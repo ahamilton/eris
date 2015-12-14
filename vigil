@@ -295,7 +295,7 @@ class Summary:
         self._max_width = None
         self._max_path_length = None
         self.sync_with_filesystem()
-        
+
     @property
     def _cursor_position(self):
         return self.__cursor_position

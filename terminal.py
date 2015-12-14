@@ -6,10 +6,7 @@
 import contextlib
 import curses
 import os
-import select
 import sys
-import termios
-import tty
 
 import urwid
 import urwid.raw_display
