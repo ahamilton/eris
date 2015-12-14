@@ -1,0 +1,394 @@
+Todo
+- Have at least one golden test for every tool.
+  - Maybe could re-use linguist's example test files for many tools.
+- Seperate tool specific code from infrastructure in the tools module.
+- Add command line options, e.g. -h
+- Docstrings
+- Boilerplate: Readme, usage, man page?, docs?, setup.py?, wheel?, __pkginfo__.py?
+- Publish. pypi and github will do.
+  - Maybe also use cxfreeze, py2exe, pyrun or zipapp?  Is zipapp the standard way?
+  - Use cookiecutter?
+  - Need to use conventional version numbers for pypi. See pep0440.
+- Add ESC as an alternative to 'q' for quit. If looking at Help, ESC should just
+  exit the help screen.
+- Add means to pause and unpause all current jobs.
+- Have a sandbox for unsafe (or all) tools.
+- Determine if ".py" files are python2 or python3 to run the right tool.
+- Statuses' pretty names and variable names don't match.
+- Report on python doctests. (also coverage of)
+- Check if class Entry is really working correctly as a collections.UserList.
+- Don't let the user scroll indefinately below the end of the page.
+
+
+Done
+- Use inotify to keep the results up to date.
+- Show a table of statuses.
+- Let a cursor move over the table.
+- Have a result pane, which always shows the result corresponding the
+  current position in the table.
+- Use color in the status.
+- Use syntax highlighting when showing source code.
+- Don't show raw binary. Prefer at least a hex dump.
+- When the program is first run, calculate all the results in the background.
+  Have the statuses and results update while the you can still navigate around
+  the table.
+- If a traceback occurs when running a tool, catch it and show the traceback as
+  the tool's result.
+  - syntax highlight the traceback
+- Add color to files based on LS_COLORS.
+- Have a key for toggling the split screen between vertical and horizontal.
+- Results need to be classified into at least success or failure.
+- Have a tool summarizing the file metadata, including checksums.
+- If a python script has a shebang line rely on that when running it. 
+  Let it fail if the script isn't executable.
+- Change to python3.
+  + python2 is still working
+    + dropped python2 for now
+- Add a command to just run a tool on a file.
+- Write some tests for run-tool.
+- Use memoization.
+  - Make the input filename, tool, and contents (or hash of contents) the key.
+  - Therefore different versions of the same file can be in the cache at 
+    the same time, and switching between the versions requires no recalculation.
+    + Undone: only one version is stored
+- Have a toggleable activity log.
+- Add a job queue.
+    D Run the jobs closest to the cursor first.
+    D Make the maximum number of running jobs be the number of processes.
+    S Run all jobs at a lower priority then the viewer.
+- Make sure unittests start running with very little latency, and as quickly
+  as possible.
+  - Let tools be prioritised. <- The result with focus is always run first.
+  - Maybe should run an extra concurrent job if other jobs are already running?
+- Don't show the whole path.  Show one relative to the base directory.
+- Use tools' paths relative to the codebase root, so that the codebase root
+  can be moved without invalidating the cache.
+- Colourise the tool names.
+  - If the tool is used on one type of file, use the same color.
+  - If the tool is associated with many file types, show the colour of the file
+    currently being worked on.
+  - If the tool is generic use a particular color.  White bold.
+- Be able to focus on a list of files within the codebase.
+  + Undone: shows whole directory
+- Have a help screen
+- Add header lines to some panes in the interface.
+  - A line above the result pane containing the path, tool, and status.
+  - A line above the activity log.  Containing just "Activity log".
+- Stop the log from getting focus.
+- When a file is changed and all the results are recalculated the tool currently
+  in focus should have priority.
+- Highlight the row the cursor is in so it's easier to find.
+- Rename Columns widget to Row and Rows widget to Column.
+- Optionally hide scrollbars when full size.
+- Can the interface latency be improved? Atm its slugish when jobs are running.
+  Could some (or all) jobs be momentarily paused when a key is pressed to free 
+  a cpu? Does changing their priority help?
+- Use WidgetPlaceHolder in result widgets so that they can be changed in place,
+  and so that the check in run_tool-after_run is not needed.
+- When running tools on a file in a subdirectory cd to the subdirectory first.
+  <- Should avoid this.
+- Have means to jump to the next failure.
+- Watch for new or deleted files
+- If dump_pickle_safe fails then delete the tmp file.
+- Use multiprocessing module, or concurrent.futures, or asyncio?
+  + Used asyncio and concurrent.futures. Is faster.
+  + Used multiprocessing
+- Store all the statuses together in one pickle. It should never be too big.
+  This could greatly speedup startup.  Would probably help to still have each
+  status stored redundantly with its result.
+  + Didn't store statuses redundantly. Each result was stored in its own gzipped
+    pickle.
+- When looking for the next issue wrap around and find ones above when there
+  are none below.
+- Use the entire stat of a file to decide if the file has changed.
+- Existing status indicators don't change when viewed in other terminal types.
+  They should all change together depending on the terminal.
+  + You can toggle between two status styles.
+- Add a legend to explain the meaning of the different colored
+  status indicators.
+- Be able to move to the next issue of the tool currently selected.
+- Take the part of blessings being used.
+- Cache os.get_terminal_size if necessary.
+  <- Didn't cache, seems to be fast enough.
+- Color the dirname of paths with the directory color.
+- Rename to vigil
+  <- Also created a symlink vigil.py for vigil_test.py to import.
+- Let the entries be sorted by directory then type, and type then directory.
+- Change sort order to show all files in a directory before any of the files of the
+  subdirectories.  Is currently interleaved.
+- Be able to control whether the filesystem is being watched.
+- Add a status bar showing state of switches, and maybe combine with a progress
+  bar. e.g.
+  h:help  q:quit  w:Watching  p:Working  s:sync  n:next  r:rotate
+  l:log  -:statuses  d,c,j,k:navigate
+- Add color to the help text
+- Name it 'vigil' ?
+- Have a progress bar for the work queue.
+- Have a progress bar showing the ratio of calculated to uncalculated results.
+  <- Did this type of progress bar
+- Pare down fill3 and rename it
+  <- Didn't rename it yet
+- Scroll speed is arbitrary and small. Scroll jumps should be the length of
+  the page or half the length of the page.
+  <- Is half the length of the page
+- Force recalculation of vigil's whole cache when vigil.py changes.
+- For now assume ".py" extension means python3.
+  - So only use python3 tools
+- common.py is not needed anymore without run-tool, merge its contents back
+  into vigil and termstr.
+- Add navigation keys (d,c,j,k) to help screen.
+- Removed FIX code involving arbitrary numbers.
+- Get python3-coverage tool working.
+- Make sure you can always see the cursor with simple statuses.
+- Make the indent of filenames the same for all files in the same directory.
+- Give the help page scroll bars.
+  + Also made portals, and views scrollable.
+- Make arrow keys work for navigation.
+- Make 'page up', 'page down', 'home' and 'end' work for navigation.
+- Let the mouse select statuses.
+
+A-syntax, B-tests, C-auto docs, D-lint, E-coverage, F-profile, G-tidy, H-import deps
+             A B C D E F G H
+python       s s s s s s s s
+perl         s   s       s 
+html         s - -   -   s
+css              -          
+c            s           s
+c++                      s
+php          s   l     l
+java .class        s       
+java .java         s       
+javascript   l              
+c#                           
+objective-c                
+ruby                       
+lua
+julia
+
+legend: s = started, l = looked, - = not applicable 
+
+
+Ideas
+- See gucharmap ✔ ✘ ● ◯ ▐▌ 🀆   ◆ ■  □ ▒
+- Some tool ideas:
+  - code tests
+  - coverage
+  D linting: pylint, pyflakes, pychecker, pycharm?
+  - python profile: cprofile, line-profiler?, yappi, 
+    pyinstrument, /usr/lib/python3.4/trace.py, cprofilev
+  - Also maybe trace alloc?
+  - And my tools: gut, spanish translations
+  - git diff, annotate
+  - C++ tools: CppCat?, PVS-Studio, Cppcheck, Visual Studio
+- Let a test function define a file type.  Not just the filename extension.  
+  Use the 'file' tool's type.
+  (see hgviewlib)
+- Let run-tool optionally use the cache.
+- Have run-tool also optionally show the status of the result.
+- Have run-tool optionally show colour.
+- chdir shouldn't be used with multi-threading. openat and fstatat can help.
+- Show all binary files with a binary viewer tool? Like a hex editor?
+- Use jp2a which turns jpegs into ascii
+- Ignore other input while help screen is showing.
+- See http://cynic.cc/blog//posts/2015-05-16_coursera-dl_activities/
+  for current practices of installation and testing.
+- See https://www.atlassian.com/git/tutorials/comparing-workflows git tutorial.
+- Other languages: lisp, bash shell, sql, lua, haskell, cobol, dart, julia, go, rust, D
+- Other file types: core dumps, subtitles, pictures, elf binaries, shared libraries,
+  library archives, metadata for databases, metadata for audio/video,
+  contents of compressed archives, pdf2text, doc2text, html2text, ebook2text,
+  csv file?
+- Check these tools: astyle, indent, uncrustify, xmlindent, csstidy, flake8,
+  frosted, pep257, pyroma, dodgy, jedi, pep8-naming, graphite, propector, mypy, vmprof
+- eslint for javascript?
+- epydoc for python
+- readelf
+- pinfer from mypy
+- for c, c++: libasan, liblsan, libtsan, libubsan, coverty?
+- for ruby: flog
+- for po, pot files: dennis
+- for go: "go report card"
+- markdown -> text
+- for bash or shell scripts: ShellCheck
+- ffprobe for detecting media types
+- Can these job queue systems help?  celery, gearman, joblib, pathos, 
+  parallel python, dask, spark
+- Need rpc?  pyro4, protocol buffers, thrift
+- Maybe use psutil python module instead of subprocess
+- Make graphical output possible
+  - Use an existing web browser.
+  - Use gnome with an embedded browser.
+    - The left hand panel could be a vte widget, instead of a gnome table.
+- Serve as a web app.
+- Find image-to-ascii to make a best effort with images.
+- Install tools and their dependencies, on demand, in the background.
+- Ignore emacs backup files?    i.e. files ending in ~
+- Only import tools if needed?  And only apt-get install deps if necessary?
+- When a status changes from a fail to success show a smiley (or vice versa) in
+  the activity log message.
+- Optionally make a sound based on the success or failure of a run.
+  - Only make a success or fail sound when the status changes 
+    (instead of every time)
+- Let the focus move diagonally as well.
+- Have an option to turn off all automatic work.
+- Have a command so a tool can be re-run at any time.
+  i.e. for when not trusting the cache
+- Somehow make python test modules another type of file, so they are grouped
+  together, and seperately from the other python files. (A subtype?)
+- Internationalization
+- Let results depend on other results?  Could depend on .pyc for example?
+- Make the tools configurable.
+- Make editing found problems easy:
+  i.e. Editing at spots found by code checkers or linters.
+  - Integrate editor?
+  - Open file in editor at the spot?
+- Use linguist as a generic tool.
+- POLA, only put in the sandbox what the tool needs.  e.g. only the file.
+  Make a chroot with one file?
+- Be able to add new tools within the interface, and have a 
+  github 'send pull request' button, to suggest the new tool.
+- Store extra metadata about results: e.g. tool version, start time, finish time,
+  CPU used (sys, user).
+- If not installing all dependencies at once, install them grouped by file type, e.g.
+  programming language.  Also in that case its probably best to have the tool 
+  functions in a package with the tools divided into one module per file type.
+- Have a Cache widget with an update_appearance_min method
+- termstr should fail when called with methods str has that it doesn't
+- Pause jobs during screen updates?
+  - Don't pause jobs during all screen updates. Only pause during screen updates
+    that came from key presses.
+- Colourise all directory listings. e.g. file listings of archives
+- Kill all subprocesses if the process is interrupted.
+- Make it possible for a git user to switch branches without needing to
+  recalculate all the results. i.e. cache old results
+- Use biglist to store the summary table to speed up start & quit times for
+  very big projects.
+- Have a progress bar when loading all results. Should only be seen on results
+  large enough to require more time to load.
+- Make a terminal widget, so that editors can be embedded.
+  - looked at:
+    - libvterm
+    - gate one's terminal.py <- mixed with html
+    - pyte <- problems with color
+    - stterm's st.c <- mixed with X
+    - urwid's terminal widget
+- Make sure theres no problems if its run twice concurrently on the same
+  directory.
+- Make a read-only virtual fuse filesytem containing the results.
+- Have a way to show a diff between two chosen results.
+- Make a code widget that lets you change the color theme.
+- Maybe use importlib.util.LazyLoader for a faster startup
+- Have an estimated time till completion with the progress bar.
+- Try to drop the dependency on pyinotify.
+- Try to make the saving of the result to disk occur in the multiprocessing
+  process.
+- Use appearance_interval on Text widgets to speed up display of large files,
+  by only loading the necessary part for the interval.
+- Somehow process a whole directory of projects seperately.
+  - Have a headless option so you can script calculating all the results for
+    many projects.
+- python-guacamole deals with 24bit color & conversions
+- Let the status bar keys summary be used as a list of buttons on tablets.
+- Try doing autosave again.
+  - It musn't save if there are no changes.
+- Use Gnuroot (debian) for Android. See: ("http://www.techrepublic.com/article"
+   "/use-gnuroot-to-install-a-gnulinux-distribution-on-your-android-device/")
+- Let the mouse move the scrollbars?
+- Let the mouse click on the actions in the status bar?
+- Let the mouse click the filenames.  Try to show a result from the same type
+  of tool.
+
+
+Shelved
+- Have a way to concatenate tool's results together
+  - Could be used to join all the metadata of a file together
+  <- I just made a specific metadata tool that shows all the info.
+- Is colorlog helpful?
+  <- Made a colorful log before I found out.
+- Possibly show the size of the work queue.
+  <- No obvious place to put it.  The user has a sense of outstanding work
+     from the percentage of unknown statuses(?) visible.
+  <- This could be a progress bar.
+- Optionally let the focus wrap around when moving off the table.
+  <- I don't know how to make urwid allow that, or to force it.
+- Also have h,j,k,l as arrow keys.
+  <- 'l' is for toggling the log.  Normal arrow keys should be enough.
+- See all the LS_COLORS even if you don't have them in your environment.
+  <- Its better for the colors to be consistent for people, than to possibly
+     have more.
+  <- Should mention LS_COLORS for people.
+- Include directories in the file listing?  Directories are files too.
+- Don't waste space between the status pane and the result pane. Have a minimum
+  width of the result pane, but let it grow wider if the the status pane is
+  narrow.
+    <- Was complicated by the addition on the activity log, which needs more
+       width.
+- Use libmagic directly from python instead of 'file'
+  <- Easier and simpler to stay with file
+- Have optional summary view of subprocesses. (Or jobs) - OS does it well enough
+- Undo hack of urwid.display_common.
+  - The hack worked around a possible bug which limited colors to 88 instead of
+    256.  See display_common.py:824
+- Retain a fs cache for a fast startup. Use file timestamps.
+    D Add autosave
+    - Ignore out of date results on startup.
+    - Schedule jobs for new or changed files.
+    - Have a seperate cache for each file's results. Only save the cache once
+      when all the results have been calculated. Only load the cache once when
+      the file changes.
+  <- Something similar was done instead: A gzipped file for every result, and
+     one pickled file of all the results' statuses together, including some
+     application state.
+- Use sqlite for the cache.  Use a seperate sqlite db for each file?
+- Use a key-value store for the cache.  Use a seperate store for each file?
+- Let columns be sorted.
+  - For the filename have at least: sort by file type then directory and
+    sort by directory then type. 
+  <- Sorting columns doesn't really make sense since a column can contain
+     results from different tools.  Instead let all rows be sorted in different
+     ways.
+- Make sure doctests work
+  <- huh, where were the doctests?
+- Have a 'raw' tool that shows the contents of the file but doesn't store it
+  in the cache?
+- python help summary
+- Have run_tool_cached cache exceptions too.  And raise them the next time.
+  <- run_tool_cached isn't being used now
+- Watch for a change to tools.py and reload and recalculate.
+- Run untrusted tools in a sandbox: Docker? aufs? SECOMP? pflask? lxc? AppArmor?
+  SELinux? systemd-nspawn? chroot? sandstorm? firejail? lxd?
+  - Be able to choose the sandbox, or none.
+  <- At the moment all tools are in ubuntu so are trusted
+    <- But some tools like unittest run scripts. That needs sandboxing.
+- Seperate tools into fast and slow.  Prioritise all fast ones before slow ones.
+  - Maybe proceed in rounds based on distance. So close distance fast, close 
+    distance slow, medium distance fast, medium distance slow, further distance
+    fast, further distance slow.
+- Have one class or function for the storage layer, with switchable
+  implementation.
+  - Have a reference implementation with the simplest implementation, 
+    and performance unimportant.
+  - Have a good implementation.
+  - Have tests which are run on both.
+- Also make the visibility of the result and summary panes toggleable.
+- When running tools minimize side effects. e.g. use "python -B" to supress
+  generation of .pyc files.
+- Have a cache of the appearance of the entire screen as you move around.
+  Only works if the log isn't showing, and the results are all calculated.
+- Allow negative position coordinates in Portal.
+  <- I don't need it
+- Use multiple cores to update the screen faster. Currently one is used.
+  <- Don't have multiple cores to test this
+- Show help info about the current tool in the help page.
+- Show the code of the current tool in the help page.
+  <- Any info about the tool won't be on the help page.
+- Ensure the model and view is seperated.
+  - And make another view use the same model.
+  <- Not seperated. Well it is seperated in the sense that the view code only exists
+     in 'appearance' methods, otherwise think of everything as models.
+     This worked great.
+- Try to minimize the width of the summary pane to avoid wasting space.
+  The maximum width would still be half the screen.
+  <- Unfortunately that would make the width of the log window too small. Maybe its
+     still worth it though.
+     

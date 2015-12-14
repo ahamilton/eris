@@ -1,0 +1,216 @@
+Current
+- Changing the status style with 'watching' off can result in recalculations.
+- In stterm the previous console title isn't being restored.
+  Seems to be a bug in stterm, because its okay in gnome-terminal.
+- Some jobs always are recalculated when restarting vigil.
+  e.g. vigil.py pylint, BUGS metadata, BUGS _pygments
+- Sometimes when quitting: "close failed in object destructor",
+  "sys.excepthook is missing"
+- If a pending file is deleted, while not watching the filesystem,
+  then tools fail when they can't find the file. Also, even if watching, there
+  would be a race. Do what?
+- The scrollbars in the help screen don't work with the arrow keys.
+
+
+Current (tool related)
+- disassemble.py is not always found
+- disassemble doesn't work for python3
+- gut had an error with utf-8. A traceback printed directly on the screen,
+  garbling the interface.
+- Some file's display is garbled. e.g. perldoc of FieldHash.pm
+- Scrolling right on a result from disassemble_pyc (or pydoc run on termstr.py)
+  causes screen corruption.
+
+
+Fixed
+- The interface is hanging during large tool computations.
+- Your cwd relative to the code base path should not be important.  Currently it
+  causes the cached paths not to be found.
+- Clicking the mouse button causes a traceback.
+  (Started when the keyhandler was added)
+- The cursor disappears when on the placeholders "."
+- The filenames are only showing their basenames.
+- After moving with the mouse, the new position is not remembered. So that
+  moving with keys moves from the position you last had when moving with keys. 
+- Not working correctly: Let rows in the table have different numbers of
+  columns. If navigating between rows, from one row, to another with less
+  columns, change the column of the cursor. 
+- Sometimes when moving with the mouse the wrong result appears. The column
+  doesn't change.
+- on_file_saved is responding to everything including when the cache is saved
+- It seems that on_file_saved won't work properly with subdirectories. The event
+  path is always a basename.
+- Tabs are appearing as question marks in the source code.
+- When changing a file and the results are updated... The updates don't show on
+  the screen, you need to move the cursor over them to force them to be shown.
+  And in this time the CPU is 100%.
+- An exception shows when the cache changes while it is saving. 
+  No more autosave.
+- Fix problems caused when displaying long path names.
+  <- So far only fixed by truncating the file name.
+- Bug in _closes_result when using min().
+- urwid is not coping with large files well.
+- The result does not change to "?", only the statuses. (urwid implementation)
+- The screen does not change from the placeholders if you never move the
+  cursor. (urwid implementation)
+- Have seen a hang. It was running the 'file' program on 'table3.py' at the 
+  time. Still responded to 'q'. On next run all the results were in the cache.
+  Maybe the hang was only in the display. (urwid implementation)
+- Quiting out sometimes hangs. (urwid implementation)
+- Often the program crashes early on. (urwid implementation)
+- One time the program was slow after running for a long time, and after
+  restarting it was definately quicker. (urwid implementation)
+- Views crash when scrolled too far.
+- Ensure the terminal is in a good state if the process is interrupted.
+- The listing's title is missing when the program starts.
+- Its possible to be calculating the same result more than once at the same time.
+- The scrollbar disappears on long summaries, when moving to the next page down.
+  <- urwid related
+- Sometimes the cache isn't being saved
+  <- changed cache implementation
+- signal_process_tree is signalling the root process when it shouldn't.
+  <- not using signal_process_tree at the moment.
+- "./table.py t *.py" shouldn't show the py files in the parent directory of t.
+  <- Not doing globbing at the moment.
+- Running out of space while saving the cache leaves a partially written .tmp file.
+  <- File is deleted
+- If a file becomes executable this is not detected and it will have the wrong
+  color.
+- When quitting out any currently running jobs are forgotten, and forever left in
+  the running state after restart.
+- Quiting out is hanging.
+- Quiting out is not producing an error code of 0.   i.e.  $? != 0   If all the
+  results are calculated it does give 0 when quiting out.
+- If a tool is interrupted its result will be incorrect, and worse cached.
+- The interface is very slow and almost unresponsive on larger projects.
+  <- The whole summary was mistakenly being rendered.
+  <- Changes to the cache weren't excluded from events caught by pyinotify.. 
+- Sometimes when quiting out the screen is not restored
+- Sometimes when starting up the whole screen is not drawn, only the first diff.
+  <- The screen update thread was being started before the blessings fullscreen
+     context manager.
+- Currently any issue thats on the current row, to the left of the cursor, won't
+  be found, even if its the last one.
+- The metadata result isn't formatted correctly.
+- The log is truncated, and is too short on large displays.
+- The "All results are up to date" message doesn't show immediately.
+  <- The most recent n messages weren't being shown.
+  Also it ideally wouldn't be repeated by each worker thread.
+  <- still being repeated
+- Sometimes two results are yellow simultaneously, even though theres only
+  one worker thread.
+  - Caused when the pep8 column for some reason is the same as its neighbour
+    pflask!
+  <- The key in sync_with_filesystem was sometimes the same for different tools.
+     Fixed by including the tool name in the key.
+- All rows in the filename column need to change width together, or always stay
+  the same size.
+  <- For now its always a fixed arbitrary size.
+- Shouldn't reuse "." to mean not applicable. Its hard to tell which jobs are
+  really pending.
+  <- Changed to a grey block
+- The scrollbar is invisible on very large pages.
+  <- Now its always at least one character in size.
+- While the metadata is being calculated the width of the metadata column changes.
+- If a file has many tools the statuses are truncated on the right. Probably
+  should scroll over with the cursor. Or possibly wrap the statuses onto the
+  next line?
+  <- Fixed by scrolling over. Haven't tried wrapping yet.
+- The cursor can dissappear behind the scrollbar when scrolling to the right in
+  the summary view.
+  <- Off by one... Forgot the extra space added at the end of the filename.
+- lib/jquery.min.js (from luakit) takes a long time to display (by pygments) and
+  the output is corrupted.
+  <- Not a bug with vigil, and I can't see the corruption.
+- Files which are broken symbolic links only show errors.
+  <- Decided to not list broken symlinks in the summary view.
+- The filenames are all white!
+  <- ljust on a termstr returns a str. Fixed by avoiding ljust, but should
+     add ljust to termstr.
+- The cursor sometimes moves down one line while programs are being run.
+  Probably a problem in sync_with_filesystem. Happened while leaving the
+  cursor on pyc files.
+- Its not working in the linux console. The terminal codes are producing
+  garbled output there. Its probably the 24 bit color terminal codes.
+  <- It wasn't about colour.
+  <- The encoding was latin, it should have been utf-8.
+- Jobs are still being started during shutdown
+- Sometimes jobs hang. Started after the switch to multiprocessing with pausing.
+  Accidently pausing?
+  <- Fixed by removing the join which can deadlock and is unnecessary.
+- Sometimes quiting hangs. At least with the q key. Test ctrl-c also. Started
+  after the join was removed when running jobs.
+  <- Fixed by making the multiprocess Process a deemon thread. But is the reset
+     method really terminating the process?
+- Switching status style doesn't work sometimes after restart.
+- next_test.py passes in the console but fails when piped through 'less'.
+  <- Fixed when changed to terminal_codes.
+- Old results aren't being deleted from the cache.
+- When the terminal window is resized the contents aren't immediately resized.
+- The length of the grey highlight bar isn't always the full width of the
+  view window.  Its only as long as the widest row currently showing.
+- sync_with_filesystem is being run when changes occur in ".vigil" directories
+  in sub-projects.
+- Filenames are always colored white in gnome-terminal. This used to work, and
+  was probablty broken when blessings was replaced.
+  <- False alarm. Went away!
+- When sorting by ext then path, the filesystem is always changing for some
+  reason.
+  <- The filesystem change was the log changing. Moved the log elsewhere.
+- When a sync_from_filesystem occurs the files are always sorted one way.
+  Which could be a change.
+- While the watch manager is disconnected from the mainloop, events are being
+  queued up, and are all played out when the watch manager is reconnected.
+- First character in help is green
+- Switching 'watching' on, is slow.  At least update the indicator text quickly.
+- Something in ~/repos/pygame breaks convert_lscolor_code_to_charstyle
+  <- Files with ".conf" extensions were breaking convert_lscolor_code_to_charstyle
+- When syncing, why does the tool name in the title of the result pane briefly
+  change colour?
+  <- Can't see this any more because you can't manually sync. Also doesn't show
+     when toggling the 'watching' switch.
+- terminal.italic is None in the linux console. Then code_for_term fails.
+- Vigil won't clear the cache if the previous vigil was still running and making
+  changes after the new vigil was installed.
+  <- Created a ".creation-time" timestamp for when the cache was created.
+- Have all jobs calculated, and job runners waiting, then find new jobs with
+  syncing-with-fs... The job runners aren't then being started to calculate these
+  jobs.
+- Sometimes the job runners stop and say all results are done, but I can see
+  outstanding pending results. A restarted vigil processes them.
+- Getting screen corruption after using curses for input. The corruption occurs
+  when viewing particular reports. Must be in a different mode so characters
+  are interpreted differently.
+  <- This went away, for now...
+- The mouse sometimes stops working. At this time you can also highlight parts
+  of the screen. Maybe we've left raw mode?
+  <- This also went away.
+- Theres corruption the first time you type a key or press the mouse button.
+  The screen gets cleared and only the diff lines are shown. Eventually with
+  more diffs the whole screen is showing.
+  - If can't fix properly... a hack could be to programatically type a key early
+    on.
+  <- This was some problem with my use of curses. Fixed by using urwid's raw_display
+     instead.
+- When the screen changes the cursor can be seen flying around quickly. It also
+  ends up on the right hand side of the screen.
+  <- I forgot I began relying on curses to hide the cursor. Put back the
+     'hidden cursor' contextmanager.
+
+
+On hold, run-tool related
+- Sometimes there is a blank line at the end of the result in run-tool, and
+  probably in table.py.  Sometimes not.
+- In run-tool, if the tool fails, the returncode is always 0.
+- "python ./run-tool gut table.py" results in "The file must be within the 
+  codebase.", but it is in.
+
+
+Won't fix
+- If the summary window is narrower then max_path_length the paths are never
+  visible.
+  <- Only a problem for very narrow windows.
+- There is no color in lxterminal, only shades of grey.
+  <- Only testing gnome-terminal & stterm at the moment.
+- Sometimes a lot (or all?) of the results are "?" even with correct statuses.
+  <- Happens when the cache is deleted from underneath a running vigil.
