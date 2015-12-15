@@ -63,12 +63,12 @@ import termstr
 import tools
 
 
-_CWD = os.getcwd()
+_LOG_PATH = os.path.join(os.getcwd(), "vigil.log")
 
 
 def _log_error(message=None):
     message = traceback.format_exc() if message is None else message + "\n"
-    with open(os.path.join(_CWD, "vigil.log"), "a") as log_file:
+    with open(_LOG_PATH, "a") as log_file:
         log_file.write(message)
 
 
