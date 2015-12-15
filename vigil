@@ -40,7 +40,6 @@ Keys:
 
 import asyncio
 import collections
-import curses
 import functools
 import gc
 import gzip
@@ -842,8 +841,7 @@ class Screen:
         ({"K", "end"}, listing_right), ({"o"}, toggle_sort),
         ({"n"}, move_to_next_issue), ({"N"}, move_to_next_issue_of_tool),
         ({"e"}, edit_file), ({"s"}, toggle_status_style),
-        ({"w"}, toggle_watch_filesystem), ({"q"}, quit_),
-        ({curses.KEY_MOUSE}, on_mouse_event)]
+        ({"w"}, toggle_watch_filesystem), ({"q"}, quit_)]
 
 
 class Runner:
