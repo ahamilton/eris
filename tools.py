@@ -185,19 +185,6 @@ def md5(path):  # Deps: coreutils
         return hashlib.md5(file.read()).hexdigest()
 
 
-def _filemode(mode):
-    """Convert a file's mode to a string of the form '-rwxrwxrwx'."""
-    perm = []
-    for table in stat._filemode_table:
-        for bit, char in table:
-            if mode & bit == bit:
-                perm.append(char)
-                break
-        else:
-            perm.append("-")
-    return "".join(perm)
-
-
 def metadata(path):  # Deps: file, coreutils
 
     def _detail(value, unit):
@@ -205,7 +192,7 @@ def metadata(path):  # Deps: file, coreutils
                 (value, unit))
     is_symlink = "yes" if os.path.islink(path) else "no"
     stat_result = os.stat(path)
-    permissions = _filemode(stat_result.st_mode)
+    permissions = stat.filemode(stat_result.st_mode)
     hardlinks = str(stat_result.st_nlink)
     group = [pwd.getpwuid(stat_result.st_gid).pw_name,
              _detail(stat_result.st_gid, "gid")]
