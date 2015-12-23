@@ -464,6 +464,13 @@ def flog(path):  # Deps: "gem install flog"
 #     return status, source_widget
 
 
+def _colorize_coverage_report(text):
+    line_color = {"> ": termstr.Color.green, "! ": termstr.Color.red,
+                  "  ": None}
+    return fill3.join("", [termstr.TermStr(line).fg_color(line_color[line[:2]])
+                           for line in text.splitlines(keepends=True)])
+
+
 def python3_coverage(path):
     test_path = path[:-(len(".py"))] + "_test.py"
     if os.path.exists(test_path):
@@ -480,7 +487,7 @@ def python3_coverage(path):
                  os.path.normpath(path)], env=env)
             with open(os.path.join(temp_dir, path + ",cover"), "r") as f:
                 stdout = f.read()
-        return Status.info, fill3.Text(stdout)
+        return Status.info, fill3.Text(_colorize_coverage_report(stdout))
     else:
         return Status.placeholder, fill3.Text("No corresponding test file: " +
                                               os.path.normpath(test_path))

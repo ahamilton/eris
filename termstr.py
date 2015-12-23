@@ -221,3 +221,15 @@ class TermStr(collections.UserString):
             return CharStyle(style.fg_color, style.bg_color,
                              is_bold=style.is_bold, is_underlined=True)
         return self.transform_style(make_underlined)
+
+    def fg_color(self, fg_color):
+        def set_fgcolor(style):
+            return CharStyle(fg_color, style.bg_color, is_bold=style.is_bold,
+                             is_underlined=style.is_underlined)
+        return self.transform_style(set_fgcolor)
+
+    def bg_color(self, bg_color):
+        def set_bgcolor(style):
+            return CharStyle(style.fg_color, bg_color, is_bold=style.is_bold,
+                             is_underlined=style.is_underlined)
+        return self.transform_style(set_bgcolor)
