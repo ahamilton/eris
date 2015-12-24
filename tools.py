@@ -334,10 +334,10 @@ def python_tidy(path):  # Deps: found on internet?
     return Status.info, _syntax_highlight_code(stdout, path)
 
 
-def mccabe(path):
+def python3_mccabe(path):
     command = ["python3", "/usr/lib/python3/dist-packages/mccabe.py", path]
     return _run_command(path, command, Status.info)
-mccabe.dependencies = {"python3-mccabe"}
+python3_mccabe.dependencies = {"python3-mccabe"}
 
 
 def perltidy(path):
@@ -534,7 +534,7 @@ def generic_tools():
 def tools_for_extension():
     return {
         "py": [python_syntax, unittests, pydoc3, python3_coverage, profile,
-               pep8, pyflakes, pylint3, gut, modulefinder],  # mccabe
+               pep8, pyflakes, pylint3, gut, modulefinder, python3_mccabe],
         "pyc": [disassemble_pyc],
         "pl": [perl_syntax, perldoc, perltidy],
         "pm": [perl_syntax, perldoc, perltidy],
