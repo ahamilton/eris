@@ -1,0 +1,12 @@
+#!/bin/bash
+
+
+set -e
+
+
+echo "Install the dependencies of the vigil script..."
+sudo apt-get --yes install python3-minimal python3-pygments python3-pyinotify \
+     python3-urwid
+echo
+echo "Install all the tools vigil may need..."
+./install-tools
