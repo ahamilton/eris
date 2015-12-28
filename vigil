@@ -55,6 +55,7 @@ import threading
 import time
 import traceback
 
+import psutil
 import pyinotify
 
 import fill3
@@ -136,6 +137,12 @@ def status_to_str(status, is_status_simple):
         return status
 
 
+def make_process_nicest(pid):
+    process = psutil.Process(pid)
+    process.set_nice(19)
+    process.set_ionice(psutil.IOPRIO_CLASS_IDLE)
+
+
 class Result:
 
     def __init__(self, path, tool, is_stored_compressed=True):
@@ -186,6 +193,7 @@ class Result:
         start_time = time.time()
         self.process = multiprocessing_process(
             tools.run_tool_no_error, self.path, self.tool)
+        make_process_nicest(self.process.pid)
         new_status, result = self.process.result_conn.recv()
         self.status, self.result = new_status, result
         self.process = None
