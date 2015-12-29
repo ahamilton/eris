@@ -83,13 +83,6 @@ def _convert_lscolor_code_to_charstyle(lscolor_code):
     return termstr.CharStyle(fg_color, is_bold=is_bold)
 
 
-def sandbox_command(command):
-    # Deps: firejail http://l3net.wordpress.com/projects/firejail/
-    # return ["firejail", "--overlay", "-c"] + command
-    # return ["firejail", "-c"] + command
-    return command
-
-
 def fix_input(input_):
     input_str = input_.decode("utf-8") if isinstance(input_, bytes) else input_
     return input_str.replace("\t", " " * 4)
@@ -98,8 +91,7 @@ def fix_input(input_):
 def _do_command(command, **kwargs):
     stdout, stderr = "", ""
     try:
-        process = subprocess.Popen(sandbox_command(command),
-                                   stdout=subprocess.PIPE,
+        process = subprocess.Popen(command, stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE, **kwargs)
         stdout, stderr = process.communicate()
     except subprocess.CalledProcessError:
@@ -110,8 +102,7 @@ def _do_command(command, **kwargs):
 def _run_command(path, command, status_text=Status.success):
     status, output = status_text, ""
     try:
-        process = subprocess.Popen(sandbox_command(command),
-                                   stdout=subprocess.PIPE,
+        process = subprocess.Popen(command, stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE)
         stdout, stderr = process.communicate()
         output = stdout + stderr
@@ -177,10 +168,7 @@ def _pretty_bytes(bytes):
     return "%s %s" % (conversion, units[unit_index])
 
 
-def md5(path):  # Deps: coreutils
-    # stdout, stderr, returncode = _do_command(["md5sum", path])
-    # stdout = stdout.decode("utf-8")
-    # return stdout.split()[0]
+def md5(path):
     with open(path, "rb") as file:
         return hashlib.md5(file.read()).hexdigest()
 
@@ -313,12 +301,6 @@ def disassemble_pyc(path):
     dis.dis(bytecode, file=stringio)
     stringio.seek(0)
     return Status.info, fill3.Text(stringio.read())
-
-# def disassemble_pyc(path):  # Deps: found on internet
-#     code_path = os.path.dirname(sys.argv[0])
-#     disassemble_path = os.path.join(code_path, "disassemble.py")
-#     return _run_command(path, ["python", disassemble_path, path],
-#                         Status.info)
 
 
 def perldoc(path):
@@ -578,17 +560,6 @@ def dependencies():
     return dependencies_all
 
 
-# def _extensions_for_tool(tools_for_extension):
-#     result = {}
-#     for extension, tools in tools_for_extension.items():
-#         for tool in tools:
-#             if tool in result:
-#                 result[tool].append(extension)
-#             else:
-#                 result[tool] = [extension]
-#     return result
-
-
 def splitext(path):
     root, ext = os.path.splitext(path)
     if "." in root:
@@ -601,7 +572,6 @@ def splitext(path):
 def tools_for_path(path):
     root, ext = splitext(path)
     extra_tools = [] if ext == "" else tools_for_extension().get(ext[1:], [])
-    # return [Tool(tool) for tool in (generic_tools() + extra_tools)]
     return generic_tools() + extra_tools
 
 
@@ -647,11 +617,6 @@ def _tool_name_colored(tool, path):
         char_style = termstr.CharStyle((255, 255, 255), (0, 0, 0),
                                        is_bold=True)
     else:
-        # extensions = _extensions_for_tool(tools_for_extension())[tool]
-        # color_code = (
-        #     LS_COLOR_CODES.get("." + extensions[0], None)
-        #     if len(extensions) == 1
-        #     else lscolors.color_code_for_path(path, LS_COLOR_CODES))
         color_code = lscolors.color_code_for_path(path, LS_COLOR_CODES)
         char_style = _convert_lscolor_code_to_charstyle(color_code)
     return termstr.TermStr(tool.__name__, char_style)
