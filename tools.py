@@ -586,6 +586,9 @@ def _convert_lscolor_code_to_charstyle(lscolor_code):
     if len(parts) == 1:
         is_bold = parts[0] == "1"
         fg_color = None
+    elif len(parts) == 2:
+        is_bold = False
+        fg_color = int(parts[1])
     else:
         is_bold = len(parts) == 4 and parts[3] == "1"
         fg_color = int(parts[2])
