@@ -69,20 +69,6 @@ _STATUS_TO_TERMSTR_SIMPLE[Status.empty] = "."
 LS_COLOR_CODES = lscolors.get_color_codes(os.environ)
 
 
-def _convert_lscolor_code_to_charstyle(lscolor_code):
-    if lscolor_code is None:
-        return termstr.CharStyle()
-    parts = lscolor_code.split(";")
-    if len(parts) == 1:
-        # Is this correct?
-        is_bold = parts[0] == "1"
-        fg_color = termstr.Color.white
-    else:
-        is_bold = len(parts) == 4 and parts[3] == "1"
-        fg_color = int(parts[2])
-    return termstr.CharStyle(fg_color, is_bold=is_bold)
-
-
 def fix_input(input_):
     input_str = input_.decode("utf-8") if isinstance(input_, bytes) else input_
     return input_str.replace("\t", " " * 4)
@@ -595,28 +581,38 @@ def run_tool_no_error(path, tool):
     return status, result
 
 
+def _convert_lscolor_code_to_charstyle(lscolor_code):
+    parts = lscolor_code.split(";")
+    if len(parts) == 1:
+        is_bold = parts[0] == "1"
+        fg_color = None
+    else:
+        is_bold = len(parts) == 4 and parts[3] == "1"
+        fg_color = int(parts[2])
+    return termstr.CharStyle(fg_color=fg_color, is_bold=is_bold)
+
+
+def _charstyle_of_path(path):
+    color_code = lscolors.color_code_for_path(path, LS_COLOR_CODES)
+    return (termstr.CharStyle() if color_code is None else
+            _convert_lscolor_code_to_charstyle(color_code))
+
+
 @functools.lru_cache(maxsize=100)
 def _path_colored(path):
-    color_code = lscolors.color_code_for_path(path, LS_COLOR_CODES)
-    char_style = _convert_lscolor_code_to_charstyle(color_code)
+    char_style = _charstyle_of_path(path)
     path = path[2:]
     dirname, basename = os.path.split(path)
     if dirname == "":
         return termstr.TermStr(basename, char_style)
     else:
         dirname = dirname + os.path.sep
-        color_code = lscolors.color_code_for_path(dirname, LS_COLOR_CODES)
-        dir_style = _convert_lscolor_code_to_charstyle(color_code)
-        return (termstr.TermStr(dirname, dir_style) +
+        return (termstr.TermStr(dirname, _charstyle_of_path(dirname)) +
                 termstr.TermStr(basename, char_style))
 
 
 @functools.lru_cache(maxsize=100)
 def _tool_name_colored(tool, path):
-    if tool in generic_tools():
-        char_style = termstr.CharStyle((255, 255, 255), (0, 0, 0),
-                                       is_bold=True)
-    else:
-        color_code = lscolors.color_code_for_path(path, LS_COLOR_CODES)
-        char_style = _convert_lscolor_code_to_charstyle(color_code)
+    char_style = (termstr.CharStyle(is_bold=True) if tool in generic_tools()
+                  else _charstyle_of_path(path))
     return termstr.TermStr(tool.__name__, char_style)
