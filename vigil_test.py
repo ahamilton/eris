@@ -38,17 +38,6 @@ class LruCacheWithEvictionTestCase(unittest.TestCase):
         self._assert_cache(a, 1, 2, 2)
 
 
-class MultiprocessingWrapperTestCase(unittest.TestCase):
-
-    def test_multiprocessing_wrapper(self):
-        def a(b, c, d=1):
-            return b + c + d
-        process = vigil.multiprocessing_process(a, 1, 2)
-        result = process.result_conn.recv()
-        process.join()
-        self.assertEqual(result, 4)
-
-
 _DIMENSIONS = (40, 40)
 
 
