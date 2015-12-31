@@ -164,14 +164,14 @@ class Result:
         appearance_changed_event.set()
         self.entry.appearance_cache = None
 
-    def run(self, log, appearance_changed_event, runner):
+    def run(self, log, appearance_changed_event, worker):
         self.is_placeholder = False
         tool_name = tools._tool_name_colored(self.tool, self.path)
         path_colored = tools._path_colored(self.path)
         log.log_message(["Running ", tool_name, " on ", path_colored, "."])
         self.set_status(tools.Status.running, appearance_changed_event)
         start_time = time.time()
-        new_status = runner.worker.run_tool(self.path, self.tool)
+        new_status = worker.run_tool(self.path, self.tool)
         Result.result.fget.evict(self)
         end_time = time.time()
         self.set_status(new_status, appearance_changed_event)
@@ -895,7 +895,7 @@ class Runner:
                     log.log_message("All results are up to date.")
                     break
                 try:
-                    self.result.run(log, appearance_changed_event, self)
+                    self.result.run(log, appearance_changed_event, self.worker)
                     summary.completed_total += 1
                 except EOFError:  # Occurs if the process is terminated
                     pass
@@ -970,13 +970,10 @@ def main(root_path, urwid_screen):
         for runner in runners:
             runner.result.reset()
         # Cannot pickle generators, locks, sockets or events.
-        summary.closest_placeholder_generator = None
-        summary._lock = None
-        summary._jobs_added_event = None
-        screen._appearance_changed_event = None
-        screen._main_loop = None
-        screen._watch_manager = None
-        log._appearance_changed_event = None
+        (summary.closest_placeholder_generator, summary._lock,
+         summary._jobs_added_event, screen._appearance_changed_event,
+         screen._main_loop, screen._watch_manager,
+         log._appearance_changed_event) = [None] * 7
         open_compressed = functools.partial(gzip.open, compresslevel=1)
         dump_pickle_safe(screen, pickle_path, open=open_compressed)
 
