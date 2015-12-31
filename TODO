@@ -146,6 +146,8 @@ Done
 - Make arrow keys work for navigation.
 - Make 'page up', 'page down', 'home' and 'end' work for navigation.
 - Let the mouse select statuses.
+- Try to make the saving of the result to disk occur in the multiprocessing
+  process.
 
 A-syntax, B-tests, C-auto docs, D-lint, E-coverage, F-profile, G-tidy, H-import deps
              A B C D E F G H
@@ -280,8 +282,6 @@ Ideas
 - Maybe use importlib.util.LazyLoader for a faster startup
 - Have an estimated time till completion with the progress bar.
 - Try to drop the dependency on pyinotify.
-- Try to make the saving of the result to disk occur in the multiprocessing
-  process.
 - Use appearance_interval on Text widgets to speed up display of large files,
   by only loading the necessary part for the interval.
 - Somehow process a whole directory of projects seperately.

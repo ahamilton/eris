@@ -4,8 +4,6 @@ Current
   Seems to be a bug in stterm, because its okay in gnome-terminal.
 - Some jobs always are recalculated when restarting vigil.
   e.g. vigil.py pylint, BUGS metadata, BUGS _pygments
-- Sometimes when quitting: "close failed in object destructor",
-  "sys.excepthook is missing"
 - If a pending file is deleted, while not watching the filesystem,
   then tools fail when they can't find the file. Also, even if watching, there
   would be a race. Do what?
@@ -196,6 +194,9 @@ Fixed
   ends up on the right hand side of the screen.
   <- I forgot I began relying on curses to hide the cursor. Put back the
      'hidden cursor' contextmanager.
+- Sometimes when quitting: "close failed in object destructor",
+  "sys.excepthook is missing"
+  <- This has probably gone away now jobs are run differently
 
 
 On hold, run-tool related
