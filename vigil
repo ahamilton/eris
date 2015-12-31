@@ -851,26 +851,26 @@ class _Result(Result):
         pass
 
 
-def work_loop(child_connection):
+def work_loop(parent_connection):
     while True:
-        tool, path = child_connection.recv()
+        tool, path = parent_connection.recv()
         result = _Result(path, tool)
         status, result.result = tools.run_tool_no_error(path, tool)
-        child_connection.send(status)
+        parent_connection.send(status)
 
 
 class Worker:
 
     def __init__(self):
-        self.parent_connection, child_connection = multiprocessing.Pipe()
+        self.child_connection, parent_connection = multiprocessing.Pipe()
         self.process = multiprocessing.Process(
-            target=work_loop, args=(child_connection,), daemon=True)
+            target=work_loop, args=(parent_connection,), daemon=True)
         make_process_nicest(self.process.pid)
         self.process.start()
 
     def run_tool(self, path, tool):
-        self.parent_connection.send([tool, path])
-        return self.parent_connection.recv()
+        self.child_connection.send([tool, path])
+        return self.child_connection.recv()
 
     def stop(self):
         os.kill(self.process.pid, signal.SIGKILL)
