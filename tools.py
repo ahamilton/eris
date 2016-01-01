@@ -25,6 +25,7 @@ import pygments.styles
 import traceback
 
 import fill3
+import gut
 import termstr
 
 
@@ -245,15 +246,11 @@ def unittests(path):
 unittests.dependencies = {"python3"}
 
 
-def gut(path):
-    status, output = Status.info, ""
-    try:
-        output = subprocess.check_output(
-            ["/home/ahamilton/code/python-gut/gut.py", path])
-    except subprocess.CalledProcessError:
-        status = Status.failure
+def python_gut(path):
+    with open(path) as module_file:
+        output = gut.gut_module(module_file.read())
     source_widget = _syntax_highlight_code(fix_input(output), path)
-    return status, source_widget
+    return Status.info, source_widget
 
 
 def pydoc3(path):
@@ -502,7 +499,8 @@ def generic_tools():
 def tools_for_extension():
     return {
         "py": [python_syntax, unittests, pydoc3, python3_coverage, profile,
-               pep8, pyflakes, pylint3, gut, modulefinder, python3_mccabe],
+               pep8, pyflakes, pylint3, python_gut, modulefinder,
+               python3_mccabe],
         "pyc": [disassemble_pyc],
         "pl": [perl_syntax, perldoc, perltidy],
         "pm": [perl_syntax, perldoc, perltidy],
