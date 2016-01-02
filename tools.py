@@ -154,7 +154,7 @@ def md5(path):
         return hashlib.md5(file.read()).hexdigest()
 
 
-def metadata(path):  # Deps: file, coreutils
+def metadata(path):
 
     def _detail(value, unit):
         return (" (%s)" % value if unit is None else " (%s %s)" %
@@ -200,7 +200,7 @@ def metadata(path):  # Deps: file, coreutils
             name, value = line
             text.append("%-15s: %s\n" % (name, "".join(value)))
     return (Status.info, fill3.Text("".join(text)))
-metadata.dependencies = set()
+metadata.dependencies = {"file", "coreutils"}
 
 
 def _is_python_syntax_correct(path, python_version):
