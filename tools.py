@@ -128,13 +128,6 @@ def linguist(path):
     return _run_command(path, ["linguist", path], Status.info)
 
 
-def mp3info(path):
-    stdout, stderr, returncode = _do_command(["mp3info", "-x", path])
-    source_widget = fill3.Text(stdout)
-    return Status.info, source_widget
-mp3info.dependencies = ["mp3info"]
-
-
 def _permissions_in_octal(permissions):
     result = []
     for part_index in range(3):
@@ -216,7 +209,7 @@ def _is_python_syntax_correct(path, python_version):
             ["python", "-c",
              "__import__('compiler').parse(open('%s').read())" % path])
         return returncode == 0
-    else: # python3
+    else:  # python3
         with open(path) as f:
             source = f.read()
         try:
@@ -233,20 +226,10 @@ def _python_version(path):  # Need a better hueristic
     return "python3"
 
 
-def pylint(path):
-    return _run_command(path, [_python_version(path), "-m", "pylint",
-                               "--errors-only", path])
-pylint.dependencies = {"pylint", "pylint3"}
-
-
-def pyflakes(path):
-    return _run_command(path, [_python_version(path), "-m", "pyflakes", path])
-pyflakes.dependencies = {"pyflakes"}
-
-
-def pep8(path):
-    return _run_command(path, [_python_version(path), "-m", "pep8", path])
-pep8.dependencies = {"pep8", "python3-pep8"}
+def python_syntax(path):
+    python_version = _python_version(path)
+    return _run_command(path, [python_version, "-m", "py_compile", path])
+python_syntax.dependencies = {"python", "python3"}
 
 
 def _has_shebang_line(path):
@@ -272,14 +255,6 @@ def python_unittests(path):
 python_unittests.dependencies = {"python", "python3"}
 
 
-def python_gut(path):
-    with open(path) as module_file:
-        output = gut.gut_module(module_file.read())
-    source_widget = _syntax_highlight_code(fix_input(output), path)
-    return Status.info, source_widget
-python_gut.dependencies = set()
-
-
 def pydoc(path):
     pydoc_exe = "pydoc3" if _python_version(path) == "python3" else "pydoc"
     status, output = Status.info, ""
@@ -293,172 +268,6 @@ def pydoc(path):
         status = Status.placeholder
     return status, fill3.Text(output)
 pydoc.dependencies = {"python", "python3"}
-
-
-def python_modulefinder(path):
-    return _run_command(
-        path, [_python_version(path), "-m", "modulefinder", path], Status.info)
-python_modulefinder.dependencies = {"python", "python3"}
-
-
-def python_syntax(path):
-    python_version = _python_version(path)
-    return _run_command(path, [python_version, "-m", "py_compile", path])
-python_syntax.dependencies = {"python", "python3"}
-
-
-def disassemble_pyc(path):
-    bytecode = open(path, "rb").read()
-    stringio = io.StringIO()
-    dis.dis(bytecode, file=stringio)
-    stringio.seek(0)
-    return Status.info, fill3.Text(stringio.read())
-disassemble_pyc.dependencies = set()
-
-
-def perldoc(path):
-    stdout, stderr, returncode = _do_command(["perldoc", path])
-    return ((Status.info, fill3.Text(stdout)) if returncode == 0
-            else (Status.placeholder, fill3.Text(stderr)))
-perldoc.dependencies = {"perl-doc"}
-
-
-def python_tidy(path):  # Deps: found on internet?
-    stdout, stderr, returncode = _do_command(["python", "python-tidy.py",
-                                              path])
-    return Status.info, _syntax_highlight_code(stdout, path)
-
-
-def python_mccabe(path):
-    command = [_python_version(path), "-m", "mccabe", path]
-    return _run_command(path, command, Status.info)
-python_mccabe.dependencies = {"python-mccabe", "python3-mccabe"}
-
-
-def perltidy(path):
-    stdout, stderr, returncode = _do_command(["perltidy", "-st", path])
-    return Status.info, _syntax_highlight_code(stdout, path)
-perltidy.dependencies = {"perltidy"}
-
-
-def perl_syntax(path):
-    return _run_command(path, ["perl", "-c", path])
-perl_syntax.dependencies = {"perl"}
-
-
-def objdump_headers(path):
-    return _run_command(path, ["objdump", "--all-headers", path], Status.info)
-objdump_headers.dependencies = {"binutils"}
-
-
-def objdump_disassemble(path):
-    stdout, stderr, returncode = _do_command(
-        ["objdump", "--disassemble", "--reloc", "--dynamic-reloc", path])
-    import pygments.lexers.asm
-    lexer = pygments.lexers.asm.ObjdumpLexer()
-    return Status.success, fill3.Text(list(pygments.lex(stdout, lexer)))
-objdump_disassemble.dependencies = {"binutils"}
-
-
-def readelf(path):
-    return _run_command(path, ["readelf", "--all", path], Status.info)
-readelf.dependencies = {"binutils"}
-
-
-def dump_pickle(path):
-    with open(path, "rb") as file_:
-        object_ = pickle.load(file_)
-    return Status.info, fill3.Text(pprint.pformat(object_.__dict__))
-dump_pickle.dependencies = set()
-
-
-def unzip(path):
-    return _run_command(path, ["unzip", "-l", path], Status.info)
-unzip.dependencies = {"unzip"}
-
-
-def tar_gz(path):
-    return _run_command(path, ["tar", "ztvf", path], Status.info)
-tar_gz.dependencies = {"tar"}
-
-
-def tar_bz2(path):
-    return _run_command(path, ["tar", "jtvf", path], Status.info)
-tar_bz2.dependencies = {"tar"}
-
-
-def csv(path):
-    return _run_command(path, ["head", "--lines=20", path], Status.info)
-csv.dependencies = {"coreutils"}
-
-
-def nm(path):
-    return _run_command(path, ["nm", "--demangle", path], Status.info)
-nm.dependencies = {"binutils"}
-
-
-def pdf2txt(path):
-    return _run_command(path, ["pdf2txt", path], Status.info)
-pdf2txt.dependencies = {"python-pdfminer"}
-
-
-def html2text(path):
-    return _run_command(path, ["html2text", path], Status.info)
-html2text.dependencies = {"html2text"}
-
-
-def html_syntax(path):
-    # Maybe only show errors
-    stdout, stderr, returncode = _do_command(["tidy", path])
-    status = Status.success if returncode == 0 else Status.failure
-    return status, fill3.Text(stderr)
-html_syntax.dependencies = {"tidy"}
-
-
-def tidy(path):
-    stdout, stderr, returncode = _do_command(["tidy", path])
-    return Status.info, fill3.Text(stdout)
-tidy.dependencies = {"tidy"}
-
-
-def bcpp(path):
-    stdout, stderr, returncode = _do_command(["bcpp", "-fi", path])
-    status = Status.info if returncode == 0 else Status.failure
-    source_widget = _syntax_highlight_code(stdout, path)
-    return status, source_widget
-bcpp.dependencies = {"bcpp"}
-
-
-def uncrustify(path):
-    with tempfile.TemporaryDirectory() as temp_dir:
-        config_path = os.path.join(temp_dir, "uncrustify.cfg")
-        stdout, stderr, returncode = _do_command(
-            ["uncrustify", "--detect", "-f", path, "-o", config_path])
-        if returncode != 0:
-            raise AssertionError
-        stdout, stderr, returncode = _do_command(
-            ["uncrustify", "-c", config_path, "-f", path])
-    status = Status.info if returncode == 0 else Status.failure
-    source_widget = _syntax_highlight_code(stdout, path)
-    return status, source_widget
-uncrustify.dependencies = {"uncrustify"}
-
-
-def php5_syntax(path):
-    return _run_command(path, ["php", "--syntax-check", path])
-php5_syntax.dependencies = {"php5"}
-
-
-def flog(path):  # Deps: "gem install flog"
-    return _run_command(path, ["flog", path], Status.info)
-flog.dependencies = set()
-
-
-# def csstidy(path):  # Deps: csstidy
-#     stdout, stderr, returncode = _do_command(["csstidy", path])
-#     status = Status.info if returncode == 0 else Status.failure
-#     source_widget = _syntax_highlight_code(stdout, path)
-#     return status, source_widget
 
 
 def _colorize_coverage_report(text):
@@ -499,6 +308,75 @@ def python_profile(path):
 python_profile.dependencies = {"python", "python3"}
 
 
+def pep8(path):
+    return _run_command(path, [_python_version(path), "-m", "pep8", path])
+pep8.dependencies = {"pep8", "python3-pep8"}
+
+
+def pyflakes(path):
+    return _run_command(path, [_python_version(path), "-m", "pyflakes", path])
+pyflakes.dependencies = {"pyflakes"}
+
+
+def pylint(path):
+    return _run_command(path, [_python_version(path), "-m", "pylint",
+                               "--errors-only", path])
+pylint.dependencies = {"pylint", "pylint3"}
+
+
+def python_gut(path):
+    with open(path) as module_file:
+        output = gut.gut_module(module_file.read())
+    source_widget = _syntax_highlight_code(fix_input(output), path)
+    return Status.info, source_widget
+python_gut.dependencies = set()
+
+
+def python_modulefinder(path):
+    return _run_command(
+        path, [_python_version(path), "-m", "modulefinder", path], Status.info)
+python_modulefinder.dependencies = {"python", "python3"}
+
+
+def python_mccabe(path):
+    command = [_python_version(path), "-m", "mccabe", path]
+    return _run_command(path, command, Status.info)
+python_mccabe.dependencies = {"python-mccabe", "python3-mccabe"}
+
+
+def python_tidy(path):  # Deps: found on internet?
+    stdout, stderr, returncode = _do_command(["python", "python-tidy.py",
+                                              path])
+    return Status.info, _syntax_highlight_code(stdout, path)
+
+
+def disassemble_pyc(path):
+    bytecode = open(path, "rb").read()
+    stringio = io.StringIO()
+    dis.dis(bytecode, file=stringio)
+    stringio.seek(0)
+    return Status.info, fill3.Text(stringio.read())
+disassemble_pyc.dependencies = set()
+
+
+def perl_syntax(path):
+    return _run_command(path, ["perl", "-c", path])
+perl_syntax.dependencies = {"perl"}
+
+
+def perldoc(path):
+    stdout, stderr, returncode = _do_command(["perldoc", path])
+    return ((Status.info, fill3.Text(stdout)) if returncode == 0
+            else (Status.placeholder, fill3.Text(stderr)))
+perldoc.dependencies = {"perl-doc"}
+
+
+def perltidy(path):
+    stdout, stderr, returncode = _do_command(["perltidy", "-st", path])
+    return Status.info, _syntax_highlight_code(stdout, path)
+perltidy.dependencies = {"perltidy"}
+
+
 def _jlint_tool(tool_type, path):
     stdout, stderr, returncode = _do_command([tool_type, path])
     status = (Status.success
@@ -522,6 +400,128 @@ def splint(path):
     status = Status.success if returncode == 0 else Status.failure
     return status, fill3.Text(stdout + stderr)
 splint.dependencies = {"splint"}
+
+
+def objdump_headers(path):
+    return _run_command(path, ["objdump", "--all-headers", path], Status.info)
+objdump_headers.dependencies = {"binutils"}
+
+
+def objdump_disassemble(path):
+    stdout, stderr, returncode = _do_command(
+        ["objdump", "--disassemble", "--reloc", "--dynamic-reloc", path])
+    import pygments.lexers.asm
+    lexer = pygments.lexers.asm.ObjdumpLexer()
+    return Status.success, fill3.Text(list(pygments.lex(stdout, lexer)))
+objdump_disassemble.dependencies = {"binutils"}
+
+
+def readelf(path):
+    return _run_command(path, ["readelf", "--all", path], Status.info)
+readelf.dependencies = {"binutils"}
+
+
+def mp3info(path):
+    stdout, stderr, returncode = _do_command(["mp3info", "-x", path])
+    source_widget = fill3.Text(stdout)
+    return Status.info, source_widget
+mp3info.dependencies = ["mp3info"]
+
+
+def dump_pickle(path):
+    with open(path, "rb") as file_:
+        object_ = pickle.load(file_)
+    return Status.info, fill3.Text(pprint.pformat(object_.__dict__))
+dump_pickle.dependencies = set()
+
+
+def unzip(path):
+    return _run_command(path, ["unzip", "-l", path], Status.info)
+unzip.dependencies = {"unzip"}
+
+
+def tar_gz(path):
+    return _run_command(path, ["tar", "ztvf", path], Status.info)
+tar_gz.dependencies = {"tar"}
+
+
+def tar_bz2(path):
+    return _run_command(path, ["tar", "jtvf", path], Status.info)
+tar_bz2.dependencies = {"tar"}
+
+
+def csv(path):
+    return _run_command(path, ["head", "--lines=20", path], Status.info)
+csv.dependencies = {"coreutils"}
+
+
+def nm(path):
+    return _run_command(path, ["nm", "--demangle", path], Status.info)
+nm.dependencies = {"binutils"}
+
+
+def pdf2txt(path):
+    return _run_command(path, ["pdf2txt", path], Status.info)
+pdf2txt.dependencies = {"python-pdfminer"}
+
+
+def html_syntax(path):
+    # Maybe only show errors
+    stdout, stderr, returncode = _do_command(["tidy", path])
+    status = Status.success if returncode == 0 else Status.failure
+    return status, fill3.Text(stderr)
+html_syntax.dependencies = {"tidy"}
+
+
+def tidy(path):
+    stdout, stderr, returncode = _do_command(["tidy", path])
+    return Status.info, fill3.Text(stdout)
+tidy.dependencies = {"tidy"}
+
+
+def html2text(path):
+    return _run_command(path, ["html2text", path], Status.info)
+html2text.dependencies = {"html2text"}
+
+
+def bcpp(path):
+    stdout, stderr, returncode = _do_command(["bcpp", "-fi", path])
+    status = Status.info if returncode == 0 else Status.failure
+    source_widget = _syntax_highlight_code(stdout, path)
+    return status, source_widget
+bcpp.dependencies = {"bcpp"}
+
+
+def uncrustify(path):
+    with tempfile.TemporaryDirectory() as temp_dir:
+        config_path = os.path.join(temp_dir, "uncrustify.cfg")
+        stdout, stderr, returncode = _do_command(
+            ["uncrustify", "--detect", "-f", path, "-o", config_path])
+        if returncode != 0:
+            raise AssertionError
+        stdout, stderr, returncode = _do_command(
+            ["uncrustify", "-c", config_path, "-f", path])
+    status = Status.info if returncode == 0 else Status.failure
+    source_widget = _syntax_highlight_code(stdout, path)
+    return status, source_widget
+uncrustify.dependencies = {"uncrustify"}
+
+
+def php5_syntax(path):
+    return _run_command(path, ["php", "--syntax-check", path])
+php5_syntax.dependencies = {"php5"}
+
+
+def flog(path):  # Deps: "gem install flog"
+    return _run_command(path, ["flog", path], Status.info)
+flog.dependencies = set()
+
+
+# def csstidy(path):  # Deps: csstidy
+#     stdout, stderr, returncode = _do_command(["csstidy", path])
+#     status = Status.info if returncode == 0 else Status.failure
+#     source_widget = _syntax_highlight_code(stdout, path)
+#     return status, source_widget
 
 
 def generic_tools():
