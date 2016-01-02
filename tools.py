@@ -3,6 +3,7 @@
 # Copyright (C) 2015-2016 Andrew Hamilton. All rights reserved.
 # Licensed under the Artistic License 2.0.
 
+import ast
 import dis
 import functools
 import hashlib
@@ -208,20 +209,43 @@ def metadata(path):  # Deps: file, coreutils
     return (Status.info, fill3.Text("".join(text)))
 
 
-def pylint3(path):
-    return _run_command(path, ["python3", "-m", "pylint", "--errors-only",
-                               path])
-pylint3.dependencies = {"pylint3"}
+def _is_python_syntax_correct(path, python_version):
+    if python_version == "python":
+        stdin, stdout, returncode = _do_command(
+            ["python", "-c",
+             "__import__('compiler').parse(open('%s').read())" % path])
+        return returncode == 0
+    else: # python3
+        with open(path) as f:
+            source = f.read()
+        try:
+            ast.parse(source)
+        except:
+            return False
+        return True
+
+
+def _python_version(path):  # Need a better hueristic
+    for version in ["python3", "python"]:
+        if _is_python_syntax_correct(path, version):
+            return version
+    return "python3"
+
+
+def pylint(path):
+    return _run_command(path, [_python_version(path), "-m", "pylint",
+                               "--errors-only", path])
+pylint.dependencies = {"pylint", "pylint3"}
 
 
 def pyflakes(path):
-    return _run_command(path, ["python3", "-m", "pyflakes", path])
+    return _run_command(path, [_python_version(path), "-m", "pyflakes", path])
 pyflakes.dependencies = {"pyflakes"}
 
 
 def pep8(path):
-    return _run_command(path, ["python3", "-m", "pep8", path])
-pep8.dependencies = {"python3-pep8"}
+    return _run_command(path, [_python_version(path), "-m", "pep8", path])
+pep8.dependencies = {"pep8", "python3-pep8"}
 
 
 def _has_shebang_line(path):
@@ -232,9 +256,10 @@ def _has_shebang_line(path):
 _python_console_lexer = pygments.lexers.PythonConsoleLexer()
 
 
-def unittests(path):
+def python_unittests(path):
     if str(path).endswith("_test.py"):
-        cmd = [path] if _has_shebang_line(path) else ["python3", path]
+        python_version = _python_version(path)
+        cmd = [path] if _has_shebang_line(path) else [python_version, path]
         stdout, stderr, returncode = _do_command(["timeout", "20"] + cmd)
         markup = pygments.lex(stderr, _python_console_lexer)
         status = Status.success if returncode == 0 else Status.failure
@@ -243,7 +268,7 @@ def unittests(path):
         return status, code
     else:
         return Status.placeholder, fill3.Text("No tests.")
-unittests.dependencies = {"python3"}
+python_unittests.dependencies = {"python", "python3"}
 
 
 def python_gut(path):
@@ -253,29 +278,31 @@ def python_gut(path):
     return Status.info, source_widget
 
 
-def pydoc3(path):
+def pydoc(path):
+    pydoc_exe = "pydoc3" if _python_version(path) == "python3" else "pydoc"
     status, output = Status.info, ""
     try:
         output = subprocess.check_output(
-            ["timeout", "20", "pydoc3", path])
+            ["timeout", "20", pydoc_exe, path])
         output = fix_input(output)
     except subprocess.CalledProcessError:
         status = Status.placeholder
     if not output.startswith("Help on module"):
         status = Status.placeholder
     return status, fill3.Text(output)
-pydoc3.dependencies = {"python3"}
+pydoc.dependencies = {"python", "python3"}
 
 
-def modulefinder(path):
+def python_modulefinder(path):
     return _run_command(
-        path, ["python3", "-m", "modulefinder", path], Status.info)
-modulefinder.dependencies = {"python3"}
+        path, [_python_version(path), "-m", "modulefinder", path], Status.info)
+python_modulefinder.dependencies = {"python", "python3"}
 
 
 def python_syntax(path):
-    return _run_command(path, ["python3", "-m", "py_compile", path])
-python_syntax.dependencies = {"python3"}
+    python_version = _python_version(path)
+    return _run_command(path, [python_version, "-m", "py_compile", path])
+python_syntax.dependencies = {"python", "python3"}
 
 
 def disassemble_pyc(path):
@@ -299,10 +326,10 @@ def python_tidy(path):  # Deps: found on internet?
     return Status.info, _syntax_highlight_code(stdout, path)
 
 
-def python3_mccabe(path):
-    command = ["python3", "/usr/lib/python3/dist-packages/mccabe.py", path]
+def python_mccabe(path):
+    command = [_python_version(path), "-m", "mccabe", path]
     return _run_command(path, command, Status.info)
-python3_mccabe.dependencies = {"python3-mccabe"}
+python_mccabe.dependencies = {"python-mccabe", "python3-mccabe"}
 
 
 def perltidy(path):
@@ -436,19 +463,19 @@ def _colorize_coverage_report(text):
                            for line in text.splitlines(keepends=True)])
 
 
-def python3_coverage(path):
+def python_coverage(path):
     test_path = path[:-(len(".py"))] + "_test.py"
     if os.path.exists(test_path):
         with tempfile.TemporaryDirectory() as temp_dir:
+            python_exe = "%s-coverage" % _python_version(path)
             coverage_path = os.path.join(temp_dir, "coverage")
             env = os.environ.copy()
             env["COVERAGE_FILE"] = coverage_path
             stdout, stderr, returncode = _do_command(
-                ["timeout", "20", "python3-coverage", "run", test_path],
-                env=env)
+                ["timeout", "20", python_exe, "run", test_path], env=env)
             assert returncode == 0, returncode
             stdout, stderr, returncode = _do_command(
-                ["python3-coverage", "annotate", "--directory", temp_dir,
+                [python_exe, "annotate", "--directory", temp_dir,
                  os.path.normpath(path)], env=env)
             with open(os.path.join(temp_dir, path + ",cover"), "r") as f:
                 stdout = f.read()
@@ -456,15 +483,15 @@ def python3_coverage(path):
     else:
         return Status.placeholder, fill3.Text("No corresponding test file: " +
                                               os.path.normpath(test_path))
-python3_coverage.dependencies = {"python3-coverage"}
+python_coverage.dependencies = {"python-coverage", "python3-coverage"}
 
 
-def profile(path):
+def python_profile(path):
     stdout, stderr, returncode = _do_command(
-        ["timeout", "20", "python3", "-m", "cProfile", "--sort=cumulative",
-         path])
+        ["timeout", "20", _python_version(path), "-m", "cProfile",
+         "--sort=cumulative", path])
     return Status.info, fill3.Text(stdout)
-profile.dependencies = {"python3"}
+python_profile.dependencies = {"python", "python3"}
 
 
 def _jlint_tool(tool_type, path):
@@ -498,9 +525,9 @@ def generic_tools():
 
 def tools_for_extension():
     return {
-        "py": [python_syntax, unittests, pydoc3, python3_coverage, profile,
-               pep8, pyflakes, pylint3, python_gut, modulefinder,
-               python3_mccabe],
+        "py": [python_syntax, python_unittests, pydoc, python_coverage,
+               python_profile, pep8, pyflakes, pylint, python_gut,
+               python_modulefinder, python_mccabe],
         "pyc": [disassemble_pyc],
         "pl": [perl_syntax, perldoc, perltidy],
         "pm": [perl_syntax, perldoc, perltidy],

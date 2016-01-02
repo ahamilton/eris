@@ -13,7 +13,6 @@ Todo
   exit the help screen.
 - Add means to pause and unpause all current jobs.
 - Have a sandbox for unsafe (or all) tools.
-- Determine if ".py" files are python2 or python3 to run the right tool.
 - Statuses' pretty names and variable names don't match.
 - Report on python doctests. (also coverage of)
 - Check if class Entry is really working correctly as a collections.UserList.
@@ -148,6 +147,7 @@ Done
 - Let the mouse select statuses.
 - Try to make the saving of the result to disk occur in the multiprocessing
   process.
+- Determine if ".py" files are python2 or python3 to run the right tool.
 
 A-syntax, B-tests, C-auto docs, D-lint, E-coverage, F-profile, G-tidy, H-import deps
              A B C D E F G H
