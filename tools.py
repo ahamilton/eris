@@ -207,6 +207,7 @@ def metadata(path):  # Deps: file, coreutils
             name, value = line
             text.append("%-15s: %s\n" % (name, "".join(value)))
     return (Status.info, fill3.Text("".join(text)))
+metadata.dependencies = set()
 
 
 def _is_python_syntax_correct(path, python_version):
@@ -276,6 +277,7 @@ def python_gut(path):
         output = gut.gut_module(module_file.read())
     source_widget = _syntax_highlight_code(fix_input(output), path)
     return Status.info, source_widget
+python_gut.dependencies = set()
 
 
 def pydoc(path):
@@ -311,6 +313,7 @@ def disassemble_pyc(path):
     dis.dis(bytecode, file=stringio)
     stringio.seek(0)
     return Status.info, fill3.Text(stringio.read())
+disassemble_pyc.dependencies = set()
 
 
 def perldoc(path):
@@ -366,6 +369,7 @@ def dump_pickle(path):
     with open(path, "rb") as file_:
         object_ = pickle.load(file_)
     return Status.info, fill3.Text(pprint.pformat(object_.__dict__))
+dump_pickle.dependencies = set()
 
 
 def unzip(path):
@@ -447,6 +451,7 @@ php5_syntax.dependencies = {"php5"}
 
 def flog(path):  # Deps: "gem install flog"
     return _run_command(path, ["flog", path], Status.info)
+flog.dependencies = set()
 
 
 # def csstidy(path):  # Deps: csstidy
@@ -564,10 +569,7 @@ def tools_all():
 def dependencies():
     dependencies_all = set()
     for tool in tools_all():
-        try:
-            dependencies_all.update(tool.dependencies)
-        except AttributeError:
-            continue
+        dependencies_all.update(tool.dependencies)
     return dependencies_all
 
 
