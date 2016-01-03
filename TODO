@@ -1,9 +1,6 @@
 Todo
 - Have at least one golden test for every tool.
   - Maybe could re-use linguist's example test files for many tools.
-- Seperate tool specific code from infrastructure in the tools module.
-- Add command line options, e.g. -h
-- Docstrings
 - Boilerplate: Readme, usage, man page?, docs?, setup.py?, wheel?, __pkginfo__.py?
 - Publish. pypi and github will do.
   - Maybe also use cxfreeze, py2exe, pyrun or zipapp?  Is zipapp the standard way?
@@ -15,8 +12,6 @@ Todo
 - Have a sandbox for unsafe (or all) tools.
 - Statuses' pretty names and variable names don't match.
 - Report on python doctests. (also coverage of)
-- Check if class Entry is really working correctly as a collections.UserList.
-- Don't let the user scroll indefinately below the end of the page.
 
 
 Done
@@ -148,11 +143,16 @@ Done
 - Try to make the saving of the result to disk occur in the multiprocessing
   process.
 - Determine if ".py" files are python2 or python3 to run the right tool.
+- Ignore other input while help screen is showing.
+- Have an option to turn off all automatic work.
+  <- The 'working' switch does this
 
 A-syntax, B-tests, C-auto docs, D-lint, E-coverage, F-profile, G-tidy, H-import deps
              A B C D E F G H
-python       s s s s s s s s
-perl         s   s       s 
+python       * s * * * * s *
+python3      * s * * * * s *
+perl         *   s       s
+perl6
 html         s - -   -   s
 css              -          
 c            s           s
@@ -167,7 +167,7 @@ ruby
 lua
 julia
 
-legend: s = started, l = looked, - = not applicable 
+legend: * = done, s = started, l = looked, - = not applicable 
 
 
 Ideas
@@ -182,16 +182,7 @@ Ideas
   - And my tools: gut, spanish translations
   - git diff, annotate
   - C++ tools: CppCat?, PVS-Studio, Cppcheck, Visual Studio
-- Let a test function define a file type.  Not just the filename extension.  
-  Use the 'file' tool's type.
-  (see hgviewlib)
-- Let run-tool optionally use the cache.
-- Have run-tool also optionally show the status of the result.
-- Have run-tool optionally show colour.
-- chdir shouldn't be used with multi-threading. openat and fstatat can help.
-- Show all binary files with a binary viewer tool? Like a hex editor?
 - Use jp2a which turns jpegs into ascii
-- Ignore other input while help screen is showing.
 - See http://cynic.cc/blog//posts/2015-05-16_coursera-dl_activities/
   for current practices of installation and testing.
 - See https://www.atlassian.com/git/tutorials/comparing-workflows git tutorial.
@@ -213,33 +204,17 @@ Ideas
 - markdown -> text
 - for bash or shell scripts: ShellCheck
 - ffprobe for detecting media types
-- Can these job queue systems help?  celery, gearman, joblib, pathos, 
-  parallel python, dask, spark
-- Need rpc?  pyro4, protocol buffers, thrift
-- Maybe use psutil python module instead of subprocess
-- Make graphical output possible
-  - Use an existing web browser.
-  - Use gnome with an embedded browser.
-    - The left hand panel could be a vte widget, instead of a gnome table.
-- Serve as a web app.
 - Find image-to-ascii to make a best effort with images.
-- Install tools and their dependencies, on demand, in the background.
 - Ignore emacs backup files?    i.e. files ending in ~
-- Only import tools if needed?  And only apt-get install deps if necessary?
 - When a status changes from a fail to success show a smiley (or vice versa) in
   the activity log message.
 - Optionally make a sound based on the success or failure of a run.
   - Only make a success or fail sound when the status changes 
     (instead of every time)
 - Let the focus move diagonally as well.
-- Have an option to turn off all automatic work.
 - Have a command so a tool can be re-run at any time.
   i.e. for when not trusting the cache
-- Somehow make python test modules another type of file, so they are grouped
-  together, and seperately from the other python files. (A subtype?)
 - Internationalization
-- Let results depend on other results?  Could depend on .pyc for example?
-- Make the tools configurable.
 - Make editing found problems easy:
   i.e. Editing at spots found by code checkers or linters.
   - Integrate editor?
@@ -247,48 +222,15 @@ Ideas
 - Use linguist as a generic tool.
 - POLA, only put in the sandbox what the tool needs.  e.g. only the file.
   Make a chroot with one file?
-- Be able to add new tools within the interface, and have a 
-  github 'send pull request' button, to suggest the new tool.
-- Store extra metadata about results: e.g. tool version, start time, finish time,
-  CPU used (sys, user).
-- If not installing all dependencies at once, install them grouped by file type, e.g.
-  programming language.  Also in that case its probably best to have the tool 
-  functions in a package with the tools divided into one module per file type.
 - Have a Cache widget with an update_appearance_min method
-- termstr should fail when called with methods str has that it doesn't
-- Pause jobs during screen updates?
-  - Don't pause jobs during all screen updates. Only pause during screen updates
-    that came from key presses.
 - Colourise all directory listings. e.g. file listings of archives
-- Kill all subprocesses if the process is interrupted.
-- Make it possible for a git user to switch branches without needing to
-  recalculate all the results. i.e. cache old results
-- Use biglist to store the summary table to speed up start & quit times for
-  very big projects.
-- Have a progress bar when loading all results. Should only be seen on results
-  large enough to require more time to load.
-- Make a terminal widget, so that editors can be embedded.
-  - looked at:
-    - libvterm
-    - gate one's terminal.py <- mixed with html
-    - pyte <- problems with color
-    - stterm's st.c <- mixed with X
-    - urwid's terminal widget
 - Make sure theres no problems if its run twice concurrently on the same
   directory.
-- Make a read-only virtual fuse filesytem containing the results.
-- Have a way to show a diff between two chosen results.
-- Make a code widget that lets you change the color theme.
 - Maybe use importlib.util.LazyLoader for a faster startup
-- Have an estimated time till completion with the progress bar.
 - Try to drop the dependency on pyinotify.
-- Use appearance_interval on Text widgets to speed up display of large files,
-  by only loading the necessary part for the interval.
 - Somehow process a whole directory of projects seperately.
   - Have a headless option so you can script calculating all the results for
     many projects.
-- python-guacamole deals with 24bit color & conversions
-- Let the status bar keys summary be used as a list of buttons on tablets.
 - Try doing autosave again.
   - It musn't save if there are no changes.
 - Use Gnuroot (debian) for Android. See: ("http://www.techrepublic.com/article"
@@ -297,6 +239,10 @@ Ideas
 - Let the mouse click on the actions in the status bar?
 - Let the mouse click the filenames.  Try to show a result from the same type
   of tool.
+- Check if class Entry is really working correctly as a collections.UserList.
+- Don't let the user scroll indefinately below the end of the page.
+- Add command line options, e.g. -h
+- Docstrings
 
 
 Shelved
@@ -391,4 +337,60 @@ Shelved
   The maximum width would still be half the screen.
   <- Unfortunately that would make the width of the log window too small. Maybe its
      still worth it though.
-     
+- Seperate tool specific code from infrastructure in the tools module.
+  <- Don't need to do this yet.
+- Can these job queue systems help?  celery, gearman, joblib, pathos, 
+  parallel python, dask, spark
+- Need rpc?  pyro4, protocol buffers, thrift
+- Maybe use psutil python module instead of subprocess
+- Let results depend on other results?  Could depend on .pyc for example?
+- Make the tools configurable.
+- Be able to add new tools within the interface, and have a 
+  github 'send pull request' button, to suggest the new tool.
+- Store extra metadata about results: e.g. tool version, start time, finish time,
+  CPU used (sys, user).
+- If not installing all dependencies at once, install them grouped by file type, e.g.
+  programming language.  Also in that case its probably best to have the tool 
+  functions in a package with the tools divided into one module per file type.
+- termstr should fail when called with methods str has that it doesn't
+- Pause jobs during screen updates?
+  - Don't pause jobs during all screen updates. Only pause during screen updates
+    that came from key presses.
+- Install tools and their dependencies, on demand, in the background.
+- Only import tools if needed?  And only apt-get install deps if necessary?
+- Kill all subprocesses if the process is interrupted.
+- Make it possible for a git user to switch branches without needing to
+  recalculate all the results. i.e. cache old results
+- Use biglist to store the summary table to speed up start & quit times for
+  very big projects.
+- Have a progress bar when loading all results. Should only be seen on results
+  large enough to require more time to load.
+- Make a terminal widget, so that editors can be embedded.
+  - looked at:
+    - libvterm
+    - gate one's terminal.py <- mixed with html
+    - pyte <- problems with color
+    - stterm's st.c <- mixed with X
+    - urwid's terminal widget
+- Make a read-only virtual fuse filesytem containing the results.
+- Have a way to show a diff between two chosen results.
+- Make a code widget that lets you change the color theme.
+- Have an estimated time till completion with the progress bar.
+- Use appearance_interval on Text widgets to speed up display of large files,
+  by only loading the necessary part for the interval.
+- Somehow make python test modules another type of file, so they are grouped
+  together, and seperately from the other python files. (A subtype?)
+- Make graphical output possible
+  - Use an existing web browser.
+  - Use gnome with an embedded browser.
+    - The left hand panel could be a vte widget, instead of a gnome table.
+- Serve as a web app.
+- Let run-tool optionally use the cache.
+- Have run-tool also optionally show the status of the result.
+- Have run-tool optionally show colour.
+- Let a test function define a file type.  Not just the filename extension.  
+  Use the 'file' tool's type.
+  (see hgviewlib)
+- chdir shouldn't be used with multi-threading. openat and fstatat can help.
+- Show all binary files with a binary viewer tool? Like a hex editor?
+- python-guacamole deals with 24bit color & conversions
