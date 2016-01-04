@@ -377,6 +377,11 @@ def perltidy(path):
 perltidy.dependencies = {"perltidy"}
 
 
+def perl6_syntax(path):
+    return _run_command(path, ["perl6", "-c", path])
+perl6_syntax.dependencies = {"perl6"}
+
+
 def _jlint_tool(tool_type, path):
     stdout, stderr, returncode = _do_command([tool_type, path])
     status = (Status.success
@@ -536,6 +541,9 @@ def tools_for_extension():
         "pyc": [disassemble_pyc],
         "pl": [perl_syntax, perldoc, perltidy],
         "pm": [perl_syntax, perldoc, perltidy],
+        "t": [perl_syntax, perldoc, perltidy],
+        "p6": [perl6_syntax],
+        "pm6": [perl6_syntax],
         "java": [antic, uncrustify],
         "class": [jlint],
         "c": [splint, uncrustify],

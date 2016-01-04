@@ -152,7 +152,7 @@ A-syntax, B-tests, C-auto docs, D-lint, E-coverage, F-profile, G-tidy, H-import 
 python       * s * * * * s *
 python3      * s * * * * s *
 perl         *   s       s
-perl6
+perl6        *
 html         s - -   -   s
 css              -          
 c            s           s
