@@ -32,6 +32,7 @@ Keys:
   *n - Move to the next issue.
   *N - Move to the next issue of the current tool.
   *o - Order files by type, or by directory location. (toggle)
+  *p - Pause work. (toggle)
   *w - Watch the filesystem for changes. (toggle)
   *s - Change the appearance of result statuses. (toggle)
   *q - Quit.
@@ -588,6 +589,7 @@ class Screen:
         self._is_log_visible = True
         self._is_help_visible = False
         self._is_watching_filesystem = False
+        self._is_paused = False
         self.toggle_watch_filesystem()
         self._make_widgets()
         self._make_keymap()
@@ -722,6 +724,17 @@ class Screen:
             self._main_loop.remove_reader(self._watch_manager.get_fd())
             self._watch_manager = None
 
+    def toggle_pause(self):
+        self._is_paused = not self._is_paused
+        self._log.log_command("Paused work." if self._is_paused else
+                              "Continuing work.")
+        if self._is_paused:
+            for runner in self.runners:
+                runner.pause()
+        else:
+            for runner in self.runners:
+                runner.continue_()
+
     def quit_(self):
         raise KeyboardInterrupt
 
@@ -777,16 +790,19 @@ class Screen:
                 action(self)
                 self._appearance_changed_event.set()
 
-    _STATUS_BAR = _highlight_chars(" *help *quit *d,*c,*j,*k:navigate *turn"
-                                   " *log *edit *next *watch *order *statuses",
-                                   Log.GREEN_STYLE)
+    _STATUS_BAR = _highlight_chars(
+        " *help *quit *d,*c,*j,*k:navigate *turn *log *edit *next *pause"
+        " *watch *order *statuses", Log.GREEN_STYLE)
 
     @functools.lru_cache(maxsize=2)
     def _get_status_bar_appearance(self, width, is_directory_sort,
-                                   is_watching_filesystem, progress_bar_size):
+                                   is_watching_filesystem, is_paused,
+                                   progress_bar_size):
         ordering_text = "directory" if is_directory_sort else "type     "
         watching_text = "watching" if is_watching_filesystem else "--------"
-        indicators = " %s   order:%s " % (watching_text, ordering_text)
+        paused_text = "paused" if is_paused else "------"
+        indicators = " %s  %s  order:%s " % (paused_text, watching_text,
+                                             ordering_text)
         spacing = " " * (width - len(self._STATUS_BAR) - len(indicators))
         bar = (self._STATUS_BAR[:width - len(indicators)] + spacing +
                indicators)[:width]
@@ -809,7 +825,7 @@ class Screen:
                                 self._summary.result_total)
         status_bar_appearance = self._get_status_bar_appearance(
             width, self._summary.is_directory_sort,
-            self._is_watching_filesystem, progress_bar_size)
+            self._is_watching_filesystem, self._is_paused, progress_bar_size)
         return (self._layouts[self._is_log_visible][self._is_listing_portrait]
                 .appearance((width, height-len(status_bar_appearance))) +
                 status_bar_appearance)
@@ -823,7 +839,8 @@ class Screen:
         ({"K", "end"}, listing_right), ({"o"}, toggle_sort),
         ({"n"}, move_to_next_issue), ({"N"}, move_to_next_issue_of_tool),
         ({"e"}, edit_file), ({"s"}, toggle_status_style),
-        ({"w"}, toggle_watch_filesystem), ({"q"}, quit_)]
+        ({"w"}, toggle_watch_filesystem), ({"q"}, quit_),
+        ({"p"}, toggle_pause)]
 
 
 def get_cpu_temperature():
@@ -872,6 +889,12 @@ class Worker:
         self.child_connection.send([tool, path])
         return self.child_connection.recv()
 
+    def pause(self):
+        os.kill(self.process.pid, signal.SIGSTOP)
+
+    def continue_(self):
+        os.kill(self.process.pid, signal.SIGCONT)
+
     def stop(self):
         os.kill(self.process.pid, signal.SIGKILL)
 
@@ -901,6 +924,12 @@ class Runner:
                     pass
             jobs_added_event.clear()
 
+    def pause(self):
+        self.worker.pause()
+
+    def continue_(self):
+        self.worker.continue_()
+
 
 _UPDATE_THREAD_STOPPED = False
 
@@ -914,7 +943,7 @@ def update_screen(main_widget, appearance_changed_event):
         fill3.patch_screen(main_widget)
 
 
-def main(root_path, urwid_screen):
+def main(root_path):
     global _UPDATE_THREAD_STOPPED
     os.chdir(root_path)  # FIX: Don't change directory if possible.
     loop = asyncio.get_event_loop()
@@ -942,40 +971,46 @@ def main(root_path, urwid_screen):
             summary.sync_with_filesystem()
     log.log_message("Program started.")
     jobs_added_event.set()
-    update_display_thread = threading.Thread(
-        target=update_screen, args=(screen, appearance_changed_event),
-        daemon=True)
-    update_display_thread.start()
-    loop.add_reader(sys.stdin, screen.on_keypressed, urwid_screen)
     runners = [Runner() for index in range(multiprocessing.cpu_count() * 2)]
+    screen.runners = runners
     for runner in runners:
         args = (summary, log, jobs_added_event, appearance_changed_event)
         threading.Thread(target=runner.job_runner, args=args,
                          daemon=True).start()
+    if screen._is_paused:
+        for runner in runners:
+            runner.pause()
 
     def on_window_resize(n, frame):
         appearance_changed_event.set()
     signal.signal(signal.SIGWINCH, on_window_resize)
     appearance_changed_event.set()
-    try:
-        loop.run_forever()
-    except KeyboardInterrupt:
-        log.log_message("Program stopped.")
-        _UPDATE_THREAD_STOPPED = True
-        appearance_changed_event.set()
-        update_display_thread.join()
-        for runner in runners:
-            runner.worker.stop()
-            runner.is_running = False
-        for runner in runners:
-            runner.result.reset()
-        # Cannot pickle generators, locks, sockets or events.
-        (summary.closest_placeholder_generator, summary._lock,
-         summary._jobs_added_event, screen._appearance_changed_event,
-         screen._main_loop, screen._watch_manager,
-         log._appearance_changed_event) = [None] * 7
-        open_compressed = functools.partial(gzip.open, compresslevel=1)
-        dump_pickle_safe(screen, pickle_path, open=open_compressed)
+    update_display_thread = threading.Thread(
+        target=update_screen, args=(screen, appearance_changed_event),
+        daemon=True)
+    with terminal.hidden_cursor():
+        with terminal.urwid_screen() as urwid_screen:
+            update_display_thread.start()
+            loop.add_reader(sys.stdin, screen.on_keypressed, urwid_screen)
+            try:
+                loop.run_forever()
+            except KeyboardInterrupt:
+                log.log_message("Program stopped.")
+                _UPDATE_THREAD_STOPPED = True
+                appearance_changed_event.set()
+                update_display_thread.join()
+                for runner in runners:
+                    runner.worker.stop()
+                    runner.is_running = False
+                for runner in runners:
+                    runner.result.reset()
+                # Cannot pickle generators, locks, sockets or events.
+                (summary.closest_placeholder_generator, summary._lock,
+                 summary._jobs_added_event, screen._appearance_changed_event,
+                 screen._main_loop, screen._watch_manager, screen.runners,
+                 log._appearance_changed_event) = [None] * 8
+                open_compressed = functools.partial(gzip.open, compresslevel=1)
+                dump_pickle_safe(screen, pickle_path, open=open_compressed)
 
 
 def manage_cache(root_path):
@@ -996,9 +1031,7 @@ if __name__ == "__main__":
         root_path = os.path.abspath(sys.argv[1])
         with terminal.console_title("vigil: " + os.path.basename(root_path)):
             manage_cache(root_path)
-            with terminal.hidden_cursor():
-                with terminal.urwid_screen() as urwid_screen:
-                    main(root_path, urwid_screen)
+            main(root_path)
     else:
         usage = __doc__.replace("*", "")
         print(usage)

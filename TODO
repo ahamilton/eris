@@ -8,10 +8,11 @@ Todo
   - Need to use conventional version numbers for pypi. See pep0440.
 - Add ESC as an alternative to 'q' for quit. If looking at Help, ESC should just
   exit the help screen.
-- Add means to pause and unpause all current jobs.
 - Have a sandbox for unsafe (or all) tools.
 - Statuses' pretty names and variable names don't match.
 - Report on python doctests. (also coverage of)
+- Treat any compressed file as though it is uncompressed. But the metadata tool
+  should still report on the original compressed file.
 
 
 Done
@@ -146,6 +147,7 @@ Done
 - Ignore other input while help screen is showing.
 - Have an option to turn off all automatic work.
   <- The 'working' switch does this
+- Add means to pause and unpause all current jobs.
 
 A-syntax, B-tests, C-auto docs, D-lint, E-coverage, F-profile, G-tidy, H-import deps
              A B C D E F G H
