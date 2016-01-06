@@ -980,16 +980,16 @@ def main(root_path):
     if screen._is_paused:
         for runner in runners:
             runner.pause()
-
     def on_window_resize(n, frame):
         appearance_changed_event.set()
-    signal.signal(signal.SIGWINCH, on_window_resize)
+
     appearance_changed_event.set()
     update_display_thread = threading.Thread(
         target=update_screen, args=(screen, appearance_changed_event),
         daemon=True)
     with terminal.hidden_cursor():
         with terminal.urwid_screen() as urwid_screen:
+            signal.signal(signal.SIGWINCH, on_window_resize)
             update_display_thread.start()
             loop.add_reader(sys.stdin, screen.on_keypressed, urwid_screen)
             try:
