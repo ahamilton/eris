@@ -600,11 +600,6 @@ class Screen:
             self._log.log_message("Filesystem changed.")
             self._summary.sync_with_filesystem(sync_tools=False)
             self._appearance_changed_event.set()
-
-        def on_tools_change(event):
-            self._log.log_message("Tools changed.")
-            self._summary.sync_with_filesystem(sync_paths=False)
-            self._appearance_changed_event.set()
         watch_manager = pyinotify.WatchManager()
         event_mask = (pyinotify.IN_CREATE | pyinotify.IN_DELETE |
                       pyinotify.IN_CLOSE_WRITE | pyinotify.IN_ATTRIB)
@@ -612,8 +607,6 @@ class Screen:
             self._summary._root_path, event_mask, rec=True, auto_add=True,
             proc_fun=on_filesystem_change, exclude_filter=lambda path:
             is_path_excluded(path))
-        watch_manager.add_watch(tools.__file__, event_mask,
-                                proc_fun=on_tools_change)
         self._watch_manager = watch_manager
         add_watch_manager_to_mainloop(self._watch_manager, self._main_loop)
 
@@ -980,9 +973,9 @@ def main(root_path):
     if screen._is_paused:
         for runner in runners:
             runner.pause()
+
     def on_window_resize(n, frame):
         appearance_changed_event.set()
-
     appearance_changed_event.set()
     update_display_thread = threading.Thread(
         target=update_screen, args=(screen, appearance_changed_event),
