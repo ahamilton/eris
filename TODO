@@ -13,6 +13,9 @@ Todo
 - Report on python doctests. (also coverage of)
 - Treat any compressed file as though it is uncompressed. But the metadata tool
   should still report on the original compressed file.
+- Cache tools._python_version.
+- Determine if perl files are perl5 or perl6.
+- Colourise mccabe.
 
 
 Done
