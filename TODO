@@ -16,6 +16,7 @@ Todo
 - Cache tools._python_version.
 - Determine if perl files are perl5 or perl6.
 - Colourise mccabe.
+- Add rich LSCOLORS if the environment variable is not set.
 
 
 Done
