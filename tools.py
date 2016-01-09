@@ -338,21 +338,32 @@ def python_modulefinder(path):
 python_modulefinder.dependencies = {"python", "python3"}
 
 
-def _colorize_mccabe(text, python_version):
-    def get_score(line):
-        position, function_name, score = line.split()
-        return int(score if python_version == "python3" else score[:-1])
-    max_score = max(get_score(line) for line in text.splitlines())
-    return fill3.join("", [termstr.TermStr(line).fg_color(termstr.Color.yellow)
-                           if get_score(line) == max_score else line
-                           for line in text.splitlines(keepends=True)])
+def _get_mccabe_line_score(line, python_version):
+    position, function_name, score = line.split()
+    return int(score if python_version == "python3" else score[:-1])
+
+
+def _colorize_mccabe(text, python_version, max_score):
+    return fill3.join("", [
+        termstr.TermStr(line).fg_color(termstr.Color.yellow)
+        if _get_mccabe_line_score(line, python_version) == max_score else line
+        for line in text.splitlines(keepends=True)])
 
 
 def python_mccabe(path):
     python_version = _python_version(path)
     stdout, stderr, returncode = _do_command(
         [python_version, "-m", "mccabe", path])
-    return Status.info, fill3.Text(_colorize_mccabe(stdout, python_version))
+    max_score = 0
+    try:
+        max_score = max(_get_mccabe_line_score(line, python_version)
+                        for line in stdout.splitlines())
+    except ValueError:
+        status = Status.success
+    else:
+        status = Status.failure if max_score > 10 else Status.success
+    return status, fill3.Text(_colorize_mccabe(stdout, python_version,
+                                               max_score))
 python_mccabe.dependencies = {"python-mccabe", "python3-mccabe"}
 
 
