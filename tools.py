@@ -358,12 +358,11 @@ def python_mccabe(path):
     try:
         max_score = max(_get_mccabe_line_score(line, python_version)
                         for line in stdout.splitlines())
-    except ValueError:
-        status = Status.success
-    else:
-        status = Status.failure if max_score > 10 else Status.success
-    return status, fill3.Text(_colorize_mccabe(stdout, python_version,
-                                               max_score))
+    except ValueError:  # When there are no lines
+        pass
+    status = Status.failure if max_score > 10 else Status.success
+    return status, fill3.Text(
+        _colorize_mccabe(stdout, python_version, max_score))
 python_mccabe.dependencies = {"python-mccabe", "python3-mccabe"}
 
 
