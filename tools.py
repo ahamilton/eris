@@ -338,9 +338,21 @@ def python_modulefinder(path):
 python_modulefinder.dependencies = {"python", "python3"}
 
 
+def _colorize_mccabe(text, python_version):
+    def get_score(line):
+        position, function_name, score = line.split()
+        return int(score if python_version == "python3" else score[:-1])
+    max_score = max(get_score(line) for line in text.splitlines())
+    return fill3.join("", [termstr.TermStr(line).fg_color(termstr.Color.yellow)
+                           if get_score(line) == max_score else line
+                           for line in text.splitlines(keepends=True)])
+
+
 def python_mccabe(path):
-    command = [_python_version(path), "-m", "mccabe", path]
-    return _run_command(path, command, Status.info)
+    python_version = _python_version(path)
+    stdout, stderr, returncode = _do_command(
+        [python_version, "-m", "mccabe", path])
+    return Status.info, fill3.Text(_colorize_mccabe(stdout, python_version))
 python_mccabe.dependencies = {"python-mccabe", "python3-mccabe"}
 
 
