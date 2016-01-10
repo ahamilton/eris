@@ -76,18 +76,18 @@ def fix_input(input_):
     return input_str.replace("\t", " " * 4)
 
 
-def _do_command(command, **kwargs):
+def _do_command(command):
     stdout, stderr = "", ""
     try:
         process = subprocess.Popen(command, stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE, **kwargs)
+                                   stderr=subprocess.PIPE)
         stdout, stderr = process.communicate()
     except subprocess.CalledProcessError:
         pass
     return fix_input(stdout), fix_input(stderr), process.returncode
 
 
-def _run_command(path, command, status_text=Status.success):
+def _run_command(command, status_text=Status.success):
     status, output = status_text, ""
     try:
         process = subprocess.Popen(command, stdout=subprocess.PIPE,
@@ -125,7 +125,7 @@ pygments_.dependencies = ["python3-pygments"]
 
 def linguist(path):
     # Dep: ruby?, ruby-dev, libicu-dev, cmake, "gem install github-linguist"
-    return _run_command(path, ["linguist", path], Status.info)
+    return _run_command(["linguist", path], Status.info)
 
 
 def _permissions_in_octal(permissions):
@@ -228,7 +228,7 @@ def _python_version(path):  # Need a better hueristic
 
 def python_syntax(path):
     python_version = _python_version(path)
-    return _run_command(path, [python_version, "-m", "py_compile", path])
+    return _run_command([python_version, "-m", "py_compile", path])
 python_syntax.dependencies = {"python", "python3"}
 
 
@@ -309,18 +309,18 @@ python_profile.dependencies = {"python", "python3"}
 
 
 def pep8(path):
-    return _run_command(path, [_python_version(path), "-m", "pep8", path])
+    return _run_command([_python_version(path), "-m", "pep8", path])
 pep8.dependencies = {"pep8", "python3-pep8"}
 
 
 def pyflakes(path):
-    return _run_command(path, [_python_version(path), "-m", "pyflakes", path])
+    return _run_command([_python_version(path), "-m", "pyflakes", path])
 pyflakes.dependencies = {"pyflakes"}
 
 
 def pylint(path):
-    return _run_command(path, [_python_version(path), "-m", "pylint",
-                               "--errors-only", path])
+    return _run_command([_python_version(path), "-m", "pylint",
+                         "--errors-only", path])
 pylint.dependencies = {"pylint", "pylint3"}
 
 
@@ -333,8 +333,8 @@ python_gut.dependencies = set()
 
 
 def python_modulefinder(path):
-    return _run_command(
-        path, [_python_version(path), "-m", "modulefinder", path], Status.info)
+    return _run_command([_python_version(path), "-m", "modulefinder", path],
+                        Status.info)
 python_modulefinder.dependencies = {"python", "python3"}
 
 
@@ -382,7 +382,7 @@ disassemble_pyc.dependencies = set()
 
 
 def perl_syntax(path):
-    return _run_command(path, ["perl", "-c", path])
+    return _run_command(["perl", "-c", path])
 perl_syntax.dependencies = {"perl"}
 
 
@@ -400,7 +400,7 @@ perltidy.dependencies = {"perltidy"}
 
 
 def perl6_syntax(path):
-    return _run_command(path, ["perl6", "-c", path])
+    return _run_command(["perl6", "-c", path])
 perl6_syntax.dependencies = {"perl6"}
 
 
@@ -430,7 +430,7 @@ splint.dependencies = {"splint"}
 
 
 def objdump_headers(path):
-    return _run_command(path, ["objdump", "--all-headers", path], Status.info)
+    return _run_command(["objdump", "--all-headers", path], Status.info)
 objdump_headers.dependencies = {"binutils"}
 
 
@@ -444,7 +444,7 @@ objdump_disassemble.dependencies = {"binutils"}
 
 
 def readelf(path):
-    return _run_command(path, ["readelf", "--all", path], Status.info)
+    return _run_command(["readelf", "--all", path], Status.info)
 readelf.dependencies = {"binutils"}
 
 
@@ -463,32 +463,32 @@ dump_pickle.dependencies = set()
 
 
 def unzip(path):
-    return _run_command(path, ["unzip", "-l", path], Status.info)
+    return _run_command(["unzip", "-l", path], Status.info)
 unzip.dependencies = {"unzip"}
 
 
 def tar_gz(path):
-    return _run_command(path, ["tar", "ztvf", path], Status.info)
+    return _run_command(["tar", "ztvf", path], Status.info)
 tar_gz.dependencies = {"tar"}
 
 
 def tar_bz2(path):
-    return _run_command(path, ["tar", "jtvf", path], Status.info)
+    return _run_command(["tar", "jtvf", path], Status.info)
 tar_bz2.dependencies = {"tar"}
 
 
 def csv(path):
-    return _run_command(path, ["head", "--lines=20", path], Status.info)
+    return _run_command(["head", "--lines=20", path], Status.info)
 csv.dependencies = {"coreutils"}
 
 
 def nm(path):
-    return _run_command(path, ["nm", "--demangle", path], Status.info)
+    return _run_command(["nm", "--demangle", path], Status.info)
 nm.dependencies = {"binutils"}
 
 
 def pdf2txt(path):
-    return _run_command(path, ["pdf2txt", path], Status.info)
+    return _run_command(["pdf2txt", path], Status.info)
 pdf2txt.dependencies = {"python-pdfminer"}
 
 
@@ -507,7 +507,7 @@ tidy.dependencies = {"tidy"}
 
 
 def html2text(path):
-    return _run_command(path, ["html2text", path], Status.info)
+    return _run_command(["html2text", path], Status.info)
 html2text.dependencies = {"html2text"}
 
 
@@ -535,12 +535,12 @@ uncrustify.dependencies = {"uncrustify"}
 
 
 def php5_syntax(path):
-    return _run_command(path, ["php", "--syntax-check", path])
+    return _run_command(["php", "--syntax-check", path])
 php5_syntax.dependencies = {"php5"}
 
 
 def flog(path):  # Deps: "gem install flog"
-    return _run_command(path, ["flog", path], Status.info)
+    return _run_command(["flog", path], Status.info)
 flog.dependencies = set()
 
 
