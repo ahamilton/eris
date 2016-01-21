@@ -7,7 +7,7 @@ Current
 - If a pending file is deleted, while not watching the filesystem,
   then tools fail when they can't find the file. Also, even if watching, there
   would be a race. Do what?
-- The scrollbars in the help screen don't work with the arrow keys.
+- Scrolling in the help screen doesn't work with the arrow keys.
 
 
 Current (tool related)

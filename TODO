@@ -8,15 +8,16 @@ Todo
   - Need to use conventional version numbers for pypi. See pep0440.
 - Add ESC as an alternative to 'q' for quit. If looking at Help, ESC should just
   exit the help screen.
-- Have a sandbox for unsafe (or all) tools.
 - Statuses' pretty names and variable names don't match.
 - Report on python doctests. (also coverage of)
 - Treat any compressed file as though it is uncompressed. But the metadata tool
   should still report on the original compressed file.
 - Cache tools._python_version.
 - Determine if perl files are perl5 or perl6.
-- Colourise mccabe.
+- Use perldoc on pod files.
 - Add rich LSCOLORS if the environment variable is not set.
+- Simplify coloring of mccabe. Just color functions with complexity greater than 10.
+- Add bandit tool for python.
 
 
 Done
@@ -152,6 +153,8 @@ Done
 - Have an option to turn off all automatic work.
   <- The 'working' switch does this
 - Add means to pause and unpause all current jobs.
+- Colourise mccabe.
+- Have a sandbox for unsafe (or all) tools.
 
 A-syntax, B-tests, C-auto docs, D-lint, E-coverage, F-profile, G-tidy, H-import deps
              A B C D E F G H
@@ -226,8 +229,6 @@ Ideas
   - Integrate editor?
   - Open file in editor at the spot?
 - Use linguist as a generic tool.
-- POLA, only put in the sandbox what the tool needs.  e.g. only the file.
-  Make a chroot with one file?
 - Have a Cache widget with an update_appearance_min method
 - Colourise all directory listings. e.g. file listings of archives
 - Make sure theres no problems if its run twice concurrently on the same
@@ -400,3 +401,6 @@ Shelved
 - chdir shouldn't be used with multi-threading. openat and fstatat can help.
 - Show all binary files with a binary viewer tool? Like a hex editor?
 - python-guacamole deals with 24bit color & conversions
+- POLA, only put in the sandbox what the tool needs.  e.g. only the file.
+  Make a chroot with one file?
+  <- Not sure what the tool needs.

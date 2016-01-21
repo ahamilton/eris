@@ -3,11 +3,12 @@
 # Copyright (C) 2015-2016 Andrew Hamilton. All rights reserved.
 # Licensed under the Artistic License 2.0.
 
+import contextlib
+import io
 import os
 import shutil
 import tempfile
 import threading
-# import time
 import unittest
 
 import fill3
@@ -52,7 +53,9 @@ def touch(path):
 
 
 def assert_widget_appearance(widget, golden_path, dimensions=_DIMENSIONS):
-    golden.assertGolden(_widget_to_string(widget, dimensions), golden_path)
+    golden_path_absolute = os.path.join(os.path.dirname(__file__), golden_path)
+    golden.assertGolden(_widget_to_string(widget, dimensions),
+                        golden_path_absolute)
 
 
 class MockMainLoop:
@@ -61,7 +64,7 @@ class MockMainLoop:
         pass
 
 
-class MainTestCase(unittest.TestCase):
+class ScreenWidgetTestCase(unittest.TestCase):
 
     def setUp(self):
         self.temp_dir = tempfile.mkdtemp()
@@ -218,6 +221,37 @@ class SummarySyncWithFilesystem(unittest.TestCase):
 #         log.log_message("bar", timestamp=timestamp)
 #         assert_widget_appearance(log, "golden-files/log-two-messages", None)
 #         assert_widget_appearance(log, "golden-files/log-appearance")
+
+
+def _mount_total():
+    with open("/proc/mounts") as proc_mounts:
+        return len(proc_mounts.readlines())
+
+
+def _tmp_total():
+    return len(os.listdir("/tmp"))
+
+
+class MainTestCase(unittest.TestCase):
+
+    def test_start_and_run_a_job_then_stop_with_no_leaks(self):
+        temp_dir = tempfile.mkdtemp()
+        try:
+            mount_total = _mount_total()
+            tmp_total = _tmp_total()
+            foo_path = os.path.join(temp_dir, "foo")
+            open(foo_path, "w").close()
+            vigil.manage_cache(temp_dir)
+            with vigil.chdir(temp_dir):
+                with contextlib.redirect_stdout(io.StringIO()):
+                    vigil.main(temp_dir, is_being_tested=True)
+                self.assertTrue(os.path.exists(".vigil/.summary.pickle"))
+                self.assertTrue(os.path.exists(".vigil/.creation-time"))
+                self.assertTrue(os.path.exists(".vigil/foo-metadata"))
+            self.assertEqual(_mount_total(), mount_total)
+            self.assertEqual(_tmp_total(), tmp_total)
+        finally:
+            shutil.rmtree(temp_dir)
 
 
 if __name__ == "__main__":

@@ -4,6 +4,7 @@
 # Licensed under the Artistic License 2.0.
 
 import ast
+import contextlib
 import dis
 import functools
 import hashlib
@@ -76,14 +77,12 @@ def fix_input(input_):
     return input_str.replace("\t", " " * 4)
 
 
-def _do_command(command):
+def _do_command(command, **kwargs):
     stdout, stderr = "", ""
-    try:
+    with contextlib.suppress(subprocess.CalledProcessError):
         process = subprocess.Popen(command, stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE)
+                                   stderr=subprocess.PIPE, **kwargs)
         stdout, stderr = process.communicate()
-    except subprocess.CalledProcessError:
-        pass
     return fix_input(stdout), fix_input(stderr), process.returncode
 
 
@@ -173,14 +172,14 @@ def metadata(path):
                         stat_result.st_atime)]
     size = [_pretty_bytes(stat_result.st_size),
             _detail(stat_result.st_size, "bytes")]
-    stdout, stderr, returncode = _do_command(
+    stdout, *rest = _do_command(
         ["file", "--dereference", "--brief", "--uncompress", "--mime", path])
     mime_type = stdout
-    stdout, stderr, returncode = _do_command(
+    stdout, *rest = _do_command(
         ["file", "--dereference", "--brief", "--uncompress", path])
     file_type = stdout
     md5sum = md5(path)
-    stdout, stderr, returncode = _do_command(["sha1sum", path])
+    stdout, *rest = _do_command(["sha1sum", path])
     sha1sum = stdout.split()[0]
     permissions_value = [permissions,
                          _detail(_permissions_in_octal(permissions), None)]
@@ -285,10 +284,9 @@ def python_coverage(path):
             coverage_path = os.path.join(temp_dir, "coverage")
             env = os.environ.copy()
             env["COVERAGE_FILE"] = coverage_path
-            stdout, stderr, returncode = _do_command(
-                ["timeout", "20", python_exe, "run", test_path], env=env)
-            assert returncode == 0, returncode
-            stdout, stderr, returncode = _do_command(
+            stdout, *rest = _do_command(
+                ["timeout", "60", python_exe, "run", test_path], env=env)
+            stdout, *rest = _do_command(
                 [python_exe, "annotate", "--directory", temp_dir,
                  os.path.normpath(path)], env=env)
             with open(os.path.join(temp_dir, path + ",cover"), "r") as f:
@@ -301,9 +299,8 @@ python_coverage.dependencies = {"python-coverage", "python3-coverage"}
 
 
 def python_profile(path):
-    stdout, stderr, returncode = _do_command(
-        ["timeout", "20", _python_version(path), "-m", "cProfile",
-         "--sort=cumulative", path])
+    stdout, *rest = _do_command(["timeout", "20", _python_version(path), "-m",
+                                 "cProfile", "--sort=cumulative", path])
     return Status.info, fill3.Text(stdout)
 python_profile.dependencies = {"python", "python3"}
 
@@ -352,14 +349,11 @@ def _colorize_mccabe(text, python_version, max_score):
 
 def python_mccabe(path):
     python_version = _python_version(path)
-    stdout, stderr, returncode = _do_command(
-        [python_version, "-m", "mccabe", path])
+    stdout, *rest = _do_command([python_version, "-m", "mccabe", path])
     max_score = 0
-    try:
+    with contextlib.suppress(ValueError):  # When there are no lines
         max_score = max(_get_mccabe_line_score(line, python_version)
                         for line in stdout.splitlines())
-    except ValueError:  # When there are no lines
-        pass
     status = Status.failure if max_score > 10 else Status.success
     return status, fill3.Text(
         _colorize_mccabe(stdout, python_version, max_score))
@@ -367,8 +361,7 @@ python_mccabe.dependencies = {"python-mccabe", "python3-mccabe"}
 
 
 def python_tidy(path):  # Deps: found on internet?
-    stdout, stderr, returncode = _do_command(["python", "python-tidy.py",
-                                              path])
+    stdout, *rest = _do_command(["python", "python-tidy.py", path])
     return Status.info, _syntax_highlight_code(stdout, path)
 
 
@@ -394,7 +387,7 @@ perldoc.dependencies = {"perl-doc"}
 
 
 def perltidy(path):
-    stdout, stderr, returncode = _do_command(["perltidy", "-st", path])
+    stdout, *rest = _do_command(["perltidy", "-st", path])
     return Status.info, _syntax_highlight_code(stdout, path)
 perltidy.dependencies = {"perltidy"}
 
@@ -405,7 +398,7 @@ perl6_syntax.dependencies = {"perl6"}
 
 
 def _jlint_tool(tool_type, path):
-    stdout, stderr, returncode = _do_command([tool_type, path])
+    stdout, *rest = _do_command([tool_type, path])
     status = (Status.success
               if b"Verification completed: 0 reported messages." in stdout
               else Status.failure)
@@ -435,7 +428,7 @@ objdump_headers.dependencies = {"binutils"}
 
 
 def objdump_disassemble(path):
-    stdout, stderr, returncode = _do_command(
+    stdout, *rest = _do_command(
         ["objdump", "--disassemble", "--reloc", "--dynamic-reloc", path])
     import pygments.lexers.asm
     lexer = pygments.lexers.asm.ObjdumpLexer()
@@ -449,7 +442,7 @@ readelf.dependencies = {"binutils"}
 
 
 def mp3info(path):
-    stdout, stderr, returncode = _do_command(["mp3info", "-x", path])
+    stdout, *rest = _do_command(["mp3info", "-x", path])
     source_widget = fill3.Text(stdout)
     return Status.info, source_widget
 mp3info.dependencies = ["mp3info"]
@@ -501,7 +494,7 @@ html_syntax.dependencies = {"tidy"}
 
 
 def tidy(path):
-    stdout, stderr, returncode = _do_command(["tidy", path])
+    stdout, *rest = _do_command(["tidy", path])
     return Status.info, fill3.Text(stdout)
 tidy.dependencies = {"tidy"}
 
