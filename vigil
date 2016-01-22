@@ -960,6 +960,8 @@ def main(root_path, is_being_tested=False):
                 try:
                     loop.run_forever()
                 except KeyboardInterrupt:
+                    log.log_command("Exiting...")
+                    time.sleep(0.05)
                     _UPDATE_THREAD_STOPPED = True
                     appearance_changed_event.set()
                     update_display_thread.join()
