@@ -388,7 +388,7 @@ perl_syntax.dependencies = {"perl"}
 
 
 def perldoc(path):
-    stdout, stderr, returncode = _do_command(["perldoc", path])
+    stdout, stderr, returncode = _do_command(["perldoc", "-t", path])
     return ((Status.info, fill3.Text(stdout)) if returncode == 0
             else (Status.placeholder, fill3.Text(stderr)))
 perldoc.dependencies = {"perl-doc"}
@@ -565,8 +565,10 @@ def tools_for_extension():
         "pl": [perl_syntax, perldoc, perltidy],
         "pm": [perl_syntax, perldoc, perltidy],
         "t": [perl_syntax, perldoc, perltidy],
-        "p6": [perl6_syntax],
-        "pm6": [perl6_syntax],
+        "p6": [perl6_syntax, perldoc],
+        "pm6": [perl6_syntax, perldoc],
+        "pod": [perldoc],
+        "pod6": [perldoc],
         "java": [antic, uncrustify],
         "class": [jlint],
         "c": [splint, uncrustify],
