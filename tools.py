@@ -340,10 +340,10 @@ def _get_mccabe_line_score(line, python_version):
     return int(score if python_version == "python3" else score[:-1])
 
 
-def _colorize_mccabe(text, python_version, max_score):
+def _colorize_mccabe(text, python_version):
     return fill3.join("", [
         termstr.TermStr(line).fg_color(termstr.Color.yellow)
-        if _get_mccabe_line_score(line, python_version) == max_score else line
+        if _get_mccabe_line_score(line, python_version) > 10 else line
         for line in text.splitlines(keepends=True)])
 
 
@@ -355,8 +355,7 @@ def python_mccabe(path):
         max_score = max(_get_mccabe_line_score(line, python_version)
                         for line in stdout.splitlines())
     status = Status.failure if max_score > 10 else Status.success
-    return status, fill3.Text(
-        _colorize_mccabe(stdout, python_version, max_score))
+    return status, fill3.Text(_colorize_mccabe(stdout, python_version))
 python_mccabe.dependencies = {"python-mccabe", "python3-mccabe"}
 
 

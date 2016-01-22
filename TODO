@@ -16,7 +16,6 @@ Todo
 - Determine if perl files are perl5 or perl6.
 - Use perldoc on pod files.
 - Add rich LSCOLORS if the environment variable is not set.
-- Simplify coloring of mccabe. Just color functions with complexity greater than 10.
 - Add bandit tool for python.
 
 
@@ -155,6 +154,7 @@ Done
 - Add means to pause and unpause all current jobs.
 - Colourise mccabe.
 - Have a sandbox for unsafe (or all) tools.
+- Simplify coloring of mccabe. Just color functions with complexity greater than 10.
 
 A-syntax, B-tests, C-auto docs, D-lint, E-coverage, F-profile, G-tidy, H-import deps
              A B C D E F G H
