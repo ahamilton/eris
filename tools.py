@@ -69,7 +69,16 @@ _STATUS_TO_TERMSTR_SIMPLE[Status.error] = termstr.TermStr(
 _STATUS_TO_TERMSTR_SIMPLE[Status.empty] = "."
 
 
-LS_COLOR_CODES = lscolors.get_color_codes(os.environ)
+def get_ls_color_codes():
+    if "LS_COLORS" not in os.environ:
+        script = os.path.join(os.path.dirname(__file__), "LS_COLORS.sh")
+        with open(script) as file_:
+            codes = file_.readline().strip()[len("LS_COLORS='"):-len("';")]
+            os.environ["LS_COLORS"] = codes
+    return lscolors.get_color_codes(os.environ)
+
+
+LS_COLOR_CODES = get_ls_color_codes()
 
 
 def fix_input(input_):
