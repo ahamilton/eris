@@ -8,7 +8,6 @@ Todo
   - Need to use conventional version numbers for pypi. See pep0440.
 - Add ESC as an alternative to 'q' for quit. If looking at Help, ESC should just
   exit the help screen.
-- Statuses' pretty names and variable names don't match.
 - Report on python doctests. (also coverage of)
 - Treat any compressed file as though it is uncompressed. But the metadata tool
   should still report on the original compressed file.
@@ -155,6 +154,7 @@ Done
 - Simplify coloring of mccabe. Just color functions with complexity greater than 10.
 - Add rich LSCOLORS if the environment variable is not set.
 - Use perldoc on pod files.
+- Statuses' pretty names and variable names don't match.
 
 A-syntax, B-tests, C-auto docs, D-lint, E-coverage, F-profile, G-tidy, H-import deps
              A B C D E F G H

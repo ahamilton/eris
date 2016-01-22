@@ -136,7 +136,7 @@ class Result:
         self.scroll_position = (0, 0)
         self.is_completed = False
         self.is_placeholder = True
-        self.status = tools.Status.empty
+        self.status = tools.Status.pending
 
     @property
     @lru_cache_with_eviction(maxsize=50)
@@ -181,7 +181,7 @@ class Result:
 
     def reset(self):
         self.is_placeholder = True
-        self.set_status(tools.Status.empty)
+        self.set_status(tools.Status.pending)
 
     def appearance_min(self):
         return [status_to_str(self.status,
@@ -438,7 +438,7 @@ class Summary:
             row_index = (index + y) % len(self._column)
             row = self._column[row_index]
             for index_x, result in enumerate(row):
-                if (result.status == tools.Status.failure and
+                if (result.status == tools.Status.problem and
                     not (row_index == y and index_x <= x and
                          index != len(self._column))):
                     yield result, (index_x, row_index)

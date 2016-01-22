@@ -30,7 +30,7 @@ class WorkerTestCase(unittest.TestCase):
 
     def _test_worker(self, sandbox):
         status = worker.Worker(sandbox).run_tool("foo", tools.metadata)
-        self.assertEqual(status, tools.Status.info)
+        self.assertEqual(status, tools.Status.normal)
         result_path = os.path.join(vigil._CACHE_PATH, "foo-metadata")
         self.assertTrue(os.path.exists(result_path))
 

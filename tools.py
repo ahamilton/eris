@@ -33,40 +33,40 @@ import termstr
 
 class Status:
 
-    success = 1
-    failure = 2
-    info = 3
+    ok = 1
+    problem = 2
+    normal = 3
     error = 4
-    placeholder = 5
+    not_applicable = 5
     running = 6
-    empty = 7
+    pending = 7
     paused = 8
 
 
-_STATUS_COLORS = [(Status.success, termstr.Color.green),
-                  (Status.failure, termstr.Color.red),
-                  (Status.info, termstr.Color.white),
-                  (Status.placeholder, termstr.Color.grey_100),
+_STATUS_COLORS = [(Status.ok, termstr.Color.green),
+                  (Status.problem, termstr.Color.red),
+                  (Status.normal, termstr.Color.white),
+                  (Status.not_applicable, termstr.Color.grey_100),
                   (Status.running, termstr.Color.yellow)]
 
 
 STATUS_MEANINGS = [
-    (Status.info, "Normal"), (Status.success, "No problems"),
-    (Status.failure, "Problems"), (Status.placeholder, "Not applicable"),
-    (Status.running, "Running"), (Status.empty, "Pending"),
+    (Status.normal, "Normal"), (Status.ok, "Ok"),
+    (Status.problem, "Problem"), (Status.not_applicable, "Not applicable"),
+    (Status.running, "Running"), (Status.pending, "Pending"),
     (Status.error, "Error")]
 _STATUS_TO_TERMSTR = {
     status: termstr.TermStr(" ", termstr.CharStyle(fg_color=color))
     for status, color in _STATUS_COLORS}
 _STATUS_TO_TERMSTR[Status.error] = termstr.TermStr(
     "E ", termstr.CharStyle(fg_color=termstr.Color.red))
-_STATUS_TO_TERMSTR[Status.empty] = ". "
+_STATUS_TO_TERMSTR[Status.pending] = ". "
 _STATUS_TO_TERMSTR_SIMPLE = {
     status: termstr.TermStr(" ", termstr.CharStyle(bg_color=color))
     for status, color in _STATUS_COLORS}
 _STATUS_TO_TERMSTR_SIMPLE[Status.error] = termstr.TermStr(
     "E", termstr.CharStyle(bg_color=termstr.Color.red))
-_STATUS_TO_TERMSTR_SIMPLE[Status.empty] = "."
+_STATUS_TO_TERMSTR_SIMPLE[Status.pending] = "."
 
 
 def get_ls_color_codes():
@@ -95,7 +95,7 @@ def _do_command(command, **kwargs):
     return fix_input(stdout), fix_input(stderr), process.returncode
 
 
-def _run_command(command, status_text=Status.success):
+def _run_command(command, status_text=Status.ok):
     status, output = status_text, ""
     try:
         process = subprocess.Popen(command, stdout=subprocess.PIPE,
@@ -103,9 +103,9 @@ def _run_command(command, status_text=Status.success):
         stdout, stderr = process.communicate()
         output = stdout + stderr
     except subprocess.CalledProcessError:
-        status = Status.failure
+        status = Status.problem
     if process.returncode != 0:
-        status = Status.failure
+        status = Status.problem
     return status, fill3.Text(fix_input(output))
 
 
@@ -121,19 +121,19 @@ def pygments_(path):
         try:
             text = file_.read()
         except UnicodeDecodeError:
-            return Status.placeholder, fill3.Text("Not unicode")
+            return Status.not_applicable, fill3.Text("Not unicode")
         else:
             try:
                 source_widget = _syntax_highlight_code(fix_input(text), path)
             except pygments.util.ClassNotFound:
-                return Status.placeholder, fill3.Text("No lexer found")
-    return Status.info, source_widget
+                return Status.not_applicable, fill3.Text("No lexer found")
+    return Status.normal, source_widget
 pygments_.dependencies = ["python3-pygments"]
 
 
 def linguist(path):
     # Dep: ruby?, ruby-dev, libicu-dev, cmake, "gem install github-linguist"
-    return _run_command(["linguist", path], Status.info)
+    return _run_command(["linguist", path], Status.normal)
 
 
 def _permissions_in_octal(permissions):
@@ -207,7 +207,7 @@ def metadata(path):
         else:
             name, value = line
             text.append("%-15s: %s\n" % (name, "".join(value)))
-    return (Status.info, fill3.Text("".join(text)))
+    return (Status.normal, fill3.Text("".join(text)))
 metadata.dependencies = {"file", "coreutils"}
 
 
@@ -254,26 +254,26 @@ def python_unittests(path):
         cmd = [path] if _has_shebang_line(path) else [python_version, path]
         stdout, stderr, returncode = _do_command(["timeout", "20"] + cmd)
         markup = pygments.lex(stderr, _python_console_lexer)
-        status = Status.success if returncode == 0 else Status.failure
+        status = Status.ok if returncode == 0 else Status.problem
         native_style = pygments.styles.get_style_by_name("native")
         code = fill3.Code(markup, native_style)
         return status, code
     else:
-        return Status.placeholder, fill3.Text("No tests.")
+        return Status.not_applicable, fill3.Text("No tests.")
 python_unittests.dependencies = {"python", "python3"}
 
 
 def pydoc(path):
     pydoc_exe = "pydoc3" if _python_version(path) == "python3" else "pydoc"
-    status, output = Status.info, ""
+    status, output = Status.normal, ""
     try:
         output = subprocess.check_output(
             ["timeout", "20", pydoc_exe, path])
         output = fix_input(output)
     except subprocess.CalledProcessError:
-        status = Status.placeholder
+        status = Status.not_applicable
     if not output.startswith("Help on module"):
-        status = Status.placeholder
+        status = Status.not_applicable
     return status, fill3.Text(output)
 pydoc.dependencies = {"python", "python3"}
 
@@ -300,17 +300,17 @@ def python_coverage(path):
                  os.path.normpath(path)], env=env)
             with open(os.path.join(temp_dir, path + ",cover"), "r") as f:
                 stdout = f.read()
-        return Status.info, fill3.Text(_colorize_coverage_report(stdout))
+        return Status.normal, fill3.Text(_colorize_coverage_report(stdout))
     else:
-        return Status.placeholder, fill3.Text("No corresponding test file: " +
-                                              os.path.normpath(test_path))
+        return Status.not_applicable, fill3.Text(
+            "No corresponding test file: " + os.path.normpath(test_path))
 python_coverage.dependencies = {"python-coverage", "python3-coverage"}
 
 
 def python_profile(path):
     stdout, *rest = _do_command(["timeout", "20", _python_version(path), "-m",
                                  "cProfile", "--sort=cumulative", path])
-    return Status.info, fill3.Text(stdout)
+    return Status.normal, fill3.Text(stdout)
 python_profile.dependencies = {"python", "python3"}
 
 
@@ -334,13 +334,13 @@ def python_gut(path):
     with open(path) as module_file:
         output = gut.gut_module(module_file.read())
     source_widget = _syntax_highlight_code(fix_input(output), path)
-    return Status.info, source_widget
+    return Status.normal, source_widget
 python_gut.dependencies = set()
 
 
 def python_modulefinder(path):
     return _run_command([_python_version(path), "-m", "modulefinder", path],
-                        Status.info)
+                        Status.normal)
 python_modulefinder.dependencies = {"python", "python3"}
 
 
@@ -363,14 +363,14 @@ def python_mccabe(path):
     with contextlib.suppress(ValueError):  # When there are no lines
         max_score = max(_get_mccabe_line_score(line, python_version)
                         for line in stdout.splitlines())
-    status = Status.failure if max_score > 10 else Status.success
+    status = Status.problem if max_score > 10 else Status.ok
     return status, fill3.Text(_colorize_mccabe(stdout, python_version))
 python_mccabe.dependencies = {"python-mccabe", "python3-mccabe"}
 
 
 def python_tidy(path):  # Deps: found on internet?
     stdout, *rest = _do_command(["python", "python-tidy.py", path])
-    return Status.info, _syntax_highlight_code(stdout, path)
+    return Status.normal, _syntax_highlight_code(stdout, path)
 
 
 def disassemble_pyc(path):
@@ -378,7 +378,7 @@ def disassemble_pyc(path):
     stringio = io.StringIO()
     dis.dis(bytecode, file=stringio)
     stringio.seek(0)
-    return Status.info, fill3.Text(stringio.read())
+    return Status.normal, fill3.Text(stringio.read())
 disassemble_pyc.dependencies = set()
 
 
@@ -389,14 +389,14 @@ perl_syntax.dependencies = {"perl"}
 
 def perldoc(path):
     stdout, stderr, returncode = _do_command(["perldoc", "-t", path])
-    return ((Status.info, fill3.Text(stdout)) if returncode == 0
-            else (Status.placeholder, fill3.Text(stderr)))
+    return ((Status.normal, fill3.Text(stdout)) if returncode == 0
+            else (Status.not_applicable, fill3.Text(stderr)))
 perldoc.dependencies = {"perl-doc"}
 
 
 def perltidy(path):
     stdout, *rest = _do_command(["perltidy", "-st", path])
-    return Status.info, _syntax_highlight_code(stdout, path)
+    return Status.normal, _syntax_highlight_code(stdout, path)
 perltidy.dependencies = {"perltidy"}
 
 
@@ -407,9 +407,9 @@ perl6_syntax.dependencies = {"perl6"}
 
 def _jlint_tool(tool_type, path):
     stdout, *rest = _do_command([tool_type, path])
-    status = (Status.success
+    status = (Status.ok
               if b"Verification completed: 0 reported messages." in stdout
-              else Status.failure)
+              else Status.problem)
     return status, fill3.Text(stdout)
 
 
@@ -425,13 +425,13 @@ jlint.dependencies = {"jlint"}
 
 def splint(path):
     stdout, stderr, returncode = _do_command(["splint", "-preproc", path])
-    status = Status.success if returncode == 0 else Status.failure
+    status = Status.ok if returncode == 0 else Status.problem
     return status, fill3.Text(stdout + stderr)
 splint.dependencies = {"splint"}
 
 
 def objdump_headers(path):
-    return _run_command(["objdump", "--all-headers", path], Status.info)
+    return _run_command(["objdump", "--all-headers", path], Status.normal)
 objdump_headers.dependencies = {"binutils"}
 
 
@@ -440,81 +440,81 @@ def objdump_disassemble(path):
         ["objdump", "--disassemble", "--reloc", "--dynamic-reloc", path])
     import pygments.lexers.asm
     lexer = pygments.lexers.asm.ObjdumpLexer()
-    return Status.success, fill3.Text(list(pygments.lex(stdout, lexer)))
+    return Status.ok, fill3.Text(list(pygments.lex(stdout, lexer)))
 objdump_disassemble.dependencies = {"binutils"}
 
 
 def readelf(path):
-    return _run_command(["readelf", "--all", path], Status.info)
+    return _run_command(["readelf", "--all", path], Status.normal)
 readelf.dependencies = {"binutils"}
 
 
 def mp3info(path):
     stdout, *rest = _do_command(["mp3info", "-x", path])
     source_widget = fill3.Text(stdout)
-    return Status.info, source_widget
+    return Status.normal, source_widget
 mp3info.dependencies = ["mp3info"]
 
 
 def dump_pickle(path):
     with open(path, "rb") as file_:
         object_ = pickle.load(file_)
-    return Status.info, fill3.Text(pprint.pformat(object_.__dict__))
+    return Status.normal, fill3.Text(pprint.pformat(object_.__dict__))
 dump_pickle.dependencies = set()
 
 
 def unzip(path):
-    return _run_command(["unzip", "-l", path], Status.info)
+    return _run_command(["unzip", "-l", path], Status.normal)
 unzip.dependencies = {"unzip"}
 
 
 def tar_gz(path):
-    return _run_command(["tar", "ztvf", path], Status.info)
+    return _run_command(["tar", "ztvf", path], Status.normal)
 tar_gz.dependencies = {"tar"}
 
 
 def tar_bz2(path):
-    return _run_command(["tar", "jtvf", path], Status.info)
+    return _run_command(["tar", "jtvf", path], Status.normal)
 tar_bz2.dependencies = {"tar"}
 
 
 def csv(path):
-    return _run_command(["head", "--lines=20", path], Status.info)
+    return _run_command(["head", "--lines=20", path], Status.normal)
 csv.dependencies = {"coreutils"}
 
 
 def nm(path):
-    return _run_command(["nm", "--demangle", path], Status.info)
+    return _run_command(["nm", "--demangle", path], Status.normal)
 nm.dependencies = {"binutils"}
 
 
 def pdf2txt(path):
-    return _run_command(["pdf2txt", path], Status.info)
+    return _run_command(["pdf2txt", path], Status.normal)
 pdf2txt.dependencies = {"python-pdfminer"}
 
 
 def html_syntax(path):
     # Maybe only show errors
     stdout, stderr, returncode = _do_command(["tidy", path])
-    status = Status.success if returncode == 0 else Status.failure
+    status = Status.ok if returncode == 0 else Status.problem
     return status, fill3.Text(stderr)
 html_syntax.dependencies = {"tidy"}
 
 
 def tidy(path):
     stdout, *rest = _do_command(["tidy", path])
-    return Status.info, fill3.Text(stdout)
+    return Status.normal, fill3.Text(stdout)
 tidy.dependencies = {"tidy"}
 
 
 def html2text(path):
-    return _run_command(["html2text", path], Status.info)
+    return _run_command(["html2text", path], Status.normal)
 html2text.dependencies = {"html2text"}
 
 
 def bcpp(path):
     stdout, stderr, returncode = _do_command(["bcpp", "-fi", path])
-    status = Status.info if returncode == 0 else Status.failure
+    status = Status.normal if returncode == 0 else Status.problem
     source_widget = _syntax_highlight_code(stdout, path)
     return status, source_widget
 bcpp.dependencies = {"bcpp"}
@@ -529,7 +529,7 @@ def uncrustify(path):
             raise AssertionError
         stdout, stderr, returncode = _do_command(
             ["uncrustify", "-c", config_path, "-f", path])
-    status = Status.info if returncode == 0 else Status.failure
+    status = Status.normal if returncode == 0 else Status.problem
     source_widget = _syntax_highlight_code(stdout, path)
     return status, source_widget
 uncrustify.dependencies = {"uncrustify"}
@@ -541,13 +541,13 @@ php5_syntax.dependencies = {"php5"}
 
 
 def flog(path):  # Deps: "gem install flog"
-    return _run_command(["flog", path], Status.info)
+    return _run_command(["flog", path], Status.normal)
 flog.dependencies = set()
 
 
 # def csstidy(path):  # Deps: csstidy
 #     stdout, stderr, returncode = _do_command(["csstidy", path])
-#     status = Status.info if returncode == 0 else Status.failure
+#     status = Status.normal if returncode == 0 else Status.problem
 #     source_widget = _syntax_highlight_code(stdout, path)
 #     return status, source_widget
 
