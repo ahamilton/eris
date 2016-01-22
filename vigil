@@ -19,14 +19,15 @@ are kept up to date. (optional)
 The reports are cached in a directory named ".vigil" under the target
 directory.
 
+
 Usage: vigil <root_path>
 
 e.g. # vigil my_project
 
 Keys:
   *h - Show the help screen. (toggle)
-  *d, *c, *j, *k - Move the cursor up, down, left and right.
-  *D, *C, *J, *K - Scroll the result pane up, down, left and right.
+  *d, *c, *j, *k or arrow keys or the mouse - Move the cursor.
+  *D, *C, *J, *K or page up, page down, home and end - Scroll the result pane.
   *t - Turn the result pane to portrait or landscape orientation. (toggle)
   *l - Show the activity log. (toggle)
   *n - Move to the next issue.
