@@ -8,16 +8,16 @@ Current
   then tools fail when they can't find the file. Also, even if watching, there
   would be a race. Do what?
 - Scrolling in the help screen doesn't work with the arrow keys.
+- Within the sandbox sudo is not working for tools.
+- When the filesystem changes a lot vigil is syncing the summary repeatedly
+  for each part in a queue of changes. Needs to empty the queue then sync.
+- There is an exception if vigil's window is made too small.
 
 
 Current (tool related)
-- disassemble.py is not always found
 - disassemble doesn't work for python3
 - gut had an error with utf-8. A traceback printed directly on the screen,
   garbling the interface.
-- Some file's display is garbled. e.g. perldoc of FieldHash.pm
-- Scrolling right on a result from disassemble_pyc (or pydoc run on termstr.py)
-  causes screen corruption.
 
 
 Fixed
@@ -197,6 +197,13 @@ Fixed
 - Sometimes when quitting: "close failed in object destructor",
   "sys.excepthook is missing"
   <- This has probably gone away now jobs are run differently
+- disassemble.py is not always found
+  <- The script isn't used anymore
+- Some file's display is garbled. e.g. perldoc of FieldHash.pm
+  <- pydoc was outputting ASCII term codes.
+- Scrolling right on a result from disassemble_pyc (or pydoc run on termstr.py)
+  causes screen corruption.
+  <- pydoc was outputting ASCII term codes.
 
 
 On hold, run-tool related
