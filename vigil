@@ -32,7 +32,6 @@ Keys:
   *N - Move to the next issue of the current tool.
   *o - Order files by type, or by directory location. (toggle)
   *p - Pause work. (toggle)
-  *w - Watch the filesystem for changes. (toggle)
   *s - Change the appearance of result statuses. (toggle)
   *q - Quit.
 """
@@ -566,19 +565,6 @@ class Listing:
         return self.view.appearance(dimensions)
 
 
-def add_watch_manager_to_mainloop(watch_manager, mainloop):
-    notifier = pyinotify.Notifier(watch_manager)
-
-    def on_inotify():
-        notifier.read_events()
-        notifier.process_events()
-    mainloop.add_reader(watch_manager.get_fd(), on_inotify)
-
-
-def is_path_excluded(path):
-    return any(part.startswith(".") for part in path.split(os.path.sep))
-
-
 class Screen:
 
     def __init__(self, summary, log, appearance_changed_event, main_loop):
@@ -589,27 +575,9 @@ class Screen:
         self._is_listing_portrait = True
         self._is_log_visible = True
         self._is_help_visible = False
-        self._is_watching_filesystem = False
         self._is_paused = False
-        self.toggle_watch_filesystem()
         self._make_widgets()
         self._make_keymap()
-
-    def make_watch_manager(self):
-
-        def on_filesystem_change(event):
-            self._log.log_message("Filesystem changed.")
-            self._summary.sync_with_filesystem(sync_tools=False)
-            self._appearance_changed_event.set()
-        watch_manager = pyinotify.WatchManager()
-        event_mask = (pyinotify.IN_CREATE | pyinotify.IN_DELETE |
-                      pyinotify.IN_CLOSE_WRITE | pyinotify.IN_ATTRIB)
-        watch_manager.add_watch(
-            self._summary._root_path, event_mask, rec=True, auto_add=True,
-            proc_fun=on_filesystem_change, exclude_filter=lambda path:
-            is_path_excluded(path))
-        self._watch_manager = watch_manager
-        add_watch_manager_to_mainloop(self._watch_manager, self._main_loop)
 
     def _partition(self, widgets, height):
         smaller_height = max(height // 4, 10)
@@ -706,18 +674,6 @@ class Screen:
         self._log.log_command("Ordering files by %s." % sort_order)
         self._summary.sort(new_sort)
 
-    def toggle_watch_filesystem(self):
-        self._is_watching_filesystem = not self._is_watching_filesystem
-        self._log.log_command("Watching the filesystem for changes..."
-                              if self._is_watching_filesystem else
-                              "Stopped watching the filesystem.")
-        if self._is_watching_filesystem:
-            self._summary.sync_with_filesystem()
-            self.make_watch_manager()
-        else:
-            self._main_loop.remove_reader(self._watch_manager.get_fd())
-            self._watch_manager = None
-
     def toggle_pause(self):
         self._is_paused = not self._is_paused
         self._log.log_command("Paused work." if self._is_paused else
@@ -786,17 +742,14 @@ class Screen:
 
     _STATUS_BAR = _highlight_chars(
         " *help *quit *d,*c,*j,*k:navigate *turn *log *edit *next *pause"
-        " *watch *order *statuses", Log.GREEN_STYLE)
+        " *order *statuses", Log.GREEN_STYLE)
 
     @functools.lru_cache(maxsize=2)
     def _get_status_bar_appearance(self, width, is_directory_sort,
-                                   is_watching_filesystem, is_paused,
-                                   progress_bar_size):
+                                   is_paused, progress_bar_size):
         ordering_text = "directory" if is_directory_sort else "type     "
-        watching_text = "watching" if is_watching_filesystem else "--------"
         paused_text = "paused" if is_paused else "------"
-        indicators = " %s  %s  order:%s " % (paused_text, watching_text,
-                                             ordering_text)
+        indicators = " %s  order:%s " % (paused_text, ordering_text)
         spacing = " " * (width - len(self._STATUS_BAR) - len(indicators))
         bar = (self._STATUS_BAR[:width - len(indicators)] + spacing +
                indicators)[:width]
@@ -818,8 +771,8 @@ class Screen:
         progress_bar_size = max(0, width * incomplete //
                                 self._summary.result_total)
         status_bar_appearance = self._get_status_bar_appearance(
-            width, self._summary.is_directory_sort,
-            self._is_watching_filesystem, self._is_paused, progress_bar_size)
+            width, self._summary.is_directory_sort, self._is_paused,
+            progress_bar_size)
         return (self._layouts[self._is_log_visible][self._is_listing_portrait]
                 .appearance((width, height-len(status_bar_appearance))) +
                 status_bar_appearance)
@@ -833,8 +786,7 @@ class Screen:
         ({"K", "end"}, listing_right), ({"o"}, toggle_sort),
         ({"n"}, move_to_next_issue), ({"N"}, move_to_next_issue_of_tool),
         ({"e"}, edit_file), ({"s"}, toggle_status_style),
-        ({"w"}, toggle_watch_filesystem), ({"q"}, quit_),
-        ({"p"}, toggle_pause)]
+        ({"q"}, quit_), ({"p"}, toggle_pause)]
 
 
 def get_cpu_temperature():
@@ -882,6 +834,29 @@ class Runner:
         self.worker.continue_()
 
 
+def add_watch_manager_to_mainloop(watch_manager, mainloop):
+    notifier = pyinotify.Notifier(watch_manager)
+
+    def on_inotify():
+        notifier.read_events()
+        notifier.process_events()
+    mainloop.add_reader(watch_manager.get_fd(), on_inotify)
+
+
+def is_path_excluded(path):
+    return any(part.startswith(".") for part in path.split(os.path.sep))
+
+
+def make_watch_manager(root_path, callback):
+    watch_manager = pyinotify.WatchManager()
+    event_mask = (pyinotify.IN_CREATE | pyinotify.IN_DELETE |
+                  pyinotify.IN_CLOSE_WRITE | pyinotify.IN_ATTRIB)
+    watch_manager.add_watch(root_path, event_mask, rec=True, auto_add=True,
+                            proc_fun=callback, exclude_filter=lambda path:
+                            is_path_excluded(path))
+    return watch_manager
+
+
 _UPDATE_THREAD_STOPPED = False
 
 
@@ -910,15 +885,19 @@ def main(root_path, is_being_tested=False):
     else:
         screen._appearance_changed_event = appearance_changed_event
         screen._main_loop = loop
-        if screen._is_watching_filesystem:
-            screen.make_watch_manager()
         summary = screen._summary
         summary._lock = threading.Lock()
         summary._jobs_added_event = jobs_added_event
         log = screen._log
         log._appearance_changed_event = appearance_changed_event
-        if screen._is_watching_filesystem:
-            summary.sync_with_filesystem()
+        summary.sync_with_filesystem()
+
+    def on_filesystem_change(event):
+        log.log_message("Filesystem changed.")
+        summary.sync_with_filesystem(sync_tools=False)
+        appearance_changed_event.set()
+    watch_manager = make_watch_manager(root_path, on_filesystem_change)
+    add_watch_manager_to_mainloop(watch_manager, loop)
     log.log_message("Program started.")
     jobs_added_event.set()
     runners = []
@@ -972,8 +951,8 @@ def main(root_path, is_being_tested=False):
         # Cannot pickle generators, locks, sockets or events.
         (summary.closest_placeholder_generator, summary._lock,
          summary._jobs_added_event, screen._appearance_changed_event,
-         screen._main_loop, screen._watch_manager, screen.runners,
-         log._appearance_changed_event) = [None] * 8
+         screen._main_loop, screen.runners, log._appearance_changed_event) \
+         = [None] * 7
         open_compressed = functools.partial(gzip.open, compresslevel=1)
         dump_pickle_safe(screen, pickle_path, open=open_compressed)
     finally:

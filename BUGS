@@ -1,12 +1,8 @@
 Current
-- Changing the status style with 'watching' off can result in recalculations.
 - In stterm the previous console title isn't being restored.
   Seems to be a bug in stterm, because its okay in gnome-terminal.
 - Some jobs always are recalculated when restarting vigil.
   e.g. vigil.py pylint, BUGS metadata, BUGS _pygments
-- If a pending file is deleted, while not watching the filesystem,
-  then tools fail when they can't find the file. Also, even if watching, there
-  would be a race. Do what?
 - Scrolling in the help screen doesn't work with the arrow keys.
 - Within the sandbox sudo is not working for tools.
 - When the filesystem changes a lot vigil is syncing the summary repeatedly
@@ -204,7 +200,13 @@ Fixed
 - Scrolling right on a result from disassemble_pyc (or pydoc run on termstr.py)
   causes screen corruption.
   <- pydoc was outputting ASCII term codes.
-
+- If a pending file is deleted, while not watching the filesystem,
+  then tools fail when they can't find the file. Also, even if watching, there
+  would be a race. Do what?
+  <- Decided to remove the 'watching' toggle. Now its always watching. Use
+     pause to stop computation.
+- Changing the status style with 'watching' off can result in recalculations.
+  <- 'Watching' is never off now
 
 On hold, run-tool related
 - Sometimes there is a blank line at the end of the result in run-tool, and

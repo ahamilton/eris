@@ -155,6 +155,8 @@ Done
 - Add rich LSCOLORS if the environment variable is not set.
 - Use perldoc on pod files.
 - Statuses' pretty names and variable names don't match.
+- Removed the 'watching' toggle.
+  <- Its not really necessary, now that you can pause.
 
 A-syntax, B-tests, C-auto docs, D-lint, E-coverage, F-profile, G-tidy, H-import deps
              A B C D E F G H
