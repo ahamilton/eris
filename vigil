@@ -5,19 +5,17 @@
 # Licensed under the Artistic License 2.0.
 
 """\
-Produces a set of reports for every file in a directory tree.
-The reports are produced by many existing command-line tools.
+Vigil maintains a set of reports for each file in a directory tree. 
+Different types of reports are produced for different types of file.
 
-The state of each report is also summarised by a status indicator.
-The possible states are listed below.
+The state of each report is summarised by a status indicator, and a report is
+viewed by selecting this status indicator with the cursor. The types of status
+are listed below.
 
-A report is viewed by selecting its status indicator with the cursor.
+Reports are recalculated whenever files are changed, so that they are always up
+to date.
 
-Reports are recalculated whenever files are changed, added, or deleted, and so
-are kept up to date. (optional)
-
-The reports are cached in a directory named ".vigil" under the target
-directory.
+The reports are cached in a directory ".vigil" under the target directory.
 
 
 Usage: vigil <root_path>
