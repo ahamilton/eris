@@ -5,8 +5,6 @@ Current
   e.g. vigil.py pylint, BUGS metadata, BUGS _pygments
 - Scrolling in the help screen doesn't work with the arrow keys.
 - Within the sandbox sudo is not working for tools.
-- When the filesystem changes a lot vigil is syncing the summary repeatedly
-  for each part in a queue of changes. Needs to empty the queue then sync.
 - There is an exception if vigil's window is made too small.
 
 
@@ -207,6 +205,9 @@ Fixed
      pause to stop computation.
 - Changing the status style with 'watching' off can result in recalculations.
   <- 'Watching' is never off now
+- When the filesystem changes a lot vigil is syncing the summary repeatedly
+  for each part in a queue of changes. Needs to empty the queue then sync.
+
 
 On hold, run-tool related
 - Sometimes there is a blank line at the end of the result in run-tool, and
