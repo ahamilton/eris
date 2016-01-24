@@ -210,14 +210,14 @@ def metadata(path):
 metadata.dependencies = {"file", "coreutils"}
 
 
-def view(path):
+def contents(path):
     root, ext = splitext(path)
     if ext == "":
         with open(path) as file_:
             return Status.normal, fill3.Text(file_.read())
     else:
         return pygments_(path)
-view.dependencies = {"python3-pygments"}
+contents.dependencies = {"python3-pygments"}
 
 
 def _is_python_syntax_correct(path, python_version):
@@ -562,7 +562,7 @@ flog.dependencies = set()
 
 
 def generic_tools():
-    return [view, metadata]
+    return [contents, metadata]
 
 
 def tools_for_extension():
