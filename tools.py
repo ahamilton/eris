@@ -47,7 +47,7 @@ _STATUS_COLORS = [(Status.ok, termstr.Color.green),
                   (Status.problem, termstr.Color.red),
                   (Status.normal, termstr.Color.white),
                   (Status.not_applicable, termstr.Color.grey_100),
-                  (Status.running, termstr.Color.yellow)]
+                  (Status.running, termstr.Color.light_blue)]
 
 
 STATUS_MEANINGS = [
