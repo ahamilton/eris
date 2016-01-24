@@ -562,7 +562,7 @@ flog.dependencies = set()
 
 
 def generic_tools():
-    return [metadata, view]
+    return [view, metadata]
 
 
 def tools_for_extension():
