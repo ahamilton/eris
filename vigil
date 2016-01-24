@@ -515,6 +515,14 @@ def _highlight_chars(str_, style, marker="*"):
     return fill3.join("", [parts[0]] + highlighted_parts)
 
 
+@functools.lru_cache()
+def _get_help_text(is_status_simple=True):
+    usage = _highlight_chars(__doc__, Log.GREEN_STYLE)
+    return fill3.join("\n", [usage, "Statuses:"] +
+                      ["  " + status_to_str(status, is_status_simple) + " " +
+                       meaning for status, meaning in tools.STATUS_MEANINGS])
+
+
 class Help:
 
     def __init__(self, summary, screen):
@@ -523,7 +531,6 @@ class Help:
         self.body = fill3.Placeholder()
         self.view = fill3.View.from_widget(self.body)
         self.widget = fill3.Border(self.view, title="Help")
-        self.usage = _highlight_chars(__doc__, Log.GREEN_STYLE)
         portal = self.view.portal
         self.key_map = {"h": self.exit_help, "d": portal.scroll_up,
                         "c": portal.scroll_down, "j": portal.scroll_left,
@@ -541,10 +548,7 @@ class Help:
             action()
 
     def appearance(self, dimensions):
-        text = fill3.join(
-            "\n", [self.usage, "Statuses:"] +
-            ["  " + status_to_str(status, self.summary.is_status_simple) +
-             " " + meaning for status, meaning in tools.STATUS_MEANINGS])
+        text = _get_help_text(self.summary.is_status_simple)
         self.body.widget = fill3.Text(text)
         return self.widget.appearance(dimensions)
 
@@ -986,5 +990,4 @@ if __name__ == "__main__":
             with chdir(root_path):  # FIX: Don't change directory if possible.
                 main(root_path)
     else:
-        usage = __doc__.replace("*", "")
-        print(usage)
+        print(_get_help_text())
