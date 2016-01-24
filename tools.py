@@ -126,9 +126,8 @@ def pygments_(path):
             try:
                 source_widget = _syntax_highlight_code(fix_input(text), path)
             except pygments.util.ClassNotFound:
-                return Status.not_applicable, fill3.Text("No lexer found")
+                return Status.normal, fill3.Text(text)
     return Status.normal, source_widget
-pygments_.dependencies = ["python3-pygments"]
 
 
 def linguist(path):
@@ -206,9 +205,19 @@ def metadata(path):
             text.append("\n")
         else:
             name, value = line
-            text.append("%-15s: %s\n" % (name, "".join(value)))
+            text.append("%-15s %s\n" % (name + ":", "".join(value)))
     return (Status.normal, fill3.Text("".join(text)))
 metadata.dependencies = {"file", "coreutils"}
+
+
+def view(path):
+    root, ext = splitext(path)
+    if ext == "":
+        with open(path) as file_:
+            return Status.normal, fill3.Text(file_.read())
+    else:
+        return pygments_(path)
+view.dependencies = {"python3-pygments"}
 
 
 def _is_python_syntax_correct(path, python_version):
@@ -553,7 +562,7 @@ flog.dependencies = set()
 
 
 def generic_tools():
-    return [metadata, pygments_]
+    return [metadata, view]
 
 
 def tools_for_extension():

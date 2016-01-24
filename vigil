@@ -818,7 +818,7 @@ class Runner:
                 with contextlib.suppress(ValueError):  # Process was terminated
                     self.result.run(log, appearance_changed_event, self.worker)
                     summary.completed_total += 1
-                if self.is_being_tested:
+                if self.is_being_tested and self.result.tool == tools.metadata:
                     os.kill(os.getpid(), signal.SIGINT)
             jobs_added_event.clear()
 
