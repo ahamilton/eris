@@ -5,7 +5,7 @@
 # Licensed under the Artistic License 2.0.
 
 """\
-Vigil maintains a set of reports for each file in a directory tree. 
+Vigil maintains a set of reports for each file in a directory tree.
 Different types of reports are produced for different types of file.
 
 The state of each report is summarised by a status indicator, and a report is
@@ -42,7 +42,6 @@ import collections
 import contextlib
 import functools
 import gzip
-import importlib
 import multiprocessing
 import os
 import pickle
@@ -216,11 +215,9 @@ class Entry(collections.UserList):
         appearance = self.appearance_cache
         if appearance is None:
             if self.highlighted is not None:
-                if self.summary.is_status_simple:
-                    cursor = fill3.Text("●")
-                else:
-                    cursor = fill3.Style(self.widget[self.highlighted],
-                                         reverse_style)
+                cursor = (fill3.Text("●") if self.summary.is_status_simple
+                          else fill3.Style(self.widget[self.highlighted],
+                                           reverse_style))
                 self.widget[self.highlighted] = cursor
             new_appearance = self.widget.appearance_min()
             path = tools._path_colored(self.path)
@@ -287,9 +284,7 @@ class Summary:
             self.__cursor_position = new_position
             self.closest_placeholder_generator = None
 
-    def sync_with_filesystem(self, sync_tools=True, sync_paths=True):
-        if sync_tools:
-            importlib.reload(tools)
+    def sync_with_filesystem(self, sync_paths=True):
         x, y = self._cursor_position
         try:
             old_path = self.get_selection().path
@@ -454,7 +449,7 @@ class Summary:
 
     def toggle_status_style(self):
         self.is_status_simple = not self.is_status_simple
-        self.sync_with_filesystem(sync_tools=False, sync_paths=False)
+        self.sync_with_filesystem(sync_paths=False)
 
     def sort(self, is_directory_sort):
         def directory_sort(path):
@@ -467,7 +462,7 @@ class Summary:
         key_func = directory_sort if is_directory_sort else type_sort
         self._paths.sort(key=key_func)
         self.is_directory_sort = is_directory_sort
-        self.sync_with_filesystem(sync_tools=False, sync_paths=False)
+        self.sync_with_filesystem(sync_paths=False)
 
 
 class Log:
@@ -745,8 +740,8 @@ class Screen:
         " *order *statuses", Log.GREEN_STYLE)
 
     @functools.lru_cache(maxsize=2)
-    def _get_status_bar_appearance(self, width, is_directory_sort,
-                                   is_paused, progress_bar_size):
+    def _get_status_bar_appearance(self, width, is_directory_sort, is_paused,
+                                   progress_bar_size):
         ordering_text = "directory" if is_directory_sort else "type     "
         paused_text = "paused" if is_paused else "------"
         indicators = " %s  order:%s " % (paused_text, ordering_text)
@@ -785,8 +780,8 @@ class Screen:
         ({"C", "page down"}, listing_down), ({"J", "home"}, listing_left),
         ({"K", "end"}, listing_right), ({"o"}, toggle_sort),
         ({"n"}, move_to_next_issue), ({"N"}, move_to_next_issue_of_tool),
-        ({"e"}, edit_file), ({"s"}, toggle_status_style),
-        ({"q"}, quit_), ({"p"}, toggle_pause)]
+        ({"e"}, edit_file), ({"s"}, toggle_status_style), ({"q"}, quit_),
+        ({"p"}, toggle_pause)]
 
 
 def get_cpu_temperature():
@@ -893,7 +888,7 @@ def main(root_path, is_being_tested=False):
 
     def on_filesystem_change():
         log.log_message("Filesystem changed.")
-        summary.sync_with_filesystem(sync_tools=False)
+        summary.sync_with_filesystem()
         appearance_changed_event.set()
     add_watch_manager_to_mainloop(root_path, loop, on_filesystem_change)
     log.log_message("Program started.")
@@ -949,8 +944,8 @@ def main(root_path, is_being_tested=False):
         # Cannot pickle generators, locks, sockets or events.
         (summary.closest_placeholder_generator, summary._lock,
          summary._jobs_added_event, screen._appearance_changed_event,
-         screen._main_loop, screen.runners, log._appearance_changed_event) \
-         = [None] * 7
+         screen._main_loop, screen.runners,
+         log._appearance_changed_event) = [None] * 7
         open_compressed = functools.partial(gzip.open, compresslevel=1)
         dump_pickle_safe(screen, pickle_path, open=open_compressed)
     finally:

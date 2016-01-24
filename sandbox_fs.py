@@ -49,6 +49,14 @@ def _parse_proc_mounts():
             yield line.split()
 
 
+def _find_mounts():
+    all_mounts = set(part[1] for part in _parse_proc_mounts())
+    mount_points = {"/", "/usr", "/bin", "/etc", "/lib", "/dev", "/proc",
+                    "/home", "/boot", "/opt", "/run", "/sys", "/root", "/var",
+                    "/tmp"}
+    return all_mounts.intersection(mount_points)
+
+
 class SandboxFs:
 
     def __init__(self, mount_point):
@@ -59,17 +67,10 @@ class SandboxFs:
         return "<SandboxFs:%r mounts:%r>" % (self.mount_point,
                                              len(self.overlay_mounts))
 
-    def _find_mounts(self):
-        all_mounts = set(part[1] for part in _parse_proc_mounts())
-        obvious_mount_points = {"/", "/usr", "/bin", "/etc", "/lib", "/dev",
-                                "/proc", "/home", "/boot", "/opt", "/run",
-                                "/sys", "/root", "/var", "/tmp"}
-        return all_mounts.intersection(obvious_mount_points)
-
     def mount(self):
         self.overlay_mounts = [OverlayfsMount(mount_point,
                                               self.mount_point + mount_point)
-                               for mount_point in sorted(self._find_mounts())]
+                               for mount_point in sorted(_find_mounts())]
 
     def umount(self):
         for mount in reversed(self.overlay_mounts):
