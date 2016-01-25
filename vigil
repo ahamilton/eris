@@ -24,8 +24,9 @@ e.g. # vigil my_project
 
 Keys:
   *h - Show the help screen. (toggle)
-  *d, *c, *j, *k or arrow keys or the mouse - Move the cursor.
-  *D, *C, *J, *K or page up, page down, home and end - Scroll the result pane.
+  *d, *c, *j, *k or arrow keys or mouse click - Move the cursor.
+  *D, *C, *J, *K or page up, page down, home, end or the mouse wheel -
+      Scroll the result pane.
   *t - Turn the result pane to portrait or landscape orientation. (toggle)
   *l - Show the activity log. (toggle)
   *n - Move to the next issue.
