@@ -748,8 +748,10 @@ class Screen:
     def _get_status_bar_appearance(self, width, is_directory_sort, is_paused,
                                    progress_bar_size):
         ordering_text = "directory" if is_directory_sort else "type     "
-        paused_text = "paused" if is_paused else "------"
-        indicators = " %s  order:%s " % (paused_text, ordering_text)
+        paused_indicator = (termstr.TermStr("paused ").fg_color(
+            termstr.Color.yellow) if is_paused else termstr.TermStr("running").\
+                            fg_color(termstr.Color.light_blue)).bold()
+        indicators = " " + paused_indicator + "  order:%s " % ordering_text
         spacing = " " * (width - len(self._STATUS_BAR) - len(indicators))
         bar = (self._STATUS_BAR[:width - len(indicators)] + spacing +
                indicators)[:width]
