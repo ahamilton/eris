@@ -47,14 +47,15 @@ _STATUS_COLORS = [(Status.ok, termstr.Color.green),
                   (Status.problem, termstr.Color.red),
                   (Status.normal, termstr.Color.white),
                   (Status.not_applicable, termstr.Color.grey_100),
-                  (Status.running, termstr.Color.light_blue)]
+                  (Status.running, termstr.Color.light_blue),
+                  (Status.paused, termstr.Color.yellow)]
 
 
 STATUS_MEANINGS = [
     (Status.normal, "Normal"), (Status.ok, "Ok"),
     (Status.problem, "Problem"), (Status.not_applicable, "Not applicable"),
-    (Status.running, "Running"), (Status.pending, "Pending"),
-    (Status.error, "Error")]
+    (Status.running, "Running"), (Status.paused, "Paused"),
+    (Status.pending, "Pending"), (Status.error, "Error")]
 _STATUS_TO_TERMSTR = {
     status: termstr.TermStr(" ", termstr.CharStyle(fg_color=color))
     for status, color in _STATUS_COLORS}

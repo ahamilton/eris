@@ -829,8 +829,12 @@ class Runner:
 
     def pause(self):
         self.worker.pause()
+        if self.result.status == tools.Status.running:
+            self.result.set_status(tools.Status.paused)
 
     def continue_(self):
+        if self.result.status == tools.Status.paused:
+            self.result.set_status(tools.Status.running)
         self.worker.continue_()
 
 
