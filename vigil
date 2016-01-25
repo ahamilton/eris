@@ -158,12 +158,15 @@ class Result:
         self.status = status
         self.entry.appearance_cache = None
 
-    def run(self, log, appearance_changed_event, worker):
+    def run(self, log, appearance_changed_event, worker, runner):
         self.is_placeholder = False
         tool_name = tools._tool_name_colored(self.tool, self.path)
         path_colored = tools._path_colored(self.path)
         log.log_message(["Running ", tool_name, " on ", path_colored, "..."])
         self.set_status(tools.Status.running)
+        if runner.is_already_paused:
+            runner.is_already_paused = False
+            runner.pause()
         appearance_changed_event.set()
         start_time = time.time()
         new_status = worker.run_tool(self.path, self.tool)
@@ -749,7 +752,7 @@ class Screen:
                                    progress_bar_size):
         ordering_text = "directory" if is_directory_sort else "type     "
         paused_indicator = (termstr.TermStr("paused ").fg_color(
-            termstr.Color.yellow) if is_paused else termstr.TermStr("running").\
+            termstr.Color.yellow) if is_paused else termstr.TermStr("running").
                             fg_color(termstr.Color.light_blue)).bold()
         indicators = " " + paused_indicator + "  order:%s " % ordering_text
         spacing = " " * (width - len(self._STATUS_BAR) - len(indicators))
@@ -806,9 +809,10 @@ def regulate_temperature(log):
 
 class Runner:
 
-    def __init__(self, sandbox, is_being_tested):
+    def __init__(self, sandbox, is_already_paused, is_being_tested):
         self.result = None
         self.worker = worker.Worker(sandbox)
+        self.is_already_paused = is_already_paused
         self.is_being_tested = is_being_tested
 
     def job_runner(self, summary, log, jobs_added_event,
@@ -823,21 +827,24 @@ class Runner:
                     log.log_message("All results are up to date.")
                     break
                 with contextlib.suppress(ValueError):  # Process was terminated
-                    self.result.run(log, appearance_changed_event, self.worker)
+                    self.result.run(log, appearance_changed_event, self.worker,
+                                    self)
                     summary.completed_total += 1
                 if self.is_being_tested and self.result.tool == tools.metadata:
                     os.kill(os.getpid(), signal.SIGINT)
             jobs_added_event.clear()
 
     def pause(self):
-        self.worker.pause()
-        if self.result.status == tools.Status.running:
+        if self.result is not None and \
+           self.result.status == tools.Status.running:
+            self.worker.pause()
             self.result.set_status(tools.Status.paused)
 
     def continue_(self):
-        if self.result.status == tools.Status.paused:
+        if self.result is not None and \
+           self.result.status == tools.Status.paused:
             self.result.set_status(tools.Status.running)
-        self.worker.continue_()
+            self.worker.continue_()
 
 
 def is_path_excluded(path):
@@ -915,16 +922,13 @@ def main(root_path, is_being_tested=False):
         log.log_message("Starting workers...")
         worker_total = multiprocessing.cpu_count() * 2
         for index in range(worker_total):
-            runners.append(Runner(sandbox, is_being_tested))
+            runners.append(Runner(sandbox, screen._is_paused, is_being_tested))
         screen.runners = runners
         log.log_message("Workers started. (%s)" % worker_total)
         for runner in runners:
             args = (summary, log, jobs_added_event, appearance_changed_event)
             threading.Thread(target=runner.job_runner, args=args,
                              daemon=True).start()
-        if screen._is_paused:
-            for runner in runners:
-                runner.pause()
     try:
         threading.Thread(target=start_runners, daemon=True).start()
 
