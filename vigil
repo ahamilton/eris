@@ -753,7 +753,7 @@ class Screen:
         ordering_text = "directory" if is_directory_sort else "type     "
         paused_indicator = (termstr.TermStr("paused ").fg_color(
             termstr.Color.yellow) if is_paused else termstr.TermStr("running").
-                            fg_color(termstr.Color.light_blue)).bold()
+                            fg_color(termstr.Color.light_blue))
         indicators = " " + paused_indicator + "  order:%s " % ordering_text
         spacing = " " * (width - len(self._STATUS_BAR) - len(indicators))
         bar = (self._STATUS_BAR[:width - len(indicators)] + spacing +
