@@ -473,6 +473,7 @@ class Log:
 
     GREY_BOLD_STYLE = termstr.CharStyle(termstr.Color.grey_100, is_bold=True)
     GREEN_STYLE = termstr.CharStyle(termstr.Color.green)
+    LOG_PATH = os.path.join(_CACHE_PATH, ".log")
 
     def __init__(self, appearance_changed_event):
         self._appearance_changed_event = appearance_changed_event
@@ -489,9 +490,10 @@ class Log:
             message = termstr.TermStr(message, char_style)
         timestamp = (time.strftime("%H:%M:%S", time.localtime())
                      if timestamp is None else timestamp)
-        label = fill3.Text(termstr.TermStr(timestamp, Log.GREY_BOLD_STYLE) +
-                           " " + message)
-        self.widget.append(label)
+        line = termstr.TermStr(timestamp, Log.GREY_BOLD_STYLE) + " " + message
+        self.widget.append(fill3.Text(line))
+        with open(Log.LOG_PATH, "a") as log_file:
+            print(line, file=log_file)
         self.widget.widgets = self.widget[-200:]
         self._appearance_cache = None
         self._appearance_changed_event.set()

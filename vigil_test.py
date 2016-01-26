@@ -247,6 +247,7 @@ class MainTestCase(unittest.TestCase):
                     vigil.main(temp_dir, is_being_tested=True)
                 self.assertTrue(os.path.exists(".vigil/.summary.pickle"))
                 self.assertTrue(os.path.exists(".vigil/.creation-time"))
+                self.assertTrue(os.path.exists(".vigil/.log"))
                 self.assertTrue(os.path.exists(".vigil/foo-metadata"))
             self.assertEqual(_mount_total(), mount_total)
             self.assertEqual(_tmp_total(), tmp_total)
