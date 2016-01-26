@@ -5,7 +5,6 @@ Current
   e.g. vigil.py pylint, BUGS metadata, BUGS _pygments
 - Scrolling in the help screen doesn't work with the arrow keys.
 - Within the sandbox sudo is not working for tools.
-- There is an exception if vigil's window is made too small.
 
 
 Current (tool related)
@@ -207,6 +206,9 @@ Fixed
   <- 'Watching' is never off now
 - When the filesystem changes a lot vigil is syncing the summary repeatedly
   for each part in a queue of changes. Needs to empty the queue then sync.
+- There is an exception if vigil's window is made too small.
+  <- When the window is narrower than 10 or shorter than 20 the contents
+     start to crop instead of shrink.
 
 
 On hold, run-tool related

@@ -761,7 +761,7 @@ class Screen:
         return [bar[:progress_bar_size].underline() + bar[progress_bar_size:]]
 
     def appearance(self, dimensions):
-        width, height = dimensions
+        width, height = max(dimensions[0], 10), max(dimensions[1], 20)
         if self._is_help_visible:
             return self._help_widget.appearance(dimensions)
         widget = self._summary.get_selection()
@@ -778,9 +778,12 @@ class Screen:
         status_bar_appearance = self._get_status_bar_appearance(
             width, self._summary.is_directory_sort, self._is_paused,
             progress_bar_size)
-        return (self._layouts[self._is_log_visible][self._is_listing_portrait]
-                .appearance((width, height-len(status_bar_appearance))) +
-                status_bar_appearance)
+        result = (self._layouts[self._is_log_visible]
+                  [self._is_listing_portrait] .appearance(
+                      (width, height-len(status_bar_appearance))) +
+                  status_bar_appearance)
+        return (result if (width, height) == dimensions
+                else fill3.appearance_resize(result, dimensions))
 
     _KEY_DATA = [
         ({"t"}, toggle_window_orientation), ({"l"}, toggle_log),
