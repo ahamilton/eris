@@ -830,6 +830,7 @@ class Runner:
                     self.result = summary.get_closest_placeholder()
                 except StopIteration:
                     log.log_message("All results are up to date.")
+                    self.result = None
                     break
                 with contextlib.suppress(ValueError):  # Process was terminated
                     self.result.run(log, appearance_changed_event, self.worker,

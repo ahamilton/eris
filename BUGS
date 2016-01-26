@@ -1,8 +1,7 @@
 Current
-- Some jobs are always recalculated when restarting vigil.
-  e.g. vigil.py pylint, BUGS metadata, BUGS _pygments
 - Scrolling in the help screen doesn't work with the arrow keys.
 - Within the sandbox sudo is not working for tools.
+- Tracebacks occur if you pause during early startup.
 
 
 Current (tool related)
@@ -209,6 +208,8 @@ Fixed
      start to crop instead of shrink.
 - The cache is not relocatable anymore. i.e. Restarting vigil after renaming
   the project directory is failing.
+- Some jobs are always recalculated when restarting vigil.
+  e.g. vigil.py pylint, BUGS metadata, BUGS _pygments
 
 
 Won't fix
