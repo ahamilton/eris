@@ -1,14 +1,14 @@
 Current
-- In stterm the previous console title isn't being restored.
-  Seems to be a bug in stterm, because its okay in gnome-terminal.
-- Some jobs always are recalculated when restarting vigil.
+- Some jobs are always recalculated when restarting vigil.
   e.g. vigil.py pylint, BUGS metadata, BUGS _pygments
 - Scrolling in the help screen doesn't work with the arrow keys.
 - Within the sandbox sudo is not working for tools.
+- The cache is not relocatable anymore. i.e. Restarting vigil after renaming
+  the project directory is failing.
 
 
 Current (tool related)
-- disassemble doesn't work for python3
+- disassemble for python doesn't always work.
 - gut had an error with utf-8. A traceback printed directly on the screen,
   garbling the interface.
 
@@ -211,14 +211,6 @@ Fixed
      start to crop instead of shrink.
 
 
-On hold, run-tool related
-- Sometimes there is a blank line at the end of the result in run-tool, and
-  probably in table.py.  Sometimes not.
-- In run-tool, if the tool fails, the returncode is always 0.
-- "python ./run-tool gut table.py" results in "The file must be within the 
-  codebase.", but it is in.
-
-
 Won't fix
 - If the summary window is narrower then max_path_length the paths are never
   visible.
@@ -227,3 +219,5 @@ Won't fix
   <- Only testing gnome-terminal & stterm at the moment.
 - Sometimes a lot (or all?) of the results are "?" even with correct statuses.
   <- Happens when the cache is deleted from underneath a running vigil.
+- In stterm the previous console title isn't being restored.
+  <- Seems to be a bug in stterm, because its okay in gnome-terminal.
