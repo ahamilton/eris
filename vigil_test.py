@@ -244,7 +244,7 @@ class MainTestCase(unittest.TestCase):
             with vigil.chdir(root_path):
                 with contextlib.redirect_stdout(io.StringIO()):
                     vigil.main(root_path, is_being_tested=True)
-                for file_name in [".summary.pickle", ".creation-time", ".log",
+                for file_name in ["summary.pickle", "creation_time", "log",
                                   "foo-metadata"]:
                     self.assertTrue(os.path.exists(".vigil/" + file_name))
             self.assertEqual(_mount_total(), mount_total)

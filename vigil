@@ -473,7 +473,7 @@ class Log:
 
     GREY_BOLD_STYLE = termstr.CharStyle(termstr.Color.grey_100, is_bold=True)
     GREEN_STYLE = termstr.CharStyle(termstr.Color.green)
-    LOG_PATH = os.path.join(_CACHE_PATH, ".log")
+    LOG_PATH = os.path.join(_CACHE_PATH, "log")
 
     def __init__(self, appearance_changed_event):
         self._appearance_changed_event = appearance_changed_event
@@ -895,7 +895,7 @@ def main(root_path, is_being_tested=False):
     jobs_added_event = threading.Event()
     appearance_changed_event = threading.Event()
     try:
-        pickle_path = os.path.join(_CACHE_PATH, ".summary.pickle")
+        pickle_path = os.path.join(_CACHE_PATH, "summary.pickle")
         with gzip.open(pickle_path, "rb") as file_:
             screen = pickle.load(file_)
     except FileNotFoundError:
@@ -991,7 +991,7 @@ def chdir(path):
 
 def manage_cache(root_path):
     cache_path = os.path.join(root_path, _CACHE_PATH)
-    timestamp_path = os.path.join(cache_path, ".creation-time")
+    timestamp_path = os.path.join(cache_path, "creation_time")
     if os.path.exists(cache_path) and \
        os.stat(__file__).st_mtime > os.stat(timestamp_path).st_mtime:
         print("Vigil has been updated, so clearing the cache and"
