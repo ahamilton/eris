@@ -851,14 +851,15 @@ def is_path_excluded(path):
     return any(part.startswith(".") for part in path.split(os.path.sep))
 
 
-def add_watch_manager_to_mainloop(root_path, mainloop, on_filesystem_change):
+def add_watch_manager_to_mainloop(root_path, mainloop, on_filesystem_change,
+                                  exclude_filter):
     watch_manager = pyinotify.WatchManager()
     event_mask = (pyinotify.IN_CREATE | pyinotify.IN_DELETE |
                   pyinotify.IN_CLOSE_WRITE | pyinotify.IN_ATTRIB |
                   pyinotify.IN_MOVED_FROM | pyinotify.IN_MOVED_TO)
     watch_manager.add_watch(root_path, event_mask, rec=True, auto_add=True,
                             proc_fun=lambda event: None,
-                            exclude_filter=lambda path: is_path_excluded(path))
+                            exclude_filter=exclude_filter)
     notifier = pyinotify.Notifier(watch_manager)
 
     def on_inotify():
@@ -908,7 +909,8 @@ def main(root_path, is_being_tested=False):
         log.log_message("Filesystem changed.")
         summary.sync_with_filesystem()
         appearance_changed_event.set()
-    add_watch_manager_to_mainloop(root_path, loop, on_filesystem_change)
+    add_watch_manager_to_mainloop(root_path, loop, on_filesystem_change,
+                                  is_path_excluded)
     log.log_message("Program started.")
     jobs_added_event.set()
     runners = []
