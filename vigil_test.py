@@ -234,23 +234,29 @@ def _tmp_total():
 
 class MainTestCase(unittest.TestCase):
 
-    def test_start_and_run_a_job_then_stop_with_no_leaks(self):
-        temp_dir = tempfile.mkdtemp()
-        try:
+    def test_main_and_restart_and_no_leaks_and_is_relocatable(self):
+        def test_run(root_path):
             mount_total = _mount_total()
             tmp_total = _tmp_total()
-            foo_path = os.path.join(temp_dir, "foo")
+            foo_path = os.path.join(root_path, "foo")
             open(foo_path, "w").close()
-            vigil.manage_cache(temp_dir)
-            with vigil.chdir(temp_dir):
+            vigil.manage_cache(root_path)
+            with vigil.chdir(root_path):
                 with contextlib.redirect_stdout(io.StringIO()):
-                    vigil.main(temp_dir, is_being_tested=True)
-                self.assertTrue(os.path.exists(".vigil/.summary.pickle"))
-                self.assertTrue(os.path.exists(".vigil/.creation-time"))
-                self.assertTrue(os.path.exists(".vigil/.log"))
-                self.assertTrue(os.path.exists(".vigil/foo-metadata"))
+                    vigil.main(root_path, is_being_tested=True)
+                for file_name in [".summary.pickle", ".creation-time", ".log",
+                                  "foo-metadata"]:
+                    self.assertTrue(os.path.exists(".vigil/" + file_name))
             self.assertEqual(_mount_total(), mount_total)
             self.assertEqual(_tmp_total(), tmp_total)
+        temp_dir = tempfile.mkdtemp()
+        try:
+            first_dir = os.path.join(temp_dir, "first")
+            os.mkdir(first_dir)
+            test_run(first_dir)
+            second_dir = os.path.join(temp_dir, "second")
+            os.rename(first_dir, second_dir)
+            test_run(second_dir)
         finally:
             shutil.rmtree(temp_dir)
 

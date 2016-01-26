@@ -3,8 +3,6 @@ Current
   e.g. vigil.py pylint, BUGS metadata, BUGS _pygments
 - Scrolling in the help screen doesn't work with the arrow keys.
 - Within the sandbox sudo is not working for tools.
-- The cache is not relocatable anymore. i.e. Restarting vigil after renaming
-  the project directory is failing.
 
 
 Current (tool related)
@@ -209,6 +207,8 @@ Fixed
 - There is an exception if vigil's window is made too small.
   <- When the window is narrower than 10 or shorter than 20 the contents
      start to crop instead of shrink.
+- The cache is not relocatable anymore. i.e. Restarting vigil after renaming
+  the project directory is failing.
 
 
 Won't fix

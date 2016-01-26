@@ -872,7 +872,9 @@ def add_watch_manager_to_mainloop(root_path, mainloop, on_filesystem_change,
         notifier.read_events()
         notifier.process_events()
         on_filesystem_change()
-    mainloop.add_reader(watch_manager.get_fd(), on_inotify)
+    watch_manager_fd = watch_manager.get_fd()
+    mainloop.add_reader(watch_manager_fd, on_inotify)
+    return watch_manager_fd
 
 
 _UPDATE_THREAD_STOPPED = False
@@ -906,18 +908,19 @@ def main(root_path, is_being_tested=False):
         summary = screen._summary
         summary._lock = threading.Lock()
         summary._jobs_added_event = jobs_added_event
+        summary._root_path = root_path
         log = screen._log
         log._appearance_changed_event = appearance_changed_event
         summary.sync_with_filesystem()
 
+    log.log_message("Program started.")
+    jobs_added_event.set()
     def on_filesystem_change():
         log.log_message("Filesystem changed.")
         summary.sync_with_filesystem()
         appearance_changed_event.set()
-    add_watch_manager_to_mainloop(root_path, loop, on_filesystem_change,
-                                  is_path_excluded)
-    log.log_message("Program started.")
-    jobs_added_event.set()
+    watch_manager_fd = add_watch_manager_to_mainloop(
+        root_path, loop, on_filesystem_change, is_path_excluded)
     runners = []
     sandbox_temp_dir = tempfile.mkdtemp()
     sandbox = sandbox_fs.SandboxFs(sandbox_temp_dir)
@@ -973,6 +976,7 @@ def main(root_path, is_being_tested=False):
     finally:
         sandbox.umount()
         os.rmdir(sandbox_temp_dir)
+        loop.remove_reader(watch_manager_fd)
 
 
 @contextlib.contextmanager
