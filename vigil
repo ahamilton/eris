@@ -922,7 +922,7 @@ def main(root_path, is_being_tested=False):
         appearance_changed_event.set()
     watch_manager_fd = add_watch_manager_to_mainloop(
         root_path, loop, on_filesystem_change, is_path_excluded)
-    runners = []
+    screen.runners = runners = []
     sandbox_temp_dir = tempfile.mkdtemp()
     sandbox = sandbox_fs.SandboxFs(sandbox_temp_dir)
 
@@ -934,7 +934,6 @@ def main(root_path, is_being_tested=False):
         worker_total = multiprocessing.cpu_count() * 2
         for index in range(worker_total):
             runners.append(Runner(sandbox, screen._is_paused, is_being_tested))
-        screen.runners = runners
         log.log_message("Workers started. (%s)" % worker_total)
         for runner in runners:
             args = (summary, log, jobs_added_event, appearance_changed_event)

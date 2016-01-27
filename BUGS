@@ -1,7 +1,6 @@
 Current
 - Scrolling in the help screen doesn't work with the arrow keys.
 - Within the sandbox sudo is not working for tools.
-- Tracebacks occur if you pause during early startup.
 
 
 Current (tool related)
@@ -210,6 +209,7 @@ Fixed
   the project directory is failing.
 - Some jobs are always recalculated when restarting vigil.
   e.g. vigil.py pylint, BUGS metadata, BUGS _pygments
+- Tracebacks occur if you pause during early startup.
 
 
 Won't fix
