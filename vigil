@@ -696,8 +696,8 @@ class Screen:
 
     def toggle_pause(self):
         self._is_paused = not self._is_paused
-        self._log.log_command("Paused work." if self._is_paused else
-                              "Continuing work...")
+        self._log.log_command("Paused workers." if self._is_paused else
+                              "Running workers...")
         if self._is_paused:
             for runner in self.runners:
                 runner.pause()
