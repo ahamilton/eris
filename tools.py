@@ -165,8 +165,9 @@ def md5(path):
 def metadata(path):
 
     def _detail(value, unit):
-        return (" (%s)" % value if unit is None else " (%s %s)" %
-                (value, unit))
+        result = (" (%s)" % value if unit is None else " (%s %s)" %
+                  (value, unit))
+        return termstr.TermStr(result).fg_color(termstr.Color.grey_100)
     is_symlink = "yes" if os.path.islink(path) else "no"
     stat_result = os.stat(path)
     permissions = stat.filemode(stat_result.st_mode)
@@ -206,8 +207,10 @@ def metadata(path):
             text.append("\n")
         else:
             name, value = line
-            text.append("%-15s %s\n" % (name + ":", "".join(value)))
-    return (Status.normal, fill3.Text("".join(text)))
+            name = termstr.TermStr(name + ":").fg_color(
+                termstr.Color.light_blue).ljust(16)
+            text.append(name + fill3.join("", value) + "\n")
+    return (Status.normal, fill3.Text(fill3.join("", text)))
 metadata.dependencies = {"file", "coreutils"}
 
 
