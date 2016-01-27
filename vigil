@@ -545,9 +545,9 @@ class Help:
     def exit_help(self):
         self.screen._is_help_visible = False
 
-    def on_keypressed(self):
+    def on_input_event(self, event):
         try:
-            action = self.key_map[sys.stdin.read(1)]
+            action = self.key_map[event]
         except KeyError:
             pass
         else:
@@ -727,23 +727,21 @@ class Screen:
             self._summary._cursor_position = new_position
             self._appearance_changed_event.set()
 
-    def on_keypressed(self, urwid_screen):
+    def on_input_event(self, event):
         if self._is_help_visible:
-            self._help_widget.on_keypressed()
+            self._help_widget.on_input_event(event)
             self._appearance_changed_event.set()
             return
-        events = urwid_screen.get_input()
-        for event in events:
-            if type(event) == tuple:
-                self.on_mouse_event(event)
-                continue
-            try:
-                action = self._key_map[event]
-            except KeyError:
-                pass
-            else:
-                action(self)
-                self._appearance_changed_event.set()
+        if type(event) == tuple:
+            self.on_mouse_event(event)
+            return
+        try:
+            action = self._key_map[event]
+        except KeyError:
+            pass
+        else:
+            action(self)
+            self._appearance_changed_event.set()
 
     _STATUS_BAR = _highlight_chars(
         " *help *quit *d,*c,*j,*k:navigate *turn *log *edit *next *pause"
@@ -913,9 +911,9 @@ def main(root_path, is_being_tested=False):
         log = screen._log
         log._appearance_changed_event = appearance_changed_event
         summary.sync_with_filesystem()
-
     log.log_message("Program started.")
     jobs_added_event.set()
+
     def on_filesystem_change():
         log.log_message("Filesystem changed.")
         summary.sync_with_filesystem()
@@ -942,6 +940,10 @@ def main(root_path, is_being_tested=False):
     try:
         threading.Thread(target=start_runners, daemon=True).start()
 
+        def on_input(urwid_screen):
+            for event in urwid_screen.get_input():
+                screen.on_input_event(event)
+
         def on_window_resize(n, frame):
             appearance_changed_event.set()
         appearance_changed_event.set()
@@ -950,17 +952,16 @@ def main(root_path, is_being_tested=False):
             daemon=True)
         with terminal.hidden_cursor():
             with terminal.urwid_screen() as urwid_screen:
-                loop.add_reader(sys.stdin, screen.on_keypressed, urwid_screen)
+                loop.add_reader(sys.stdin, on_input, urwid_screen)
                 update_display_thread.start()
                 signal.signal(signal.SIGWINCH, on_window_resize)
-                try:
+                with contextlib.suppress(KeyboardInterrupt):
                     loop.run_forever()
-                except KeyboardInterrupt:
-                    log.log_command("Exiting...")
-                    time.sleep(0.05)
-                    _UPDATE_THREAD_STOPPED = True
-                    appearance_changed_event.set()
-                    update_display_thread.join()
+                log.log_command("Exiting...")
+                time.sleep(0.05)
+                _UPDATE_THREAD_STOPPED = True
+                appearance_changed_event.set()
+                update_display_thread.join()
         log.log_message("Program stopped.")
         for runner in runners:
             runner.pause()
