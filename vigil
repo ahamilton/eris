@@ -513,6 +513,10 @@ class Log:
     def log_command(self, message, timestamp=None):
         self.log_message(message, char_style=Log.GREEN_STYLE)
 
+    def delete_log_file(self):
+        with contextlib.suppress(FileNotFoundError):
+            os.remove(Log.LOG_PATH)
+
     def appearance_min(self):
         appearance = self._appearance_cache
         if appearance is None:
@@ -957,6 +961,7 @@ def main(root_path, is_being_tested=False):
         log = screen._log
         log._appearance_changed_event = appearance_changed_event
         summary.sync_with_filesystem()
+    log.delete_log_file()
     log.log_message("Program started.")
     jobs_added_event.set()
 
