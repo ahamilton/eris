@@ -14,6 +14,7 @@ Todo
 - Cache tools._python_version.
 - Determine if perl files are perl5 or perl6.
 - Add bandit tool for python.
+- Add page up and page down to the summary.
 
 
 Done

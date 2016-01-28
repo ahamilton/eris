@@ -850,8 +850,8 @@ class Runner:
                     summary.completed_total += 1
                 if summary.result_total == summary.completed_total:
                     log.log_message("All results are up to date.")
-                if self.is_being_tested and self.result.tool == tools.metadata:
-                    os.kill(os.getpid(), signal.SIGINT)
+                    if self.is_being_tested:
+                        os.kill(os.getpid(), signal.SIGINT)
             jobs_added_event.clear()
 
     def pause(self):
