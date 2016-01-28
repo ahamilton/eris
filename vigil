@@ -261,6 +261,9 @@ def change_background(str_, new_background):
     return termstr.TermStr(str_).transform_style(change_background_style)
 
 
+UP, DOWN, LEFT, RIGHT = (0, -1), (0, 1), (-1, 0), (1, 0)
+
+
 class Summary:
 
     def __init__(self, root_path, jobs_added_event):
@@ -407,7 +410,8 @@ class Summary:
         x, y = self.cursor_position()
         return self._column[y][x]
 
-    def _move_cursor(self, dx, dy):
+    def _move_cursor(self, vector):
+        dx, dy = vector
         if dy == 0:
             x, y = self.cursor_position()
             self._cursor_position = ((x + dx) % len(self._column[y]), y)
@@ -418,24 +422,24 @@ class Summary:
             raise ValueError
 
     def cursor_right(self):
-        self._move_cursor(1, 0)
+        self._move_cursor(RIGHT)
 
     def cursor_left(self):
-        self._move_cursor(-1, 0)
+        self._move_cursor(LEFT)
 
     def cursor_up(self):
-        self._move_cursor(0, -1)
+        self._move_cursor(UP)
 
     def cursor_down(self):
-        self._move_cursor(0, 1)
+        self._move_cursor(DOWN)
 
     def cursor_page_up(self):
         view_width, view_height = self._view_widget.portal.last_dimensions
-        self._move_cursor(0, -(view_height - 1))
+        self._move_cursor((0, -(view_height - 1)))
 
     def cursor_page_down(self):
         view_width, view_height = self._view_widget.portal.last_dimensions
-        self._move_cursor(0, view_height - 1)
+        self._move_cursor((0, view_height - 1))
 
     def _issue_generator(self):
         x, y = self.cursor_position()
@@ -665,32 +669,35 @@ class Screen:
     def cursor_page_down(self):
         self._summary.cursor_page_down()
 
-    def _move_listing(self, dx, dy):
+    def _move_listing(self, vector):
+        dx, dy = vector
         selected_widget = self._summary.get_selection()
         x, y = selected_widget.scroll_position
         selected_widget.scroll_position = max(x + dx, 0), max(y + dy, 0)
 
-    def _page_listing(self, dx, dy):
+    def _page_listing(self, vector):
+        dx, dy = vector
         listing_width, listing_height = self._listing.widget.last_dimensions
-        self._move_listing(dx * (listing_width // 2), dy * (listing_height // 2))
+        self._move_listing((dx * (listing_width // 2),
+                            dy * (listing_height // 2)))
 
     def listing_up(self):
-        self._move_listing(0, -1)
+        self._move_listing(UP)
 
     def listing_down(self):
-        self._move_listing(0, 1)
+        self._move_listing(DOWN)
 
     def listing_right(self):
-        self._page_listing(1, 0)
+        self._page_listing(RIGHT)
 
     def listing_left(self):
-        self._page_listing(-1, 0)
+        self._page_listing(LEFT)
 
     def listing_page_up(self):
-        self._page_listing(0, -1)
+        self._page_listing(UP)
 
     def listing_page_down(self):
-        self._page_listing(0, 1)
+        self._page_listing(DOWN)
 
     def move_to_next_issue(self):
         self._summary.move_to_next_issue()
