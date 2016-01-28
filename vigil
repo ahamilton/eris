@@ -24,8 +24,8 @@ e.g. # vigil my_project
 
 Keys:
   *h - Show the help screen. (toggle)
-  *d, *c, *j, *k or arrow keys or mouse click - Move the cursor.
-  *D, *C, *J, *K or page up, page down, home, end or the mouse wheel -
+  *d, *c, *j, *k, *f, *v or arrow keys or mouse click - Move the cursor.
+  *D, *C, *J, *K, *F, *V or page up, page down, home, end or the mouse wheel -
       Scroll the result pane.
   *t - Turn the result pane to portrait or landscape orientation. (toggle)
   *l - Show the activity log. (toggle)
@@ -429,6 +429,14 @@ class Summary:
     def cursor_down(self):
         self._move_cursor(0, 1)
 
+    def cursor_page_up(self):
+        view_width, view_height = self._view_widget.portal.last_dimensions
+        self._move_cursor(0, -(view_height - 1))
+
+    def cursor_page_down(self):
+        view_width, view_height = self._view_widget.portal.last_dimensions
+        self._move_cursor(0, view_height - 1)
+
     def _issue_generator(self):
         x, y = self.cursor_position()
         for index in range(len(self._column) + 1):
@@ -651,13 +659,20 @@ class Screen:
     def cursor_left(self):
         self._summary.cursor_left()
 
+    def cursor_page_up(self):
+        self._summary.cursor_page_up()
+
+    def cursor_page_down(self):
+        self._summary.cursor_page_down()
+
     def _move_listing(self, dx, dy):
-        listing_width, listing_height = self._listing.widget.last_dimensions
         selected_widget = self._summary.get_selection()
         x, y = selected_widget.scroll_position
-        selected_widget.scroll_position = \
-            (max(x + dx * (listing_width // 2), 0),
-             max(y + dy * (listing_height // 2), 0))
+        selected_widget.scroll_position = max(x + dx, 0), max(y + dy, 0)
+
+    def _page_listing(self, dx, dy):
+        listing_width, listing_height = self._listing.widget.last_dimensions
+        self._move_listing(dx * (listing_width // 2), dy * (listing_height // 2))
 
     def listing_up(self):
         self._move_listing(0, -1)
@@ -666,10 +681,16 @@ class Screen:
         self._move_listing(0, 1)
 
     def listing_right(self):
-        self._move_listing(1, 0)
+        self._page_listing(1, 0)
 
     def listing_left(self):
-        self._move_listing(-1, 0)
+        self._page_listing(-1, 0)
+
+    def listing_page_up(self):
+        self._page_listing(0, -1)
+
+    def listing_page_down(self):
+        self._page_listing(0, 1)
 
     def move_to_next_issue(self):
         self._summary.move_to_next_issue()
@@ -759,7 +780,7 @@ class Screen:
             self._appearance_changed_event.set()
 
     _STATUS_BAR = _highlight_chars(
-        " *help *quit *d,*c,*j,*k:navigate *turn *log *edit *next *pause"
+        " *help *quit *d,*c,*j,*k,*f,*v:navigate *turn *log *edit *next *pause"
         " *order *statuses", Log.GREEN_STYLE)
 
     @functools.lru_cache(maxsize=2)
@@ -804,8 +825,10 @@ class Screen:
         ({"t"}, toggle_window_orientation), ({"l"}, toggle_log),
         ({"h"}, toggle_help), ({"d", "up"}, cursor_up),
         ({"c", "down"}, cursor_down), ({"j", "left"}, cursor_left),
-        ({"k", "right"}, cursor_right), ({"D", "page up"}, listing_up),
-        ({"C", "page down"}, listing_down), ({"J", "home"}, listing_left),
+        ({"k", "right"}, cursor_right), ({"v"}, cursor_page_down),
+        ({"f"}, cursor_page_up), ({"F", "page up"}, listing_page_up),
+        ({"V", "page down"}, listing_page_down), ({"D"}, listing_up),
+        ({"C"}, listing_down), ({"J", "home"}, listing_left),
         ({"K", "end"}, listing_right), ({"o"}, toggle_sort),
         ({"n"}, move_to_next_issue), ({"N"}, move_to_next_issue_of_tool),
         ({"e"}, edit_file), ({"s"}, toggle_status_style), ({"q"}, quit_),

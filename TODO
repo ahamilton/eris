@@ -14,7 +14,6 @@ Todo
 - Cache tools._python_version.
 - Determine if perl files are perl5 or perl6.
 - Add bandit tool for python.
-- Add page up and page down to the summary.
 
 
 Done
@@ -158,6 +157,7 @@ Done
 - Statuses' pretty names and variable names don't match.
 - Removed the 'watching' toggle.
   <- Its not really necessary, now that you can pause.
+- Add page up and page down to the summary.
 
 A-syntax, B-tests, C-auto docs, D-lint, E-coverage, F-profile, G-tidy, H-import deps
              A B C D E F G H
