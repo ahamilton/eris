@@ -1,5 +1,7 @@
 Current
 - Within the sandbox sudo is not working for tools.
+- If vigil is started with eveything up-to-date the up-to-date message never
+  appears.
 
 
 Current (tool related)
