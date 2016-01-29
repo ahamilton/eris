@@ -18,9 +18,14 @@ to date.
 The reports are cached in a directory ".vigil" under the target directory.
 
 
-Usage: vigil <root_path>
+Usage:
+  vigil <root_path>
 
-e.g. # vigil my_project
+Example:
+  # vigil my_project
+
+Options:
+  -h, --help  Show this screen and exit.
 
 Keys:
   *h - Show the help screen. (toggle)
@@ -55,6 +60,7 @@ import threading
 import time
 import traceback
 
+import docopt
 import pyinotify
 
 import fill3
@@ -1055,13 +1061,11 @@ def manage_cache(root_path):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) == 2:
-        subprocess.call(["sudo", "-p", "Vigil needs sudo to create the filesy"
-                         "stem sandbox...  [sudo] password for %u: ", "true"])
-        root_path = os.path.abspath(sys.argv[1])
-        with terminal.console_title("vigil: " + os.path.basename(root_path)):
-            manage_cache(root_path)
-            with chdir(root_path):  # FIX: Don't change directory if possible.
-                main(root_path)
-    else:
-        print(_get_help_text())
+    arguments = docopt.docopt(__doc__.replace("*", ""))
+    root_path = os.path.abspath(arguments["<root_path>"])
+    subprocess.call(["sudo", "-p", "Vigil needs sudo to create the filesy"
+                     "stem sandbox...  [sudo] password for %u: ", "true"])
+    with terminal.console_title("vigil: " + os.path.basename(root_path)):
+        manage_cache(root_path)
+        with chdir(root_path):  # FIX: Don't change directory if possible.
+            main(root_path)
