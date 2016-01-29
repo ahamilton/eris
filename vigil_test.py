@@ -41,7 +41,7 @@ class LruCacheWithEvictionTestCase(unittest.TestCase):
         self._assert_cache(a, 1, 2, 2)
 
 
-_DIMENSIONS = (40, 40)
+_DIMENSIONS = (100, 60)
 
 
 def _widget_to_string(widget, dimensions=_DIMENSIONS):
