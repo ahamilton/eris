@@ -20,6 +20,7 @@ The reports are cached in a directory ".vigil" under the target directory.
 
 Usage:
   vigil [options] <root_path>
+  vigil -h | --help
 
 Example:
   # vigil my_project
@@ -1069,7 +1070,11 @@ def manage_cache(root_path):
 
 
 if __name__ == "__main__":
-    arguments = docopt.docopt(__doc__.replace("*", ""))
+    arguments = docopt.docopt(__doc__.replace("*", ""), help=False)
+    show_help = arguments["--help"]
+    if show_help:
+        print(_get_help_text())
+        sys.exit(0)
     root_path = os.path.abspath(arguments["<root_path>"])
     is_sandboxed = not arguments["--no-sandbox"]
     if is_sandboxed:
