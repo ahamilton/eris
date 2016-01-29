@@ -19,13 +19,14 @@ The reports are cached in a directory ".vigil" under the target directory.
 
 
 Usage:
-  vigil <root_path>
+  vigil [options] <root_path>
 
 Example:
   # vigil my_project
 
 Options:
-  -h, --help  Show this screen and exit.
+  -h --help          Show this screen and exit.
+  -n --no-sandbox    Don't prevent changes to the filesystem.
 
 Keys:
   *h - Show the help screen. (toggle)
@@ -944,7 +945,7 @@ def update_screen(main_widget, appearance_changed_event):
         fill3.patch_screen(main_widget)
 
 
-def main(root_path, is_being_tested=False):
+def main(root_path, is_sandboxed=True, is_being_tested=False):
     global _UPDATE_THREAD_STOPPED
     loop = asyncio.get_event_loop()
     jobs_added_event = threading.Event()
@@ -978,13 +979,19 @@ def main(root_path, is_being_tested=False):
     watch_manager_fd = add_watch_manager_to_mainloop(
         root_path, loop, on_filesystem_change, is_path_excluded)
     screen.runners = runners = []
-    sandbox_temp_dir = tempfile.mkdtemp()
-    sandbox = sandbox_fs.SandboxFs(sandbox_temp_dir)
+    if is_sandboxed:
+        sandbox_temp_dir = tempfile.mkdtemp()
+        sandbox = sandbox_fs.SandboxFs(sandbox_temp_dir)
+    else:
+        sandbox = None
 
     def start_runners():
-        log.log_message("Making filesystem sandbox...")
-        sandbox.mount()
-        log.log_message("Sandbox made.")
+        if is_sandboxed:
+            log.log_message("Making filesystem sandbox...")
+            sandbox.mount()
+            log.log_message("Sandbox made.")
+        else:
+            log.log_message("Running without the filesystem sandbox...")
         log.log_message("Starting workers...")
         worker_total = multiprocessing.cpu_count() * 2
         for index in range(worker_total):
@@ -1032,8 +1039,9 @@ def main(root_path, is_being_tested=False):
         open_compressed = functools.partial(gzip.open, compresslevel=1)
         dump_pickle_safe(screen, pickle_path, open=open_compressed)
     finally:
-        sandbox.umount()
-        os.rmdir(sandbox_temp_dir)
+        if is_sandboxed:
+            sandbox.umount()
+            os.rmdir(sandbox_temp_dir)
         loop.remove_reader(watch_manager_fd)
 
 
@@ -1063,9 +1071,11 @@ def manage_cache(root_path):
 if __name__ == "__main__":
     arguments = docopt.docopt(__doc__.replace("*", ""))
     root_path = os.path.abspath(arguments["<root_path>"])
-    subprocess.call(["sudo", "-p", "Vigil needs sudo to create the filesy"
-                     "stem sandbox...  [sudo] password for %u: ", "true"])
+    is_sandboxed = not arguments["--no-sandbox"]
+    if is_sandboxed:
+        subprocess.call(["sudo", "-p", "Vigil needs sudo to create the filesy"
+                         "stem sandbox...  [sudo] password for %u: ", "true"])
     with terminal.console_title("vigil: " + os.path.basename(root_path)):
         manage_cache(root_path)
         with chdir(root_path):  # FIX: Don't change directory if possible.
-            main(root_path)
+            main(root_path, is_sandboxed)
