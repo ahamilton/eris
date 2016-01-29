@@ -1076,6 +1076,12 @@ if __name__ == "__main__":
         print(_get_help_text())
         sys.exit(0)
     root_path = os.path.abspath(arguments["<root_path>"])
+    if not os.path.exists(root_path):
+        print("File does not exist:", root_path)
+        sys.exit(1)
+    if not os.path.isdir(root_path):
+        print("File is not a directory:", root_path)
+        sys.exit(1)
     is_sandboxed = not arguments["--no-sandbox"]
     if is_sandboxed:
         subprocess.call(["sudo", "-p", "Vigil needs sudo to create the filesy"
