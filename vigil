@@ -443,11 +443,15 @@ class Summary:
 
     def cursor_page_up(self):
         view_width, view_height = self._view_widget.portal.last_dimensions
-        self._move_cursor((0, -(view_height - 1)))
+        x, y = self._cursor_position
+        jump = view_height - 1
+        self._cursor_position = (x, max(y - jump, 0))
 
     def cursor_page_down(self):
         view_width, view_height = self._view_widget.portal.last_dimensions
-        self._move_cursor((0, view_height - 1))
+        x, y = self._cursor_position
+        jump = view_height - 1
+        self._cursor_position = (x, min(y + jump, len(self._column) - 1))
 
     def _issue_generator(self):
         x, y = self.cursor_position()
