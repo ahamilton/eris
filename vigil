@@ -19,7 +19,7 @@ The reports are cached in a directory ".vigil" under the target directory.
 
 
 Usage:
-  vigil [options] <root_path>
+  vigil [options] <directory>
   vigil -h | --help
 
 Example:
@@ -1088,7 +1088,7 @@ if __name__ == "__main__":
     if show_help:
         print(_get_help_text())
         sys.exit(0)
-    root_path = os.path.abspath(arguments["<root_path>"])
+    root_path = os.path.abspath(arguments["<directory>"])
     if not os.path.exists(root_path):
         print("File does not exist:", root_path)
         sys.exit(1)

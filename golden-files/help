@@ -13,7 +13,7 @@
 │                                                                                                  │
 │                                                                                                  │
 │Usage:                                                                                            │
-│  vigil [options] <root_path>                                                                     │
+│  vigil [options] <directory>                                                                     │
 │  vigil -h | --help                                                                               │
 │                                                                                                  │
 │Example:                                                                                          │
