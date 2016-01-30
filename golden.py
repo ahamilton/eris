@@ -15,7 +15,7 @@ def _accept_actual(failed):
     for actual_str, golden_path in failed:
         with open(golden_path, "w") as golden_file:
             golden_file.write(actual_str)
-        print("Changed golden file: %s" % golden_path)
+        print("Wrote golden file: %s" % golden_path)
 
 
 def _run_meld_gui(failed):
@@ -41,13 +41,21 @@ _FAILED = set()
 
 
 def assertGolden(actual, golden_path):
-    with open(golden_path, "r") as golden_file:
-        expected = golden_file.read()
+    try:
+        with open(golden_path, "r") as golden_file:
+            expected = golden_file.read()
+    except FileNotFoundError:
+        expected = None
     if actual != expected:
         _FAILED.add((actual, golden_path))
-        raise unittest.TestCase.failureException(
-            'Output does not match golden file: %r\nUse "--diff" or'
-            ' "--accept" to update the golden file.' % golden_path)
+        if expected is None:
+            raise unittest.TestCase.failureException(
+                'The golden file does not exist: %r\nUse "--diff" or'
+                ' "--accept" to create the golden file.' % golden_path)
+        else:
+            raise unittest.TestCase.failureException(
+                'Output does not match golden file: %r\nUse "--diff" or'
+                ' "--accept" to update the golden file.' % golden_path)
 
 
 def main():
