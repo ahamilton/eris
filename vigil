@@ -696,6 +696,8 @@ class Screen:
                 selected_widget.result.appearance_min())
             listing_width, listing_height = (self._listing.widget.
                                              last_dimensions)
+            listing_width -= 1  # scrollbars
+            listing_height -= 1
             x = min(x + dx, max(widget_width - listing_width, 0))
             y = min(y + dy, max(widget_height - listing_height, 0))
         selected_widget.scroll_position = x, y
