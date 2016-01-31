@@ -39,7 +39,7 @@ Keys:
   *n - Move to the next issue.
   *N - Move to the next issue of the current tool.
   *o - Order files by type, or by directory location. (toggle)
-  *p - Pause work. (toggle)
+  *p - Pause workers. (toggle)
   *s - Change the appearance of result statuses. (toggle)
   *q - Quit.
 """
