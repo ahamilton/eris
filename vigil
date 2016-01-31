@@ -26,8 +26,10 @@ Example:
   # vigil my_project
 
 Options:
-  -h --help          Show this screen and exit.
-  -n --no-sandbox    Don't prevent changes to the filesystem.
+  -h --help                  Show this screen and exit.
+  -n --no-sandbox            Don't prevent changes to the filesystem.
+  -w COUNT --workers=COUNT   The number of processes working in parallel.    
+                             By default it is twice the number of cpus.
 
 Keys:
   *h - Show the help screen. (toggle)
@@ -961,7 +963,8 @@ def update_screen(main_widget, appearance_changed_event):
         fill3.patch_screen(main_widget)
 
 
-def main(root_path, is_sandboxed=True, is_being_tested=False):
+def main(root_path, worker_count=multiprocessing.cpu_count()*2,
+         is_sandboxed=True, is_being_tested=False):
     global _UPDATE_THREAD_STOPPED
     loop = asyncio.get_event_loop()
     jobs_added_event = threading.Event()
@@ -1009,10 +1012,9 @@ def main(root_path, is_sandboxed=True, is_being_tested=False):
         else:
             log.log_message("Running without the filesystem sandbox...")
         log.log_message("Starting workers...")
-        worker_total = multiprocessing.cpu_count() * 2
-        for index in range(worker_total):
+        for index in range(worker_count):
             runners.append(Runner(sandbox, screen._is_paused, is_being_tested))
-        log.log_message("Workers started. (%s)" % worker_total)
+        log.log_message("Workers started. (%s)" % worker_count)
         for runner in runners:
             args = (summary, log, jobs_added_event, appearance_changed_event)
             threading.Thread(target=runner.job_runner, args=args,
@@ -1084,8 +1086,17 @@ def manage_cache(root_path):
         open(timestamp_path, "w").close()
 
 
-if __name__ == "__main__":
+def process_arguments():
     arguments = docopt.docopt(__doc__.replace("*", ""), help=False)
+    try:
+        worker_count = (int(arguments["--workers"]) if arguments["--workers"]
+                        is not None else multiprocessing.cpu_count() * 2)
+    except ValueError:
+        print("Please supply a number for --workers.")
+        sys.exit(1)
+    if worker_count == 0:
+        print("There must be at least one worker.")
+        sys.exit(1)
     show_help = arguments["--help"]
     if show_help:
         print(_get_help_text())
@@ -1098,10 +1109,15 @@ if __name__ == "__main__":
         print("File is not a directory:", root_path)
         sys.exit(1)
     is_sandboxed = not arguments["--no-sandbox"]
+    return root_path, worker_count, is_sandboxed
+
+
+if __name__ == "__main__":
+    root_path, worker_count, is_sandboxed = process_arguments()
     if is_sandboxed:
         subprocess.call(["sudo", "-p", "Vigil needs sudo to create the filesy"
                          "stem sandbox...  [sudo] password for %u: ", "true"])
     with terminal.console_title("vigil: " + os.path.basename(root_path)):
         manage_cache(root_path)
         with chdir(root_path):  # FIX: Don't change directory if possible.
-            main(root_path, is_sandboxed)
+            main(root_path, worker_count, is_sandboxed)

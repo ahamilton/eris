@@ -20,8 +20,10 @@
 │  # vigil my_project                                                                              │
 │                                                                                                  │
 │Options:                                                                                          │
-│  -h --help          Show this screen and exit.                                                   │
-│  -n --no-sandbox    Don't prevent changes to the filesystem.                                     │
+│  -h --help                  Show this screen and exit.                                           │
+│  -n --no-sandbox            Don't prevent changes to the filesystem.                             │
+│  -w COUNT --workers=COUNT   The number of processes working in parallel.                         │
+│                             By default it is twice the number of cpus.                           │
 │                                                                                                  │
 │Keys:                                                                                             │
 │  [0m[38;2;0;255;0m[48;2;0;0;0mh[0m[38;2;255;255;255m[48;2;0;0;0m - Show the help screen. (toggle)                                                              │
@@ -33,7 +35,7 @@
 │  [0m[38;2;0;255;0m[48;2;0;0;0mn[0m[38;2;255;255;255m[48;2;0;0;0m - Move to the next issue.                                                                     │
 │  [0m[38;2;0;255;0m[48;2;0;0;0mN[0m[38;2;255;255;255m[48;2;0;0;0m - Move to the next issue of the current tool.                                                 │
 │  [0m[38;2;0;255;0m[48;2;0;0;0mo[0m[38;2;255;255;255m[48;2;0;0;0m - Order files by type, or by directory location. (toggle)                                     │
-│  [0m[38;2;0;255;0m[48;2;0;0;0mp[0m[38;2;255;255;255m[48;2;0;0;0m - Pause work. (toggle)                                                                        │
+│  [0m[38;2;0;255;0m[48;2;0;0;0mp[0m[38;2;255;255;255m[48;2;0;0;0m - Pause workers. (toggle)                                                                     │
 │  [0m[38;2;0;255;0m[48;2;0;0;0ms[0m[38;2;255;255;255m[48;2;0;0;0m - Change the appearance of result statuses. (toggle)                                          │
 │  [0m[38;2;0;255;0m[48;2;0;0;0mq[0m[38;2;255;255;255m[48;2;0;0;0m - Quit.                                                                                       │
 │                                                                                                  │
@@ -46,8 +48,6 @@
 │  [0m[38;2;255;255;0m[48;2;0;0;0m [0m[38;2;255;255;255m[48;2;0;0;0m Paused                                                                                       │
 │  .  Pending                                                                                      │
 │  [0m[38;2;255;0;0m[48;2;0;0;0mE [0m[38;2;255;255;255m[48;2;0;0;0m Error                                                                                        │
-│                                                                                                  │
-│                                                                                                  │
 │                                                                                                  │
 │                                                                                                  │
 │                                                                                                  │

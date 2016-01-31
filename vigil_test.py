@@ -250,7 +250,8 @@ class MainTestCase(unittest.TestCase):
             vigil.manage_cache(root_path)
             with vigil.chdir(root_path):
                 with contextlib.redirect_stdout(io.StringIO()):
-                    vigil.main(root_path, is_being_tested=True)
+                    vigil.main(root_path, worker_count=2, is_sandboxed=True,
+                               is_being_tested=True)
                 for file_name in ["summary.pickle", "creation_time", "log",
                                   "foo-metadata", "foo-contents"]:
                     self.assertTrue(os.path.exists(".vigil/" + file_name))
