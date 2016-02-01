@@ -1,5 +1,6 @@
 Current
 - Within the sandbox sudo is not working for tools.
+- python-coverage is failing in the sub-directories of a project.
 
 
 Current (tool related)
