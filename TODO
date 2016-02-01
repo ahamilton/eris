@@ -158,6 +158,8 @@ Done
 - Removed the 'watching' toggle.
   <- Its not really necessary, now that you can pause.
 - Add page up and page down to the summary.
+- Don't let the user scroll indefinately below the end of the page.
+- Add command line options, e.g. -h
 
 A-syntax, B-tests, C-auto docs, D-lint, E-coverage, F-profile, G-tidy, H-import deps
              A B C D E F G H
@@ -250,8 +252,6 @@ Ideas
 - Let the mouse click the filenames.  Try to show a result from the same type
   of tool.
 - Check if class Entry is really working correctly as a collections.UserList.
-- Don't let the user scroll indefinately below the end of the page.
-- Add command line options, e.g. -h
 - Docstrings
 
 
