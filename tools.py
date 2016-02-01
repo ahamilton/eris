@@ -80,7 +80,7 @@ def get_ls_color_codes():
 
 
 LS_COLOR_CODES = get_ls_color_codes()
-TIMEOUT = "60"
+TIMEOUT = 60
 
 
 def fix_input(input_):
@@ -88,12 +88,16 @@ def fix_input(input_):
     return input_str.replace("\t", " " * 4)
 
 
-def _do_command(command, **kwargs):
+def _do_command(command, timeout=None, **kwargs):
     stdout, stderr = "", ""
     with contextlib.suppress(subprocess.CalledProcessError):
         process = subprocess.Popen(command, stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE, **kwargs)
-        stdout, stderr = process.communicate()
+        try:
+            stdout, stderr = process.communicate(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            raise
     return fix_input(stdout), fix_input(stderr), process.returncode
 
 
@@ -266,7 +270,7 @@ def python_unittests(path):
     if str(path).endswith("_test.py"):
         python_version = _python_version(path)
         cmd = [path] if _has_shebang_line(path) else [python_version, path]
-        stdout, stderr, returncode = _do_command(["timeout", TIMEOUT] + cmd)
+        stdout, stderr, returncode = _do_command(cmd, timeout=TIMEOUT)
         markup = pygments.lex(stderr, _python_console_lexer)
         status = Status.ok if returncode == 0 else Status.problem
         native_style = pygments.styles.get_style_by_name("native")
@@ -281,8 +285,7 @@ def pydoc(path):
     pydoc_exe = "pydoc3" if _python_version(path) == "python3" else "pydoc"
     status, output = Status.normal, ""
     try:
-        output = subprocess.check_output(
-            ["timeout", TIMEOUT, pydoc_exe, path])
+        output = subprocess.check_output([pydoc_exe, path], timeout=TIMEOUT)
         output = fix_input(output)
     except subprocess.CalledProcessError:
         status = Status.not_applicable
@@ -308,7 +311,7 @@ def python_coverage(path):
             env = os.environ.copy()
             env["COVERAGE_FILE"] = coverage_path
             stdout, *rest = _do_command(
-                ["timeout", TIMEOUT, python_exe, "run", test_path], env=env)
+                [python_exe, "run", test_path], env=env, timeout=TIMEOUT)
             stdout, *rest = _do_command(
                 [python_exe, "annotate", "--directory", temp_dir,
                  os.path.normpath(path)], env=env)
@@ -322,9 +325,8 @@ python_coverage.dependencies = {"python-coverage", "python3-coverage"}
 
 
 def python_profile(path):
-    stdout, *rest = _do_command(["timeout", TIMEOUT, _python_version(path),
-                                 "-m", "cProfile", "--sort=cumulative",
-                                 path])
+    stdout, *rest = _do_command([_python_version(path), "-m", "cProfile",
+                                 "--sort=cumulative", path], timeout=TIMEOUT)
     return Status.normal, fill3.Text(stdout)
 python_profile.dependencies = {"python", "python3"}
 
@@ -647,6 +649,8 @@ def _get_python_console_lexer():
 def run_tool_no_error(path, tool):
     try:
         status, result = tool(path)
+    except subprocess.TimeoutExpired:
+        status, result = Status.error, fill3.Text("Timed out")
     except:
         # Maybe use code.InteractiveInterpreter.showtraceback() ?
         tokens = pygments.lex(traceback.format_exc(),
