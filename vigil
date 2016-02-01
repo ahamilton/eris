@@ -42,6 +42,7 @@ Keys:
   *N - Move to the next issue of the current tool.
   *o - Order files by type, or by directory location. (toggle)
   *p - Pause workers. (toggle)
+  *r - Refresh the currently selected report.
   *s - Change the appearance of result statuses. (toggle)
   *q - Quit.
 """
@@ -271,6 +272,10 @@ def change_background(str_, new_background):
     return termstr.TermStr(str_).transform_style(change_background_style)
 
 
+def in_green(str_):
+    return termstr.TermStr(str_, termstr.CharStyle(termstr.Color.green))
+
+
 UP, DOWN, LEFT, RIGHT = (0, -1), (0, 1), (-1, 0), (1, 0)
 
 
@@ -493,6 +498,20 @@ class Summary:
         self._paths.sort(key=key_func)
         self.is_directory_sort = is_directory_sort
         self.sync_with_filesystem(sync_paths=False)
+
+    def refresh(self, log):
+        selection = self.get_selection()
+        if selection.status not in {tools.Status.running, tools.Status.paused,
+                                    tools.Status.pending}:
+            tool_name = tools._tool_name_colored(selection.tool, selection.path)
+            path_colored = tools._path_colored(selection.path)
+            log.log_message([in_green("Refreshing "), tool_name,
+                             in_green(" result of "), path_colored,
+                             in_green("...")])
+            selection.reset()
+            self.closest_placeholder_generator = None
+            self._jobs_added_event.set()
+            self.completed_total -= 1
 
 
 class Log:
@@ -737,7 +756,8 @@ class Screen:
     def edit_file(self):
         path = self._summary.get_selection().path
         path_colored = tools._path_colored(path)
-        self._log.log_message("Editing " + path_colored + " in emacs.")
+        self._log.log_message([in_green("Editing "), path_colored,
+                               in_green(" in emacs...")])
         subprocess.Popen(["emacsclient", path],
                          stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -764,6 +784,9 @@ class Screen:
 
     def quit_(self):
         raise KeyboardInterrupt
+
+    def refresh(self):
+        self._summary.refresh(self._log)
 
     def on_mouse_event(self, event):
         if event[0] not in ["mouse press", "mouse drag"]:
@@ -817,7 +840,7 @@ class Screen:
 
     _STATUS_BAR = _highlight_chars(
         " *help *quit *d,*c,*j,*k,*f,*v:navigate *turn *log *edit *next *pause"
-        " *order *statuses", Log.GREEN_STYLE)
+        " *order *refresh *statuses", Log.GREEN_STYLE)
 
     @functools.lru_cache(maxsize=2)
     def _get_status_bar_appearance(self, width, is_directory_sort, is_paused,
@@ -868,7 +891,7 @@ class Screen:
         ({"K", "end"}, listing_right), ({"o"}, toggle_sort),
         ({"n"}, move_to_next_issue), ({"N"}, move_to_next_issue_of_tool),
         ({"e"}, edit_file), ({"s"}, toggle_status_style), ({"q"}, quit_),
-        ({"p"}, toggle_pause)]
+        ({"p"}, toggle_pause), ({"r"}, refresh)]
 
 
 def get_cpu_temperature():
