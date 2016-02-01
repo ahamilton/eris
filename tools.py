@@ -41,6 +41,7 @@ class Status:
     running = 6
     pending = 7
     paused = 8
+    timed_out = 9
 
 
 _STATUS_COLORS = [(Status.ok, termstr.Color.green),
@@ -48,14 +49,17 @@ _STATUS_COLORS = [(Status.ok, termstr.Color.green),
                   (Status.normal, termstr.Color.white),
                   (Status.not_applicable, termstr.Color.grey_100),
                   (Status.running, termstr.Color.light_blue),
-                  (Status.paused, termstr.Color.yellow)]
+                  (Status.paused, termstr.Color.yellow),
+                  (Status.timed_out, termstr.Color.purple)]
 
 
 STATUS_MEANINGS = [
     (Status.normal, "Normal"), (Status.ok, "Ok"),
     (Status.problem, "Problem"), (Status.not_applicable, "Not applicable"),
     (Status.running, "Running"), (Status.paused, "Paused"),
-    (Status.pending, "Pending"), (Status.error, "Error")]
+    (Status.timed_out, "Timed out"), (Status.pending, "Pending"),
+    (Status.error, "Error")
+]
 _STATUS_TO_TERMSTR = {
     status: termstr.TermStr(" ", termstr.CharStyle(fg_color=color))
     for status, color in _STATUS_COLORS}
@@ -650,7 +654,7 @@ def run_tool_no_error(path, tool):
     try:
         status, result = tool(path)
     except subprocess.TimeoutExpired:
-        status, result = Status.error, fill3.Text("Timed out")
+        status, result = Status.timed_out, fill3.Text("Timed out")
     except:
         # Maybe use code.InteractiveInterpreter.showtraceback() ?
         tokens = pygments.lex(traceback.format_exc(),

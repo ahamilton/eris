@@ -29,6 +29,7 @@ class Color:
     grey_50 = (50, 50, 50)
     grey_100 = (100, 100, 100)
     light_blue = (90, 90, 255)
+    purple = (200, 0, 200)
 
 
 class CharStyle:
