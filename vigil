@@ -26,10 +26,12 @@ Example:
   # vigil my_project
 
 Options:
-  -h --help                  Show this screen and exit.
-  -n --no-sandbox            Don't prevent changes to the filesystem.
-  -w COUNT --workers=COUNT   The number of processes working in parallel.    
-                             By default it is twice the number of cpus.
+  -h --help                        Show this screen and exit.
+  -n --no-sandbox                  Don't prevent changes to the filesystem.
+  -w COUNT --workers=COUNT         The number of processes working in parallel.
+                                   By default it is twice the number of cpus.
+  -e "COMMAND" --editor="COMMAND"  The command used to start the editor, in
+                                   the *edit command. It may contain options.
 
 Keys:
   *h - Show the help screen. (toggle)
@@ -39,7 +41,7 @@ Keys:
       Scroll the result pane.
   *t - Turn the result pane to portrait or landscape orientation. (toggle)
   *l - Show the activity log. (toggle)
-  *e - Edit the current file in emacs. (Uses emacsclient)
+  *e - Edit the current file with a seperate editor. (-e or $EDITOR or $VISUAL)
   *n - Move to the next issue.
   *N - Move to the next issue of the current tool.
   *p - Pause workers. (toggle)
@@ -755,12 +757,17 @@ class Screen:
         self._summary.move_to_next_issue_of_tool()
 
     def edit_file(self):
-        path = self._summary.get_selection().path
-        path_colored = tools._path_colored(path)
-        self._log.log_message([in_green("Editing "), path_colored,
-                               in_green(" in emacs...")])
-        subprocess.Popen(["emacsclient", path],
-                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if self.editor_command is None:
+            self._log.log_message("An editor has not been defined. "
+                                  "See option -e.")
+        else:
+            path = self._summary.get_selection().path
+            path_colored = tools._path_colored(path)
+            self._log.log_message([in_green("Editing "), path_colored,
+                                   in_green(' with command: "%s"...'
+                                            % self.editor_command)])
+            subprocess.Popen("%s %s" % (self.editor_command, path), shell=True,
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def toggle_status_style(self):
         self._summary.toggle_status_style()
@@ -988,7 +995,7 @@ def update_screen(main_widget, appearance_changed_event):
 
 
 def main(root_path, worker_count=multiprocessing.cpu_count()*2,
-         is_sandboxed=True, is_being_tested=False):
+         is_sandboxed=True, editor_command=None, is_being_tested=False):
     global _UPDATE_THREAD_STOPPED
     loop = asyncio.get_event_loop()
     jobs_added_event = threading.Event()
@@ -1011,6 +1018,7 @@ def main(root_path, worker_count=multiprocessing.cpu_count()*2,
         log = screen._log
         log._appearance_changed_event = appearance_changed_event
         summary.sync_with_filesystem()
+    screen.editor_command = editor_command
     log.delete_log_file()
     log.log_message("Program started.")
     jobs_added_event.set()
@@ -1133,15 +1141,17 @@ def process_arguments():
         print("File is not a directory:", root_path)
         sys.exit(1)
     is_sandboxed = not arguments["--no-sandbox"]
-    return root_path, worker_count, is_sandboxed
+    editor_command = (arguments["--editor"] or os.environ.get("EDITOR", None)
+                      or os.environ.get("VISUAL", None))
+    return root_path, worker_count, is_sandboxed, editor_command
 
 
 if __name__ == "__main__":
-    root_path, worker_count, is_sandboxed = process_arguments()
+    root_path, worker_count, is_sandboxed, editor_command = process_arguments()
     if is_sandboxed:
         subprocess.call(["sudo", "-p", "Vigil needs sudo to create the filesy"
                          "stem sandbox...  [sudo] password for %u: ", "true"])
     with terminal.console_title("vigil: " + os.path.basename(root_path)):
         manage_cache(root_path)
         with chdir(root_path):  # FIX: Don't change directory if possible.
-            main(root_path, worker_count, is_sandboxed)
+            main(root_path, worker_count, is_sandboxed, editor_command)

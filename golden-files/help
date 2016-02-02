@@ -20,10 +20,12 @@
 │  # vigil my_project                                                                              │
 │                                                                                                  │
 │Options:                                                                                          │
-│  -h --help                  Show this screen and exit.                                           │
-│  -n --no-sandbox            Don't prevent changes to the filesystem.                             │
-│  -w COUNT --workers=COUNT   The number of processes working in parallel.                         │
-│                             By default it is twice the number of cpus.                           │
+│  -h --help                        Show this screen and exit.                                     │
+│  -n --no-sandbox                  Don't prevent changes to the filesystem.                       │
+│  -w COUNT --workers=COUNT         The number of processes working in parallel.                   │
+│                                   By default it is twice the number of cpus.                     │
+│  -e "COMMAND" --editor="COMMAND"  The command used to start the editor, in                       │
+│                                   the [0m[38;2;0;255;0m[48;2;0;0;0me[0m[38;2;255;255;255m[48;2;0;0;0mdit command. It may contain options.                      │
 │                                                                                                  │
 │Keys:                                                                                             │
 │  [0m[38;2;0;255;0m[48;2;0;0;0mh[0m[38;2;255;255;255m[48;2;0;0;0m - Show the help screen. (toggle)                                                              │
@@ -33,7 +35,7 @@
 │      Scroll the result pane.                                                                     │
 │  [0m[38;2;0;255;0m[48;2;0;0;0mt[0m[38;2;255;255;255m[48;2;0;0;0m - Turn the result pane to portrait or landscape orientation. (toggle)                         │
 │  [0m[38;2;0;255;0m[48;2;0;0;0ml[0m[38;2;255;255;255m[48;2;0;0;0m - Show the activity log. (toggle)                                                             │
-│  [0m[38;2;0;255;0m[48;2;0;0;0me[0m[38;2;255;255;255m[48;2;0;0;0m - Edit the current file in emacs. (Uses emacsclient)                                          │
+│  [0m[38;2;0;255;0m[48;2;0;0;0me[0m[38;2;255;255;255m[48;2;0;0;0m - Edit the current file with a seperate editor. (-e or $EDITOR or $VISUAL)                    │
 │  [0m[38;2;0;255;0m[48;2;0;0;0mn[0m[38;2;255;255;255m[48;2;0;0;0m - Move to the next issue.                                                                     │
 │  [0m[38;2;0;255;0m[48;2;0;0;0mN[0m[38;2;255;255;255m[48;2;0;0;0m - Move to the next issue of the current tool.                                                 │
 │  [0m[38;2;0;255;0m[48;2;0;0;0mp[0m[38;2;255;255;255m[48;2;0;0;0m - Pause workers. (toggle)                                                                     │
@@ -51,8 +53,6 @@
 │  [0m[38;2;200;0;200m[48;2;0;0;0m [0m[38;2;255;255;255m[48;2;0;0;0m Timed out                                                                                    │
 │  .  Pending                                                                                      │
 │  [0m[38;2;255;0;0m[48;2;0;0;0mE [0m[38;2;255;255;255m[48;2;0;0;0m Error                                                                                        │
-│                                                                                                  │
-│                                                                                                  │
 │                                                                                                  │
 │                                                                                                  │
 │                                                                                                  │
