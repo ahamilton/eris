@@ -1,16 +1,14 @@
 Todo
-- Have at least one golden test for every tool.
-  - Maybe could re-use linguist's example test files for many tools.
-- Boilerplate: Readme, usage, man page?, docs?, setup.py?, wheel?, __pkginfo__.py?
+- Test the tools.
 - Publish. pypi and github will do.
+  - docs?, setup.py?, wheel?, __pkginfo__.py?
   - Maybe also use cxfreeze, py2exe, pyrun or zipapp?  Is zipapp the standard way?
   - Use cookiecutter?
   - Need to use conventional version numbers for pypi. See pep0440.
-- Add ESC as an alternative to 'q' for quit. If looking at Help, ESC should just
-  exit the help screen.
+
+
+Todo (tool related)
 - Report on python doctests. (also coverage of)
-- Treat any compressed file as though it is uncompressed. But the metadata tool
-  should still report on the original compressed file.
 - Cache tools._python_version.
 - Determine if perl files are perl5 or perl6.
 - Add bandit tool for python.
@@ -160,6 +158,8 @@ Done
 - Add page up and page down to the summary.
 - Don't let the user scroll indefinately below the end of the page.
 - Add command line options, e.g. -h
+- Boilerplate: Readme, usage
+
 
 A-syntax, B-tests, C-auto docs, D-lint, E-coverage, F-profile, G-tidy, H-import deps
              A B C D E F G H
@@ -253,6 +253,16 @@ Ideas
   of tool.
 - Check if class Entry is really working correctly as a collections.UserList.
 - Docstrings
+- Add ESC as an alternative to 'q' for quit. If looking at Help, ESC should just
+  exit the help screen.
+  <- Can't do this easily right now with urwid. Maybe do it later.
+- Treat any compressed file as though it is uncompressed. But the metadata tool
+  should still report on the original compressed file.
+  <- This is not very common, a nice to have. Its not obvious how to always have it
+     without always needing the sandbox.
+- Have command line options for more things? timeout? worker's nice priority level?
+  editor? pygment syntax theme? Compress the cache? Ignore which paths? Log to disk?
+  The cache path?
 
 
 Shelved
