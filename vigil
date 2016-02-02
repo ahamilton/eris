@@ -1116,7 +1116,7 @@ def process_arguments():
         worker_count = (int(arguments["--workers"]) if arguments["--workers"]
                         is not None else multiprocessing.cpu_count() * 2)
     except ValueError:
-        print("Please supply a number for --workers.")
+        print("--workers requires a number.")
         sys.exit(1)
     if worker_count == 0:
         print("There must be at least one worker.")
