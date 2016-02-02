@@ -33,18 +33,19 @@ Options:
 
 Keys:
   *h - Show the help screen. (toggle)
+  *q - Quit.
   *d, *c, *j, *k, *f, *v or arrow keys or mouse click - Move the cursor.
   *D, *C, *J, *K, *F, *V or page up, page down, home, end or the mouse wheel -
       Scroll the result pane.
   *t - Turn the result pane to portrait or landscape orientation. (toggle)
   *l - Show the activity log. (toggle)
+  *e - Edit the current file in emacs. (Uses emacsclient)
   *n - Move to the next issue.
   *N - Move to the next issue of the current tool.
-  *o - Order files by type, or by directory location. (toggle)
   *p - Pause workers. (toggle)
+  *o - Order files by type, or by directory location. (toggle)
   *r - Refresh the currently selected report.
   *s - Change the appearance of result statuses. (toggle)
-  *q - Quit.
 """
 
 
