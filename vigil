@@ -282,6 +282,26 @@ def in_green(str_):
 UP, DOWN, LEFT, RIGHT = (0, -1), (0, 1), (-1, 0), (1, 0)
 
 
+def directory_sort(path):
+    return (os.path.dirname(path), tools.splitext(path)[1],
+            os.path.basename(path))
+
+
+def type_sort(path):
+    return (tools.splitext(path)[1], os.path.dirname(path),
+            os.path.basename(path))
+
+
+def get_diff_stats(old_files, new_files):
+    old_names = set(name for name, ctime in old_files)
+    new_names = set(name for name, ctime in new_files)
+    added_count = len(new_names - old_names)
+    deleted_count = len(old_names - new_names)
+    same_count = len(new_names) - added_count
+    modified_count = same_count - len(old_files.intersection(new_files))
+    return added_count, deleted_count, modified_count
+
+
 class Summary:
 
     def __init__(self, root_path, jobs_added_event):
@@ -309,7 +329,7 @@ class Summary:
             self.__cursor_position = new_position
             self.closest_placeholder_generator = None
 
-    def sync_with_filesystem(self, sync_paths=True):
+    def sync_with_filesystem(self):
         x, y = self._cursor_position
         try:
             old_path = self.get_selection().path
@@ -317,13 +337,9 @@ class Summary:
             old_path = None
         new_column = fill3.Column([])
         new_cache = {}
-        if sync_paths:
-            paths = fix_paths(self._root_path,
-                              codebase_files(self._root_path))
-            self._paths = paths
-            self.sort(self.is_directory_sort)
-        else:
-            paths = self._paths
+        paths = fix_paths(self._root_path,
+                          codebase_files(self._root_path))
+        paths.sort(key=directory_sort if self.is_directory_sort else type_sort)
         jobs_added = False
         new_cursor_position = (0, 0)
         row_index = 0
@@ -332,16 +348,17 @@ class Summary:
         for path in paths:
             full_path = os.path.join(self._root_path, path)
             try:
-                key = (path, os.stat(full_path).st_ctime)
+                file_key = (path, os.stat(full_path).st_ctime)
             except FileNotFoundError:
                 continue
             if path == old_path:
                 new_cursor_position = (x, row_index)
             row = []
             for tool in tools.tools_for_path(path):
-                cache_key = (key, tool.__name__, tool.__code__.co_code)
-                if cache_key in self._cache:
-                    result = self._cache[cache_key]
+                tool_key = (tool.__name__, tool.__code__.co_code)
+                if (file_key in self._cache
+                    and tool_key in self._cache[file_key]):
+                    result = self._cache[file_key][tool_key]
                     result.tool = tool
                 else:
                     result = Result(path, tool)
@@ -349,7 +366,8 @@ class Summary:
                     all_results.add(result)
                 if result.is_completed:
                     completed_total += 1
-                new_cache[cache_key] = result
+                file_entry = new_cache.setdefault(file_key, {})
+                file_entry[tool_key] = result
                 row.append(result)
             new_column.append(Entry(path, row, self))
             row_index += 1
@@ -357,6 +375,7 @@ class Summary:
         max_width = max(len(row) for row in new_column)
         max_path_length = max(len(path) for path in paths) - len("./")
         deleted_results = self._all_results - all_results
+        stats = get_diff_stats(set(self._cache.keys()), set(new_cache.keys()))
         self._column, self._cache, self._cursor_position, self.result_total, \
             self.completed_total, self._max_width, self._max_path_length, \
             self.closest_placeholder_generator, self._all_results = (
@@ -367,6 +386,7 @@ class Summary:
         for result in deleted_results:
             with contextlib.suppress(FileNotFoundError):
                 os.remove(result.pickle_path)
+        return stats
 
     def placeholder_spiral(self):
         x, y = self.cursor_position()
@@ -487,20 +507,7 @@ class Summary:
 
     def toggle_status_style(self):
         self.is_status_simple = not self.is_status_simple
-        self.sync_with_filesystem(sync_paths=False)
-
-    def sort(self, is_directory_sort):
-        def directory_sort(path):
-            return (os.path.dirname(path), tools.splitext(path)[1],
-                    os.path.basename(path))
-
-        def type_sort(path):
-            return (tools.splitext(path)[1], os.path.dirname(path),
-                    os.path.basename(path))
-        key_func = directory_sort if is_directory_sort else type_sort
-        self._paths.sort(key=key_func)
-        self.is_directory_sort = is_directory_sort
-        self.sync_with_filesystem(sync_paths=False)
+        self.sync_with_filesystem()
 
     def refresh(self, log):
         selection = self.get_selection()
@@ -772,12 +779,12 @@ class Screen:
     def toggle_status_style(self):
         self._summary.toggle_status_style()
 
-    def toggle_sort(self):
-        new_sort = not self._summary.is_directory_sort
-        sort_order = ("directory then type" if new_sort
+    def toggle_order(self):
+        self._summary.is_directory_sort = not self._summary.is_directory_sort
+        sort_order = ("directory then type" if self._summary.is_directory_sort
                       else "type then directory")
         self._log.log_command("Ordering files by %s." % sort_order)
-        self._summary.sort(new_sort)
+        self._summary.sync_with_filesystem()
 
     def toggle_pause(self):
         self._is_paused = not self._is_paused
@@ -896,7 +903,7 @@ class Screen:
         ({"f"}, cursor_page_up), ({"F", "page up"}, listing_page_up),
         ({"V", "page down"}, listing_page_down), ({"D"}, listing_up),
         ({"C"}, listing_down), ({"J", "home"}, listing_left),
-        ({"K", "end"}, listing_right), ({"o"}, toggle_sort),
+        ({"K", "end"}, listing_right), ({"o"}, toggle_order),
         ({"n"}, move_to_next_issue), ({"N"}, move_to_next_issue_of_tool),
         ({"e"}, edit_file), ({"s"}, toggle_status_style), ({"q"}, quit_),
         ({"p"}, toggle_pause), ({"r"}, refresh)]
@@ -1024,8 +1031,8 @@ def main(root_path, worker_count=multiprocessing.cpu_count()*2,
     jobs_added_event.set()
 
     def on_filesystem_change():
-        log.log_message("Filesystem changed.")
-        summary.sync_with_filesystem()
+        log.log_message("Filesystem changed: %s added. %s deleted. %s modified" %
+                        summary.sync_with_filesystem())
         appearance_changed_event.set()
     watch_manager_fd = add_watch_manager_to_mainloop(
         root_path, loop, on_filesystem_change, is_path_excluded)
