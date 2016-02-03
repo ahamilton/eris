@@ -1002,6 +1002,16 @@ def update_screen(main_widget, appearance_changed_event):
         fill3.patch_screen(main_widget)
 
 
+def _filesystem_changed_message(added, deleted, modified):
+    def part(stat, text, color):
+        return termstr.TermStr("%2s %s." % (stat, text)).fg_color(
+            termstr.Color.grey_100 if stat == 0 else color)
+    parts = [part(added, "added", termstr.Color.green),
+             part(deleted, "deleted", termstr.Color.red),
+             part(modified, "modified", termstr.Color.light_blue)]
+    return "Filesystem changed: " + fill3.join(" ", parts)
+
+
 def main(root_path, worker_count=multiprocessing.cpu_count()*2,
          is_sandboxed=True, editor_command=None, is_being_tested=False):
     global _UPDATE_THREAD_STOPPED
@@ -1032,14 +1042,8 @@ def main(root_path, worker_count=multiprocessing.cpu_count()*2,
     jobs_added_event.set()
 
     def on_filesystem_change():
-        def part(stat, text, color):
-            return termstr.TermStr("%2s %s." % (stat, text)).fg_color(
-                termstr.Color.grey_100 if stat == 0 else color)
-        added, deleted, modified = summary.sync_with_filesystem()
-        parts = [part(added, "added", termstr.Color.green),
-                 part(deleted, "deleted", termstr.Color.red),
-                 part(modified, "modified", termstr.Color.light_blue)]
-        log.log_message("Filesystem changed: " + fill3.join(" ", parts))
+        stats = summary.sync_with_filesystem()
+        log.log_message(_filesystem_changed_message(*stats))
         appearance_changed_event.set()
     watch_manager_fd = add_watch_manager_to_mainloop(
         root_path, loop, on_filesystem_change, is_path_excluded)
