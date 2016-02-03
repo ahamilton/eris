@@ -356,8 +356,8 @@ class Summary:
             row = []
             for tool in tools.tools_for_path(path):
                 tool_key = (tool.__name__, tool.__code__.co_code)
-                if (file_key in self._cache
-                    and tool_key in self._cache[file_key]):
+                if file_key in self._cache \
+                   and tool_key in self._cache[file_key]:
                     result = self._cache[file_key][tool_key]
                     result.tool = tool
                 else:
@@ -513,7 +513,8 @@ class Summary:
         selection = self.get_selection()
         if selection.status not in {tools.Status.running, tools.Status.paused,
                                     tools.Status.pending}:
-            tool_name = tools._tool_name_colored(selection.tool, selection.path)
+            tool_name = tools._tool_name_colored(
+                selection.tool, selection.path)
             path_colored = tools._path_colored(selection.path)
             log.log_message([in_green("Refreshing "), tool_name,
                              in_green(" result of "), path_colored,
@@ -1031,8 +1032,14 @@ def main(root_path, worker_count=multiprocessing.cpu_count()*2,
     jobs_added_event.set()
 
     def on_filesystem_change():
-        log.log_message("Filesystem changed: %s added. %s deleted. %s modified" %
-                        summary.sync_with_filesystem())
+        def part(stat, text, color):
+            return termstr.TermStr("%2s %s." % (stat, text)).fg_color(
+                termstr.Color.grey_100 if stat == 0 else color)
+        added, deleted, modified = summary.sync_with_filesystem()
+        parts = [part(added, "added", termstr.Color.green),
+                 part(deleted, "deleted", termstr.Color.red),
+                 part(modified, "modified", termstr.Color.light_blue)]
+        log.log_message("Filesystem changed: " + fill3.join(" ", parts))
         appearance_changed_event.set()
     watch_manager_fd = add_watch_manager_to_mainloop(
         root_path, loop, on_filesystem_change, is_path_excluded)
@@ -1148,8 +1155,8 @@ def process_arguments():
         print("File is not a directory:", root_path)
         sys.exit(1)
     is_sandboxed = not arguments["--no-sandbox"]
-    editor_command = (arguments["--editor"] or os.environ.get("EDITOR", None)
-                      or os.environ.get("VISUAL", None))
+    editor_command = arguments["--editor"] or os.environ.get("EDITOR", None)\
+        or os.environ.get("VISUAL", None)
     return root_path, worker_count, is_sandboxed, editor_command
 
 
