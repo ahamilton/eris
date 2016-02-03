@@ -808,11 +808,11 @@ class Screen:
         if event[0] not in ["mouse press", "mouse drag"]:
             return
         if event[1] == 4:  # Mouse wheel up
-            self.listing_up()
+            self.listing_page_up()
             self._appearance_changed_event.set()
             return
         if event[1] == 5:  # Mouse wheel down
-            self.listing_down()
+            self.listing_page_down()
             self._appearance_changed_event.set()
             return
         x, y = event[2:4]
