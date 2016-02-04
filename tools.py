@@ -316,10 +316,11 @@ def python_coverage(path):
             env["COVERAGE_FILE"] = coverage_path
             stdout, *rest = _do_command(
                 [python_exe, "run", test_path], env=env, timeout=TIMEOUT)
-            stdout, *rest = _do_command(
-                [python_exe, "annotate", "--directory", temp_dir,
-                 os.path.normpath(path)], env=env)
-            with open(os.path.join(temp_dir, path + ",cover"), "r") as f:
+            path = os.path.normpath(path)
+            stdout, *rest = _do_command([python_exe, "annotate", "--directory",
+                                         temp_dir, path], env=env)
+            flat_path = path.replace("/", "_")
+            with open(os.path.join(temp_dir, flat_path + ",cover"), "r") as f:
                 stdout = f.read()
         return Status.normal, fill3.Text(_colorize_coverage_report(stdout))
     else:

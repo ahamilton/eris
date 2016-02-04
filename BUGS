@@ -3,7 +3,6 @@ Current
 
 
 Current (tool related)
-- python-coverage is failing in the sub-directories of a project.
 - disassemble for python doesn't always work.
 - gut had an error with utf-8. A traceback printed directly on the screen,
   garbling the interface.
@@ -213,6 +212,7 @@ Fixed
 - Scrolling in the help screen doesn't work with the arrow keys.
 - If vigil is started with eveything up-to-date the up-to-date message never
   appears.
+- python-coverage is failing in the sub-directories of a project.
 
 
 Won't fix
