@@ -1,5 +1,9 @@
 Current
 - Within the sandbox sudo is not working for tools.
+- If a tool runs a script that needs sudo, the password prompt is garbling
+  the screen and stopping input.
+- When paging the summary window, with the bottom scroll bar showing, the
+  cursor line drifts up or down a row.
 
 
 Current (tool related)
