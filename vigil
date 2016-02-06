@@ -296,10 +296,10 @@ def get_diff_stats(old_files, new_files):
     old_names = set(name for name, ctime in old_files)
     new_names = set(name for name, ctime in new_files)
     added_count = len(new_names - old_names)
-    deleted_count = len(old_names - new_names)
+    removed_count = len(old_names - new_names)
     same_count = len(new_names) - added_count
     modified_count = same_count - len(old_files.intersection(new_files))
-    return added_count, deleted_count, modified_count
+    return added_count, removed_count, modified_count
 
 
 class Summary:
@@ -1002,12 +1002,12 @@ def update_screen(main_widget, appearance_changed_event):
         fill3.patch_screen(main_widget)
 
 
-def _filesystem_changed_message(added, deleted, modified):
+def _filesystem_changed_message(added, removed, modified):
     def part(stat, text, color):
         return termstr.TermStr("%2s %s." % (stat, text)).fg_color(
             termstr.Color.grey_100 if stat == 0 else color)
     parts = [part(added, "added", termstr.Color.green),
-             part(deleted, "deleted", termstr.Color.red),
+             part(removed, "removed", termstr.Color.red),
              part(modified, "modified", termstr.Color.light_blue)]
     return "Filesystem changed: " + fill3.join(" ", parts)
 
