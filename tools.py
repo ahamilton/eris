@@ -44,13 +44,13 @@ class Status:
     timed_out = 9
 
 
-_STATUS_COLORS = [(Status.ok, termstr.Color.green),
-                  (Status.problem, termstr.Color.red),
-                  (Status.normal, termstr.Color.white),
-                  (Status.not_applicable, termstr.Color.grey_100),
-                  (Status.running, termstr.Color.light_blue),
-                  (Status.paused, termstr.Color.yellow),
-                  (Status.timed_out, termstr.Color.purple)]
+_STATUS_COLORS = {Status.ok: termstr.Color.green,
+                  Status.problem: termstr.Color.red,
+                  Status.normal: termstr.Color.white,
+                  Status.not_applicable: termstr.Color.grey_100,
+                  Status.running: termstr.Color.light_blue,
+                  Status.paused: termstr.Color.yellow,
+                  Status.timed_out: termstr.Color.purple}
 
 
 STATUS_MEANINGS = [
@@ -62,13 +62,13 @@ STATUS_MEANINGS = [
 ]
 _STATUS_TO_TERMSTR = {
     status: termstr.TermStr(" ", termstr.CharStyle(fg_color=color))
-    for status, color in _STATUS_COLORS}
+    for status, color in _STATUS_COLORS.items()}
 _STATUS_TO_TERMSTR[Status.error] = termstr.TermStr(
     "E ", termstr.CharStyle(fg_color=termstr.Color.red))
 _STATUS_TO_TERMSTR[Status.pending] = ". "
 _STATUS_TO_TERMSTR_SIMPLE = {
     status: termstr.TermStr(" ", termstr.CharStyle(bg_color=color))
-    for status, color in _STATUS_COLORS}
+    for status, color in _STATUS_COLORS.items()}
 _STATUS_TO_TERMSTR_SIMPLE[Status.error] = termstr.TermStr(
     "E", termstr.CharStyle(bg_color=termstr.Color.red))
 _STATUS_TO_TERMSTR_SIMPLE[Status.pending] = "."

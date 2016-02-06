@@ -61,6 +61,7 @@ import os
 import pickle
 import shutil
 import signal
+import statistics
 import subprocess
 import sys
 import tempfile
@@ -227,16 +228,27 @@ class Entry(collections.UserList):
         self.widget = fill3.Row(results)
         self.appearance_cache = None
 
+    def _get_cursor(self):
+        result_selected = self.widget[self.highlighted]
+        if self.summary.is_status_simple:
+            status_color = tools._STATUS_COLORS.get(
+                result_selected.status, None)
+            fg_color = (termstr.Color.white
+                        if (status_color is None
+                            or statistics.mean(status_color) < (255 / 2))
+                        else termstr.Color.black)
+            return fill3.Text(termstr.TermStr("●", termstr.CharStyle(
+                fg_color=fg_color, bg_color=status_color)))
+        else:
+            return fill3.Style(result_selected, reverse_style)
+
     def appearance_min(self):
         # 'appearance' local variable exists because appearance_cache can
         # become None at any time.
         appearance = self.appearance_cache
         if appearance is None:
             if self.highlighted is not None:
-                cursor = (fill3.Text("●") if self.summary.is_status_simple
-                          else fill3.Style(self.widget[self.highlighted],
-                                           reverse_style))
-                self.widget[self.highlighted] = cursor
+                self.widget[self.highlighted] = self._get_cursor()
             new_appearance = self.widget.appearance_min()
             path = tools._path_colored(self.path)
             padding = " " * (self.summary._max_path_length - len(path) + 1)
