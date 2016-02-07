@@ -61,7 +61,6 @@ import os
 import pickle
 import shutil
 import signal
-import statistics
 import subprocess
 import sys
 import tempfile
@@ -235,7 +234,7 @@ class Entry(collections.UserList):
                 result_selected.status, None)
             fg_color = (termstr.Color.white
                         if (status_color is None
-                            or statistics.mean(status_color) < (255 / 2))
+                            or (sum(status_color) / 3) < (255 / 2))
                         else termstr.Color.black)
             return fill3.Text(termstr.TermStr("●", termstr.CharStyle(
                 fg_color=fg_color, bg_color=status_color)))
