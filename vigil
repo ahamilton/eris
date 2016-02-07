@@ -41,7 +41,7 @@ Keys:
       Scroll the result pane.
   *t - Turn the result pane to portrait or landscape orientation. (toggle)
   *l - Show the activity log. (toggle)
-  *e - Edit the current file with a seperate editor. (-e or $EDITOR or $VISUAL)
+  *e - Edit the current file with an editor defined by -e, $EDITOR or $VISUAL.
   *n - Move to the next issue.
   *N - Move to the next issue of the current tool.
   *p - Pause workers. (toggle)
