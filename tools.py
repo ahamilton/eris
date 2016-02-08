@@ -6,6 +6,7 @@
 import ast
 import contextlib
 import dis
+import enum
 import functools
 import hashlib
 import io
@@ -31,7 +32,7 @@ import gut
 import termstr
 
 
-class Status:
+class Status(enum.IntEnum):
 
     ok = 1
     problem = 2

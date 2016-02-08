@@ -40,7 +40,7 @@ class Worker:
         self.process.stdin.write(("%s\n%s\n" %
                                   (tool.__qualname__, path)).encode("utf-8"))
         self.process.stdin.flush()
-        return int(self.process.stdout.readline())
+        return tools.Status(int(self.process.stdout.readline()))
 
     def pause(self):
         os.kill(self.child_pid, signal.SIGSTOP)
@@ -56,7 +56,7 @@ def main():
         tool = getattr(tools, tool_name)
         result = vigil.Result(path, tool)
         status, result.result = tools.run_tool_no_error(path, tool)
-        print(status, flush=True)
+        print(status.value, flush=True)
 
 
 if __name__ == "__main__":
