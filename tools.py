@@ -431,7 +431,7 @@ perl6_syntax.dependencies = {"perl6"}
 def _jlint_tool(tool_type, path):
     stdout, *rest = _do_command([tool_type, path])
     status = (Status.ok
-              if b"Verification completed: 0 reported messages." in stdout
+              if "Verification completed: 0 reported messages." in stdout
               else Status.problem)
     return status, fill3.Text(stdout)
 
@@ -543,10 +543,9 @@ def uncrustify(path):
         config_path = os.path.join(temp_dir, "uncrustify.cfg")
         stdout, stderr, returncode = _do_command(
             ["uncrustify", "--detect", "-f", path, "-o", config_path])
-        if returncode != 0:
-            raise AssertionError
-        stdout, stderr, returncode = _do_command(
-            ["uncrustify", "-c", config_path, "-f", path])
+        if returncode == 0:
+            stdout, stderr, returncode = _do_command(
+                ["uncrustify", "-c", config_path, "-f", path])
     status = Status.normal if returncode == 0 else Status.problem
     source_widget = _syntax_highlight_code(stdout, path)
     return status, source_widget
