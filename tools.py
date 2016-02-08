@@ -501,11 +501,6 @@ def tar_bz2(path):
 tar_bz2.dependencies = {"tar"}
 
 
-def csv(path):
-    return _run_command(["head", "--lines=20", path], Status.normal)
-csv.dependencies = {"coreutils"}
-
-
 def nm(path):
     return _run_command(["nm", "--demangle", path], Status.normal)
 nm.dependencies = {"binutils"}
@@ -603,7 +598,6 @@ def tools_for_extension():
         "tar.gz": [tar_gz],
         "tgz": [tar_gz],
         "tar.bz2": [tar_bz2],
-        "csv": [csv],
         "a": [nm],
         "so": [nm],
         "pdf": [pdf2txt],
