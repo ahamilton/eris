@@ -129,6 +129,18 @@ class ToolsTestCase(unittest.TestCase):
         self._sub_tests([(tools.splint, "hello.c", tools.Status.ok),
                          (tools.splint, "hello.h", tools.Status.ok)])
 
+    def test_html_syntax(self):
+        self._sub_tests([
+            (tools.html_syntax, "hi.html", tools.Status.problem)])
+
+    def test_tidy(self):
+        self._sub_tests([
+            (tools.tidy, "hi.html", tools.Status.normal)])
+
+    def test_html2text(self):
+        self._sub_tests([
+            (tools.html2text, "hi.html", tools.Status.normal)])
+
 
 if __name__ == "__main__":
     golden.main()
