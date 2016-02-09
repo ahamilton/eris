@@ -149,6 +149,10 @@ class ToolsTestCase(unittest.TestCase):
             (tools.tar_gz, "hi.tar.gz", tools.Status.normal),
             (tools.tar_gz, "hi.tgz", tools.Status.normal)])
 
+    def test_tar_bz2(self):
+        self._sub_tests([
+            (tools.tar_bz2, "hi.tar.bz2", tools.Status.normal)])
+
     def test_html_syntax(self):
         self._sub_tests([
             (tools.html_syntax, "hi.html", tools.Status.problem)])
