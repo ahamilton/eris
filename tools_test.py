@@ -159,6 +159,11 @@ class ToolsTestCase(unittest.TestCase):
         self._sub_tests([
             (tools.tar_bz2, "hi.tar.bz2", tools.Status.normal)])
 
+    def test_nm(self):
+        self._sub_tests([
+            (tools.nm, "libieee.a", tools.Status.normal),
+            (tools.nm, "libpcprofile.so", tools.Status.normal)])
+
     def test_html_syntax(self):
         self._sub_tests([
             (tools.html_syntax, "hi.html", tools.Status.problem)])
