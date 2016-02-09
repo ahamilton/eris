@@ -123,7 +123,8 @@ class ToolsTestCase(unittest.TestCase):
         self._sub_tests([
             (tools.uncrustify, "closure-util.java", tools.Status.problem),
             (tools.uncrustify, "hello.c", tools.Status.normal),
-            (tools.uncrustify, "hello.h", tools.Status.normal)])
+            (tools.uncrustify, "hello.h", tools.Status.normal),
+            (tools.uncrustify, "hello.cpp", tools.Status.normal)])
 
     def test_splint(self):
         self._sub_tests([(tools.splint, "hello.c", tools.Status.ok),
@@ -140,6 +141,10 @@ class ToolsTestCase(unittest.TestCase):
     def test_html2text(self):
         self._sub_tests([
             (tools.html2text, "hi.html", tools.Status.normal)])
+
+    def test_bcpp(self):
+        self._sub_tests([
+            (tools.bcpp, "hello.cpp", tools.Status.normal)])
 
 
 if __name__ == "__main__":
