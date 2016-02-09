@@ -459,11 +459,9 @@ objdump_headers.dependencies = {"binutils"}
 
 
 def objdump_disassemble(path):
-    stdout, *rest = _do_command(
-        ["objdump", "--disassemble", "--reloc", "--dynamic-reloc", path])
-    import pygments.lexers.asm
-    lexer = pygments.lexers.asm.ObjdumpLexer()
-    return Status.ok, fill3.Text(list(pygments.lex(stdout, lexer)))
+    return _run_command(
+        ["objdump", "--disassemble", "--reloc", "--dynamic-reloc", path],
+        Status.normal)
 objdump_disassemble.dependencies = {"binutils"}
 
 

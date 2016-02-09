@@ -140,6 +140,12 @@ class ToolsTestCase(unittest.TestCase):
         self._sub_tests([(tools.splint, "hello.c", tools.Status.ok),
                          (tools.splint, "hello.h", tools.Status.ok)])
 
+    def test_object_file_tools(self):
+        self._sub_tests([
+            (tools.objdump_headers, "Mcrt1.o", tools.Status.normal),
+            (tools.objdump_disassemble, "Mcrt1.o", tools.Status.problem),
+            (tools.readelf, "Mcrt1.o", tools.Status.normal)])
+
     def test_unzip(self):
         self._sub_tests([
             (tools.unzip, "hi.zip", tools.Status.normal)])
