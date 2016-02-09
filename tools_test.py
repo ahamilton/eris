@@ -140,6 +140,10 @@ class ToolsTestCase(unittest.TestCase):
         self._sub_tests([(tools.splint, "hello.c", tools.Status.ok),
                          (tools.splint, "hello.h", tools.Status.ok)])
 
+    def test_unzip(self):
+        self._sub_tests([
+            (tools.unzip, "hi.zip", tools.Status.normal)])
+
     def test_html_syntax(self):
         self._sub_tests([
             (tools.html_syntax, "hi.html", tools.Status.problem)])
