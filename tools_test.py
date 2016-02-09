@@ -146,6 +146,10 @@ class ToolsTestCase(unittest.TestCase):
         self._sub_tests([
             (tools.bcpp, "hello.cpp", tools.Status.normal)])
 
+    def test_php5_syntax(self):
+        self._sub_tests([
+            (tools.bcpp, "root.php", tools.Status.normal)])
+
 
 if __name__ == "__main__":
     golden.main()
