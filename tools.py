@@ -14,7 +14,6 @@ import math
 import os
 import os.path
 import pickle
-import pprint
 import pwd
 import stat
 import subprocess
@@ -477,13 +476,6 @@ def mp3info(path):
 mp3info.dependencies = ["mp3info"]
 
 
-def dump_pickle(path):
-    with open(path, "rb") as file_:
-        object_ = pickle.load(file_)
-    return Status.normal, fill3.Text(pprint.pformat(object_.__dict__))
-dump_pickle.dependencies = set()
-
-
 def unzip(path):
     return _run_command(["unzip", "-l", path], Status.normal)
 unzip.dependencies = {"unzip"}
@@ -590,7 +582,6 @@ def tools_for_extension():
         "h": [splint, uncrustify],
         "o": [objdump_headers, objdump_disassemble, readelf],
         "mp3": [mp3info],
-        "pickle": [dump_pickle],
         "zip": [unzip],
         "tar.gz": [tar_gz],
         "tgz": [tar_gz],
