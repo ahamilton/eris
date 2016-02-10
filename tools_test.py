@@ -67,48 +67,42 @@ class ToolsTestCase(unittest.TestCase):
     def test_contents(self):
         self._test_tool(tools.contents, [("hi3.py", tools.Status.normal)])
 
+    HI_OK = [("hi3.py", tools.Status.ok), ("hi.py", tools.Status.ok)]
+
     def test_python_syntax(self):
-        self._test_tool(tools.python_syntax, [("hi3.py", tools.Status.ok),
-                                              ("hi.py", tools.Status.ok)])
+        self._test_tool(tools.python_syntax, self.HI_OK)
 
     def test_unittests(self):
         self._test_tool(tools.python_unittests,
                         [("hi3.py", tools.Status.not_applicable),
                          ("hi.py", tools.Status.not_applicable)])
 
+    HI_NORMAL = [("hi3.py", tools.Status.normal),
+                 ("hi.py", tools.Status.normal)]
+
     def test_pydoc(self):
-        self._test_tool(tools.pydoc, [("hi3.py", tools.Status.normal),
-                                      ("hi.py", tools.Status.normal)])
+        self._test_tool(tools.pydoc, self.HI_NORMAL)
 
     def test_python_coverage(self):
-        self._test_tool(tools.python_coverage,
-                        [("hi3.py", tools.Status.normal),
-                         ("hi.py", tools.Status.normal)])
+        self._test_tool(tools.python_coverage, self.HI_NORMAL)
 
     def test_pep8(self):
-        self._test_tool(tools.pep8, [("hi3.py", tools.Status.ok),
-                                     ("hi.py", tools.Status.ok)])
+        self._test_tool(tools.pep8, self.HI_OK)
 
     def test_pyflakes(self):
-        self._test_tool(tools.pyflakes, [("hi3.py", tools.Status.ok),
-                                         ("hi.py", tools.Status.ok)])
+        self._test_tool(tools.pyflakes, self.HI_OK)
 
     def test_pylint(self):
-        self._test_tool(tools.pylint, [("hi3.py", tools.Status.ok),
-                                       ("hi.py", tools.Status.ok)])
+        self._test_tool(tools.pylint, self.HI_OK)
 
     def test_python_gut(self):
-        self._test_tool(tools.python_gut, [("hi3.py", tools.Status.normal),
-                                           ("hi.py", tools.Status.normal)])
+        self._test_tool(tools.python_gut, self.HI_NORMAL)
 
     def test_python_modulefinder(self):
-        self._test_tool(tools.python_modulefinder,
-                        [("hi3.py", tools.Status.normal),
-                         ("hi.py", tools.Status.normal)])
+        self._test_tool(tools.python_modulefinder, self.HI_NORMAL)
 
     def test_python_mccable(self):
-        self._test_tool(tools.python_mccabe, [("hi3.py", tools.Status.ok),
-                                              ("hi.py", tools.Status.ok)])
+        self._test_tool(tools.python_mccabe, self.HI_OK)
 
     def test_perl_syntax(self):
         self._test_tool(tools.perl_syntax, [("perl.pl", tools.Status.ok)])
