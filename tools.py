@@ -540,18 +540,6 @@ def php5_syntax(path):
 php5_syntax.dependencies = {"php5"}
 
 
-def flog(path):  # Deps: "gem install flog"
-    return _run_command(["flog", path], Status.normal)
-flog.dependencies = set()
-
-
-# def csstidy(path):  # Deps: csstidy
-#     stdout, stderr, returncode = _do_command(["csstidy", path])
-#     status = Status.normal if returncode == 0 else Status.problem
-#     source_widget = _syntax_highlight_code(stdout, path)
-#     return status, source_widget
-
-
 def generic_tools():
     return [contents, metadata]
 
@@ -584,8 +572,6 @@ def tools_for_extension():
         "html": [html_syntax, tidy, html2text],
         "cpp": [bcpp, uncrustify],
         "php": [php5_syntax],
-        "rb": [flog]
-        # "css": [csstidy]
     }
 
 
