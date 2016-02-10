@@ -178,7 +178,7 @@ class ToolsTestCase(unittest.TestCase):
         self._test_tool(tools.bcpp, [("hello.cpp", tools.Status.normal)])
 
     def test_php5_syntax(self):
-        self._test_tool(tools.bcpp, [("root.php", tools.Status.normal)])
+        self._test_tool(tools.php5_syntax, [("root.php", tools.Status.ok)])
 
 
 if __name__ == "__main__":
