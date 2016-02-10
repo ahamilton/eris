@@ -129,6 +129,10 @@ class ToolsTestCase(unittest.TestCase):
         self._sub_tests([
             (tools.antic, "closure-util.java", tools.Status.problem)])
 
+    def test_jlint(self):
+        self._sub_tests([
+            (tools.jlint, "javaversion.class", tools.Status.ok)])
+
     def test_uncrustify(self):
         self._sub_tests([
             (tools.uncrustify, "closure-util.java", tools.Status.problem),
