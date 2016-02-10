@@ -1,0 +1,132 @@
+    >>    0 <238>                 3340                               
+    >>    3 UNARY_POSITIVE                                           
+    >>    4 <152>                46083                               
+          7 YIELD_VALUE                                              
+          8 INPLACE_FLOOR_DIVIDE                                     
+          9 <0>                                                      
+         10 <0>                                                      
+         11 <0>                                                      
+         12 <227>                    0                               
+         15 <0>                                                      
+    >>   16 <0>                                                      
+         17 <0>                                                      
+         18 <0>                                                      
+         19 <0>                                                      
+         20 <0>                                                      
+         21 <0>                                                      
+         22 <0>                                                      
+         23 <0>                                                      
+         24 <0>                                                      
+         25 ROT_TWO                                                  
+         26 <0>                                                      
+         27 <0>                                                      
+         28 <0>                                                      
+         29 BINARY_AND                                               
+         30 <0>                                                      
+         31 <0>                                                      
+         32 <0>                                                      
+         33 POP_JUMP_IF_TRUE        16                               
+         36 <0>                                                      
+         37 <0>                                                      
+         38 LOAD_CONST               0 (0)                           
+         41 LOAD_CONST               1 (1)                           
+         44 MAKE_FUNCTION            0                               
+         47 STORE_NAME               0 (0)                           
+         50 LOAD_CONST               2 (2)                           
+         53 RETURN_VALUE                                             
+         54 <41>                                                     
+         55 ROT_THREE                                                
+         56 <99>                     0                               
+         59 <0>                                                      
+         60 <0>                                                      
+         61 <0>                                                      
+         62 <0>                                                      
+         63 <0>                                                      
+         64 <0>                                                      
+         65 <0>                                                      
+         66 <0>                                                      
+         67 <0>                                                      
+         68 <0>                                                      
+         69 ROT_TWO                                                  
+         70 <0>                                                      
+         71 <0>                                                      
+         72 <0>                                                      
+         73 INPLACE_POWER                                            
+         74 <0>                                                      
+         75 <0>                                                      
+         76 <0>                                                      
+         77 POP_JUMP_IF_TRUE        14                               
+         80 <0>                                                      
+         81 <0>                                                      
+         82 LOAD_GLOBAL              0 (0)                           
+         85 LOAD_CONST               1 (1)                           
+         88 CALL_FUNCTION            1 (1 positional, 0 keyword pair)
+         91 POP_TOP                                                  
+         92 LOAD_CONST               0 (0)                           
+         95 RETURN_VALUE                                             
+         96 <41>                                                     
+         97 ROT_TWO                                                  
+         98 INPLACE_XOR                                              
+         99 <218>                26626                               
+        102 BUILD_MAP              297                               
+        105 <218>                28677                               
+        108 POP_JUMP_IF_FALSE    28265                               
+        111 LOAD_GLOBAL            169 (169)                         
+        114 POP_JUMP_IF_FALSE        3                               
+        117 <0>                                                      
+        118 <0>                                                      
+        119 POP_JUMP_IF_FALSE        3                               
+        122 <0>                                                      
+        123 <0>                                                      
+        124 <250>                11790                               
+        127 <47>                                                     
+        128 BUILD_MAP            28782                               
+        131 <117>                12148                               
+        134 BUILD_SET            13161                               
+        137 <46>                                                     
+        138 JUMP_IF_TRUE_OR_POP  29305                               
+        141 POP_TOP                                                  
+        142 <0>                                                      
+        143 <0>                                                      
+        144 <0>                                                      
+        145 ROT_THREE                                                
+        146 <0>                                                      
+        147 <0>                                                      
+        148 <0>                                                      
+        149 POP_JUMP_IF_TRUE         2                               
+        152 <0>                                                      
+        153 <0>                                                      
+        154 <0>                                                      
+        155 POP_TOP                                                  
+        156 POP_JUMP_IF_FALSE        1                               
+        159 <0>                                                      
+        160 <0>                                                      
+        161 INPLACE_XOR                                              
+        162 <41>                                                     
+        163 POP_TOP                                                  
+        164 POP_JUMP_IF_FALSE        1                               
+        167 <0>                                                      
+        168 <0>                                                      
+        169 POP_JUMP_IF_FALSE        3                               
+        172 <0>                                                      
+        173 <0>                                                      
+        174 POP_JUMP_IF_FALSE        3                               
+        177 <0>                                                      
+        178 <0>                                                      
+        179 POP_JUMP_IF_FALSE        3                               
+        182 <0>                                                      
+        183 <0>                                                      
+        184 POP_JUMP_IF_FALSE        4                               
+        187 <0>                                                      
+        188 <0>                                                      
+        189 <218>                15368                               
+        192 IMPORT_FROM          25711 (25711)                       
+        195 <117>                25964                               
+        198 BINARY_LSHIFT                                            
+        199 ROT_THREE                                                
+        200 <0>                                                      
+        201 <0>                                                      
+        202 <0>                                                      
+        203 POP_JUMP_IF_TRUE         0                               
+        206 <0>                                                      
+        207 <0>                                                      
