@@ -72,7 +72,7 @@ class ToolsTestCase(unittest.TestCase):
     def test_python_syntax(self):
         self._test_tool(tools.python_syntax, self.HI_OK)
 
-    def test_unittests(self):
+    def test_python_unittests(self):
         self._test_tool(tools.python_unittests,
                         [("hi3.py", tools.Status.not_applicable),
                          ("hi.py", tools.Status.not_applicable)])
@@ -85,6 +85,8 @@ class ToolsTestCase(unittest.TestCase):
 
     def test_python_coverage(self):
         self._test_tool(tools.python_coverage, self.HI_NORMAL)
+
+    # Not testing python_profile, because it is non-deterministic.
 
     def test_pep8(self):
         self._test_tool(tools.pep8, self.HI_OK)
