@@ -164,6 +164,10 @@ class ToolsTestCase(unittest.TestCase):
             (tools.nm, "libieee.a", tools.Status.normal),
             (tools.nm, "libpcprofile.so", tools.Status.normal)])
 
+    def test_pdf2txt(self):
+        self._sub_tests([
+            (tools.pdf2txt, "standard.pdf", tools.Status.normal)])
+
     def test_html_syntax(self):
         self._sub_tests([
             (tools.html_syntax, "hi.html", tools.Status.problem)])
