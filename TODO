@@ -1,5 +1,4 @@
 Todo
-- Test the tools.
 - Publish. pypi and github will do.
   - docs?, setup.py?, wheel?, __pkginfo__.py?
   - Maybe also use cxfreeze, py2exe, pyrun or zipapp?  Is zipapp the standard way?
@@ -159,7 +158,8 @@ Done
 - Don't let the user scroll indefinately below the end of the page.
 - Add command line options, e.g. -h
 - Boilerplate: Readme, usage
-
+- Test the tools.
+  <- All the existing tools now have basic tests.
 
 A-syntax, B-tests, C-auto docs, D-lint, E-coverage, F-profile, G-tidy, H-import deps
              A B C D E F G H

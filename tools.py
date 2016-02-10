@@ -396,7 +396,8 @@ def python_tidy(path):  # Deps: found on internet?
 
 
 def disassemble_pyc(path):
-    bytecode = open(path, "rb").read()
+    with open(path, "rb") as file_:
+        bytecode = file_.read()
     stringio = io.StringIO()
     dis.dis(bytecode, file=stringio)
     stringio.seek(0)

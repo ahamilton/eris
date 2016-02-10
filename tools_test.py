@@ -106,6 +106,10 @@ class ToolsTestCase(unittest.TestCase):
     def test_python_mccable(self):
         self._test_tool(tools.python_mccabe, self.HI_OK)
 
+    def test_disassemble_pyc(self):
+        self._test_tool(tools.disassemble_pyc,
+                        [("hi3.cpython-34.pyc", tools.Status.normal)])
+
     def test_perl_syntax(self):
         self._test_tool(tools.perl_syntax, [("perl.pl", tools.Status.ok)])
 
