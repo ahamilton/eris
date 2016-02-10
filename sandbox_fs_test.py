@@ -4,6 +4,7 @@
 # Licensed under the Artistic License 2.0.
 
 import os
+import subprocess
 import tempfile
 import unittest
 
@@ -23,7 +24,7 @@ class SandboxFilesystemTestCase(unittest.TestCase):
 
     def test_sandbox_minimal(self):
         foo_upper_path = os.path.join(self.sandbox.mount_point, "foo")
-        open(foo_upper_path, "w").close()
+        subprocess.check_call(["sudo", "touch", foo_upper_path])
         self.assertTrue(os.path.exists(foo_upper_path))
         foo_lower_path = os.path.join(self.sandbox.overlay_mounts[0].lower_dir,
                                       "foo")

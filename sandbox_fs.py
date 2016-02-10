@@ -20,6 +20,9 @@ class OverlayfsMount():
         subprocess.check_call(["sudo",  "mount", "-t", "overlayfs", "-o",
                                option_string, "overlayfs", self.mount_point],
                               stderr=subprocess.PIPE)
+        for command in ["chmod", "chown"]:
+            subprocess.check_call(["sudo", command, "--reference", lower_dir,
+                                   mount_point])
 
     def __repr__(self):
         return "<OverlayfsMount:%r over %r>" % (self.mount_point,
