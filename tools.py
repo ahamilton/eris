@@ -469,13 +469,6 @@ def readelf(path):
 readelf.dependencies = {"binutils"}
 
 
-def mp3info(path):
-    stdout, *rest = _do_command(["mp3info", "-x", path])
-    source_widget = fill3.Text(stdout)
-    return Status.normal, source_widget
-mp3info.dependencies = ["mp3info"]
-
-
 def unzip(path):
     return _run_command(["unzip", "-l", path], Status.normal)
 unzip.dependencies = {"unzip"}
@@ -581,7 +574,6 @@ def tools_for_extension():
         "c": [splint, uncrustify],
         "h": [splint, uncrustify],
         "o": [objdump_headers, objdump_disassemble, readelf],
-        "mp3": [mp3info],
         "zip": [unzip],
         "tar.gz": [tar_gz],
         "tgz": [tar_gz],
