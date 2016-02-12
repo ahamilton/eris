@@ -304,6 +304,16 @@ def type_sort(path):
             os.path.basename(path))
 
 
+def _log_filesystem_changed(log, added, removed, modified):
+    def part(stat, text, color):
+        return termstr.TermStr("%2s %s." % (stat, text)).fg_color(
+            termstr.Color.grey_100 if stat == 0 else color)
+    parts = [part(added, "added", termstr.Color.green),
+             part(removed, "removed", termstr.Color.red),
+             part(modified, "modified", termstr.Color.light_blue)]
+    log.log_message("Filesystem changed: " + fill3.join(" ", parts))
+
+
 def get_diff_stats(old_files, new_files):
     old_names = set(name for name, ctime in old_files)
     new_names = set(name for name, ctime in new_files)
@@ -341,7 +351,7 @@ class Summary:
             self.__cursor_position = new_position
             self.closest_placeholder_generator = None
 
-    def sync_with_filesystem(self):
+    def sync_with_filesystem(self, log=None):
         x, y = self._cursor_position
         try:
             old_path = self.get_selection().path
@@ -387,7 +397,11 @@ class Summary:
         max_width = max(len(row) for row in new_column)
         max_path_length = max(len(path) for path in paths) - len("./")
         deleted_results = self._all_results - all_results
-        stats = get_diff_stats(set(self._cache.keys()), set(new_cache.keys()))
+        if log is not None:
+            stats = get_diff_stats(
+                set(self._cache.keys()), set(new_cache.keys()))
+            if sum(stats) != 0:
+                _log_filesystem_changed(log, *stats)
         self._column, self._cache, self._cursor_position, self.result_total, \
             self.completed_total, self._max_width, self._max_path_length, \
             self.closest_placeholder_generator, self._all_results = (
@@ -398,7 +412,6 @@ class Summary:
         for result in deleted_results:
             with contextlib.suppress(FileNotFoundError):
                 os.remove(result.pickle_path)
-        return stats
 
     def placeholder_spiral(self):
         x, y = self.cursor_position()
@@ -517,9 +530,9 @@ class Summary:
                 self._cursor_position = position
                 return
 
-    def toggle_status_style(self):
+    def toggle_status_style(self, log):
         self.is_status_simple = not self.is_status_simple
-        self.sync_with_filesystem()
+        self.sync_with_filesystem(log)
 
     def refresh(self, log):
         selection = self.get_selection()
@@ -790,14 +803,14 @@ class Screen:
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def toggle_status_style(self):
-        self._summary.toggle_status_style()
+        self._summary.toggle_status_style(self._log)
 
     def toggle_order(self):
         self._summary.is_directory_sort = not self._summary.is_directory_sort
         sort_order = ("directory then type" if self._summary.is_directory_sort
                       else "type then directory")
         self._log.log_command("Ordering files by %s." % sort_order)
-        self._summary.sync_with_filesystem()
+        self._summary.sync_with_filesystem(self._log)
 
     def toggle_pause(self):
         self._is_paused = not self._is_paused
@@ -1014,16 +1027,6 @@ def update_screen(main_widget, appearance_changed_event):
         fill3.patch_screen(main_widget)
 
 
-def _log_filesystem_changed(log, added, removed, modified):
-    def part(stat, text, color):
-        return termstr.TermStr("%2s %s." % (stat, text)).fg_color(
-            termstr.Color.grey_100 if stat == 0 else color)
-    parts = [part(added, "added", termstr.Color.green),
-             part(removed, "removed", termstr.Color.red),
-             part(modified, "modified", termstr.Color.light_blue)]
-    log.log_message("Filesystem changed: " + fill3.join(" ", parts))
-
-
 def main(root_path, worker_count=multiprocessing.cpu_count()*2,
          is_sandboxed=True, editor_command=None, is_being_tested=False):
     global _UPDATE_THREAD_STOPPED
@@ -1053,14 +1056,12 @@ def main(root_path, worker_count=multiprocessing.cpu_count()*2,
     log.delete_log_file()
     log.log_message("Program started.")
     jobs_added_event.set()
+    if not is_first_run:
+        summary.sync_with_filesystem(log)
 
     def on_filesystem_change():
-        stats = summary.sync_with_filesystem()
-        if sum(stats) != 0:
-            _log_filesystem_changed(log, *stats)
+        summary.sync_with_filesystem(log)
         appearance_changed_event.set()
-    if not is_first_run:
-        on_filesystem_change()
     watch_manager_fd = add_watch_manager_to_mainloop(
         root_path, loop, on_filesystem_change, is_path_excluded)
     screen.runners = runners = []
