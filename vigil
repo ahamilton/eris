@@ -1030,6 +1030,7 @@ def main(root_path, worker_count=multiprocessing.cpu_count()*2,
     loop = asyncio.get_event_loop()
     jobs_added_event = threading.Event()
     appearance_changed_event = threading.Event()
+    is_first_run = True
     try:
         pickle_path = os.path.join(_CACHE_PATH, "summary.pickle")
         with gzip.open(pickle_path, "rb") as file_:
@@ -1039,6 +1040,7 @@ def main(root_path, worker_count=multiprocessing.cpu_count()*2,
         log = Log(appearance_changed_event)
         screen = Screen(summary, log, appearance_changed_event, loop)
     else:
+        is_first_run = False
         screen._appearance_changed_event = appearance_changed_event
         screen._main_loop = loop
         summary = screen._summary
@@ -1047,7 +1049,6 @@ def main(root_path, worker_count=multiprocessing.cpu_count()*2,
         summary._root_path = root_path
         log = screen._log
         log._appearance_changed_event = appearance_changed_event
-        summary.sync_with_filesystem()
     screen.editor_command = editor_command
     log.delete_log_file()
     log.log_message("Program started.")
@@ -1057,6 +1058,8 @@ def main(root_path, worker_count=multiprocessing.cpu_count()*2,
         stats = summary.sync_with_filesystem()
         log.log_message(_filesystem_changed_message(*stats))
         appearance_changed_event.set()
+    if not is_first_run:
+        on_filesystem_change()
     watch_manager_fd = add_watch_manager_to_mainloop(
         root_path, loop, on_filesystem_change, is_path_excluded)
     screen.runners = runners = []
