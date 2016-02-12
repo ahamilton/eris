@@ -1014,14 +1014,14 @@ def update_screen(main_widget, appearance_changed_event):
         fill3.patch_screen(main_widget)
 
 
-def _filesystem_changed_message(added, removed, modified):
+def _log_filesystem_changed(log, added, removed, modified):
     def part(stat, text, color):
         return termstr.TermStr("%2s %s." % (stat, text)).fg_color(
             termstr.Color.grey_100 if stat == 0 else color)
     parts = [part(added, "added", termstr.Color.green),
              part(removed, "removed", termstr.Color.red),
              part(modified, "modified", termstr.Color.light_blue)]
-    return "Filesystem changed: " + fill3.join(" ", parts)
+    log.log_message("Filesystem changed: " + fill3.join(" ", parts))
 
 
 def main(root_path, worker_count=multiprocessing.cpu_count()*2,
@@ -1056,7 +1056,8 @@ def main(root_path, worker_count=multiprocessing.cpu_count()*2,
 
     def on_filesystem_change():
         stats = summary.sync_with_filesystem()
-        log.log_message(_filesystem_changed_message(*stats))
+        if sum(stats) != 0:
+            _log_filesystem_changed(log, *stats)
         appearance_changed_event.set()
     if not is_first_run:
         on_filesystem_change()
