@@ -1177,9 +1177,8 @@ def check_arguments():
 
 if __name__ == "__main__":
     root_path, worker_count, is_sandboxed, editor_command = check_arguments()
-    if is_sandboxed:
-        subprocess.call(["sudo", "-p", "Vigil needs sudo to create the filesy"
-                         "stem sandbox...  [sudo] password for %u: ", "true"])
+    subprocess.call(["sudo", "-p", "Vigil needs sudo to run any script that "
+                     "needs sudo...  [sudo] password for %u: ", "true"])
     with terminal.console_title("vigil: " + os.path.basename(root_path)):
         manage_cache(root_path)
         with chdir(root_path):  # FIX: Don't change directory if possible.

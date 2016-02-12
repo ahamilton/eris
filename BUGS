@@ -1,8 +1,6 @@
 Current
 - Within the sandbox sudo is not working for tools.
   <- Sudo is working now but its always asking for a password.
-- If a tool runs a script that needs sudo, the password prompt is garbling
-  the screen and stopping input.
 - When paging the summary window, with the bottom scroll bar showing, the
   cursor line drifts up or down a row.
 
@@ -218,6 +216,9 @@ Fixed
 - If vigil is started with eveything up-to-date the up-to-date message never
   appears.
 - python-coverage is failing in the sub-directories of a project.
+- If a tool runs a script that needs sudo, the password prompt is garbling
+  the screen and stopping input.
+  <- Now vigil always gets sudo.
 
 
 Won't fix
