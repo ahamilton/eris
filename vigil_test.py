@@ -18,29 +18,6 @@ import golden
 import vigil
 
 
-class LruCacheWithEvictionTestCase(unittest.TestCase):
-
-    def _assert_cache(self, func, hits, misses, current_size):
-        cache_info = func.cache_info()
-        self.assertEqual(cache_info.hits, hits)
-        self.assertEqual(cache_info.misses, misses)
-        self.assertEqual(cache_info.currsize, current_size)
-
-    def test_lru_cache_with_eviction(self):
-        @vigil.lru_cache_with_eviction()
-        def a(foo):
-            return foo
-        self._assert_cache(a, 0, 0, 0)
-        self.assertEqual(a(1), 1)
-        self._assert_cache(a, 0, 1, 1)
-        a(1)
-        self._assert_cache(a, 1, 1, 1)
-        a.evict(1)
-        self._assert_cache(a, 1, 1, 1)
-        a(1)
-        self._assert_cache(a, 1, 2, 2)
-
-
 _DIMENSIONS = (100, 60)
 
 

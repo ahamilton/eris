@@ -10,7 +10,6 @@ import subprocess
 import psutil
 
 import tools
-import vigil
 
 
 def make_process_nicest(pid):
@@ -28,7 +27,7 @@ class Worker:
                 [__file__], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE)
         else:
-            cache_path = os.path.join(os.getcwd(), vigil._CACHE_PATH)
+            cache_path = os.path.join(os.getcwd(), tools._CACHE_PATH)
             self.cache_mount = sandbox.mount_point + cache_path
             subprocess.check_call(["sudo", "mount", "--bind", cache_path,
                                    self.cache_mount])
@@ -54,7 +53,7 @@ def main():
     while True:
         tool_name, path = input(), input()
         tool = getattr(tools, tool_name)
-        result = vigil.Result(path, tool)
+        result = tools.Result(path, tool)
         status, result.result = tools.run_tool_no_error(path, tool)
         print(status.value, flush=True)
 

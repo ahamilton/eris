@@ -8,6 +8,7 @@ import contextlib
 import dis
 import enum
 import functools
+import gzip
 import hashlib
 import io
 import math
@@ -29,6 +30,9 @@ import traceback
 import fill3
 import gut
 import termstr
+
+
+_CACHE_PATH = ".vigil"
 
 
 class Status(enum.IntEnum):
@@ -544,6 +548,119 @@ uncrustify.dependencies = {"uncrustify"}
 def php5_syntax(path):
     return _run_command(["php", "--syntax-check", path])
 php5_syntax.dependencies = {"php5"}
+
+
+def lru_cache_with_eviction(maxsize=128, typed=False):
+    versions = {}
+    make_key = functools._make_key
+
+    def evict(*args, **kwds):
+        key = make_key(args, kwds, typed)
+        if key in versions:
+            versions[key] += 1
+
+    def decorating_function(user_function):
+
+        def remove_version(*args, **kwds):
+            return user_function(*args[1:], **kwds)
+        new_func = functools.lru_cache(maxsize=maxsize, typed=typed)(
+            remove_version)
+
+        def add_version(*args, **kwds):
+            key = make_key(args, kwds, typed)
+            return new_func(*((versions.setdefault(key, 0),) + args), **kwds)
+        add_version.versions = versions
+        add_version.cache_info = new_func.cache_info
+        add_version.evict = evict
+        return functools.update_wrapper(add_version, user_function)
+    return decorating_function
+
+
+def dump_pickle_safe(object_, path, protocol=pickle.HIGHEST_PROTOCOL,
+                     open=open):
+    tmp_path = path + ".tmp"
+    try:
+        with open(tmp_path, "wb") as file_:
+            pickle.dump(object_, file_, protocol=protocol)
+    except (OSError, KeyboardInterrupt):
+        os.remove(tmp_path)
+    else:
+        os.rename(tmp_path, path)
+
+
+def status_to_str(status, is_status_simple):
+    if isinstance(status, enum.Enum):
+        dict_ = (_STATUS_TO_TERMSTR_SIMPLE if is_status_simple
+                 else _STATUS_TO_TERMSTR)
+        return dict_[status]
+    else:
+        return status
+
+
+class Result:
+
+    def __init__(self, path, tool, is_stored_compressed=True):
+        self.path = path
+        self.tool = tool
+        self._open_func = gzip.open if is_stored_compressed else open
+        self.pickle_path = os.path.join(_CACHE_PATH,
+                                        path + "-" + tool.__name__)
+        self.scroll_position = (0, 0)
+        self.is_completed = False
+        self.is_placeholder = True
+        self.status = Status.pending
+
+    @property
+    @lru_cache_with_eviction(maxsize=50)
+    def result(self):
+        unknown_label = fill3.Text("?")
+        if self.is_placeholder:
+            return unknown_label
+        try:
+            with self._open_func(self.pickle_path, "rb") as pickle_file:
+                return pickle.load(pickle_file)
+        except FileNotFoundError:
+            return unknown_label
+
+    @result.setter
+    def result(self, value):
+        os.makedirs(os.path.dirname(self.pickle_path), exist_ok=True)
+        dump_pickle_safe(value, self.pickle_path, open=self._open_func)
+        Result.result.fget.evict(self)
+
+    def set_status(self, status):
+        self.status = status
+        self.entry.appearance_cache = None
+
+    def run(self, log, appearance_changed_event, worker, runner):
+        self.is_placeholder = False
+        tool_name = _tool_name_colored(self.tool, self.path)
+        path_colored = _path_colored(self.path)
+        log.log_message(["Running ", tool_name, " on ", path_colored, "..."])
+        self.set_status(Status.running)
+        if runner.is_already_paused:
+            runner.is_already_paused = False
+            runner.pause()
+        appearance_changed_event.set()
+        start_time = time.time()
+        new_status = worker.run_tool(self.path, self.tool)
+        Result.result.fget.evict(self)
+        end_time = time.time()
+        self.set_status(new_status)
+        appearance_changed_event.set()
+        self.is_completed = True
+        log.log_message(
+            ["Finished running ", tool_name, " on ", path_colored, ". ",
+             status_to_str(new_status, self.entry.summary.is_status_simple),
+             " %s secs" % round(end_time - start_time, 2)])
+
+    def reset(self):
+        self.is_placeholder = True
+        self.set_status(Status.pending)
+
+    def appearance_min(self):
+        return [status_to_str(self.status,
+                              self.entry.summary.is_status_simple)]
 
 
 def generic_tools():
