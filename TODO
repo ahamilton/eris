@@ -9,7 +9,6 @@ Todo
 Todo (tool related)
 - Report on python doctests. (also coverage of)
 - Cache tools._python_version.
-- Determine if perl files are perl5 or perl6.
 - Add bandit tool for python.
 
 
@@ -160,6 +159,8 @@ Done
 - Boilerplate: Readme, usage
 - Test the tools.
   <- All the existing tools now have basic tests.
+- Determine if perl files are perl5 or perl6.
+  <- At least done by perl_syntax.
 
 A-syntax, B-tests, C-auto docs, D-lint, E-coverage, F-profile, G-tidy, H-import deps
              A B C D E F G H

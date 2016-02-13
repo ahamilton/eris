@@ -405,9 +405,14 @@ def disassemble_pyc(path):
 disassemble_pyc.dependencies = set()
 
 
+def _perl_version(path):
+    stdout, stderr, returncode = _do_command(["perl", "-c", path])
+    return "perl6" if "Perl v6.0.0 required" in stderr else "perl"
+
+
 def perl_syntax(path):
-    return _run_command(["perl", "-c", path])
-perl_syntax.dependencies = {"perl"}
+    return _run_command([_perl_version(path), "-c", path])
+perl_syntax.dependencies = {"perl", "perl6"}
 
 
 def perldoc(path):

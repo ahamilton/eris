@@ -1,0 +1,12 @@
+Useless declaration of a has-scoped method in mainline (did you mean 'my regex http-verb'?)
+[31m===[0mSORRY![31m===[0m Error while compiling ./input/perl6.pl                      
+Two terms in a row                                                                         
+at ./input/perl6.pl:30                                                                     
+------> [32m<BOL>[33m⏏[31msay 'here';[0m                                               
+    expecting any of:                                                                      
+        postfix                                                                            
+        infix stopper                                                                      
+        infix or meta-infix                                                                
+        statement end                                                                      
+        statement modifier                                                                 
+        statement modifier loop                                                            
