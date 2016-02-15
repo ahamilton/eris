@@ -14,7 +14,7 @@ class CacheFirstResultTestCase(unittest.TestCase):
 
     def test_cache_first_result_decorator(self):
         class A:
-            @termstr.cache_first_result
+            @termstr._cache_first_result
             def a(self, foo):
                 return foo
         a = A()
@@ -22,7 +22,7 @@ class CacheFirstResultTestCase(unittest.TestCase):
         self.assertEqual(a.a(4), 3)
 
         class B:
-            @termstr.cache_first_result
+            @termstr._cache_first_result
             def b(self, foo):
                 return foo
         b = B()

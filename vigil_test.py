@@ -27,17 +27,17 @@ def _widget_to_string(widget, dimensions=_DIMENSIONS):
     return str(fill3.join("\n", appearance))
 
 
-def touch(path):
+def _touch(path):
     open(path, "w").close()
 
 
-def assert_widget_appearance(widget, golden_path, dimensions=_DIMENSIONS):
+def _assert_widget_appearance(widget, golden_path, dimensions=_DIMENSIONS):
     golden_path_absolute = os.path.join(os.path.dirname(__file__), golden_path)
     golden.assertGolden(_widget_to_string(widget, dimensions),
                         golden_path_absolute)
 
 
-class MockMainLoop:
+class _MockMainLoop:
 
     def add_reader(self, foo, bar):
         pass
@@ -48,23 +48,23 @@ class ScreenWidgetTestCase(unittest.TestCase):
     def setUp(self):
         self.temp_dir = tempfile.mkdtemp()
         foo_path = os.path.join(self.temp_dir, "foo.py")
-        touch(foo_path)
+        _touch(foo_path)
         jobs_added_event = threading.Event()
         appearance_changed_event = threading.Event()
         summary = vigil.Summary(self.temp_dir, jobs_added_event)
         log = vigil.Log(appearance_changed_event)
         self.main_widget = vigil.Screen(summary, log, appearance_changed_event,
-                                        MockMainLoop())
+                                        _MockMainLoop())
 
     def tearDown(self):
         shutil.rmtree(self.temp_dir)
 
     # def test_initial_appearance(self):
-    #     assert_widget_appearance(self.main_widget, "golden-files/initial")
+    #     _assert_widget_appearance(self.main_widget, "golden-files/initial")
 
     def test_help_appearance(self):
         self.main_widget.toggle_help()
-        assert_widget_appearance(self.main_widget, "golden-files/help")
+        _assert_widget_appearance(self.main_widget, "golden-files/help")
 
     # def test_log_appearance(self):
     #     log_shown = _widget_to_string(self.main_widget)
@@ -124,8 +124,8 @@ class SummarySyncWithFilesystem(unittest.TestCase):
         self.foo_path = os.path.join(self.temp_dir, "foo")
         self.bar_path = os.path.join(self.temp_dir, "bar")
         self.zoo_path = os.path.join(self.temp_dir, "zoo")
-        touch(self.foo_path)
-        touch(self.bar_path)
+        _touch(self.foo_path)
+        _touch(self.bar_path)
         self.jobs_added_event = threading.Event()
         self.appearance_changed_event = threading.Event()
         self.summary = vigil.Summary(self.temp_dir, self.jobs_added_event)
@@ -150,7 +150,7 @@ class SummarySyncWithFilesystem(unittest.TestCase):
         self.assertFalse(self.jobs_added_event.isSet())
 
     def test_sync_added_file(self):
-        touch(self.zoo_path)
+        _touch(self.zoo_path)
         self.summary.sync_with_filesystem()
         self._assert_paths(["./bar", "./foo", "./zoo"])
         self.assertTrue(self.jobs_added_event.isSet())
@@ -158,7 +158,7 @@ class SummarySyncWithFilesystem(unittest.TestCase):
     # def test_sync_changed_file_metadata(self):
     #     ids_before = [id(entry) for entry in self.summary._column]
     #     time.sleep(1)
-    #     touch(self.foo_path)
+    #     _touch(self.foo_path)
     #     self.summary.sync_with_filesystem()
     #     ids_after = [id(entry) for entry in self.summary._column]
     #     self.assertTrue(ids_before[0] == ids_after[0]) # bar
@@ -191,15 +191,15 @@ class SummarySyncWithFilesystem(unittest.TestCase):
 #     def test_log(self):
 #         appearance_changed_event = threading.Event()
 #         log = vigil.Log(appearance_changed_event)
-#         assert_widget_appearance(log, "golden-files/log-initial", None)
+#         _assert_widget_appearance(log, "golden-files/log-initial", None)
 #         timestamp = "11:11:11"
 #         self.assertFalse(appearance_changed_event.isSet())
 #         log.log_message("foo", timestamp=timestamp)
 #         self.assertTrue(appearance_changed_event.isSet())
-#         assert_widget_appearance(log, "golden-files/log-one-message", None)
+#         _assert_widget_appearance(log, "golden-files/log-one-message", None)
 #         log.log_message("bar", timestamp=timestamp)
-#         assert_widget_appearance(log, "golden-files/log-two-messages", None)
-#         assert_widget_appearance(log, "golden-files/log-appearance")
+#         _assert_widget_appearance(log, "golden-files/log-two-messages", None)
+#         _assert_widget_appearance(log, "golden-files/log-appearance")
 
 
 def _mount_total():
@@ -224,8 +224,8 @@ class MainTestCase(unittest.TestCase):
             # processes = _all_processes()
             foo_path = os.path.join(root_path, "foo")
             open(foo_path, "w").close()
-            vigil.manage_cache(root_path)
-            with vigil.chdir(root_path):
+            vigil._manage_cache(root_path)
+            with vigil._chdir(root_path):
                 with contextlib.redirect_stdout(io.StringIO()):
                     vigil.main(root_path, worker_count=2, is_sandboxed=True,
                                is_being_tested=True)

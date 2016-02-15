@@ -26,7 +26,7 @@ MISSING_KEY = "mi"
 MULTI_HARDLINK_KEY = "mh"
 
 
-def parse_ls_colors(ls_codes):
+def _parse_ls_colors(ls_codes):
     color_codes = {}
     for entry in ls_codes.split(":"):
         if "=" not in entry:
@@ -39,7 +39,7 @@ def parse_ls_colors(ls_codes):
     return color_codes
 
 
-DEFAULT_COLOR_CODES = \
+_DEFAULT_COLOR_CODES = \
     {BLOCK_DEVICE_KEY: '01;33', SYMLINK_KEY: '01;36',
      STICKY_OTHER_WRITABLE_KEY: '30;42', DIRECTORY_KEY: '01;34',
      SETUID_KEY: '37;41', CHARACTER_DEVICE_KEY: '01;33', SOCKET_KEY: '01;35',
@@ -51,11 +51,11 @@ DEFAULT_COLOR_CODES = \
 def get_color_codes(environment):
     if "LS_COLORS" in environment:
         try:
-            return parse_ls_colors(environment["LS_COLORS"])
+            return _parse_ls_colors(environment["LS_COLORS"])
         except:
             syslog.syslog("Syntax error in LS_COLORS environment variable. "
                           "Using default colors.")
-    return DEFAULT_COLOR_CODES
+    return _DEFAULT_COLOR_CODES
 
 
 def color_key_for_path(path, color_codes, is_link_target=True):

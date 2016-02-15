@@ -341,25 +341,25 @@ class Table:
             for y, row in enumerate(appearances)])
 
 
-def parse_rgb(hex_rgb):
+def _parse_rgb(hex_rgb):
     if hex_rgb.startswith("#"):
         hex_rgb = hex_rgb[1:]
     return tuple(eval("0x"+hex_rgb[index:index+2]) for index in [0, 2, 4])
 
 
-def char_style_for_token_type(token_type, pygment_style):
+def _char_style_for_token_type(token_type, pygment_style):
     token_style = pygment_style.style_for_token(token_type)
     fg_color = (None if token_style["color"] is None
-                else parse_rgb(token_style["color"]))
+                else _parse_rgb(token_style["color"]))
     bg_color = (None if token_style["bgcolor"] is None
-                else parse_rgb(token_style["bgcolor"]))
+                else _parse_rgb(token_style["bgcolor"]))
     return termstr.CharStyle(fg_color, bg_color, token_style["bold"],
                              token_style["italic"], token_style["underline"])
 
 
-def pygments_to_termstr(tokens, pygment_style):
+def _pygments_to_termstr(tokens, pygment_style):
     return termstr.TermStr("").join(
-        termstr.TermStr(text, char_style_for_token_type(
+        termstr.TermStr(text, _char_style_for_token_type(
             token_type, pygment_style))
         for token_type, text in tokens)
 
@@ -367,10 +367,10 @@ def pygments_to_termstr(tokens, pygment_style):
 class Code:
 
     def __init__(self, tokens, style):
-        code = pygments_to_termstr(tokens, style).split("\n")
+        code = _pygments_to_termstr(tokens, style).split("\n")
         max_width = max(len(line) for line in code)
         height = len(code)
-        # bg_color = parse_rgb(style.background_color)
+        # bg_color = _parse_rgb(style.background_color)
         # bg_style = termstr.CharStyle(1, bg_color)
         # pad_char = termstr.TermStr(" ", bg_style)
         pad_char = " "

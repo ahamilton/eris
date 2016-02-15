@@ -26,14 +26,14 @@ class TempDirTestCase(unittest.TestCase):
 class ParseLsColorsTestCase(unittest.TestCase):
 
     def test_parse_ls_colors(self):
-        self.assertRaises(AssertionError, lscolors.parse_ls_colors, "")
-        self.assertRaises(AssertionError, lscolors.parse_ls_colors, "::")
-        self.assertEqual(lscolors.parse_ls_colors("*.awk=38;5;148;1"),
+        self.assertRaises(AssertionError, lscolors._parse_ls_colors, "")
+        self.assertRaises(AssertionError, lscolors._parse_ls_colors, "::")
+        self.assertEqual(lscolors._parse_ls_colors("*.awk=38;5;148;1"),
                          {".awk": "38;5;148;1"})
-        self.assertEqual(lscolors.parse_ls_colors("*.tar.gz=38;5;148;1"),
+        self.assertEqual(lscolors._parse_ls_colors("*.tar.gz=38;5;148;1"),
                          {".tar.gz": "38;5;148;1"})
         self.assertEqual(
-            lscolors.parse_ls_colors("*.awk=38;5;148;1:di=38;5;30"),
+            lscolors._parse_ls_colors("*.awk=38;5;148;1:di=38;5;30"),
             {".awk": "38;5;148;1", "di": "38;5;30"})
 
 
@@ -216,7 +216,7 @@ class ColorCodeForFileTestCase(TempDirTestCase):
             self.TAR_GZ_COLOR)
 
 
-def parse_ls_line(line):
+def _parse_ls_line(line):
     parts = line.split("\x1b[")
     if len(parts) == 1:
         return (None, line)
@@ -229,7 +229,7 @@ def parse_ls_line(line):
 class ParseLsLineTestCase(unittest.TestCase):
 
     def test_parse_ls_line(self):
-        self.assertEqual(parse_ls_line(
+        self.assertEqual(_parse_ls_line(
             "\x1b[0m\x1b[38;5;254m\x1b[m\x1b[38;5;30mhello\x1b[0m\n"),
             ("38;5;30", "hello"))
 
@@ -247,7 +247,7 @@ def test_against_ls(root_path, environment):
         if line.endswith(":"):
             current_directory = line[:-1]
             continue
-        ls_color_code, filename = parse_ls_line(line)
+        ls_color_code, filename = _parse_ls_line(line)
         path = os.path.join(current_directory, filename)
         if os.path.exists(path):  # Some paths are already gone. e.g. in /proc
             color_code = lscolors.color_code_for_path(path, color_codes)

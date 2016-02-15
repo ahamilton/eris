@@ -264,6 +264,7 @@ Ideas
 - Have command line options for more things? timeout? worker's nice priority level?
   editor? pygment syntax theme? Compress the cache? Ignore which paths? Log to disk?
   The cache path?
+- Can mypy be a tool?
 
 
 Shelved

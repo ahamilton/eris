@@ -12,7 +12,7 @@ import psutil
 import tools
 
 
-def make_process_nicest(pid):
+def _make_process_nicest(pid):
     process = psutil.Process(pid)
     process.nice(19)
     process.ionice(psutil.IOPRIO_CLASS_IDLE)
@@ -33,7 +33,7 @@ class Worker:
                                    self.cache_mount])
             self.process = sandbox.Popen([__file__])
         self.child_pid = int(self.process.stdout.readline())
-        make_process_nicest(self.child_pid)
+        _make_process_nicest(self.child_pid)
 
     def run_tool(self, path, tool):
         self.process.stdin.write(("%s\n%s\n" %

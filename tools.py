@@ -87,11 +87,11 @@ def get_ls_color_codes():
     return lscolors.get_color_codes(os.environ)
 
 
-LS_COLOR_CODES = get_ls_color_codes()
+_LS_COLOR_CODES = get_ls_color_codes()
 TIMEOUT = 60
 
 
-def fix_input(input_):
+def _fix_input(input_):
     input_str = input_.decode("utf-8") if isinstance(input_, bytes) else input_
     return input_str.replace("\t", " " * 4)
 
@@ -106,7 +106,7 @@ def _do_command(command, timeout=None, **kwargs):
         except subprocess.TimeoutExpired:
             process.kill()
             raise
-    return fix_input(stdout), fix_input(stderr), process.returncode
+    return _fix_input(stdout), _fix_input(stderr), process.returncode
 
 
 def _run_command(command, status_text=Status.ok):
@@ -120,7 +120,7 @@ def _run_command(command, status_text=Status.ok):
         status = Status.problem
     if process.returncode != 0:
         status = Status.problem
-    return status, fill3.Text(fix_input(output))
+    return status, fill3.Text(_fix_input(output))
 
 
 def _syntax_highlight_code(text, path):
@@ -138,7 +138,7 @@ def pygments_(path):
             return Status.not_applicable, fill3.Text("Not unicode")
         else:
             try:
-                source_widget = _syntax_highlight_code(fix_input(text), path)
+                source_widget = _syntax_highlight_code(_fix_input(text), path)
             except pygments.util.ClassNotFound:
                 return Status.normal, fill3.Text(text)
     return Status.normal, source_widget
@@ -170,14 +170,14 @@ def _pretty_bytes(bytes):
     return "%s %s" % (conversion, units[unit_index])
 
 
-def md5(path):
+def _md5(path):
     with open(path, "rb") as file:
         return hashlib.md5(file.read()).hexdigest()
 
 
 def metadata(path):
 
-    def _detail(value, unit):
+    def detail(value, unit):
         result = (" (%s)" % value if unit is None else " (%s %s)" %
                   (value, unit))
         return termstr.TermStr(result).fg_color(termstr.Color.grey_100)
@@ -186,26 +186,26 @@ def metadata(path):
     permissions = stat.filemode(stat_result.st_mode)
     hardlinks = str(stat_result.st_nlink)
     group = [pwd.getpwuid(stat_result.st_gid).pw_name,
-             _detail(stat_result.st_gid, "gid")]
+             detail(stat_result.st_gid, "gid")]
     owner = [pwd.getpwuid(stat_result.st_uid).pw_name,
-             _detail(stat_result.st_uid, "uid")]
+             detail(stat_result.st_uid, "uid")]
     modified, created, access = [
-        [time.asctime(time.gmtime(seconds)), _detail(int(seconds), "secs")]
+        [time.asctime(time.gmtime(seconds)), detail(int(seconds), "secs")]
         for seconds in (stat_result.st_mtime, stat_result.st_ctime,
                         stat_result.st_atime)]
     size = [_pretty_bytes(stat_result.st_size),
-            _detail(stat_result.st_size, "bytes")]
+            detail(stat_result.st_size, "bytes")]
     stdout, *rest = _do_command(
         ["file", "--dereference", "--brief", "--uncompress", "--mime", path])
     mime_type = stdout
     stdout, *rest = _do_command(
         ["file", "--dereference", "--brief", "--uncompress", path])
     file_type = stdout
-    md5sum = md5(path)
+    md5sum = _md5(path)
     stdout, *rest = _do_command(["sha1sum", path])
     sha1sum = stdout.split()[0]
     permissions_value = [permissions,
-                         _detail(_permissions_in_octal(permissions), None)]
+                         detail(_permissions_in_octal(permissions), None)]
     text = []
     for line in [
             ("size", size), ("permissions", permissions_value), None,
@@ -294,7 +294,7 @@ def pydoc(path):
     status, output = Status.normal, ""
     try:
         output = subprocess.check_output([pydoc_exe, path], timeout=TIMEOUT)
-        output = fix_input(output)
+        output = _fix_input(output)
     except subprocess.CalledProcessError:
         status = Status.not_applicable
     if not output.startswith("Help on module"):
@@ -359,7 +359,7 @@ pylint.dependencies = {"pylint", "pylint3"}
 def python_gut(path):
     with open(path) as module_file:
         output = gut.gut_module(module_file.read())
-    source_widget = _syntax_highlight_code(fix_input(output), path)
+    source_widget = _syntax_highlight_code(_fix_input(output), path)
     return Status.normal, source_widget
 python_gut.dependencies = set()
 
@@ -666,11 +666,11 @@ class Result:
                               self.entry.summary.is_status_simple)]
 
 
-def generic_tools():
+def _generic_tools():
     return [contents, metadata]
 
 
-def tools_for_extension():
+def _tools_for_extension():
     return {
         "py": [python_syntax, python_unittests, pydoc, python_coverage,
                python_profile, pep8, pyflakes, pylint, python_gut,
@@ -702,8 +702,8 @@ def tools_for_extension():
 
 
 def tools_all():
-    tools_ = set(generic_tools())
-    for tool_list in tools_for_extension().values():
+    tools_ = set(_generic_tools())
+    for tool_list in _tools_for_extension().values():
         tools_.update(set(tool_list))
     return tools_
 
@@ -726,8 +726,8 @@ def splitext(path):
 
 def tools_for_path(path):
     root, ext = splitext(path)
-    extra_tools = [] if ext == "" else tools_for_extension().get(ext[1:], [])
-    return generic_tools() + extra_tools
+    extra_tools = [] if ext == "" else _tools_for_extension().get(ext[1:], [])
+    return _generic_tools() + extra_tools
 
 
 def _get_python_traceback_lexer():
@@ -767,7 +767,7 @@ def _convert_lscolor_code_to_charstyle(lscolor_code):
 
 
 def _charstyle_of_path(path):
-    color_code = lscolors.color_code_for_path(path, LS_COLOR_CODES)
+    color_code = lscolors.color_code_for_path(path, _LS_COLOR_CODES)
     return (termstr.CharStyle() if color_code is None else
             _convert_lscolor_code_to_charstyle(color_code))
 
@@ -787,6 +787,6 @@ def _path_colored(path):
 
 @functools.lru_cache(maxsize=100)
 def _tool_name_colored(tool, path):
-    char_style = (termstr.CharStyle(is_bold=True) if tool in generic_tools()
+    char_style = (termstr.CharStyle(is_bold=True) if tool in _generic_tools()
                   else _charstyle_of_path(path))
     return termstr.TermStr(tool.__name__, char_style)

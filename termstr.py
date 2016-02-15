@@ -8,7 +8,7 @@ import weakref
 import terminal
 
 
-def cache_first_result(user_function):
+def _cache_first_result(user_function):
     def decorator(self, *args, **kwds):
         try:
             return self._cache
@@ -66,7 +66,7 @@ class CharStyle:
         return ("<CharStyle: fg:%s bg:%s attr:%s>" %
                 (self.fg_color, self.bg_color, ",".join(attributes)))
 
-    @cache_first_result
+    @_cache_first_result
     def code_for_term(self):
         fg_func = (terminal.fg_color if isinstance(self.fg_color, int)
                    else terminal.fg_rgb_color)
@@ -80,7 +80,7 @@ class CharStyle:
                         underline_code])
 
 
-def join_lists(lists):
+def _join_lists(lists):
     result = []
     for list_ in lists:
         result.extend(list_)
@@ -109,7 +109,7 @@ class TermStr(collections.UserString):
     def __hash__(self):
         return hash((self.data, self.style))
 
-    @cache_first_result
+    @_cache_first_result
     def _partition_style(self):
         if self.data == "":
             return []
@@ -126,7 +126,7 @@ class TermStr(collections.UserString):
         return result
 
     def __str__(self):
-        return "".join(join_lists(
+        return "".join(_join_lists(
             [style.code_for_term(), str_]
             for style, str_, position in self._partition_style()) +
                        [terminal.normal])
@@ -154,7 +154,7 @@ class TermStr(collections.UserString):
     def join(self, parts):
         parts = [TermStr(part) if isinstance(part, str) else part
                  for part in parts]
-        joined_style = join_lists(self.style + part.style for part in parts)
+        joined_style = _join_lists(self.style + part.style for part in parts)
         return self.__class__(self.data.join(part.data for part in parts),
                               tuple(joined_style[len(self.style):]))
 
@@ -207,7 +207,7 @@ class TermStr(collections.UserString):
     # Below are extra methods useful for termstrs.
 
     def transform_style(self, transform_func):
-        new_style = tuple(join_lists([transform_func(style)] * len(str_)
+        new_style = tuple(_join_lists([transform_func(style)] * len(str_)
                                      for style, str_, position
                                      in self._partition_style()))
         return self.__class__(self.data, new_style)

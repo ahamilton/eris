@@ -89,7 +89,7 @@ def _log_error(message=None):
         log_file.write(message)
 
 
-def reverse_style(style):
+def _reverse_style(style):
     return termstr.CharStyle(style.bg_color, style.fg_color, style.is_bold,
                              style.is_underlined)
 
@@ -122,7 +122,7 @@ class Entry(collections.UserList):
             return fill3.Text(termstr.TermStr("●", termstr.CharStyle(
                 fg_color=fg_color, bg_color=status_color)))
         else:
-            return fill3.Style(result_selected, reverse_style)
+            return fill3.Style(result_selected, _reverse_style)
 
     def appearance_min(self):
         # 'appearance' local variable exists because appearance_cache can
@@ -139,27 +139,27 @@ class Entry(collections.UserList):
         return appearance
 
 
-def is_filename_excluded(filename):
+def _is_filename_excluded(filename):
     return filename.startswith(".")
 
 
-def codebase_files(path, skip_hidden_directories=True):
+def _codebase_files(path, skip_hidden_directories=True):
     for (dirpath, dirnames, filenames) in os.walk(path):
         if skip_hidden_directories:
             filtered_dirnames = [dirname for dirname in dirnames
-                                 if not is_filename_excluded(dirname)]
+                                 if not _is_filename_excluded(dirname)]
             dirnames[:] = filtered_dirnames
         for filename in filenames:
-            if not is_filename_excluded(filename):
+            if not _is_filename_excluded(filename):
                 yield os.path.join(dirpath, filename)
 
 
-def fix_paths(root_path, paths):
+def _fix_paths(root_path, paths):
     return [os.path.join(".", os.path.relpath(path, root_path))
             for path in paths]
 
 
-def change_background(str_, new_background):
+def _change_background(str_, new_background):
 
     def change_background_style(style):
         new_bg = (new_background if style.bg_color == termstr.Color.black
@@ -169,19 +169,19 @@ def change_background(str_, new_background):
     return termstr.TermStr(str_).transform_style(change_background_style)
 
 
-def in_green(str_):
+def _in_green(str_):
     return termstr.TermStr(str_, termstr.CharStyle(termstr.Color.green))
 
 
-UP, DOWN, LEFT, RIGHT = (0, -1), (0, 1), (-1, 0), (1, 0)
+_UP, _DOWN, _LEFT, _RIGHT = (0, -1), (0, 1), (-1, 0), (1, 0)
 
 
-def directory_sort(path):
+def _directory_sort(path):
     return (os.path.dirname(path), tools.splitext(path)[1],
             os.path.basename(path))
 
 
-def type_sort(path):
+def _type_sort(path):
     return (tools.splitext(path)[1], os.path.dirname(path),
             os.path.basename(path))
 
@@ -196,7 +196,7 @@ def _log_filesystem_changed(log, added, removed, modified):
     log.log_message("Filesystem changed: " + fill3.join(" ", parts))
 
 
-def get_diff_stats(old_files, new_files):
+def _get_diff_stats(old_files, new_files):
     old_names = set(name for name, ctime in old_files)
     new_names = set(name for name, ctime in new_files)
     added_count = len(new_names - old_names)
@@ -241,9 +241,10 @@ class Summary:
             old_path = None
         new_column = fill3.Column([])
         new_cache = {}
-        paths = fix_paths(self._root_path,
-                          codebase_files(self._root_path))
-        paths.sort(key=directory_sort if self.is_directory_sort else type_sort)
+        paths = _fix_paths(self._root_path,
+                           _codebase_files(self._root_path))
+        paths.sort(key=_directory_sort if self.is_directory_sort
+                   else _type_sort)
         jobs_added = False
         new_cursor_position = (0, 0)
         row_index = 0
@@ -280,7 +281,7 @@ class Summary:
         max_path_length = max(len(path) for path in paths) - len("./")
         deleted_results = self._all_results - all_results
         if log is not None:
-            stats = get_diff_stats(
+            stats = _get_diff_stats(
                 set(self._cache.keys()), set(new_cache.keys()))
             if sum(stats) != 0:
                 _log_filesystem_changed(log, *stats)
@@ -295,7 +296,7 @@ class Summary:
             with contextlib.suppress(FileNotFoundError):
                 os.remove(result.pickle_path)
 
-    def placeholder_spiral(self):
+    def _placeholder_spiral(self):
         x, y = self.cursor_position()
         result = self._column[y][x]
         if result.is_placeholder:
@@ -318,7 +319,7 @@ class Summary:
             try:
                 return self.closest_placeholder_generator.send(None)
             except AttributeError:
-                self.closest_placeholder_generator = self.placeholder_spiral()
+                self.closest_placeholder_generator = self._placeholder_spiral()
                 return self.closest_placeholder_generator.send(None)
 
     def appearance_dimensions(self):
@@ -343,7 +344,7 @@ class Summary:
         scroll_y = (screen_y // height) * height
         self._view_widget.position = ((screen_x // width) * width, scroll_y)
         appearance = self._view_widget.appearance(dimensions)
-        appearance[screen_y - scroll_y] = change_background(
+        appearance[screen_y - scroll_y] = _change_background(
             appearance[screen_y - scroll_y], termstr.Color.grey_50)
         return appearance
 
@@ -367,16 +368,16 @@ class Summary:
             raise ValueError
 
     def cursor_right(self):
-        self._move_cursor(RIGHT)
+        self._move_cursor(_RIGHT)
 
     def cursor_left(self):
-        self._move_cursor(LEFT)
+        self._move_cursor(_LEFT)
 
     def cursor_up(self):
-        self._move_cursor(UP)
+        self._move_cursor(_UP)
 
     def cursor_down(self):
-        self._move_cursor(DOWN)
+        self._move_cursor(_DOWN)
 
     def cursor_page_up(self):
         view_width, view_height = self._view_widget.portal.last_dimensions
@@ -423,9 +424,9 @@ class Summary:
             tool_name = tools._tool_name_colored(
                 selection.tool, selection.path)
             path_colored = tools._path_colored(selection.path)
-            log.log_message([in_green("Refreshing "), tool_name,
-                             in_green(" result of "), path_colored,
-                             in_green("...")])
+            log.log_message([_in_green("Refreshing "), tool_name,
+                             _in_green(" result of "), path_colored,
+                             _in_green("...")])
             selection.reset()
             self.closest_placeholder_generator = None
             self._jobs_added_event.set()
@@ -434,9 +435,9 @@ class Summary:
 
 class Log:
 
-    GREY_BOLD_STYLE = termstr.CharStyle(termstr.Color.grey_100, is_bold=True)
-    GREEN_STYLE = termstr.CharStyle(termstr.Color.green)
-    LOG_PATH = os.path.join(tools._CACHE_PATH, "log")
+    _GREY_BOLD_STYLE = termstr.CharStyle(termstr.Color.grey_100, is_bold=True)
+    _GREEN_STYLE = termstr.CharStyle(termstr.Color.green)
+    _LOG_PATH = os.path.join(tools._CACHE_PATH, "log")
 
     def __init__(self, appearance_changed_event):
         self._appearance_changed_event = appearance_changed_event
@@ -453,20 +454,20 @@ class Log:
             message = termstr.TermStr(message, char_style)
         timestamp = (time.strftime("%H:%M:%S", time.localtime())
                      if timestamp is None else timestamp)
-        line = termstr.TermStr(timestamp, Log.GREY_BOLD_STYLE) + " " + message
+        line = termstr.TermStr(timestamp, Log._GREY_BOLD_STYLE) + " " + message
         self.widget.append(fill3.Text(line))
-        with open(Log.LOG_PATH, "a") as log_file:
+        with open(Log._LOG_PATH, "a") as log_file:
             print(line, file=log_file)
         self.widget.widgets = self.widget[-200:]
         self._appearance_cache = None
         self._appearance_changed_event.set()
 
     def log_command(self, message, timestamp=None):
-        self.log_message(message, char_style=Log.GREEN_STYLE)
+        self.log_message(message, char_style=Log._GREEN_STYLE)
 
     def delete_log_file(self):
         with contextlib.suppress(FileNotFoundError):
-            os.remove(Log.LOG_PATH)
+            os.remove(Log._LOG_PATH)
 
     def appearance_min(self):
         appearance = self._appearance_cache
@@ -490,7 +491,7 @@ def _highlight_chars(str_, style, marker="*"):
 
 @functools.lru_cache()
 def _get_help_text(is_status_simple=True):
-    usage = _highlight_chars(__doc__, Log.GREEN_STYLE)
+    usage = _highlight_chars(__doc__, Log._GREEN_STYLE)
     return fill3.join(
         "\n", [usage, "Statuses:"] +
         ["  " + tools.status_to_str(status, is_status_simple) + " " + meaning
@@ -515,15 +516,15 @@ class Help:
         self.widget = fill3.Border(self.view, title="Help")
         portal = self.view.portal
         self.key_map = _make_key_map([
-            ({"h"}, self.exit_help), ({"d", "up"}, portal.scroll_up),
+            ({"h"}, self._exit_help), ({"d", "up"}, portal.scroll_up),
             ({"c", "down"}, portal.scroll_down),
             ({"j", "left"}, portal.scroll_left),
-            ({"k", "right"}, portal.scroll_right), ({"q"}, self.exit_help)])
+            ({"k", "right"}, portal.scroll_right), ({"q"}, self._exit_help)])
 
-    def exit_help(self):
+    def _exit_help(self):
         self.screen._is_help_visible = False
 
-    def on_mouse_event(self, event, appearance_changed_event):
+    def _on_mouse_event(self, event, appearance_changed_event):
         if event[1] == 4:  # Mouse wheel up
             self.view.portal.scroll_up()
             appearance_changed_event.set()
@@ -533,7 +534,7 @@ class Help:
 
     def on_input_event(self, event, appearance_changed_event):
         if type(event) == tuple:
-            self.on_mouse_event(event, appearance_changed_event)
+            self._on_mouse_event(event, appearance_changed_event)
             return
         try:
             action = self.key_map[event]
@@ -679,9 +680,9 @@ class Screen:
         else:
             path = self._summary.get_selection().path
             path_colored = tools._path_colored(path)
-            self._log.log_message([in_green("Editing "), path_colored,
-                                   in_green(' with command: "%s"...'
-                                            % self.editor_command)])
+            self._log.log_message([_in_green("Editing "), path_colored,
+                                   _in_green(' with command: "%s"...'
+                                             % self.editor_command)])
             subprocess.Popen("%s %s" % (self.editor_command, path), shell=True,
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -712,7 +713,7 @@ class Screen:
     def refresh(self):
         self._summary.refresh(self._log)
 
-    def on_mouse_event(self, event):
+    def _on_mouse_event(self, event):
         if event[0] not in ["mouse press", "mouse drag"]:
             return
         if event[1] == 4:  # Mouse wheel up
@@ -752,7 +753,7 @@ class Screen:
                 event, self._appearance_changed_event)
             return
         if type(event) == tuple:
-            self.on_mouse_event(event)
+            self._on_mouse_event(event)
             return
         try:
             action = self._key_map[event]
@@ -764,7 +765,7 @@ class Screen:
 
     _STATUS_BAR = _highlight_chars(
         " *help *quit *d,*c,*j,*k,*f,*v:navigate *turn *log *edit *next *pause"
-        " *order *refresh *statuses", Log.GREEN_STYLE)
+        " *order *refresh *statuses", Log._GREEN_STYLE)
 
     @functools.lru_cache(maxsize=2)
     def _get_status_bar_appearance(self, width, is_directory_sort, is_paused,
@@ -818,15 +819,15 @@ class Screen:
         ({"p"}, toggle_pause), ({"r"}, refresh)]
 
 
-def get_cpu_temperature():
+def _get_cpu_temperature():
     with open("/sys/class/thermal/thermal_zone0/temp", "r") as temp_file:
         return int(temp_file.read()[:-4])
 
 
-def regulate_temperature(log):
-    if get_cpu_temperature() >= 72:
+def _regulate_temperature(log):
+    if _get_cpu_temperature() >= 72:
         log.log_message("The computer is too hot. Waiting to cool down...")
-        while get_cpu_temperature() > 66:
+        while _get_cpu_temperature() > 66:
             time.sleep(1)
         log.log_message("The computer has cooled down. Continuing...")
 
@@ -844,7 +845,7 @@ class Runner:
         while True:
             jobs_added_event.wait()
             while True:
-                # regulate_temperature(log)  # My fan is broken
+                # _regulate_temperature(log)  # My fan is broken
                 try:
                     self.result = summary.get_closest_placeholder()
                 except StopIteration:
@@ -873,11 +874,11 @@ class Runner:
             self.worker.continue_()
 
 
-def is_path_excluded(path):
+def _is_path_excluded(path):
     return any(part.startswith(".") for part in path.split(os.path.sep))
 
 
-def add_watch_manager_to_mainloop(root_path, mainloop, on_filesystem_change,
+def _add_watch_manager_to_mainloop(root_path, mainloop, on_filesystem_change,
                                   exclude_filter):
     watch_manager = pyinotify.WatchManager()
     event_mask = (pyinotify.IN_CREATE | pyinotify.IN_DELETE |
@@ -901,7 +902,7 @@ def add_watch_manager_to_mainloop(root_path, mainloop, on_filesystem_change,
 _UPDATE_THREAD_STOPPED = False
 
 
-def update_screen(main_widget, appearance_changed_event):
+def _update_screen(main_widget, appearance_changed_event):
     while True:
         appearance_changed_event.wait()
         appearance_changed_event.clear()
@@ -945,8 +946,8 @@ def main(root_path, worker_count=multiprocessing.cpu_count()*2,
     def on_filesystem_change():
         summary.sync_with_filesystem(log)
         appearance_changed_event.set()
-    watch_manager_fd = add_watch_manager_to_mainloop(
-        root_path, loop, on_filesystem_change, is_path_excluded)
+    watch_manager_fd = _add_watch_manager_to_mainloop(
+        root_path, loop, on_filesystem_change, _is_path_excluded)
     screen.runners = runners = []
     if is_sandboxed:
         sandbox_temp_dir = tempfile.mkdtemp()
@@ -980,7 +981,7 @@ def main(root_path, worker_count=multiprocessing.cpu_count()*2,
             appearance_changed_event.set()
         appearance_changed_event.set()
         update_display_thread = threading.Thread(
-            target=update_screen, args=(screen, appearance_changed_event),
+            target=_update_screen, args=(screen, appearance_changed_event),
             daemon=True)
         with terminal.hidden_cursor():
             with terminal.urwid_screen() as urwid_screen:
@@ -1014,7 +1015,7 @@ def main(root_path, worker_count=multiprocessing.cpu_count()*2,
 
 
 @contextlib.contextmanager
-def chdir(path):
+def _chdir(path):
     old_cwd = os.getcwd()
     os.chdir(path)
     try:
@@ -1023,7 +1024,7 @@ def chdir(path):
         os.chdir(old_cwd)
 
 
-def manage_cache(root_path):
+def _manage_cache(root_path):
     cache_path = os.path.join(root_path, tools._CACHE_PATH)
     timestamp_path = os.path.join(cache_path, "creation_time")
     if os.path.exists(cache_path) and \
@@ -1068,6 +1069,6 @@ if __name__ == "__main__":
     subprocess.call(["sudo", "-p", "Vigil uses sudo...  "
                      "[sudo] password for %u: ", "true"])
     with terminal.console_title("vigil: " + os.path.basename(root_path)):
-        manage_cache(root_path)
-        with chdir(root_path):  # FIX: Don't change directory if possible.
+        _manage_cache(root_path)
+        with _chdir(root_path):  # FIX: Don't change directory if possible.
             main(root_path, worker_count, is_sandboxed, editor_command)
