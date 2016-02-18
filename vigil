@@ -54,7 +54,6 @@ Keys:
 import asyncio
 import collections
 import contextlib
-import enum
 import functools
 import gzip
 import multiprocessing
@@ -879,7 +878,7 @@ def _is_path_excluded(path):
 
 
 def _add_watch_manager_to_mainloop(root_path, mainloop, on_filesystem_change,
-                                  exclude_filter):
+                                   exclude_filter):
     watch_manager = pyinotify.WatchManager()
     event_mask = (pyinotify.IN_CREATE | pyinotify.IN_DELETE |
                   pyinotify.IN_CLOSE_WRITE | pyinotify.IN_ATTRIB |

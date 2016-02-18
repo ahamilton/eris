@@ -215,8 +215,8 @@ class TermStr(collections.UserString):
 
     def transform_style(self, transform_func):
         new_style = tuple(_join_lists([transform_func(style)] * len(str_)
-                                     for style, str_, position
-                                     in self._partition_style()))
+                                      for style, str_, position
+                                      in self._partition_style()))
         return self.__class__(self.data, new_style)
 
     def bold(self):

@@ -111,8 +111,9 @@ class ToolsTestCase(unittest.TestCase):
                         [("hi3.cpython-34.pyc", tools.Status.normal)])
 
     def test_perl_syntax(self):
-        self._test_tool(tools.perl_syntax, [("perl.pl", tools.Status.ok),
-                                            ("perl6.pl", tools.Status.problem)])
+        self._test_tool(tools.perl_syntax,
+                        [("perl.pl", tools.Status.ok),
+                         ("perl6.pl", tools.Status.problem)])
 
     def test_perldoc(self):
         self._test_tool(tools.perldoc,
