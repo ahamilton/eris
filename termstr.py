@@ -171,9 +171,16 @@ class TermStr(collections.UserString):
         return self._split_style(self.data.split(sep, maxsplit), len(sep))
 
     def splitlines(self, keepends=0):
-        # FIX. Fails when a line seperator isn't one character in length.. \r\n
-        sep_length = 0 if keepends else len("\n")
-        return self._split_style(self.data.splitlines(keepends), sep_length)
+        lines_with_ends = self.data.splitlines(keepends=True)
+        lines_without_ends = self.data.splitlines()
+        result_parts = lines_with_ends if keepends else lines_without_ends
+        result = []
+        cursor = 0
+        for line, line_with_end in zip(result_parts, lines_with_ends):
+            style_part = self.style[cursor:cursor+len(line)]
+            result.append(self.__class__(line, style_part))
+            cursor += len(line_with_end)
+        return result
 
     def capitalize(self):
         return self.__class__(self.data.capitalize(), self.style)

@@ -96,8 +96,11 @@ class TermStrTests(unittest.TestCase):
         self.assertEqual(foo.join(["C"]), TermStr("C"))
         bar = TermStr("bar", bold_style)
         self.assertEqual((foo + "\n" + bar).splitlines(), [foo, bar])
+        self.assertEqual((foo + "\r\n" + bar).splitlines(), [foo, bar])
         self.assertEqual((foo + "\n" + bar).splitlines(keepends=True),
                          [TermStr("foo\n"), bar])
+        self.assertEqual((foo + "\r\n" + bar).splitlines(keepends=True),
+                         [TermStr("foo\r\n"), bar])
         self.assertEqual(foo.ljust(5), foo + TermStr("  "))
         self.assertEqual(foo.rjust(5), TermStr("  ") + foo)
         self.assertEqual(TermStr("FOO").lower(), foo)
