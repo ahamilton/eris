@@ -140,18 +140,18 @@ class Entry(collections.UserList):
         return appearance
 
 
-def _is_filename_excluded(filename):
-    return filename.startswith(".")
+def _is_path_excluded(path):
+    return any(part.startswith(".") for part in path.split(os.path.sep))
 
 
 def _codebase_files(path, skip_hidden_directories=True):
     for (dirpath, dirnames, filenames) in os.walk(path):
         if skip_hidden_directories:
             filtered_dirnames = [dirname for dirname in dirnames
-                                 if not _is_filename_excluded(dirname)]
+                                 if not _is_path_excluded(dirname)]
             dirnames[:] = filtered_dirnames
         for filename in filenames:
-            if not _is_filename_excluded(filename):
+            if not _is_path_excluded(filename):
                 yield os.path.join(dirpath, filename)
 
 
@@ -873,10 +873,6 @@ class Runner:
            self.result.status == tools.Status.paused:
             self.result.set_status(tools.Status.running)
             self.worker.continue_()
-
-
-def _is_path_excluded(path):
-    return any(part.startswith(".") for part in path.split(os.path.sep))
 
 
 def _add_watch_manager_to_mainloop(root_path, mainloop, on_filesystem_change,
