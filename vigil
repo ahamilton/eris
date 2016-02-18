@@ -650,22 +650,22 @@ class Screen:
                             dy * (listing_height // 2)))
 
     def listing_up(self):
-        self._move_listing(UP)
+        self._move_listing(_UP)
 
     def listing_down(self):
-        self._move_listing(DOWN)
+        self._move_listing(_DOWN)
 
     def listing_right(self):
-        self._page_listing(RIGHT)
+        self._page_listing(_RIGHT)
 
     def listing_left(self):
-        self._page_listing(LEFT)
+        self._page_listing(_LEFT)
 
     def listing_page_up(self):
-        self._page_listing(UP)
+        self._page_listing(_UP)
 
     def listing_page_down(self):
-        self._page_listing(DOWN)
+        self._page_listing(_DOWN)
 
     def move_to_next_issue(self):
         self._summary.move_to_next_issue()
