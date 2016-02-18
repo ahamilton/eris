@@ -123,24 +123,27 @@ def _run_command(command, status_text=Status.ok):
     return status, fill3.Text(_fix_input(output))
 
 
-def _syntax_highlight(text, lexer, style, pad_char=" "):
+def _syntax_highlight(text, lexer, style):
     def _parse_rgb(hex_rgb):
         if hex_rgb.startswith("#"):
             hex_rgb = hex_rgb[1:]
         return tuple(eval("0x"+hex_rgb[index:index+2]) for index in [0, 2, 4])
-    def _char_style_for_token_type(token_type):
+    def _char_style_for_token_type(token_type, default_bg_color):
         token_style = style.style_for_token(token_type)
         fg_color = (None if token_style["color"] is None
                     else _parse_rgb(token_style["color"]))
-        bg_color = (None if token_style["bgcolor"] is None
+        bg_color = (default_bg_color if token_style["bgcolor"] is None
                     else _parse_rgb(token_style["bgcolor"]))
         return termstr.CharStyle(fg_color, bg_color, token_style["bold"],
                                  token_style["italic"],
                                  token_style["underline"])
+    default_bg_color = _parse_rgb(style.background_color)
     text = fill3.join("",
-        [termstr.TermStr(text, _char_style_for_token_type(token_type))
+        [termstr.TermStr(text, _char_style_for_token_type(token_type,
+                                                          default_bg_color))
          for token_type, text in pygments.lex(text, lexer)])
-    return fill3.Text(text, pad_char=pad_char)
+    return fill3.Text(text, pad_char=termstr.TermStr(" ").bg_color(
+        default_bg_color))
 
 
 def _syntax_highlight_using_path(text, path):
@@ -302,7 +305,7 @@ def python_unittests(path):
         status = Status.ok if returncode == 0 else Status.problem
         native_style = pygments.styles.get_style_by_name("native")
         return status, _syntax_highlight(stderr, _python_console_lexer,
-                                           native_style)
+                                         native_style)
     else:
         return Status.not_applicable, fill3.Text("No tests.")
 python_unittests.dependencies = {"python", "python3"}
