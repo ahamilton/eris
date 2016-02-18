@@ -70,6 +70,8 @@ import traceback
 
 import docopt
 import pyinotify
+import urwid
+import urwid.raw_display
 
 import fill3
 import sandbox_fs
@@ -898,6 +900,17 @@ def _add_watch_manager_to_mainloop(root_path, mainloop, on_filesystem_change,
     return watch_manager_fd
 
 
+@contextlib.contextmanager
+def _urwid_screen():
+    screen = urwid.raw_display.Screen()
+    screen.set_mouse_tracking(True)
+    screen.start()
+    try:
+        yield screen
+    finally:
+        screen.stop()
+
+
 _UPDATE_THREAD_STOPPED = False
 
 
@@ -983,7 +996,7 @@ def main(root_path, worker_count=multiprocessing.cpu_count()*2,
             target=_update_screen, args=(screen, appearance_changed_event),
             daemon=True)
         with terminal.hidden_cursor():
-            with terminal.urwid_screen() as urwid_screen:
+            with _urwid_screen() as urwid_screen:
                 loop.add_reader(sys.stdin, on_input, urwid_screen)
                 update_display_thread.start()
                 signal.signal(signal.SIGWINCH, on_window_resize)
@@ -1036,7 +1049,7 @@ def _manage_cache(root_path):
         open(timestamp_path, "w").close()
 
 
-def check_arguments():
+def _check_arguments():
     arguments = docopt.docopt(__doc__.replace("*", ""), help=False)
     if arguments["--help"]:
         print(_get_help_text())
@@ -1064,7 +1077,7 @@ def check_arguments():
 
 
 if __name__ == "__main__":
-    root_path, worker_count, is_sandboxed, editor_command = check_arguments()
+    root_path, worker_count, is_sandboxed, editor_command = _check_arguments()
     subprocess.call(["sudo", "-p", "Vigil uses sudo...  "
                      "[sudo] password for %u: ", "true"])
     with terminal.console_title("vigil: " + os.path.basename(root_path)):

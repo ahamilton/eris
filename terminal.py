@@ -8,9 +8,6 @@ import curses
 import os
 import sys
 
-import urwid
-import urwid.raw_display
-
 
 curses.setupterm(os.environ.get("TERM", "unknown"), sys.stdout.fileno())
 
@@ -96,14 +93,3 @@ def console_title(title):
         yield
     finally:
         sys.stdout.write(restore)
-
-
-@contextlib.contextmanager
-def urwid_screen():
-    screen = urwid.raw_display.Screen()
-    screen.set_mouse_tracking(True)
-    screen.start()
-    try:
-        yield screen
-    finally:
-        screen.stop()
