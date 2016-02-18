@@ -123,11 +123,30 @@ def _run_command(command, status_text=Status.ok):
     return status, fill3.Text(_fix_input(output))
 
 
-def _syntax_highlight_code(text, path):
+def _syntax_highlight(text, lexer, style, pad_char=" "):
+    def _parse_rgb(hex_rgb):
+        if hex_rgb.startswith("#"):
+            hex_rgb = hex_rgb[1:]
+        return tuple(eval("0x"+hex_rgb[index:index+2]) for index in [0, 2, 4])
+    def _char_style_for_token_type(token_type):
+        token_style = style.style_for_token(token_type)
+        fg_color = (None if token_style["color"] is None
+                    else _parse_rgb(token_style["color"]))
+        bg_color = (None if token_style["bgcolor"] is None
+                    else _parse_rgb(token_style["bgcolor"]))
+        return termstr.CharStyle(fg_color, bg_color, token_style["bold"],
+                                 token_style["italic"],
+                                 token_style["underline"])
+    text = fill3.join("",
+        [termstr.TermStr(text, _char_style_for_token_type(token_type))
+         for token_type, text in pygments.lex(text, lexer)])
+    return fill3.Text(text, pad_char=pad_char)
+
+
+def _syntax_highlight_using_path(text, path):
     lexer = pygments.lexers.get_lexer_for_filename(path, text)
-    tokens = pygments.lex(text, lexer)
     native_style = pygments.styles.get_style_by_name("native")
-    return fill3.Code(tokens, native_style)
+    return _syntax_highlight(text, lexer, native_style)
 
 
 def pygments_(path):
@@ -138,7 +157,8 @@ def pygments_(path):
             return Status.not_applicable, fill3.Text("Not unicode")
         else:
             try:
-                source_widget = _syntax_highlight_code(_fix_input(text), path)
+                source_widget = _syntax_highlight_using_path(_fix_input(text),
+                                                             path)
             except pygments.util.ClassNotFound:
                 return Status.normal, fill3.Text(text)
     return Status.normal, source_widget
@@ -279,11 +299,10 @@ def python_unittests(path):
         python_version = _python_version(path)
         cmd = [path] if _has_shebang_line(path) else [python_version, path]
         stdout, stderr, returncode = _do_command(cmd, timeout=TIMEOUT)
-        markup = pygments.lex(stderr, _python_console_lexer)
         status = Status.ok if returncode == 0 else Status.problem
         native_style = pygments.styles.get_style_by_name("native")
-        code = fill3.Code(markup, native_style)
-        return status, code
+        return status, _syntax_highlight(stderr, _python_console_lexer,
+                                           native_style)
     else:
         return Status.not_applicable, fill3.Text("No tests.")
 python_unittests.dependencies = {"python", "python3"}
@@ -359,7 +378,7 @@ pylint.dependencies = {"pylint", "pylint3"}
 def python_gut(path):
     with open(path) as module_file:
         output = gut.gut_module(module_file.read())
-    source_widget = _syntax_highlight_code(_fix_input(output), path)
+    source_widget = _syntax_highlight_using_path(_fix_input(output), path)
     return Status.normal, source_widget
 python_gut.dependencies = set()
 
@@ -396,7 +415,7 @@ python_mccabe.dependencies = {"python-mccabe", "python3-mccabe"}
 
 def python_tidy(path):  # Deps: found on internet?
     stdout, *rest = _do_command(["python", "python-tidy.py", path])
-    return Status.normal, _syntax_highlight_code(stdout, path)
+    return Status.normal, _syntax_highlight_using_path(stdout, path)
 
 
 def disassemble_pyc(path):
@@ -428,7 +447,7 @@ perldoc.dependencies = {"perl-doc"}
 
 def perltidy(path):
     stdout, *rest = _do_command(["perltidy", "-st", path])
-    return Status.normal, _syntax_highlight_code(stdout, path)
+    return Status.normal, _syntax_highlight_using_path(stdout, path)
 perltidy.dependencies = {"perltidy"}
 
 
@@ -526,8 +545,7 @@ html2text.dependencies = {"html2text"}
 def bcpp(path):
     stdout, stderr, returncode = _do_command(["bcpp", "-fi", path])
     status = Status.normal if returncode == 0 else Status.problem
-    source_widget = _syntax_highlight_code(stdout, path)
-    return status, source_widget
+    return status, _syntax_highlight_using_path(stdout, path)
 bcpp.dependencies = {"bcpp"}
 
 
@@ -540,8 +558,7 @@ def uncrustify(path):
             stdout, stderr, returncode = _do_command(
                 ["uncrustify", "-c", config_path, "-f", path])
     status = Status.normal if returncode == 0 else Status.problem
-    source_widget = _syntax_highlight_code(stdout, path)
-    return status, source_widget
+    return status, _syntax_highlight_using_path(stdout, path)
 uncrustify.dependencies = {"uncrustify"}
 
 
@@ -744,11 +761,9 @@ def run_tool_no_error(path, tool):
     except subprocess.TimeoutExpired:
         status, result = Status.timed_out, fill3.Text("Timed out")
     except:
-        # Maybe use code.InteractiveInterpreter.showtraceback() ?
-        tokens = pygments.lex(traceback.format_exc(),
-                              _get_python_traceback_lexer())
-        native_style = pygments.styles.get_style_by_name("native")
-        status, result = Status.error, fill3.Code(tokens, native_style)
+        status, result = Status.error, _syntax_highlight(
+            traceback.format_exc(), _get_python_traceback_lexer(),
+            pygments.styles.get_style_by_name("native"))
     return status, result
 
 

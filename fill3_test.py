@@ -8,10 +8,6 @@ import unittest
 
 import fill3 as fill
 
-# import pygments.lexers
-# import pygments.styles.default
-# import pygments.styles.emacs
-
 
 class WidgetTests(unittest.TestCase):
 
@@ -67,18 +63,6 @@ class WidgetTests(unittest.TestCase):
                            "┌─ AB ─┐\n"
                            "│abcdef│\n"
                            "└──────┘")
-
-    # def test_pygments_widget(self):
-    #     text = "print('hello world')"
-    #     tokens = pygments.lex(text, pygments.lexers.PythonLexer())
-    #     code = fill.Code(tokens, pygments.styles.default.DefaultStyle)
-    #     self.assert_string(code.appearance_min(),
-    #             "\x1b[1m\x1b[38;2;0;128;0m\x1b[48;2;248;248;248m"
-    #             "print\x1b(B\x1b[m\x1b[315m\x1b[48;2;248;248;248m"
-    #             "(\x1b(B\x1b[m\x1b[38;2;186;33;33m\x1b[48;2;248;248;248m"
-    #             "'hello world'\x1b(B\x1b[m\x1b[315m\x1b[48;2;248;248;248m"
-    #             ")\x1b(B\x1b[m\x1b[315m\x1b[40m\n\x1b(B\x1b[m\x1b[31m"
-    #             "\x1b[48;2;248;248;248m                    \x1b[0m")
 
     def test_placeholder_widget(self):
         placeholder = fill.Placeholder(self.TEXT_A)

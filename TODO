@@ -10,6 +10,7 @@ Todo (tool related)
 - Report on python doctests. (also coverage of)
 - Cache tools._python_version.
 - Add bandit tool for python.
+- Recognize python test files like: test_*.py
 
 
 Done
