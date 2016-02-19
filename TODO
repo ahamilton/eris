@@ -266,6 +266,8 @@ Ideas
   editor? pygment syntax theme? Compress the cache? Ignore which paths? Log to disk?
   The cache path?
 - Can mypy be a tool?
+  <- Yes, but wait for it to be included in python, or until it is an ubuntu package.
+- Have a command-line option to create workers that run remotely.
 
 
 Shelved
