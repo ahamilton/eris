@@ -26,12 +26,13 @@ Example:
   # vigil my_project
 
 Options:
-  -h, --help                        Show this screen and exit.
-  -n, --no-sandbox                  Don't prevent changes to the filesystem.
-  -w COUNT, --workers=COUNT         The number of processes working in parallel.
-                                    By default it is twice the number of cpus.
-  -e "COMMAND", --editor="COMMAND"  The command used to start the editor, in
-                                    the *edit command. It may contain options.
+  -h, --help                       Show this screen and exit.
+  -n, --no-sandbox                 Don't use a sandbox to prevent changes to
+                                   the filesystem.
+  -w COUNT, --workers=COUNT        The number of processes working in parallel.
+                                   By default it is twice the number of cpus.
+  -e "COMMAND", --editor="COMMAND" The command used to start the editor, in
+                                   the *edit command. It may contain options.
 
 Keys:
   *h - Show the help screen. (toggle)
