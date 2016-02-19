@@ -293,18 +293,18 @@ def _has_shebang_line(path):
         return file_.read(2) == "#!"
 
 
-_python_console_lexer = pygments.lexers.PythonConsoleLexer()
+def _is_python_test_file(path):
+    path = str(os.path.basename(path))
+    return path.endswith("_test.py") or path.startswith("test_")
 
 
 def python_unittests(path):
-    if str(path).endswith("_test.py"):
+    if _is_python_test_file(path):
         command = ([path] if _has_shebang_line(path)
                    else [_python_version(path), path])
         stdout, stderr, returncode = _do_command(command, timeout=TIMEOUT)
         status = Status.ok if returncode == 0 else Status.problem
-        native_style = pygments.styles.get_style_by_name("native")
-        return status, _syntax_highlight(stderr, _python_console_lexer,
-                                         native_style)
+        return status, fill3.Text(stdout + "\n" + stderr)
     else:
         return Status.not_applicable, fill3.Text("No tests.")
 python_unittests.dependencies = {"python", "python3"}
@@ -332,6 +332,7 @@ def _colorize_coverage_report(text):
 
 
 def python_coverage(path):
+    # FIX: Also use test_*.py files.
     test_path = path[:-(len(".py"))] + "_test.py"
     if os.path.exists(test_path):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -751,10 +752,6 @@ def tools_for_path(path):
 
 def _get_python_traceback_lexer():
     return pygments.lexers.PythonTracebackLexer()
-
-
-def _get_python_console_lexer():
-    return pygments.lexers.PythonConsoleLexer()
 
 
 def run_tool_no_error(path, tool):

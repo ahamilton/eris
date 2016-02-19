@@ -75,7 +75,9 @@ class ToolsTestCase(unittest.TestCase):
     def test_python_unittests(self):
         self._test_tool(tools.python_unittests,
                         [("hi3.py", tools.Status.not_applicable),
-                         ("hi.py", tools.Status.not_applicable)])
+                         ("hi.py", tools.Status.not_applicable),
+                         ("hi3_test.py", tools.Status.ok),
+                         ("test_foo.py", tools.Status.ok)])
 
     HI_NORMAL = [("hi3.py", tools.Status.normal),
                  ("hi.py", tools.Status.normal)]
