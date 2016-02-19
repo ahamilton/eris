@@ -3,12 +3,22 @@ Current
   <- Sudo is working now but its always asking for a password.
 - When paging the summary window, with the bottom scroll bar showing, the
   cursor line drifts up or down a row.
+- When pausing, sometimes not all the workers are paused.
+- Sometimes there is more than one "All results are up to date" message.
+- If a job is paused for longer than the timeout period, sometimes it has
+  the timed out status when un-paused.
+- sandbox_fs_test.py is failing when run by the vigil that was started in
+  my startup script, but passing otherwise.
 
 
 Current (tool related)
 - disassemble for python doesn't always work.
 - gut had an error with utf-8. A traceback printed directly on the screen,
   garbling the interface.
+- Some results are always missing their contents and are showing "?".
+  e.g. golden-files/results/uncrustify-hello_c <- contents and metadata
+- There is much less code coverage than I expect from vigil.py, tools.py
+  and worker.py.
 
 
 Fixed
