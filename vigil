@@ -998,14 +998,16 @@ def main(root_path, worker_count=None, is_sandboxed=True, editor_command=None,
             with _urwid_screen() as urwid_screen:
                 loop.add_reader(sys.stdin, on_input, urwid_screen)
                 update_display_thread.start()
-                signal.signal(signal.SIGWINCH, on_window_resize)
-                with contextlib.suppress(KeyboardInterrupt):
-                    loop.run_forever()
-                log.log_command("Exiting...")
-                time.sleep(0.05)
-                _UPDATE_THREAD_STOPPED = True
-                appearance_changed_event.set()
-                update_display_thread.join()
+                try:
+                    signal.signal(signal.SIGWINCH, on_window_resize)
+                    with contextlib.suppress(KeyboardInterrupt):
+                        loop.run_forever()
+                    log.log_command("Exiting...")
+                    time.sleep(0.05)
+                finally:
+                    _UPDATE_THREAD_STOPPED = True
+                    appearance_changed_event.set()
+                    update_display_thread.join()
         log.log_message("Program stopped.")
         for runner in runners:
             runner.pause()
