@@ -8,3 +8,7 @@ To run vigil:  (Tested in Ubuntu 15.10 in gnome-terminal and stterm)
     # cd vigil
     # ./install-dependencies
     # ./vigil <directory_path>
+
+and to test its working properly:
+
+    # ./test-all
