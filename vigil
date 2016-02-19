@@ -919,8 +919,10 @@ def _update_screen(main_widget, appearance_changed_event):
         fill3.patch_screen(main_widget)
 
 
-def main(root_path, worker_count=multiprocessing.cpu_count()*2,
-         is_sandboxed=True, editor_command=None, is_being_tested=False):
+def main(root_path, worker_count=None, is_sandboxed=True, editor_command=None,
+         is_being_tested=False):
+    if worker_count is None:
+        worker_count = multiprocessing.cpu_count()*2
     global _UPDATE_THREAD_STOPPED
     loop = asyncio.get_event_loop()
     jobs_added_event = threading.Event()
@@ -1051,8 +1053,8 @@ def _check_arguments():
         print(_get_help_text())
         sys.exit(0)
     try:
-        worker_count = (int(arguments["--workers"]) if arguments["--workers"]
-                        is not None else multiprocessing.cpu_count() * 2)
+        if arguments["--workers"] is not None:
+            worker_count = int(arguments["--workers"])
     except ValueError:
         print("--workers requires a number.")
         sys.exit(1)

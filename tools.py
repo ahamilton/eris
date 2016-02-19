@@ -20,15 +20,15 @@ import stat
 import subprocess
 import tempfile
 import time
+import traceback
 
-import lscolors
 import pygments
 import pygments.lexers
 import pygments.styles
-import traceback
 
 import fill3
 import gut
+import lscolors
 import termstr
 
 
@@ -55,8 +55,6 @@ _STATUS_COLORS = {Status.ok: termstr.Color.green,
                   Status.running: termstr.Color.light_blue,
                   Status.paused: termstr.Color.yellow,
                   Status.timed_out: termstr.Color.purple}
-
-
 STATUS_MEANINGS = [
     (Status.normal, "Normal"), (Status.ok, "Ok"),
     (Status.problem, "Problem"), (Status.not_applicable, "Not applicable"),
@@ -300,9 +298,9 @@ _python_console_lexer = pygments.lexers.PythonConsoleLexer()
 
 def python_unittests(path):
     if str(path).endswith("_test.py"):
-        python_version = _python_version(path)
-        cmd = [path] if _has_shebang_line(path) else [python_version, path]
-        stdout, stderr, returncode = _do_command(cmd, timeout=TIMEOUT)
+        command = ([path] if _has_shebang_line(path)
+                   else [_python_version(path), path])
+        stdout, stderr, returncode = _do_command(command, timeout=TIMEOUT)
         status = Status.ok if returncode == 0 else Status.problem
         native_style = pygments.styles.get_style_by_name("native")
         return status, _syntax_highlight(stderr, _python_console_lexer,
