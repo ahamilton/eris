@@ -27,8 +27,8 @@ Example:
 
 Options:
   -h, --help                       Show this screen and exit.
-  -n, --no-sandbox                 Don't use a sandbox to prevent changes to
-                                   the filesystem.
+  -s on|off, --sandbox=on|off      Use a sandbox to prevent changes to the
+                                   filesystem. The sandbox is on by default.
   -w COUNT, --workers=COUNT        The number of processes working in parallel.
                                    By default it is twice the number of cpus.
   -e "COMMAND", --editor="COMMAND" The command used to start the editor, in
@@ -1055,14 +1055,15 @@ def _check_arguments():
     if arguments["--help"]:
         print(_get_help_text())
         sys.exit(0)
+    worker_count = None
     try:
         if arguments["--workers"] is not None:
             worker_count = int(arguments["--workers"])
+            if worker_count == 0:
+                print("There must be at least one worker.")
+                sys.exit(1)
     except ValueError:
         print("--workers requires a number.")
-        sys.exit(1)
-    if worker_count == 0:
-        print("There must be at least one worker.")
         sys.exit(1)
     root_path = os.path.abspath(arguments["<directory>"])
     if not os.path.exists(root_path):
@@ -1071,7 +1072,10 @@ def _check_arguments():
     if not os.path.isdir(root_path):
         print("File is not a directory:", root_path)
         sys.exit(1)
-    is_sandboxed = not arguments["--no-sandbox"]
+    if arguments["--sandbox"] not in ["on", "off", None]:
+        print("--sandbox argument must be 'on' or 'off'")
+        sys.exit(1)
+    is_sandboxed = arguments["--sandbox"] in ["on", None]
     editor_command = arguments["--editor"] or os.environ.get("EDITOR", None)\
         or os.environ.get("VISUAL", None)
     return root_path, worker_count, is_sandboxed, editor_command
