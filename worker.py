@@ -27,7 +27,7 @@ class Worker:
                 [__file__], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE)
         else:
-            cache_path = os.path.join(os.getcwd(), tools._CACHE_PATH)
+            cache_path = os.path.join(os.getcwd(), tools.CACHE_PATH)
             self.cache_mount = sandbox.mount_point + cache_path
             subprocess.check_call(["sudo", "mount", "--bind", cache_path,
                                    self.cache_mount])

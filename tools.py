@@ -32,7 +32,7 @@ import lscolors
 import termstr
 
 
-_CACHE_PATH = ".vigil"
+CACHE_PATH = ".vigil"
 
 
 class Status(enum.IntEnum):
@@ -626,8 +626,7 @@ class Result:
         self.path = path
         self.tool = tool
         self._open_func = gzip.open if is_stored_compressed else open
-        self.pickle_path = os.path.join(_CACHE_PATH,
-                                        path + "-" + tool.__name__)
+        self.pickle_path = os.path.join(CACHE_PATH, path + "-" + tool.__name__)
         self.scroll_position = (0, 0)
         self.is_completed = False
         self.is_placeholder = True
@@ -657,9 +656,9 @@ class Result:
 
     def run(self, log, appearance_changed_event, worker, runner):
         self.is_placeholder = False
-        tool_name = _tool_name_colored(self.tool, self.path)
-        path_colored = _path_colored(self.path)
-        log.log_message(["Running ", tool_name, " on ", path_colored, "..."])
+        tool_name = tool_name_colored(self.tool, self.path)
+        path = path_colored(self.path)
+        log.log_message(["Running ", tool_name, " on ", path, "..."])
         self.set_status(Status.running)
         if runner.is_already_paused:
             runner.is_already_paused = False
@@ -673,7 +672,7 @@ class Result:
         appearance_changed_event.set()
         self.is_completed = True
         log.log_message(
-            ["Finished running ", tool_name, " on ", path_colored, ". ",
+            ["Finished running ", tool_name, " on ", path, ". ",
              status_to_str(new_status, self.entry.summary.is_status_simple),
              " %s secs" % round(end_time - start_time, 2)])
 
@@ -750,10 +749,6 @@ def tools_for_path(path):
     return _generic_tools() + extra_tools
 
 
-def _get_python_traceback_lexer():
-    return pygments.lexers.PythonTracebackLexer()
-
-
 def run_tool_no_error(path, tool):
     try:
         status, result = tool(path)
@@ -761,7 +756,7 @@ def run_tool_no_error(path, tool):
         status, result = Status.timed_out, fill3.Text("Timed out")
     except:
         status, result = Status.error, _syntax_highlight(
-            traceback.format_exc(), _get_python_traceback_lexer(),
+            traceback.format_exc(), pygments.lexers.PythonTracebackLexer(),
             pygments.styles.get_style_by_name("native"))
     return status, result
 
@@ -787,7 +782,7 @@ def _charstyle_of_path(path):
 
 
 @functools.lru_cache(maxsize=100)
-def _path_colored(path):
+def path_colored(path):
     char_style = _charstyle_of_path(path)
     path = path[2:]
     dirname, basename = os.path.split(path)
@@ -800,7 +795,7 @@ def _path_colored(path):
 
 
 @functools.lru_cache(maxsize=100)
-def _tool_name_colored(tool, path):
+def tool_name_colored(tool, path):
     char_style = (termstr.CharStyle(is_bold=True) if tool in _generic_tools()
                   else _charstyle_of_path(path))
     return termstr.TermStr(tool.__name__, char_style)

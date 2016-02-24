@@ -134,7 +134,7 @@ class Entry(collections.UserList):
             if self.highlighted is not None:
                 self.widget[self.highlighted] = self._get_cursor()
             new_appearance = self.widget.appearance_min()
-            path = tools._path_colored(self.path)
+            path = tools.path_colored(self.path)
             padding = " " * (self.summary._max_path_length - len(path) + 1)
             new_appearance[0] = path + padding + new_appearance[0]
             self.appearance_cache = appearance = new_appearance
@@ -423,9 +423,9 @@ class Summary:
         selection = self.get_selection()
         if selection.status not in {tools.Status.running, tools.Status.paused,
                                     tools.Status.pending}:
-            tool_name = tools._tool_name_colored(
+            tool_name = tools.tool_name_colored(
                 selection.tool, selection.path)
-            path_colored = tools._path_colored(selection.path)
+            path_colored = tools.path_colored(selection.path)
             log.log_message([_in_green("Refreshing "), tool_name,
                              _in_green(" result of "), path_colored,
                              _in_green("...")])
@@ -439,7 +439,7 @@ class Log:
 
     _GREY_BOLD_STYLE = termstr.CharStyle(termstr.Color.grey_100, is_bold=True)
     _GREEN_STYLE = termstr.CharStyle(termstr.Color.green)
-    _LOG_PATH = os.path.join(tools._CACHE_PATH, "log")
+    _LOG_PATH = os.path.join(tools.CACHE_PATH, "log")
 
     def __init__(self, appearance_changed_event):
         self._appearance_changed_event = appearance_changed_event
@@ -681,7 +681,7 @@ class Screen:
                                   "See option -e.")
         else:
             path = self._summary.get_selection().path
-            path_colored = tools._path_colored(path)
+            path_colored = tools.path_colored(path)
             self._log.log_message([_in_green("Editing "), path_colored,
                                    _in_green(' with command: "%s"...'
                                              % self.editor_command)])
@@ -790,9 +790,9 @@ class Screen:
         view = self._listing.widget.view
         view.position = widget.scroll_position
         view.widget = widget.result
-        tool_name = tools._tool_name_colored(widget.tool, widget.path)
+        tool_name = tools.tool_name_colored(widget.tool, widget.path)
         self._listing.title = (
-            tools._path_colored(widget.path) + " ─── " + tool_name + " " +
+            tools.path_colored(widget.path) + " ─── " + tool_name + " " +
             tools.status_to_str(widget.status, self._summary.is_status_simple))
         incomplete = self._summary.result_total - self._summary.completed_total
         progress_bar_size = max(0, width * incomplete //
@@ -930,7 +930,7 @@ def main(root_path, worker_count=None, is_sandboxed=True, editor_command=None,
     appearance_changed_event = threading.Event()
     is_first_run = True
     try:
-        pickle_path = os.path.join(tools._CACHE_PATH, "summary.pickle")
+        pickle_path = os.path.join(tools.CACHE_PATH, "summary.pickle")
         with gzip.open(pickle_path, "rb") as file_:
             screen = pickle.load(file_)
     except FileNotFoundError:
@@ -1038,7 +1038,7 @@ def _chdir(path):
 
 
 def _manage_cache(root_path):
-    cache_path = os.path.join(root_path, tools._CACHE_PATH)
+    cache_path = os.path.join(root_path, tools.CACHE_PATH)
     timestamp_path = os.path.join(cache_path, "creation_time")
     if os.path.exists(cache_path) and \
        os.stat(__file__).st_mtime > os.stat(timestamp_path).st_mtime:

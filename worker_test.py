@@ -20,7 +20,7 @@ class WorkerTestCase(unittest.TestCase):
         self.temp_dir = tempfile.mkdtemp()
         self.original_working_dir = os.getcwd()
         os.chdir(self.temp_dir)
-        os.mkdir(tools._CACHE_PATH)
+        os.mkdir(tools.CACHE_PATH)
         open("foo", "w").close()
 
     def tearDown(self):
@@ -30,7 +30,7 @@ class WorkerTestCase(unittest.TestCase):
     def _test_worker(self, sandbox):
         status = worker.Worker(sandbox).run_tool("foo", tools.metadata)
         self.assertEqual(status, tools.Status.normal)
-        result_path = os.path.join(tools._CACHE_PATH, "foo-metadata")
+        result_path = os.path.join(tools.CACHE_PATH, "foo-metadata")
         self.assertTrue(os.path.exists(result_path))
 
     def test_run_job_without_sandbox(self):
