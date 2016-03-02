@@ -15,8 +15,6 @@ Current (tool related)
 - disassemble for python doesn't always work.
 - gut had an error with utf-8. A traceback printed directly on the screen,
   garbling the interface.
-- Some results are always missing their contents and are showing "?".
-  e.g. golden-files/results/uncrustify-hello_c <- contents and metadata
 - There is much less code coverage than I expect from vigil.py, tools.py
   and worker.py.
 
@@ -229,6 +227,8 @@ Fixed
 - If a tool runs a script that needs sudo, the password prompt is garbling
   the screen and stopping input.
   <- Now vigil always gets sudo.
+- Some results are always missing their contents and are showing "?".
+  e.g. golden-files/results/uncrustify-hello_c <- contents and metadata
 
 
 Won't fix

@@ -270,7 +270,7 @@ class Summary:
                 else:
                     result = tools.Result(path, tool)
                     jobs_added = True
-                    all_results.add(result)
+                all_results.add(result)
                 if result.is_completed:
                     completed_total += 1
                 file_entry = new_cache.setdefault(file_key, {})
