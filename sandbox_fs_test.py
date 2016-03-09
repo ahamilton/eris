@@ -35,7 +35,7 @@ class SandboxFilesystemTestCase(unittest.TestCase):
         self.assertTrue(os.path.exists(home_directory))
 
     def test_run_a_command_in_the_sandbox(self):
-        stdout, stderr, returncode = self.sandbox.run_command(["pwd"])
+        stdout = subprocess.check_output(self.sandbox.command(["pwd"]))
         self.assertEqual(stdout.strip().decode("utf-8"), os.environ["PWD"])
 
 

@@ -3,6 +3,7 @@
 # Copyright (C) 2015-2016 Andrew Hamilton. All rights reserved.
 # Licensed under the Artistic License 2.0.
 
+import asyncio
 import contextlib
 import io
 import os
@@ -218,7 +219,7 @@ def _all_processes():
 class MainTestCase(unittest.TestCase):
 
     def test_main_and_restart_and_no_leaks_and_is_relocatable(self):
-        def test_run(root_path):
+        def test_run(root_path, loop):
             mount_total = _mount_total()
             tmp_total = _tmp_total()
             # processes = _all_processes()
@@ -227,8 +228,8 @@ class MainTestCase(unittest.TestCase):
             vigil._manage_cache(root_path)
             with vigil._chdir(root_path):
                 with contextlib.redirect_stdout(io.StringIO()):
-                    vigil.main(root_path, worker_count=2, is_sandboxed=True,
-                               is_being_tested=True)
+                    vigil.main(root_path, loop, worker_count=2,
+                               is_sandboxed=True, is_being_tested=True)
                 for file_name in ["summary.pickle", "creation_time", "log",
                                   "foo-metadata", "foo-contents"]:
                     self.assertTrue(os.path.exists(".vigil/" + file_name))
@@ -237,12 +238,14 @@ class MainTestCase(unittest.TestCase):
             # self.assertEqual(_all_processes(), processes)  # Fix
         temp_dir = tempfile.mkdtemp()
         try:
+            loop = asyncio.get_event_loop()
             first_dir = os.path.join(temp_dir, "first")
             os.mkdir(first_dir)
-            test_run(first_dir)
+            test_run(first_dir, loop)
             second_dir = os.path.join(temp_dir, "second")
             os.rename(first_dir, second_dir)
-            test_run(second_dir)
+            test_run(second_dir, loop)
+            loop.close()
         finally:
             shutil.rmtree(temp_dir)
 

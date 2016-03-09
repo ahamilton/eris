@@ -70,6 +70,7 @@ import time
 import traceback
 
 import docopt
+import psutil
 import pyinotify
 import urwid
 import urwid.raw_display
@@ -710,7 +711,7 @@ class Screen:
                 runner.continue_()
 
     def quit_(self):
-        raise KeyboardInterrupt
+        os.kill(os.getpid(), signal.SIGINT)
 
     def refresh(self):
         self._summary.refresh(self._log)
@@ -834,18 +835,53 @@ def _regulate_temperature(log):
         log.log_message("The computer has cooled down. Continuing...")
 
 
+def _make_process_nicest(pid):
+    process = psutil.Process(pid)
+    process.nice(19)
+    process.ionice(psutil.IOPRIO_CLASS_IDLE)
+
+
 class Runner:
 
     def __init__(self, sandbox, is_already_paused, is_being_tested):
-        self.result = None
-        self.worker = worker.Worker(sandbox)
+        self.sandbox = sandbox
         self.is_already_paused = is_already_paused
         self.is_being_tested = is_being_tested
+        self.result = None
+        self.process = None
+        self.child_pid = None
 
+    @asyncio.coroutine
+    def create_process(self):
+        if self.sandbox is None:
+            command = [worker.__file__]
+        else:
+            cache_path = os.path.join(os.getcwd(), tools.CACHE_PATH)
+            cache_mount = self.sandbox.mount_point + cache_path
+            subprocess.check_call(["sudo", "mount", "--bind", cache_path,
+                                   cache_mount])
+            command = self.sandbox.command([worker.__file__])
+        create = asyncio.create_subprocess_exec(
+            *command, stdin=asyncio.subprocess.PIPE,
+            stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+        self.process = yield from create
+        pid_line = yield from self.process.stdout.readline()
+        self.child_pid = int(pid_line.strip())
+
+    @asyncio.coroutine
+    def run_tool(self, path, tool):
+        self.process.stdin.write(("%s\n%s\n" %
+                                  (tool.__qualname__, path)).encode("utf-8"))
+        data = yield from self.process.stdout.readline()
+        return tools.Status(int(data))
+
+    @asyncio.coroutine
     def job_runner(self, summary, log, jobs_added_event,
                    appearance_changed_event):
+        yield from self.create_process()
+        _make_process_nicest(self.child_pid)
         while True:
-            jobs_added_event.wait()
+            yield from jobs_added_event.wait()
             while True:
                 # _regulate_temperature(log)  # My fan is broken
                 try:
@@ -857,23 +893,22 @@ class Runner:
                         if self.is_being_tested:
                             os.kill(os.getpid(), signal.SIGINT)
                     break
-                with contextlib.suppress(ValueError):  # Process was terminated
-                    self.result.run(log, appearance_changed_event, self.worker,
-                                    self)
-                    summary.completed_total += 1
+                yield from self.result.run(log, appearance_changed_event,
+                                           self)
+                summary.completed_total += 1
             jobs_added_event.clear()
 
     def pause(self):
         if self.result is not None and \
            self.result.status == tools.Status.running:
-            self.worker.pause()
+            os.kill(self.child_pid, signal.SIGSTOP)
             self.result.set_status(tools.Status.paused)
 
     def continue_(self):
         if self.result is not None and \
            self.result.status == tools.Status.paused:
             self.result.set_status(tools.Status.running)
-            self.worker.continue_()
+            os.kill(self.child_pid, signal.SIGCONT)
 
 
 def _add_watch_manager_to_mainloop(root_path, mainloop, on_filesystem_change,
@@ -920,13 +955,12 @@ def _update_screen(main_widget, appearance_changed_event):
         fill3.patch_screen(main_widget)
 
 
-def main(root_path, worker_count=None, is_sandboxed=True, editor_command=None,
-         is_being_tested=False):
+def main(root_path, loop, worker_count=None, is_sandboxed=True,
+         editor_command=None, is_being_tested=False):
     if worker_count is None:
         worker_count = multiprocessing.cpu_count()*2
     global _UPDATE_THREAD_STOPPED
-    loop = asyncio.get_event_loop()
-    jobs_added_event = threading.Event()
+    jobs_added_event = asyncio.Event()
     appearance_changed_event = threading.Event()
     is_first_run = True
     try:
@@ -965,54 +999,55 @@ def main(root_path, worker_count=None, is_sandboxed=True, editor_command=None,
         sandbox = sandbox_fs.SandboxFs(sandbox_temp_dir)
     else:
         sandbox = None
-
-    def start_runners():
+    try:
         if is_sandboxed:
             log.log_message("Making filesystem sandbox...")
             sandbox.mount()
             log.log_message("Sandbox made.")
         else:
             log.log_message("Running without the filesystem sandbox...")
-        log.log_message("Starting workers...")
+        log.log_message("Starting workers (%s) ..." % worker_count)
         for index in range(worker_count):
-            runners.append(Runner(sandbox, screen._is_paused, is_being_tested))
-        log.log_message("Workers started. (%s)" % worker_count)
-        for runner in runners:
-            args = (summary, log, jobs_added_event, appearance_changed_event)
-            threading.Thread(target=runner.job_runner, args=args,
-                             daemon=True).start()
-    try:
-        threading.Thread(target=start_runners, daemon=True).start()
+            runner = Runner(sandbox, screen._is_paused, is_being_tested)
+            runners.append(runner)
+            future = runner.job_runner(
+                summary, log, jobs_added_event, appearance_changed_event)
+            runner.future = asyncio.ensure_future(future, loop=loop)
 
-        def on_input(urwid_screen):
-            for event in urwid_screen.get_input():
-                screen.on_input_event(event)
-
-        def on_window_resize(n, frame):
+        def on_window_resize():
             appearance_changed_event.set()
         appearance_changed_event.set()
         update_display_thread = threading.Thread(
             target=_update_screen, args=(screen, appearance_changed_event),
             daemon=True)
+
+        def exit_loop():
+            log.log_command("Exiting...")
+            time.sleep(0.05)
+            for runner in runners:
+                runner.pause()
+                runner.future.cancel()
+                if runner.result is not None:
+                    runner.result.reset()
+            loop.stop()
+        loop.add_signal_handler(signal.SIGWINCH, on_window_resize)
+        loop.add_signal_handler(signal.SIGINT, exit_loop)
+        loop.add_signal_handler(signal.SIGTERM, exit_loop)
         with terminal.hidden_cursor():
             with _urwid_screen() as urwid_screen:
+
+                def on_input(urwid_screen):
+                    for event in urwid_screen.get_input():
+                        screen.on_input_event(event)
                 loop.add_reader(sys.stdin, on_input, urwid_screen)
                 update_display_thread.start()
                 try:
-                    signal.signal(signal.SIGWINCH, on_window_resize)
-                    with contextlib.suppress(KeyboardInterrupt):
-                        loop.run_forever()
-                    log.log_command("Exiting...")
-                    time.sleep(0.05)
+                    loop.run_forever()
                 finally:
                     _UPDATE_THREAD_STOPPED = True
                     appearance_changed_event.set()
                     update_display_thread.join()
         log.log_message("Program stopped.")
-        for runner in runners:
-            runner.pause()
-            if runner.result is not None:
-                runner.result.reset()
         # Cannot pickle generators, locks, sockets or events.
         (summary.closest_placeholder_generator, summary._lock,
          summary._jobs_added_event, screen._appearance_changed_event,
@@ -1088,4 +1123,6 @@ if __name__ == "__main__":
     with terminal.console_title("vigil: " + os.path.basename(root_path)):
         _manage_cache(root_path)
         with _chdir(root_path):  # FIX: Don't change directory if possible.
-            main(root_path, worker_count, is_sandboxed, editor_command)
+            loop = asyncio.get_event_loop()
+            main(root_path, loop, worker_count, is_sandboxed, editor_command)
+            loop.close()

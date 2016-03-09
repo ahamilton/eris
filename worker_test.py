@@ -4,6 +4,7 @@
 # Licensed under the Artistic License 2.0.
 
 
+import asyncio
 import os
 import shutil
 import tempfile
@@ -11,7 +12,7 @@ import unittest
 
 import sandbox_fs
 import tools
-import worker
+import vigil
 
 
 class WorkerTestCase(unittest.TestCase):
@@ -28,7 +29,11 @@ class WorkerTestCase(unittest.TestCase):
         os.chdir(self.original_working_dir)
 
     def _test_worker(self, sandbox):
-        status = worker.Worker(sandbox).run_tool("foo", tools.metadata)
+        loop = asyncio.get_event_loop()
+        worker_ = vigil.Runner(sandbox, False, False)
+        loop.run_until_complete(worker_.create_process())
+        future = worker_.run_tool("foo", tools.metadata)
+        status = loop.run_until_complete(future)
         self.assertEqual(status, tools.Status.normal)
         result_path = os.path.join(tools.CACHE_PATH, "foo-metadata")
         self.assertTrue(os.path.exists(result_path))

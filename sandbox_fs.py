@@ -79,14 +79,6 @@ class SandboxFs:
             mount.umount()
         self.overlay_mounts = []
 
-    def Popen(self, command, env=None):
-        full_command = _in_chroot(self.mount_point,
-                                  _in_directory(os.getcwd(), command))
-        return subprocess.Popen(full_command, stdin=subprocess.PIPE,
-                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                env=env)
-
-    def run_command(self, command, env=None):
-        process = self.Popen(command, env)
-        stdout, stderr = process.communicate()
-        return stdout, stderr, process.returncode
+    def command(self, command, env=None):
+        return _in_chroot(self.mount_point,
+                          _in_directory(os.getcwd(), command))

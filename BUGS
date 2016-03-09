@@ -9,6 +9,9 @@ Current
   the timed out status when un-paused.
 - sandbox_fs_test.py is failing when run by the vigil that was started in
   my startup script, but passing otherwise.
+- When shutting down "Exception ignored in:" noise appears. Four messages
+  for every worker running. This started with the move to asyncio for the
+  workers.
 
 
 Current (tool related)
