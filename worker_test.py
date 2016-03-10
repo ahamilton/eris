@@ -12,7 +12,7 @@ import unittest
 
 import sandbox_fs
 import tools
-import vigil
+import worker
 
 
 class WorkerTestCase(unittest.TestCase):
@@ -30,7 +30,7 @@ class WorkerTestCase(unittest.TestCase):
 
     def _test_worker(self, sandbox):
         loop = asyncio.get_event_loop()
-        worker_ = vigil.Runner(sandbox, False, False)
+        worker_ = worker.Worker(sandbox, False, False)
         loop.run_until_complete(worker_.create_process())
         future = worker_.run_tool("foo", tools.metadata)
         status = loop.run_until_complete(future)
