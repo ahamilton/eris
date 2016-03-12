@@ -12,6 +12,7 @@ import unittest
 
 import sandbox_fs
 import tools
+import vigil
 import worker
 
 
@@ -43,8 +44,7 @@ class WorkerTestCase(unittest.TestCase):
 
     def test_run_job_with_sandbox(self):
         temp_dir = tempfile.mkdtemp()
-        sandbox = sandbox_fs.SandboxFs(temp_dir)
-        sandbox.mount()
+        sandbox = vigil.make_sandbox(temp_dir)
         try:
             self._test_worker(sandbox)
         finally:

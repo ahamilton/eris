@@ -878,6 +878,15 @@ def _update_screen(main_widget, appearance_changed_event):
         fill3.patch_screen(main_widget)
 
 
+def make_sandbox(mount_point):
+    sandbox = sandbox_fs.SandboxFs(mount_point)
+    sandbox.mount()
+    cache_path = os.path.join(os.getcwd(), tools.CACHE_PATH)
+    subprocess.check_call(["sudo", "mount", "--bind", cache_path,
+                           mount_point + cache_path])
+    return sandbox
+
+
 def main(root_path, loop, worker_count=None, is_sandboxed=True,
          editor_command=None, is_being_tested=False):
     if worker_count is None:
@@ -918,17 +927,14 @@ def main(root_path, loop, worker_count=None, is_sandboxed=True,
         root_path, loop, on_filesystem_change, _is_path_excluded)
     screen.workers = workers = []
     if is_sandboxed:
+        log.log_message("Making filesystem sandbox...")
         sandbox_temp_dir = tempfile.mkdtemp()
-        sandbox = sandbox_fs.SandboxFs(sandbox_temp_dir)
+        sandbox = make_sandbox(sandbox_temp_dir)
+        log.log_message("Sandbox made.")
     else:
+        log.log_message("Running without the filesystem sandbox...")
         sandbox = None
     try:
-        if is_sandboxed:
-            log.log_message("Making filesystem sandbox...")
-            sandbox.mount()
-            log.log_message("Sandbox made.")
-        else:
-            log.log_message("Running without the filesystem sandbox...")
         log.log_message("Starting workers (%s) ..." % worker_count)
         for index in range(worker_count):
             worker_ = worker.Worker(sandbox, screen._is_paused, is_being_tested)
@@ -980,6 +986,9 @@ def main(root_path, loop, worker_count=None, is_sandboxed=True,
         tools.dump_pickle_safe(screen, pickle_path, open=open_compressed)
     finally:
         if is_sandboxed:
+            cache_path = os.path.join(os.getcwd(), tools.CACHE_PATH)
+            subprocess.check_call(["sudo", "umount",
+                                   sandbox.mount_point + cache_path])
             sandbox.umount()
             os.rmdir(sandbox_temp_dir)
         loop.remove_reader(watch_manager_fd)

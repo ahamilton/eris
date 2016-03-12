@@ -31,14 +31,9 @@ class Worker:
 
     @asyncio.coroutine
     def create_process(self):
-        if self.sandbox is None:
-            command = [__file__]
-        else:
-            cache_path = os.path.join(os.getcwd(), tools.CACHE_PATH)
-            cache_mount = self.sandbox.mount_point + cache_path
-            subprocess.check_call(["sudo", "mount", "--bind", cache_path,
-                                   cache_mount])
-            command = self.sandbox.command([__file__])
+        command = [__file__]
+        if self.sandbox is not None:
+            command = self.sandbox.command(command)
         create = asyncio.create_subprocess_exec(
             *command, stdin=asyncio.subprocess.PIPE,
             stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
