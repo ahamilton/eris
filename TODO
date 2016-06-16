@@ -208,7 +208,7 @@ Ideas
   contents of compressed archives, pdf2text, doc2text, html2text, ebook2text,
   csv file?
 - Check these tools: astyle, indent, uncrustify, xmlindent, csstidy, flake8,
-  frosted, pep257, pyroma, dodgy, jedi, pep8-naming, graphite, propector, mypy, vmprof
+  frosted, pep257, pyroma, dodgy, jedi, pep8-naming, graphite, propector, mypy, vmprof, pytype
 - eslint for javascript?
 - epydoc for python
 - readelf
