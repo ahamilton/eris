@@ -1,6 +1,6 @@
     >>    0 <238>                 3340                               
     >>    3 UNARY_POSITIVE                                           
-    >>    4 <152>                46083                               
+    >>    4 BUILD_TUPLE_UNPACK   46083                               
           7 YIELD_VALUE                                              
           8 INPLACE_FLOOR_DIVIDE                                     
           9 <0>                                                      

@@ -54,8 +54,8 @@ def _parse_proc_mounts():
 
 def _find_mounts():
     all_mounts = set(part[1] for part in _parse_proc_mounts())
-    mount_points = {"/", "/usr", "/bin", "/etc", "/lib", "/dev", "/proc",
-                    "/home", "/boot", "/opt", "/run", "/root", "/var", "/tmp"}
+    mount_points = {"/", "/usr", "/bin", "/etc", "/lib", "/dev", "/home",
+                    "/boot", "/opt", "/run", "/root", "/var", "/tmp"}
     return all_mounts.intersection(mount_points)
 
 

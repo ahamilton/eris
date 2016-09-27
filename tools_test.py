@@ -13,6 +13,7 @@ import golden
 import tools
 
 
+os.environ["TZ"] = "GMT"
 VIGIL_ROOT = os.path.dirname(__file__)
 
 
@@ -128,13 +129,6 @@ class ToolsTestCase(unittest.TestCase):
     def test_perl6_syntax(self):
         self._test_tool(tools.perl6_syntax,
                         [("perl6.p6", tools.Status.problem)])
-
-    def test_antic(self):
-        self._test_tool(tools.antic,
-                        [("closure-util.java", tools.Status.problem)])
-
-    def test_jlint(self):
-        self._test_tool(tools.jlint, [("javaversion.class", tools.Status.ok)])
 
     def test_uncrustify(self):
         self._test_tool(tools.uncrustify,

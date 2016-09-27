@@ -364,7 +364,9 @@ python_profile.dependencies = {"python", "python3"}
 
 
 def pep8(path):
-    return _run_command([_python_version(path), "-m", "pep8", path])
+    cmd = (["pep8"] if _python_version(path) == "python"
+           else ["python3", "-m", "pep8"])
+    return _run_command(cmd + [path])
 pep8.dependencies = {"pep8", "python3-pep8"}
 
 
@@ -439,7 +441,7 @@ def _perl_version(path):
 
 def perl_syntax(path):
     return _run_command([_perl_version(path), "-c", path])
-perl_syntax.dependencies = {"perl", "perl6"}
+perl_syntax.dependencies = {"perl", "rakudo"}
 
 
 def perldoc(path):
@@ -457,25 +459,7 @@ perltidy.dependencies = {"perltidy"}
 
 def perl6_syntax(path):
     return _run_command(["perl6", "-c", path])
-perl6_syntax.dependencies = {"perl6"}
-
-
-def _jlint_tool(tool_type, path):
-    stdout, *rest = _do_command([tool_type, path])
-    status = (Status.ok
-              if "Verification completed: 0 reported messages." in stdout
-              else Status.problem)
-    return status, fill3.Text(stdout)
-
-
-def antic(path):
-    return _jlint_tool("antic", path)
-antic.dependencies = {"jlint"}
-
-
-def jlint(path):
-    return _jlint_tool("jlint", path)
-jlint.dependencies = {"jlint"}
+perl6_syntax.dependencies = {"rakudo"}
 
 
 def splint(path):
@@ -568,7 +552,7 @@ uncrustify.dependencies = {"uncrustify"}
 
 def php5_syntax(path):
     return _run_command(["php", "--syntax-check", path])
-php5_syntax.dependencies = {"php5"}
+php5_syntax.dependencies = {"php"}
 
 
 #############################
@@ -704,8 +688,7 @@ def _tools_for_extension():
         "pm6": [perl6_syntax, perldoc],
         "pod": [perldoc],
         "pod6": [perldoc],
-        "java": [antic, uncrustify],
-        "class": [jlint],
+        "java": [uncrustify],
         "c": [splint, uncrustify],
         "h": [splint, uncrustify],
         "o": [objdump_headers, objdump_disassemble, readelf],
