@@ -4,18 +4,18 @@
 # Copyright (C) 2015-2016 Andrew Hamilton. All rights reserved.
 # Licensed under the Artistic License 2.0.
 
-"""\
-Vigil maintains a set of reports for each file in a directory tree.
-Different types of reports are produced for different types of file.
+"""Vigil Code Monitor
 
-The state of each report is summarised by a status indicator, and a report is
-viewed by selecting this status indicator with the cursor. The types of status
-are listed below.
+Vigil shows a list of status reports for a given codebase, and keeps them
+up to date as the codebase changes.
 
-Reports are recalculated whenever files are changed, so that they are always up
-to date.
+A set of reports is produced for every file, which depend on the file's type.
 
-The reports are cached in a directory ".vigil" under the target directory.
+A status indicator summarises the state of each report, and a report is viewed
+by selecting this status indicator with the cursor. The types of status are
+listed below.
+
+The reports are cached in the codebase's root directory in a ".vigil" directory.
 
 
 Usage:
