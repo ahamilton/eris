@@ -4,8 +4,6 @@ Todo
   - Maybe also use cxfreeze, py2exe, pyrun or zipapp?  Is zipapp the standard way?
   - Use cookiecutter?
   - Need to use conventional version numbers for pypi. See pep0440.
-- Only show the 'keys' in the help page, and only show the command line usage
-  on the command line.
 
 
 Todo (tool related)
@@ -164,6 +162,8 @@ Done
 - Determine if perl files are perl5 or perl6.
   <- At least done by perl_syntax.
 - Recognize python test files like: test_*.py
+- Only show the 'keys' in the help page, and only show the command line usage
+  on the command line.
 
 A-syntax, B-tests, C-auto docs, D-lint, E-coverage, F-profile, G-tidy, H-import deps
              A B C D E F G H

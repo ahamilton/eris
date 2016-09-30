@@ -16,8 +16,10 @@ by selecting this status indicator with the cursor. The types of status are
 listed below.
 
 The reports are cached in the codebase's root directory in a ".vigil" directory.
+"""
 
 
+USAGE = """
 Usage:
   vigil [options] <directory>
   vigil -h | --help
@@ -33,8 +35,10 @@ Options:
                                    By default it is twice the number of cpus.
   -e "COMMAND", --editor="COMMAND" The command used to start the editor, in
                                    the *edit command. It may contain options.
+"""
 
-Keys:
+
+KEYS_DOC = """Keys:
   *h - Show the help screen. (toggle)
   *q - Quit.
   *d, *c, *j, *k, *f, *v or arrow keys or mouse click - Move the cursor.
@@ -474,12 +478,10 @@ def _highlight_chars(str_, style, marker="*"):
     return fill3.join("", [parts[0]] + highlighted_parts)
 
 
-def _get_help_text():
-    usage = _highlight_chars(__doc__, Log._GREEN_STYLE)
-    return fill3.join(
-        "\n", [usage, "Statuses:"] +
-        ["  " + tools.status_to_str(status) + " " + meaning
-         for status, meaning in tools.STATUS_MEANINGS])
+def _get_status_help():
+    return fill3.join("\n", ["Statuses:"] +
+                      ["  " + tools.status_to_str(status) + " " + meaning
+                       for status, meaning in tools.STATUS_MEANINGS])
 
 
 def _make_key_map(key_data):
@@ -495,7 +497,9 @@ class Help:
     def __init__(self, summary, screen):
         self.summary = summary
         self.screen = screen
-        self.view = fill3.View.from_widget(fill3.Text(_get_help_text()))
+        keys_doc = _highlight_chars(KEYS_DOC, Log._GREEN_STYLE)
+        help_text = fill3.join("\n", [__doc__, keys_doc, _get_status_help()])
+        self.view = fill3.View.from_widget(fill3.Text(help_text))
         self.widget = fill3.Border(self.view, title="Help")
         portal = self.view.portal
         self.key_map = _make_key_map([
@@ -997,9 +1001,11 @@ def _manage_cache(root_path):
 
 
 def _check_arguments():
-    arguments = docopt.docopt(__doc__.replace("*", ""), help=False)
+    cmdline_help = __doc__ + USAGE.replace("*", "")
+    arguments = docopt.docopt(cmdline_help, help=False)
     if arguments["--help"]:
-        print(_get_help_text())
+        print(cmdline_help)
+        print(_get_status_help())
         sys.exit(0)
     worker_count = None
     try:

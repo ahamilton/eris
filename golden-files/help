@@ -12,23 +12,6 @@
 │                                                                                                  │
 │The reports are cached in the codebase's root directory in a ".vigil" directory.                  │
 │                                                                                                  │
-│                                                                                                  │
-│Usage:                                                                                            │
-│  vigil [options] <directory>                                                                     │
-│  vigil -h | --help                                                                               │
-│                                                                                                  │
-│Example:                                                                                          │
-│  # vigil my_project                                                                              │
-│                                                                                                  │
-│Options:                                                                                          │
-│  -h, --help                       Show this screen and exit.                                     │
-│  -s on|off, --sandbox=on|off      Use a sandbox to prevent changes to the                        │
-│                                   filesystem. The sandbox is on by default.                      │
-│  -w COUNT, --workers=COUNT        The number of processes working in parallel.                   │
-│                                   By default it is twice the number of cpus.                     │
-│  -e "COMMAND", --editor="COMMAND" The command used to start the editor, in                       │
-│                                   the [0m[38;2;0;255;0m[48;2;0;0;0me[0m[38;2;255;255;255m[48;2;0;0;0mdit command. It may contain options.                      │
-│                                                                                                  │
 │Keys:                                                                                             │
 │  [0m[38;2;0;255;0m[48;2;0;0;0mh[0m[38;2;255;255;255m[48;2;0;0;0m - Show the help screen. (toggle)                                                              │
 │  [0m[38;2;0;255;0m[48;2;0;0;0mq[0m[38;2;255;255;255m[48;2;0;0;0m - Quit.                                                                                       │
@@ -54,6 +37,23 @@
 │  [0m[38;2;255;255;255m[48;2;200;0;200m [0m[38;2;255;255;255m[48;2;0;0;0m Timed out                                                                                     │
 │  . Pending                                                                                       │
 │  [0m[38;2;255;255;255m[48;2;255;0;0mE[0m[38;2;255;255;255m[48;2;0;0;0m Error                                                                                         │
+│                                                                                                  │
+│                                                                                                  │
+│                                                                                                  │
+│                                                                                                  │
+│                                                                                                  │
+│                                                                                                  │
+│                                                                                                  │
+│                                                                                                  │
+│                                                                                                  │
+│                                                                                                  │
+│                                                                                                  │
+│                                                                                                  │
+│                                                                                                  │
+│                                                                                                  │
+│                                                                                                  │
+│                                                                                                  │
+│                                                                                                  │
 │                                                                                                  │
 │                                                                                                  │
 │                                                                                                  │
