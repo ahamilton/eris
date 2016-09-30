@@ -17,3 +17,8 @@ To run vigil:  (Tested in Ubuntu 16.04 in gnome-terminal and stterm)
 and to test its working properly:
 
     # ./test-all
+
+To run on an older ubuntu you can checkout an older version of vigil.
+e.g. After cloning do:
+
+    # git checkout ubuntu-15.10
