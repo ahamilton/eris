@@ -5,6 +5,7 @@
 
 import contextlib
 import os
+import subprocess
 import unittest
 import unittest.mock
 
@@ -15,6 +16,7 @@ import tools
 
 os.environ["TZ"] = "GMT"
 VIGIL_ROOT = os.path.dirname(__file__)
+TMP_ROOT = "/tmp/vigil"
 
 
 def widget_to_string(widget):
@@ -38,7 +40,7 @@ def result_path(tool, input_filename):
 
 
 def run_tool(tool, input_filename):
-    with chdir(os.path.join(VIGIL_ROOT, "golden-files")):
+    with chdir(os.path.join(TMP_ROOT, "golden-files")):
         return tool(os.path.join(".", "input", input_filename))
 
 
@@ -209,4 +211,10 @@ class LruCacheWithEvictionTestCase(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    golden.main()
+    os.makedirs(TMP_ROOT, exist_ok=True)
+    subprocess.check_call(["sudo", "mount", "--bind", VIGIL_ROOT, TMP_ROOT])
+    try:
+        golden.main()
+    finally:
+        subprocess.check_call(["sudo", "umount", "--lazy", TMP_ROOT])
+        os.rmdir(TMP_ROOT)

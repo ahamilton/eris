@@ -1,6 +1,6 @@
 [31m===[0mSORRY![31m===[0m                                                                 
 Two terms in a row across lines (missing semicolon or comma?)                                  
-at /home/ahamilton/code/vigil/golden-files/./input/perl6.pl:30                                 
+at /tmp/vigil/golden-files/./input/perl6.pl:30                                                 
 ------> [32msay 'Hello from Perl 6!'[33m⏏[31m<EOL>[0m                                      
     expecting any of:                                                                          
         infix                                                                                  
@@ -11,6 +11,6 @@ at /home/ahamilton/code/vigil/golden-files/./input/perl6.pl:30
         statement modifier loop                                                                
 Other potential difficulties:                                                                  
     Useless declaration of a has-scoped method in mainline (did you mean 'my regex http-verb'?)
-    at /home/ahamilton/code/vigil/golden-files/./input/perl6.pl:11                             
+    at /tmp/vigil/golden-files/./input/perl6.pl:11                                             
     ------> [32mregex [33m⏏[31mhttp-verb {[0m                                              
                                                                                                
