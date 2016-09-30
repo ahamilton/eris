@@ -64,17 +64,11 @@ STATUS_MEANINGS = [
     (Status.error, "Error")
 ]
 _STATUS_TO_TERMSTR = {
-    status: termstr.TermStr(" ", termstr.CharStyle(fg_color=color))
-    for status, color in _STATUS_COLORS.items()}
-_STATUS_TO_TERMSTR[Status.error] = termstr.TermStr(
-    "E ", termstr.CharStyle(fg_color=termstr.Color.red))
-_STATUS_TO_TERMSTR[Status.pending] = ". "
-_STATUS_TO_TERMSTR_SIMPLE = {
     status: termstr.TermStr(" ", termstr.CharStyle(bg_color=color))
     for status, color in _STATUS_COLORS.items()}
-_STATUS_TO_TERMSTR_SIMPLE[Status.error] = termstr.TermStr(
+_STATUS_TO_TERMSTR[Status.error] = termstr.TermStr(
     "E", termstr.CharStyle(bg_color=termstr.Color.red))
-_STATUS_TO_TERMSTR_SIMPLE[Status.pending] = "."
+_STATUS_TO_TERMSTR[Status.pending] = "."
 
 
 def get_ls_color_codes():
@@ -596,13 +590,9 @@ def dump_pickle_safe(object_, path, protocol=pickle.HIGHEST_PROTOCOL,
         os.rename(tmp_path, path)
 
 
-def status_to_str(status, is_status_simple):
-    if isinstance(status, enum.Enum):
-        dict_ = (_STATUS_TO_TERMSTR_SIMPLE if is_status_simple
-                 else _STATUS_TO_TERMSTR)
-        return dict_[status]
-    else:
-        return status
+def status_to_str(status):
+    return (_STATUS_TO_TERMSTR[status] if isinstance(status, enum.Enum)
+            else status)
 
 
 class Result:
@@ -659,16 +649,15 @@ class Result:
         self.is_completed = True
         log.log_message(
             ["Finished running ", tool_name, " on ", path, ". ",
-             status_to_str(new_status, self.entry.summary.is_status_simple),
-             " %s secs" % round(end_time - start_time, 2)])
+             status_to_str(new_status), " %s secs" %
+             round(end_time - start_time, 2)])
 
     def reset(self):
         self.is_placeholder = True
         self.set_status(Status.pending)
 
     def appearance_min(self):
-        return [status_to_str(self.status,
-                              self.entry.summary.is_status_simple)]
+        return [status_to_str(self.status)]
 
 
 def _generic_tools():

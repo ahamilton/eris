@@ -48,7 +48,6 @@ Keys:
   *p - Pause workers. (toggle)
   *o - Order files by type, or by directory location. (toggle)
   *r - Refresh the currently selected report.
-  *s - Change the appearance of result statuses. (toggle)
 """
 
 
@@ -91,11 +90,6 @@ def _log_error(message=None):
         log_file.write(message)
 
 
-def _reverse_style(style):
-    return termstr.CharStyle(style.bg_color, style.fg_color, style.is_bold,
-                             style.is_underlined)
-
-
 class Entry(collections.UserList):
 
     def __init__(self, path, results, summary, highlighted=None,
@@ -114,17 +108,14 @@ class Entry(collections.UserList):
 
     def _get_cursor(self):
         result_selected = self.widget[self.highlighted]
-        if self.summary.is_status_simple:
-            status_color = tools._STATUS_COLORS.get(
-                result_selected.status, None)
-            fg_color = (termstr.Color.white
-                        if (status_color is None or
-                            (sum(status_color) / 3) < (255 / 2))
-                        else termstr.Color.black)
-            return fill3.Text(termstr.TermStr("+", termstr.CharStyle(
-                fg_color=fg_color, bg_color=status_color)))
-        else:
-            return fill3.Style(result_selected, _reverse_style)
+        status_color = tools._STATUS_COLORS.get(
+            result_selected.status, None)
+        fg_color = (termstr.Color.white
+                    if (status_color is None or
+                        (sum(status_color) / 3) < (255 / 2))
+                    else termstr.Color.black)
+        return fill3.Text(termstr.TermStr("+", termstr.CharStyle(
+            fg_color=fg_color, bg_color=status_color)))
 
     def appearance_min(self):
         # 'appearance' local variable exists because appearance_cache can
@@ -218,7 +209,6 @@ class Summary:
         self.closest_placeholder_generator = None
         self._lock = threading.Lock()
         self._cache = {}
-        self.is_status_simple = False
         self.is_directory_sort = True
         self._max_width = None
         self._max_path_length = None
@@ -325,9 +315,7 @@ class Summary:
                 return self.closest_placeholder_generator.send(None)
 
     def appearance_dimensions(self):
-        status_width = 1 if self.is_status_simple else 2
-        width = self._max_path_length + 1 + status_width * self._max_width
-        return width, len(self._column)
+        return self._max_path_length + 1 + self._max_width, len(self._column)
 
     def appearance_interval(self, interval):
         start_y, end_y = interval
@@ -340,8 +328,7 @@ class Summary:
     def appearance(self, dimensions):
         width, height = dimensions
         x, y = self.cursor_position()
-        status_width = 1 if self.is_status_simple else 2
-        screen_x, screen_y = self._max_path_length + 1 + x * status_width, y
+        screen_x, screen_y = self._max_path_length + 1 + x, y
         width, height = width - 1, height - 1  # Minus one for the scrollbars
         scroll_y = (screen_y // height) * height
         self._view_widget.position = ((screen_x // width) * width, scroll_y)
@@ -415,10 +402,6 @@ class Summary:
                 self._cursor_position = position
                 return
 
-    def toggle_status_style(self, log):
-        self.is_status_simple = not self.is_status_simple
-        self.sync_with_filesystem(log)
-
     def refresh(self, log):
         selection = self.get_selection()
         if selection.status not in {tools.Status.running, tools.Status.paused,
@@ -491,12 +474,11 @@ def _highlight_chars(str_, style, marker="*"):
     return fill3.join("", [parts[0]] + highlighted_parts)
 
 
-@functools.lru_cache()
-def _get_help_text(is_status_simple=True):
+def _get_help_text():
     usage = _highlight_chars(__doc__, Log._GREEN_STYLE)
     return fill3.join(
         "\n", [usage, "Statuses:"] +
-        ["  " + tools.status_to_str(status, is_status_simple) + " " + meaning
+        ["  " + tools.status_to_str(status) + " " + meaning
          for status, meaning in tools.STATUS_MEANINGS])
 
 
@@ -513,8 +495,7 @@ class Help:
     def __init__(self, summary, screen):
         self.summary = summary
         self.screen = screen
-        self.body = fill3.Placeholder()
-        self.view = fill3.View.from_widget(self.body)
+        self.view = fill3.View.from_widget(fill3.Text(_get_help_text()))
         self.widget = fill3.Border(self.view, title="Help")
         portal = self.view.portal
         self.key_map = _make_key_map([
@@ -547,8 +528,6 @@ class Help:
             appearance_changed_event.set()
 
     def appearance(self, dimensions):
-        text = _get_help_text(self.summary.is_status_simple)
-        self.body.widget = fill3.Text(text)
         return self.widget.appearance(dimensions)
 
 
@@ -733,11 +712,10 @@ class Screen:
         if x < border_width or y < border_width or x > view_width or \
            y > view_height:
             return
-        status_width = 1 if self._summary.is_status_simple else 2
         view_x, view_y = self._summary._view_widget.portal.position
         spacer = 1
         column_index = (x - self._summary._max_path_length - spacer -
-                        border_width + view_x) // status_width
+                        border_width + view_x)
         row_index = y - border_width + view_y
         if row_index >= len(self._summary._column):
             return
@@ -767,7 +745,7 @@ class Screen:
 
     _STATUS_BAR = _highlight_chars(
         " *help *quit *d,*c,*j,*k,*f,*v:navigate *turn *log *edit *next *pause"
-        " *order *refresh *statuses", Log._GREEN_STYLE)
+        " *order *refresh", Log._GREEN_STYLE)
 
     @functools.lru_cache(maxsize=2)
     def _get_status_bar_appearance(self, width, is_directory_sort, is_paused,
@@ -793,7 +771,7 @@ class Screen:
         tool_name = tools.tool_name_colored(widget.tool, widget.path)
         self._listing.title = (
             tools.path_colored(widget.path) + " ─── " + tool_name + " " +
-            tools.status_to_str(widget.status, self._summary.is_status_simple))
+            tools.status_to_str(widget.status))
         incomplete = self._summary.result_total - self._summary.completed_total
         progress_bar_size = max(0, width * incomplete //
                                 self._summary.result_total)
@@ -817,7 +795,7 @@ class Screen:
         ({"C"}, listing_down), ({"J", "home"}, listing_left),
         ({"K", "end"}, listing_right), ({"o"}, toggle_order),
         ({"n"}, move_to_next_issue), ({"N"}, move_to_next_issue_of_tool),
-        ({"e"}, edit_file), ({"s"}, toggle_status_style), ({"q"}, quit_),
+        ({"e"}, edit_file), ({"q"}, quit_),
         ({"p"}, toggle_pause), ({"r"}, refresh)]
 
 
@@ -937,7 +915,8 @@ def main(root_path, loop, worker_count=None, is_sandboxed=True,
     try:
         log.log_message("Starting workers (%s) ..." % worker_count)
         for index in range(worker_count):
-            worker_ = worker.Worker(sandbox, screen._is_paused, is_being_tested)
+            worker_ = worker.Worker(sandbox, screen._is_paused,
+                                    is_being_tested)
             workers.append(worker_)
             future = worker_.job_runner(
                 summary, log, jobs_added_event, appearance_changed_event)

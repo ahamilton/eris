@@ -390,23 +390,6 @@ class Placeholder:
         return self.widget.appearance(dimensions)
 
 
-class Style:
-
-    def __init__(self, widget, style_transform_func):
-        self.widget = widget
-        self.style_transform_func = style_transform_func
-
-    def _transform_appearance(self, appearance):
-        return [termstr.TermStr(line).transform_style(
-            self.style_transform_func) for line in appearance]
-
-    def appearance_min(self):
-        return self._transform_appearance(self.widget.appearance_min())
-
-    def appearance(self, dimensions):
-        return self._transform_appearance(self.widget.appearance(dimensions))
-
-
 def draw_screen(widget):
     appearance = widget.appearance(os.get_terminal_size())
     print(terminal.move(0, 0), *appearance, sep="", end="", flush=True)
