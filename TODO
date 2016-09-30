@@ -4,6 +4,8 @@ Todo
   - Maybe also use cxfreeze, py2exe, pyrun or zipapp?  Is zipapp the standard way?
   - Use cookiecutter?
   - Need to use conventional version numbers for pypi. See pep0440.
+- Only show the 'keys' in the help page, and only show the command line usage
+  on the command line.
 
 
 Todo (tool related)
