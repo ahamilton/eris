@@ -86,7 +86,7 @@ TIMEOUT = 60
 
 def _fix_input(input_):
     input_str = input_.decode("utf-8") if isinstance(input_, bytes) else input_
-    return input_str.replace("\t", " " * 4)
+    return input_str.expandtabs(tabsize=4)
 
 
 def _do_command(command, timeout=None, **kwargs):
