@@ -18,6 +18,7 @@ import os.path
 import pickle
 import pwd
 import stat
+import string
 import subprocess
 import tempfile
 import time
@@ -84,9 +85,14 @@ _LS_COLOR_CODES = get_ls_color_codes()
 TIMEOUT = 60
 
 
+def _printable(text):
+    return "".join(char if ord(char) > 31 or char in ["\n", "\t"] else "#"
+                   for char in text)
+
+
 def _fix_input(input_):
     input_str = input_.decode("utf-8") if isinstance(input_, bytes) else input_
-    return input_str.expandtabs(tabsize=4)
+    return _printable(input_str).expandtabs(tabsize=4)
 
 
 def _do_command(command, timeout=None, **kwargs):
@@ -248,7 +254,7 @@ def contents(path):
     root, ext = splitext(path)
     if ext == "":
         with open(path) as file_:
-            return Status.normal, fill3.Text(file_.read())
+            return Status.normal, fill3.Text(_fix_input(file_.read()))
     else:
         return pygments_(path)
 contents.dependencies = {"python3-pygments"}
