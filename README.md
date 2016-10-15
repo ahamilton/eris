@@ -7,7 +7,7 @@ up to date as the codebase changes.
 
 ### Installation
 
-To run vigil:  (Tested in Ubuntu 16.04 in gnome-terminal and stterm)
+To run vigil:  (Tested in Ubuntu 16.10 in gnome-terminal and stterm)
 
     # git clone https://github.com/ahamilton/vigil
     # cd vigil
