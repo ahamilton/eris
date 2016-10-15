@@ -17,8 +17,8 @@ class OverlayfsMount():
         self.work_dir = tempfile.mkdtemp()
         option_string = ("lowerdir=%s,upperdir=%s,workdir=%s" %
                          (self.lower_dir, self.upper_dir, self.work_dir))
-        subprocess.check_call(["sudo",  "mount", "-t", "overlayfs", "-o",
-                               option_string, "overlayfs", self.mount_point],
+        subprocess.check_call(["sudo",  "mount", "-t", "overlay", "-o",
+                               option_string, "overlay", self.mount_point],
                               stderr=subprocess.PIPE)
         for command in ["chmod", "chown"]:
             subprocess.check_call(["sudo", command, "--reference", lower_dir,
