@@ -325,6 +325,13 @@ def pydoc(path):
 pydoc.dependencies = {"python", "python3"}
 
 
+def mypy(path):
+    stdout, stderr, returncode = _do_command(["mypy", path], timeout=TIMEOUT)
+    status = Status.ok if returncode == 0 else Status.normal
+    return status, fill3.Text(stdout)
+mypy.dependencies = {"mypy"}
+
+
 def _colorize_coverage_report(text):
     line_color = {"> ": termstr.Color.green, "! ": termstr.Color.red,
                   "  ": None}
@@ -672,7 +679,7 @@ def _generic_tools():
 
 def _tools_for_extension():
     return {
-        "py": [python_syntax, python_unittests, pydoc, python_coverage,
+        "py": [python_syntax, python_unittests, pydoc, mypy, python_coverage,
                python_profile, pep8, pyflakes, pylint, python_gut,
                python_modulefinder, python_mccabe],
         "pyc": [disassemble_pyc],

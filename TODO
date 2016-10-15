@@ -164,6 +164,8 @@ Done
 - Recognize python test files like: test_*.py
 - Only show the 'keys' in the help page, and only show the command line usage
   on the command line.
+- Can mypy be a tool?
+  <- Yes, but wait for it to be included in python, or until it is an ubuntu package.
 
 A-syntax, B-tests, C-auto docs, D-lint, E-coverage, F-profile, G-tidy, H-import deps
              A B C D E F G H
@@ -210,7 +212,7 @@ Ideas
   contents of compressed archives, pdf2text, doc2text, html2text, ebook2text,
   csv file?
 - Check these tools: astyle, indent, uncrustify, xmlindent, csstidy, flake8,
-  frosted, pep257, pyroma, dodgy, jedi, pep8-naming, graphite, propector, mypy, vmprof, pytype
+  frosted, pep257, pyroma, dodgy, jedi, pep8-naming, graphite, propector, vmprof, pytype
 - eslint for javascript?
 - epydoc for python
 - readelf
@@ -267,8 +269,6 @@ Ideas
 - Have command line options for more things? timeout? worker's nice priority level?
   editor? pygment syntax theme? Compress the cache? Ignore which paths? Log to disk?
   The cache path?
-- Can mypy be a tool?
-  <- Yes, but wait for it to be included in python, or until it is an ubuntu package.
 - Have a command-line option to create workers that run remotely.
 
 
