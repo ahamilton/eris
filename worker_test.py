@@ -10,7 +10,6 @@ import shutil
 import tempfile
 import unittest
 
-import sandbox_fs
 import tools
 import vigil
 import worker

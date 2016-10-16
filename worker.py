@@ -6,7 +6,6 @@
 import asyncio
 import os
 import signal
-import subprocess
 
 import psutil
 
@@ -47,7 +46,7 @@ class Worker:
         return tools.Status(int(data))
 
     async def job_runner(self, summary, log, jobs_added_event,
-                   appearance_changed_event):
+                         appearance_changed_event):
         await self.create_process()
         _make_process_nicest(self.child_pid)
         while True:
@@ -64,7 +63,7 @@ class Worker:
                             os.kill(os.getpid(), signal.SIGINT)
                     break
                 await self.result.run(log, appearance_changed_event,
-                                           self)
+                                      self)
                 summary.completed_total += 1
             jobs_added_event.clear()
 

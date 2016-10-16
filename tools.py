@@ -17,7 +17,6 @@ import os.path
 import pickle
 import pwd
 import stat
-import string
 import subprocess
 import tempfile
 import time
