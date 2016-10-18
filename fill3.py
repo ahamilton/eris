@@ -5,8 +5,15 @@
 # Licensed under the Artistic License 2.0.
 
 import collections
+import contextlib
 import itertools
 import os
+import signal
+import sys
+import threading
+
+import urwid
+import urwid.raw_display
 
 import terminal
 import termstr
@@ -409,3 +416,56 @@ def patch_screen(widget):
                      if line != old_line)
     print(*changed_lines, sep="", end="", flush=True)
     _last_appearance = appearance
+
+
+@contextlib.contextmanager
+def _urwid_screen():
+    screen = urwid.raw_display.Screen()
+    screen.set_mouse_tracking(True)
+    screen.start()
+    try:
+        yield screen
+    finally:
+        screen.stop()
+
+
+_UPDATE_THREAD_STOPPED = threading.Event()
+
+
+def _update_screen(main_widget, appearance_changed_event):
+    while True:
+        appearance_changed_event.wait()
+        appearance_changed_event.clear()
+        if _UPDATE_THREAD_STOPPED.is_set():
+            break
+        patch_screen(main_widget)
+
+
+def main(loop, appearance_changed_event, screen, exit_loop=None):
+    appearance_changed_event.set()
+    update_display_thread = threading.Thread(
+        target=_update_screen, args=(screen, appearance_changed_event),
+        daemon=True)
+
+    def exit_loop_():
+        loop.stop()
+    if exit_loop is None:
+        exit_loop = exit_loop_
+    loop.add_signal_handler(signal.SIGWINCH, appearance_changed_event.set)
+    loop.add_signal_handler(signal.SIGINT, exit_loop)
+    loop.add_signal_handler(signal.SIGTERM, exit_loop)
+    with terminal.hidden_cursor():
+        with _urwid_screen() as urwid_screen:
+
+            def on_input(urwid_screen):
+                for event in urwid_screen.get_input():
+                    screen.on_input_event(event)
+            loop.add_reader(sys.stdin, on_input, urwid_screen)
+            update_display_thread.start()
+            try:
+                loop.run_forever()
+            finally:
+                _UPDATE_THREAD_STOPPED.set()
+                appearance_changed_event.set()
+                update_display_thread.join()
+                # loop.close()

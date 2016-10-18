@@ -39,8 +39,6 @@ import traceback
 
 import docopt
 import pyinotify
-import urwid
-import urwid.raw_display
 
 import fill3
 import sandbox_fs
@@ -838,29 +836,6 @@ def _add_watch_manager_to_mainloop(root_path, mainloop, on_filesystem_change,
     return watch_manager_fd
 
 
-@contextlib.contextmanager
-def _urwid_screen():
-    screen = urwid.raw_display.Screen()
-    screen.set_mouse_tracking(True)
-    screen.start()
-    try:
-        yield screen
-    finally:
-        screen.stop()
-
-
-_UPDATE_THREAD_STOPPED = False
-
-
-def _update_screen(main_widget, appearance_changed_event):
-    while True:
-        appearance_changed_event.wait()
-        appearance_changed_event.clear()
-        if _UPDATE_THREAD_STOPPED:
-            break
-        fill3.patch_screen(main_widget)
-
-
 def make_sandbox(mount_point):
     sandbox = sandbox_fs.SandboxFs(mount_point)
     sandbox.mount()
@@ -927,13 +902,6 @@ def main(root_path, loop, worker_count=None, is_sandboxed=True,
                 summary, log, jobs_added_event, appearance_changed_event)
             worker_.future = asyncio.ensure_future(future, loop=loop)
 
-        def on_window_resize():
-            appearance_changed_event.set()
-        appearance_changed_event.set()
-        update_display_thread = threading.Thread(
-            target=_update_screen, args=(screen, appearance_changed_event),
-            daemon=True)
-
         def exit_loop():
             log.log_command("Exiting...")
             time.sleep(0.05)
@@ -943,23 +911,7 @@ def main(root_path, loop, worker_count=None, is_sandboxed=True,
                 if worker_.result is not None:
                     worker_.result.reset()
             loop.stop()
-        loop.add_signal_handler(signal.SIGWINCH, on_window_resize)
-        loop.add_signal_handler(signal.SIGINT, exit_loop)
-        loop.add_signal_handler(signal.SIGTERM, exit_loop)
-        with terminal.hidden_cursor():
-            with _urwid_screen() as urwid_screen:
-
-                def on_input(urwid_screen):
-                    for event in urwid_screen.get_input():
-                        screen.on_input_event(event)
-                loop.add_reader(sys.stdin, on_input, urwid_screen)
-                update_display_thread.start()
-                try:
-                    loop.run_forever()
-                finally:
-                    _UPDATE_THREAD_STOPPED = True
-                    appearance_changed_event.set()
-                    update_display_thread.join()
+        fill3.main(loop, appearance_changed_event, screen, exit_loop=exit_loop)
         log.log_message("Program stopped.")
         # Cannot pickle generators, locks, sockets or events.
         (summary.closest_placeholder_generator, summary._lock,
