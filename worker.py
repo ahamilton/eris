@@ -52,7 +52,6 @@ class Worker:
         while True:
             await jobs_added_event.wait()
             while True:
-                # _regulate_temperature(log)  # My fan is broken
                 try:
                     self.result = summary.get_closest_placeholder()
                 except StopIteration:

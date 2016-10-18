@@ -802,19 +802,6 @@ class Screen:
         ({"p"}, toggle_pause), ({"r"}, refresh)]
 
 
-def _get_cpu_temperature():
-    with open("/sys/class/thermal/thermal_zone0/temp", "r") as temp_file:
-        return int(temp_file.read()[:-4])
-
-
-def _regulate_temperature(log):
-    if _get_cpu_temperature() >= 72:
-        log.log_message("The computer is too hot. Waiting to cool down...")
-        while _get_cpu_temperature() > 66:
-            time.sleep(1)
-        log.log_message("The computer has cooled down. Continuing...")
-
-
 def _add_watch_manager_to_mainloop(root_path, mainloop, on_filesystem_change,
                                    exclude_filter):
     watch_manager = pyinotify.WatchManager()
