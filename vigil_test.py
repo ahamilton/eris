@@ -225,8 +225,8 @@ class MainTestCase(unittest.TestCase):
             # processes = _all_processes()
             foo_path = os.path.join(root_path, "foo")
             open(foo_path, "w").close()
-            vigil._manage_cache(root_path)
-            with vigil._chdir(root_path):
+            vigil.manage_cache(root_path)
+            with vigil.chdir(root_path):
                 with contextlib.redirect_stdout(io.StringIO()):
                     vigil.main(root_path, loop, worker_count=2,
                                is_sandboxed=True, is_being_tested=True)
