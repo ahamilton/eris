@@ -552,12 +552,33 @@ class Screen:
         self._log = log
         self._appearance_changed_event = appearance_changed_event
         self._main_loop = main_loop
+        self.workers = None
         self._is_listing_portrait = True
         self._is_log_visible = True
         self._is_help_visible = False
         self._is_paused = False
         self._make_widgets()
         self._key_map = _make_key_map(Screen._KEY_DATA)
+
+    def make_workers(self, worker_count, sandbox, is_being_tested):
+        workers = []
+        self._log.log_message("Starting workers (%s) ..." % worker_count)
+        for index in range(worker_count):
+            worker_ = worker.Worker(sandbox, self._is_paused, is_being_tested)
+            workers.append(worker_)
+            future = worker_.job_runner(
+                self._summary, self._log, self._summary._jobs_added_event,
+                self._appearance_changed_event)
+            worker_.future = asyncio.ensure_future(
+                future, loop=self._main_loop)
+        self.workers = workers
+
+    def stop_workers(self):
+        for worker_ in self.workers:
+            worker_.pause()
+            worker_.future.cancel()
+            if worker_.result is not None:
+                worker_.result.reset()
 
     def _partition(self, widgets, height):
         smaller_height = max(height // 4, 10)
@@ -870,7 +891,6 @@ def main(root_path, loop, worker_count=None, is_sandboxed=True,
         appearance_changed_event.set()
     watch_manager_fd = _add_watch_manager_to_mainloop(
         root_path, loop, on_filesystem_change, _is_path_excluded)
-    screen.workers = workers = []
     if is_sandboxed:
         log.log_message("Making filesystem sandbox...")
         sandbox_temp_dir = tempfile.mkdtemp()
@@ -879,24 +899,12 @@ def main(root_path, loop, worker_count=None, is_sandboxed=True,
     else:
         log.log_message("Running without the filesystem sandbox...")
         sandbox = None
+    screen.make_workers(worker_count, sandbox, is_being_tested)
     try:
-        log.log_message("Starting workers (%s) ..." % worker_count)
-        for index in range(worker_count):
-            worker_ = worker.Worker(sandbox, screen._is_paused,
-                                    is_being_tested)
-            workers.append(worker_)
-            future = worker_.job_runner(
-                summary, log, jobs_added_event, appearance_changed_event)
-            worker_.future = asyncio.ensure_future(future, loop=loop)
-
         def exit_loop():
             log.log_command("Exiting...")
             time.sleep(0.05)
-            for worker_ in workers:
-                worker_.pause()
-                worker_.future.cancel()
-                if worker_.result is not None:
-                    worker_.result.reset()
+            screen.stop_workers()
             loop.stop()
         fill3.main(loop, appearance_changed_event, screen, exit_loop=exit_loop)
         log.log_message("Program stopped.")
