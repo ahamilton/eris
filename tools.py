@@ -608,10 +608,9 @@ def status_to_str(status):
 
 class Result:
 
-    def __init__(self, path, tool, is_stored_compressed=True):
+    def __init__(self, path, tool):
         self.path = path
         self.tool = tool
-        self._open_func = gzip.open if is_stored_compressed else open
         self.pickle_path = os.path.join(CACHE_PATH, path + "-" + tool.__name__)
         self.scroll_position = (0, 0)
         self.is_completed = False
@@ -625,7 +624,7 @@ class Result:
         if self.is_placeholder:
             return unknown_label
         try:
-            with self._open_func(self.pickle_path, "rb") as pickle_file:
+            with gzip.open(self.pickle_path, "rb") as pickle_file:
                 return pickle.load(pickle_file)
         except FileNotFoundError:
             return unknown_label
@@ -633,7 +632,7 @@ class Result:
     @result.setter
     def result(self, value):
         os.makedirs(os.path.dirname(self.pickle_path), exist_ok=True)
-        dump_pickle_safe(value, self.pickle_path, open=self._open_func)
+        dump_pickle_safe(value, self.pickle_path, open=gzip.open)
         Result.result.fget.evict(self)
 
     def set_status(self, status):
