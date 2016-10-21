@@ -563,6 +563,16 @@ php5_syntax.dependencies = {"php"}
 #############################
 
 
+
+LOG_PATH = os.path.join(os.getcwd(), "vigil.log")
+
+
+def log_error(message=None):
+    message = traceback.format_exc() if message is None else message + "\n"
+    with open(LOG_PATH, "a") as log_file:
+        log_file.write(message)
+
+
 def lru_cache_with_eviction(maxsize=128, typed=False):
     versions = {}
     make_key = functools._make_key

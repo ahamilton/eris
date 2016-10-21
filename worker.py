@@ -81,12 +81,15 @@ class Worker:
 
 def main():
     print(os.getpid(), flush=True)
-    while True:
-        tool_name, path = input(), input()
-        tool = getattr(tools, tool_name)
-        result = tools.Result(path, tool)
-        status, result.result = tools.run_tool_no_error(path, tool)
-        print(status.value, flush=True)
+    try:
+        while True:
+            tool_name, path = input(), input()
+            tool = getattr(tools, tool_name)
+            result = tools.Result(path, tool)
+            status, result.result = tools.run_tool_no_error(path, tool)
+            print(status.value, flush=True)
+    except:
+        tools.log_error()
 
 
 if __name__ == "__main__":

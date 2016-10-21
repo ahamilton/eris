@@ -84,15 +84,6 @@ KEYS_DOC = """Keys:
 """
 
 
-LOG_PATH = os.path.join(os.getcwd(), "vigil.log")
-
-
-def log_error(message=None):
-    message = traceback.format_exc() if message is None else message + "\n"
-    with open(LOG_PATH, "a") as log_file:
-        log_file.write(message)
-
-
 class Entry(collections.UserList):
 
     def __init__(self, path, results, summary, highlighted=None,
