@@ -42,13 +42,12 @@ class WorkerTestCase(unittest.TestCase):
         self._test_worker(None)
 
     def test_run_job_with_sandbox(self):
-        temp_dir = tempfile.mkdtemp()
-        sandbox = vigil.make_sandbox(temp_dir)
+        sandbox = vigil.make_sandbox()
         try:
             self._test_worker(sandbox)
         finally:
             sandbox.umount()
-            os.rmdir(temp_dir)
+            os.rmdir(sandbox.mount_point)
 
 
 if __name__ == "__main__":

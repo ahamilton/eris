@@ -562,7 +562,6 @@ class Screen:
 
     def make_workers(self, worker_count, sandbox, is_being_tested):
         workers = []
-        self._log.log_message("Starting workers (%s) ..." % worker_count)
         for index in range(worker_count):
             worker_ = worker.Worker(sandbox, self._is_paused, is_being_tested)
             workers.append(worker_)
@@ -844,7 +843,8 @@ def _add_watch_manager_to_mainloop(root_path, mainloop, on_filesystem_change,
     return watch_manager_fd
 
 
-def make_sandbox(mount_point):
+def make_sandbox():
+    mount_point = tempfile.mkdtemp()
     sandbox = sandbox_fs.SandboxFs(mount_point)
     sandbox.mount()
     cache_path = os.path.join(os.getcwd(), tools.CACHE_PATH)
@@ -853,16 +853,17 @@ def make_sandbox(mount_point):
     return sandbox
 
 
-def main(root_path, loop, worker_count=None, is_sandboxed=True,
-         editor_command=None, is_being_tested=False):
-    if worker_count is None:
-        worker_count = multiprocessing.cpu_count()*2
-    global _UPDATE_THREAD_STOPPED
-    jobs_added_event = asyncio.Event()
-    appearance_changed_event = threading.Event()
+def _remove_sandbox(sandbox):
+    cache_path = os.path.join(os.getcwd(), tools.CACHE_PATH)
+    subprocess.check_call(["sudo", "umount", sandbox.mount_point + cache_path])
+    sandbox.umount()
+    os.rmdir(sandbox.mount_point)
+
+
+def _load_state(pickle_path, jobs_added_event, appearance_changed_event,
+                root_path, loop):
     is_first_run = True
     try:
-        pickle_path = os.path.join(tools.CACHE_PATH, "summary.pickle")
         with gzip.open(pickle_path, "rb") as file_:
             screen = pickle.load(file_)
     except FileNotFoundError:
@@ -879,6 +880,28 @@ def main(root_path, loop, worker_count=None, is_sandboxed=True,
         summary._root_path = root_path
         log = screen._log
         log._appearance_changed_event = appearance_changed_event
+    return summary, screen, log, is_first_run
+
+
+def _save_state(summary, screen, log, pickle_path):
+    # Cannot pickle generators, locks, sockets or events.
+    (summary.closest_placeholder_generator, summary._lock,
+     summary._jobs_added_event, screen._appearance_changed_event,
+     screen._main_loop, screen.workers,
+     log._appearance_changed_event) = [None] * 7
+    open_compressed = functools.partial(gzip.open, compresslevel=1)
+    tools.dump_pickle_safe(screen, pickle_path, open=open_compressed)
+
+
+def main(root_path, loop, worker_count=None, is_sandboxed=True,
+         editor_command=None, is_being_tested=False):
+    if worker_count is None:
+        worker_count = multiprocessing.cpu_count() * 2
+    pickle_path = os.path.join(tools.CACHE_PATH, "summary.pickle")
+    jobs_added_event = asyncio.Event()
+    appearance_changed_event = threading.Event()
+    summary, screen, log, is_first_run = _load_state(pickle_path,
+            jobs_added_event, appearance_changed_event, root_path, loop)
     screen.editor_command = editor_command
     log.delete_log_file()
     log.log_message("Program started.")
@@ -892,15 +915,11 @@ def main(root_path, loop, worker_count=None, is_sandboxed=True,
     watch_manager_fd = _add_watch_manager_to_mainloop(
         root_path, loop, on_filesystem_change, _is_path_excluded)
     if is_sandboxed:
-        log.log_message("Making filesystem sandbox...")
-        sandbox_temp_dir = tempfile.mkdtemp()
-        sandbox = make_sandbox(sandbox_temp_dir)
-        log.log_message("Sandbox made.")
-    else:
-        log.log_message("Running without the filesystem sandbox...")
-        sandbox = None
-    screen.make_workers(worker_count, sandbox, is_being_tested)
+        log.log_message("Making sandbox...")
+    sandbox = make_sandbox() if is_sandboxed else None
     try:
+        log.log_message("Starting workers (%s) ..." % worker_count)
+        screen.make_workers(worker_count, sandbox, is_being_tested)
         def exit_loop():
             log.log_command("Exiting...")
             time.sleep(0.05)
@@ -908,21 +927,11 @@ def main(root_path, loop, worker_count=None, is_sandboxed=True,
             loop.stop()
         fill3.main(loop, appearance_changed_event, screen, exit_loop=exit_loop)
         log.log_message("Program stopped.")
-        # Cannot pickle generators, locks, sockets or events.
-        (summary.closest_placeholder_generator, summary._lock,
-         summary._jobs_added_event, screen._appearance_changed_event,
-         screen._main_loop, screen.workers,
-         log._appearance_changed_event) = [None] * 7
-        open_compressed = functools.partial(gzip.open, compresslevel=1)
-        tools.dump_pickle_safe(screen, pickle_path, open=open_compressed)
     finally:
         if is_sandboxed:
-            cache_path = os.path.join(os.getcwd(), tools.CACHE_PATH)
-            subprocess.check_call(["sudo", "umount",
-                                   sandbox.mount_point + cache_path])
-            sandbox.umount()
-            os.rmdir(sandbox_temp_dir)
+            _remove_sandbox(sandbox)
         loop.remove_reader(watch_manager_fd)
+    _save_state(summary, screen, log, pickle_path)
 
 
 @contextlib.contextmanager
