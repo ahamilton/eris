@@ -9,7 +9,6 @@ import io
 import os
 import shutil
 import tempfile
-import threading
 import unittest
 
 import psutil
@@ -50,8 +49,8 @@ class ScreenWidgetTestCase(unittest.TestCase):
         self.temp_dir = tempfile.mkdtemp()
         foo_path = os.path.join(self.temp_dir, "foo.py")
         _touch(foo_path)
-        jobs_added_event = threading.Event()
-        appearance_changed_event = threading.Event()
+        jobs_added_event = asyncio.Event()
+        appearance_changed_event = asyncio.Event()
         summary = vigil.Summary(self.temp_dir, jobs_added_event)
         log = vigil.Log(appearance_changed_event)
         self.main_widget = vigil.Screen(summary, log, appearance_changed_event,
@@ -127,8 +126,8 @@ class SummarySyncWithFilesystem(unittest.TestCase):
         self.zoo_path = os.path.join(self.temp_dir, "zoo")
         _touch(self.foo_path)
         _touch(self.bar_path)
-        self.jobs_added_event = threading.Event()
-        self.appearance_changed_event = threading.Event()
+        self.jobs_added_event = asyncio.Event()
+        self.appearance_changed_event = asyncio.Event()
         self.summary = vigil.Summary(self.temp_dir, self.jobs_added_event)
         self.jobs_added_event.clear()
 
@@ -141,20 +140,20 @@ class SummarySyncWithFilesystem(unittest.TestCase):
 
     def test_summary_initial_state(self):
         self._assert_paths(["./bar", "./foo"])
-        self.assertFalse(self.jobs_added_event.isSet())
+        self.assertFalse(self.jobs_added_event.is_set())
 
     def test_sync_removed_file(self):
         os.remove(self.foo_path)
         self._assert_paths(["./bar", "./foo"])
         self.summary.sync_with_filesystem()
         self._assert_paths(["./bar"])
-        self.assertFalse(self.jobs_added_event.isSet())
+        self.assertFalse(self.jobs_added_event.is_set())
 
     def test_sync_added_file(self):
         _touch(self.zoo_path)
         self.summary.sync_with_filesystem()
         self._assert_paths(["./bar", "./foo", "./zoo"])
-        self.assertTrue(self.jobs_added_event.isSet())
+        self.assertTrue(self.jobs_added_event.is_set())
 
     # def test_sync_changed_file_metadata(self):
     #     ids_before = [id(entry) for entry in self.summary._column]
@@ -164,14 +163,14 @@ class SummarySyncWithFilesystem(unittest.TestCase):
     #     ids_after = [id(entry) for entry in self.summary._column]
     #     self.assertTrue(ids_before[0] == ids_after[0]) # bar
     #     self.assertTrue(ids_before[1] != ids_after[1]) # foo
-    #     self.assertTrue(self.jobs_added_event.isSet())
+    #     self.assertTrue(self.jobs_added_event.is_set())
 
     # def test_sync_same_objects(self):
     #     ids_before = [id(entry) for entry in self.summary._column]
     #     self.summary.sync_with_filesystem()
     #     ids_after = [id(entry) for entry in self.summary._column]
     #     self.assertTrue(ids_before == ids_after)
-    #     self.assertFalse(self.jobs_added_event.isSet())
+    #     self.assertFalse(self.jobs_added_event.is_set())
 
     def test_sync_linked_files(self):
         """Symbolic and hard-linked files are given distinct entry objects"""
@@ -184,19 +183,19 @@ class SummarySyncWithFilesystem(unittest.TestCase):
                         id(self.summary._column[2]))    # foo
         self.assertTrue(id(self.summary._column[2]) !=  # foo
                         id(self.summary._column[3]))    # zoo
-        self.assertTrue(self.jobs_added_event.isSet())
+        self.assertTrue(self.jobs_added_event.is_set())
 
 
 # class LogTestCase(unittest.TestCase):
 
 #     def test_log(self):
-#         appearance_changed_event = threading.Event()
+#         appearance_changed_event = asyncio.Event()
 #         log = vigil.Log(appearance_changed_event)
 #         _assert_widget_appearance(log, "golden-files/log-initial", None)
 #         timestamp = "11:11:11"
-#         self.assertFalse(appearance_changed_event.isSet())
+#         self.assertFalse(appearance_changed_event.is_set())
 #         log.log_message("foo", timestamp=timestamp)
-#         self.assertTrue(appearance_changed_event.isSet())
+#         self.assertTrue(appearance_changed_event.is_set())
 #         _assert_widget_appearance(log, "golden-files/log-one-message", None)
 #         log.log_message("bar", timestamp=timestamp)
 #         _assert_widget_appearance(log, "golden-files/log-two-messages", None)
