@@ -104,10 +104,8 @@ class Entry(collections.UserList):
         result_selected = self.widget[self.highlighted]
         status_color = tools._STATUS_COLORS.get(
             result_selected.status, None)
-        fg_color = (termstr.Color.white
-                    if (status_color is None or
-                        (sum(status_color) / 3) < (255 / 2))
-                    else termstr.Color.black)
+        fg_color = tools.STATUS_CURSOR_COLORS.get(result_selected.status,
+                                                  termstr.Color.white)
         return fill3.Text(termstr.TermStr("+", termstr.CharStyle(
             fg_color=fg_color, bg_color=status_color)))
 

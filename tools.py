@@ -68,6 +68,13 @@ _STATUS_TO_TERMSTR = {
 _STATUS_TO_TERMSTR[Status.error] = termstr.TermStr(
     "E", termstr.CharStyle(bg_color=termstr.Color.red))
 _STATUS_TO_TERMSTR[Status.pending] = "."
+STATUS_CURSOR_COLORS = {Status.ok: termstr.Color.black,
+                        Status.problem: termstr.Color.white,
+                        Status.normal: termstr.Color.black,
+                        Status.not_applicable: termstr.Color.white,
+                        Status.running: termstr.Color.white,
+                        Status.paused: termstr.Color.black,
+                        Status.timed_out: termstr.Color.white}
 
 
 def get_ls_color_codes():
