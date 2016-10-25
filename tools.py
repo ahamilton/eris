@@ -446,6 +446,18 @@ def disassemble_pyc(path):
 disassemble_pyc.dependencies = set()
 
 
+def bandit(path):
+    python_version = _python_version(path)
+    stdout, stderr, returncode = _do_command(
+        [python_version, "-m", "bandit.cli.main", "-f", "txt", path],
+        timeout=TIMEOUT)
+    status = Status.ok if returncode == 0 else Status.normal
+    text = stdout if python_version == "python" else _fix_input(eval(stdout))
+    text_without_timestamp = "".join(text.splitlines(keepends=True)[2:])
+    return status, fill3.Text(text_without_timestamp)
+bandit.dependencies = {}
+
+
 def _perl_version(path):
     stdout, stderr, returncode = _do_command(["perl", "-c", path])
     return "perl6" if "Perl v6.0.0 required" in stderr else "perl"
@@ -694,7 +706,7 @@ def _tools_for_extension():
     return {
         "py": [python_syntax, python_unittests, pydoc, mypy, python_coverage,
                python_profile, pep8, pyflakes, pylint, python_gut,
-               python_modulefinder, python_mccabe],
+               python_modulefinder, python_mccabe, bandit],
         "pyc": [disassemble_pyc],
         "pl": [perl_syntax, perldoc, perltidy],
         "pm": [perl_syntax, perldoc, perltidy],

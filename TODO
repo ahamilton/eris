@@ -9,7 +9,6 @@ Todo
 Todo (tool related)
 - Report on python doctests. (also coverage of)
 - Cache tools._python_version.
-- Add bandit tool for python.
 
 
 Done
@@ -166,6 +165,7 @@ Done
   on the command line.
 - Can mypy be a tool?
   <- Yes, but wait for it to be included in python, or until it is an ubuntu package.
+- Add bandit tool for python.
 
 A-syntax, B-tests, C-auto docs, D-lint, E-coverage, F-profile, G-tidy, H-import deps
              A B C D E F G H
