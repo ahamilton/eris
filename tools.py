@@ -582,7 +582,6 @@ php5_syntax.dependencies = {"php"}
 #############################
 
 
-
 LOG_PATH = os.path.join(os.getcwd(), "vigil.log")
 
 
