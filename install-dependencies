@@ -10,6 +10,3 @@ sudo apt-get --yes install python3-minimal python3-pygments python3-pyinotify \
 echo
 echo "Install all the tools vigil may need..."
 ./install-tools
-sudo apt-get --yes install python-pip python3-pip
-pip install bandit==1.1.0
-pip3 install bandit==1.1.0

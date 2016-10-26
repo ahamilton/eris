@@ -455,7 +455,7 @@ def bandit(path):
     text = stdout if python_version == "python" else _fix_input(eval(stdout))
     text_without_timestamp = "".join(text.splitlines(keepends=True)[2:])
     return status, fill3.Text(text_without_timestamp)
-bandit.dependencies = {}
+bandit.dependencies = {"python-bandit", "python3-bandit"}
 
 
 def _perl_version(path):
