@@ -13,6 +13,8 @@ import unittest
 
 import psutil
 
+os.environ["TERM"] = "st-256color"
+
 import fill3
 import golden
 import vigil

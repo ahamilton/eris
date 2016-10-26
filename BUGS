@@ -13,7 +13,6 @@ Current
 - When shutting down "Exception ignored in:" noise appears. Four messages
   for every worker running. This started with the move to asyncio for the
   workers.
-- The tests fail when run in gnome-terminal.
 
 
 Current (tool related)
@@ -234,6 +233,7 @@ Fixed
   <- Now vigil always gets sudo.
 - Some results are always missing their contents and are showing "?".
   e.g. golden-files/results/uncrustify-hello_c <- contents and metadata
+- The tests fail when run in gnome-terminal.
 
 
 Won't fix

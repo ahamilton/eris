@@ -3,8 +3,11 @@
 # Copyright (C) 2015-2016 Andrew Hamilton. All rights reserved.
 # Licensed under the Artistic License 2.0.
 
+import os
 import pickle
 import unittest
+
+os.environ["TERM"] = "st-256color"
 
 from termstr import TermStr, CharStyle
 import termstr
