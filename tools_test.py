@@ -9,7 +9,7 @@ import subprocess
 import unittest
 import unittest.mock
 
-os.environ["TERM"] = "st-256color"
+os.environ["TERM"] = "xterm-256color"
 
 import fill3
 import golden

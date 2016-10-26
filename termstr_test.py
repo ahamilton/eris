@@ -7,7 +7,7 @@ import os
 import pickle
 import unittest
 
-os.environ["TERM"] = "st-256color"
+os.environ["TERM"] = "xterm-256color"
 
 from termstr import TermStr, CharStyle
 import termstr
@@ -55,7 +55,7 @@ class CharStyleTests(unittest.TestCase):
 
     def test_code_for_term(self):
         self.assertEqual(self.style.code_for_term(),
-                         "\x1b[0m\x1b[38;2;255;255;255m\x1b[48;2;0;0;0m")
+                         "\x1b(B\x1b[m\x1b[38;2;255;255;255m\x1b[48;2;0;0;0m")
 
 
 class TermStrTests(unittest.TestCase):
