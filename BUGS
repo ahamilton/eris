@@ -13,6 +13,7 @@ Current
 - When shutting down "Exception ignored in:" noise appears. Four messages
   for every worker running. This started with the move to asyncio for the
   workers.
+- The tests fail when run in gnome-terminal.
 
 
 Current (tool related)
