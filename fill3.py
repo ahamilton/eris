@@ -354,13 +354,13 @@ class Border:
     THICK = ["━", "━", "┃", "┃", "┏", "┗", "┛", "┓"]
     ROUNDED = ["─", "─", "│", "│", "╭", "╰", "╯", "╮"]
     DOUBLE = ["═", "═", "║", "║", "╔", "╚", "╝", "╗"]
-    HEAVY_INNER = ["▄", "▀", "▐", "▌", "▗", "▝", "▘", "▖"]
-    HEAVY_OUTER = ["▀", "▄", "▌", "▐", "▛", "▙", "▟", "▜"]
-    INNER = ["▁", "▔", "▕", "▏", " ", " ", " ", " "]
 
     def __init__(self, widget, title=None, characters=THIN):
         self.widget = widget
         self.title = title
+        self.set_style(characters)
+
+    def set_style(self, characters):
         (self.top, self.bottom, self.left, self.right, self.top_left,
          self.bottom_left, self.bottom_right, self.top_right) = characters
 
@@ -370,7 +370,11 @@ class Border:
             title_bar = self.top * content_width
         else:
             padded_title = (" " + self.title + " ")[:content_width]
-            title_bar = padded_title.center(content_width, self.top)
+            try:
+                title_bar = padded_title.center(content_width, self.top)
+            except TypeError:
+                padded_title = termstr.TermStr(padded_title)
+                title_bar = padded_title.center(content_width, self.top)
         result = [self.top_left + title_bar + self.top_right]
         result.extend(self.left + line + self.right for line in body_content)
         result.append(self.bottom_left + self.bottom * content_width +

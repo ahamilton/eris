@@ -67,11 +67,10 @@ Options:
 
 
 KEYS_DOC = """Keys:
+  arrow keys, page up/down, mouse - Move the cursor or scroll the result pane.
+  tab - Change the focus between summary and result pane.
   *h - Show the help screen. (toggle)
   *q - Quit.
-  *d, *c, *j, *k, *f, *v or arrow keys or mouse click - Move the cursor.
-  *D, *C, *J, *K, *F, *V or page up, page down, home, end or the mouse wheel -
-      Scroll the result pane.
   *t - Turn the result pane to portrait or landscape orientation. (toggle)
   *l - Show the activity log. (toggle)
   *e - Edit the current file with an editor defined by -e, $EDITOR or $VISUAL.
@@ -538,6 +537,7 @@ class Screen:
         self._log = log
         self._appearance_changed_event = appearance_changed_event
         self._main_loop = main_loop
+        self._is_summary_focused = True
         self.workers = None
         self._is_listing_portrait = False
         self._is_log_visible = True
@@ -577,10 +577,12 @@ class Screen:
         self._help_widget = Help(self._summary, self)
         root_path = os.path.basename(self._summary._root_path)
         summary = fill3.Border(self._summary, title="Summary of " + root_path)
+        self._summary_border = summary
         selected_widget = self._summary.get_selection()
         self._view = fill3.View.from_widget(selected_widget.result)
         self._listing = fill3.Border(Listing(self._view))
-        log = fill3.Border(self._log, title="Log")
+        log = fill3.Border(self._log, title="Log",
+                           characters=Screen._DIMMED_BORDER)
         port_log = fill3.Row([fill3.Column([summary, log], self._partition),
                               self._listing])
         land_log = fill3.Column([fill3.Row([summary, log]), self._listing],
@@ -588,6 +590,7 @@ class Screen:
         port_no_log = fill3.Row([summary, self._listing])
         land_no_log = fill3.Column([summary, self._listing], self._partition_2)
         self._layouts = [[land_no_log, port_no_log], [land_log, port_log]]
+        self._set_focus()
 
     def toggle_help(self):
         self._is_help_visible = not self._is_help_visible
@@ -599,22 +602,52 @@ class Screen:
         self._is_listing_portrait = not self._is_listing_portrait
 
     def cursor_up(self):
-        self._summary.cursor_up()
+        if self._is_summary_focused:
+            self._summary.cursor_up()
+        else:
+            self._move_listing(_UP)
 
     def cursor_down(self):
-        self._summary.cursor_down()
+        if self._is_summary_focused:
+            self._summary.cursor_down()
+        else:
+            self._move_listing(_DOWN)
 
     def cursor_right(self):
-        self._summary.cursor_right()
+        if self._is_summary_focused:
+            self._summary.cursor_right()
+        else:
+            self._move_listing(_RIGHT)
 
     def cursor_left(self):
-        self._summary.cursor_left()
+        if self._is_summary_focused:
+            self._summary.cursor_left()
+        else:
+            self._move_listing(_LEFT)
 
     def cursor_page_up(self):
-        self._summary.cursor_page_up()
+        if self._is_summary_focused:
+            self._summary.cursor_page_up()
+        else:
+            self.listing_page_up()
 
     def cursor_page_down(self):
-        self._summary.cursor_page_down()
+        if self._is_summary_focused:
+            self._summary.cursor_page_down()
+        else:
+            self.listing_page_down()
+
+    def cursor_page_right(self):
+        if self._is_summary_focused:
+            pass  # Fix
+        else:
+            self._page_listing(_RIGHT)
+
+    def cursor_page_left(self):
+        if self._is_summary_focused:
+            pass  # Fix
+        else:
+            self._page_listing(_LEFT)
 
     def _move_listing(self, vector):
         dx, dy = vector
@@ -638,18 +671,6 @@ class Screen:
         listing_width, listing_height = self._listing.widget.last_dimensions
         self._move_listing((dx * (listing_width // 2),
                             dy * (listing_height // 2)))
-
-    def listing_up(self):
-        self._move_listing(_UP)
-
-    def listing_down(self):
-        self._move_listing(_DOWN)
-
-    def listing_right(self):
-        self._page_listing(_RIGHT)
-
-    def listing_left(self):
-        self._page_listing(_LEFT)
 
     def listing_page_up(self):
         self._page_listing(_UP)
@@ -703,6 +724,20 @@ class Screen:
     def refresh(self):
         self._summary.refresh(self._log)
 
+    _DIMMED_BORDER = [termstr.TermStr(part).fg_color(termstr.Color.grey_100)
+                      for part in fill3.Border.THIN]
+
+    def _set_focus(self):
+        focused, unfocused = fill3.Border.THICK, Screen._DIMMED_BORDER
+        self._summary_border.set_style(focused if self._is_summary_focused
+                                       else unfocused)
+        self._listing.set_style(unfocused if self._is_summary_focused
+                                else focused)
+
+    def toggle_focus(self):
+        self._is_summary_focused = not self._is_summary_focused
+        self._set_focus()
+
     def _on_mouse_event(self, event):
         if event[0] not in ["mouse press", "mouse drag"]:
             return
@@ -753,8 +788,8 @@ class Screen:
             self._appearance_changed_event.set()
 
     _STATUS_BAR = highlight_chars(
-        " *help *quit *d,*c,*j,*k,*f,*v:navigate *turn *log *edit *next *pause"
-        " *order *refresh", Log._GREEN_STYLE)
+        " *help *quit *t*a*b:focus *turn *log *edit *next *pause *order"
+        " *refresh", Log._GREEN_STYLE)
 
     @functools.lru_cache(maxsize=2)
     def _get_status_bar_appearance(self, width, is_directory_sort, is_paused,
@@ -778,8 +813,9 @@ class Screen:
         view.position = widget.scroll_position
         view.widget = widget.result
         tool_name = tools.tool_name_colored(widget.tool, widget.path)
+        divider = " " + self._listing.top * 4 + " "
         self._listing.title = (
-            tools.path_colored(widget.path) + " ─── " + tool_name + " " +
+            tools.path_colored(widget.path) + divider + tool_name + " " +
             tools.status_to_str(widget.status))
         incomplete = self._summary.result_total - self._summary.completed_total
         progress_bar_size = max(0, width * incomplete //
@@ -796,16 +832,15 @@ class Screen:
 
     _KEY_DATA = [
         ({"t"}, toggle_window_orientation), ({"l"}, toggle_log),
-        ({"h"}, toggle_help), ({"d", "up"}, cursor_up),
-        ({"c", "down"}, cursor_down), ({"j", "left"}, cursor_left),
-        ({"k", "right"}, cursor_right), ({"v"}, cursor_page_down),
-        ({"f"}, cursor_page_up), ({"F", "page up"}, listing_page_up),
-        ({"V", "page down"}, listing_page_down), ({"D"}, listing_up),
-        ({"C"}, listing_down), ({"J", "home"}, listing_left),
-        ({"K", "end"}, listing_right), ({"o"}, toggle_order),
-        ({"n"}, move_to_next_issue), ({"N"}, move_to_next_issue_of_tool),
-        ({"e"}, edit_file), ({"q"}, quit_),
-        ({"p"}, toggle_pause), ({"r"}, refresh)]
+        ({"h"}, toggle_help), ({"up"}, cursor_up),
+        ({"down"}, cursor_down), ({"left"}, cursor_left),
+        ({"right"}, cursor_right), ({"page down", "ctrl v"}, cursor_page_down),
+        ({"page up", "meta v"}, cursor_page_up), ({"o"}, toggle_order),
+        ({"home", "ctrl a"}, cursor_page_left),
+        ({"end", "ctrl e"}, cursor_page_right), ({"n"}, move_to_next_issue),
+        ({"N"}, move_to_next_issue_of_tool), ({"e"}, edit_file),
+        ({"q"}, quit_), ({"p"}, toggle_pause), ({"r"}, refresh),
+        ({"tab"}, toggle_focus)]
 
 
 def add_watch_manager_to_mainloop(root_path, mainloop, on_filesystem_change,
