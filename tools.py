@@ -459,13 +459,15 @@ bandit.dependencies = {"python-bandit", "python3-bandit"}
 
 
 def _perl_version(path):
-    stdout, stderr, returncode = _do_command(["perl", "-c", path])
-    return "perl6" if "Perl v6.0.0 required" in stderr else "perl"
+    # stdout, stderr, returncode = _do_command(["perl", "-c", path])
+    # return "perl6" if "Perl v6.0.0 required" in stderr else "perl"
+    return "perl"
 
 
 def perl_syntax(path):
     return _run_command([_perl_version(path), "-c", path])
-perl_syntax.dependencies = {"perl", "rakudo"}
+# perl_syntax.dependencies = {"perl", "rakudo"}
+perl_syntax.dependencies = {"perl"}
 
 
 def perldoc(path):
@@ -481,9 +483,9 @@ def perltidy(path):
 perltidy.dependencies = {"perltidy"}
 
 
-def perl6_syntax(path):
-    return _run_command(["perl6", "-c", path])
-perl6_syntax.dependencies = {"rakudo"}
+# def perl6_syntax(path):
+#     return _run_command(["perl6", "-c", path])
+# perl6_syntax.dependencies = {"rakudo"}
 
 
 def splint(path):
@@ -710,8 +712,8 @@ def _tools_for_extension():
         "pl": [perl_syntax, perldoc, perltidy],
         "pm": [perl_syntax, perldoc, perltidy],
         "t": [perl_syntax, perldoc, perltidy],
-        "p6": [perl6_syntax, perldoc],
-        "pm6": [perl6_syntax, perldoc],
+        # "p6": [perl6_syntax, perldoc],
+        # "pm6": [perl6_syntax, perldoc],
         "pod": [perldoc],
         "pod6": [perldoc],
         "java": [uncrustify],

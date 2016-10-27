@@ -128,7 +128,8 @@ class ToolsTestCase(unittest.TestCase):
     def test_perl_syntax(self):
         self._test_tool(tools.perl_syntax,
                         [("perl.pl", tools.Status.ok),
-                         ("perl6.pl", tools.Status.problem)])
+                         # ("perl6.pl", tools.Status.problem)
+                        ])
 
     def test_perldoc(self):
         self._test_tool(tools.perldoc,
@@ -138,9 +139,9 @@ class ToolsTestCase(unittest.TestCase):
     def test_perltidy(self):
         self._test_tool(tools.perltidy, [("perl.pl", tools.Status.normal)])
 
-    def test_perl6_syntax(self):
-        self._test_tool(tools.perl6_syntax,
-                        [("perl6.p6", tools.Status.problem)])
+    # def test_perl6_syntax(self):
+    #     self._test_tool(tools.perl6_syntax,
+    #                     [("perl6.p6", tools.Status.problem)])
 
     def test_uncrustify(self):
         self._test_tool(tools.uncrustify,

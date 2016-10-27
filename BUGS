@@ -1,5 +1,4 @@
 Current
-- When pausing, often getting a ProcessLookupError.
 - Within the sandbox sudo is not working for tools.
   <- Sudo is working now but its always asking for a password.
 - When paging the summary window, with the bottom scroll bar showing, the
@@ -234,6 +233,8 @@ Fixed
 - Some results are always missing their contents and are showing "?".
   e.g. golden-files/results/uncrustify-hello_c <- contents and metadata
 - The tests fail when run in gnome-terminal.
+- When pausing, often getting a ProcessLookupError.
+  <- Somehow the worker was dying when running perl6. Revisiting this later.
 
 
 Won't fix
