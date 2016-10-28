@@ -609,6 +609,23 @@ class Screen:
     def toggle_window_orientation(self):
         self._is_listing_portrait = not self._is_listing_portrait
 
+    def _move_listing(self, vector):
+        dx, dy = vector
+        selected_widget = self._summary.get_selection()
+        x, y = selected_widget.scroll_position
+        if dy < 0 or dx < 0:  # up or left
+            x, y = max(x + dx, 0), max(y + dy, 0)
+        else:  # down or right
+            widget_width, widget_height = fill3.appearance_dimensions(
+                selected_widget.result.appearance_min())
+            listing_width, listing_height = (self._listing.widget.
+                                             last_dimensions)
+            listing_width -= 1  # scrollbars
+            listing_height -= 1
+            x = min(x + dx, max(widget_width - listing_width, 0))
+            y = min(y + dy, max(widget_height - listing_height, 0))
+        selected_widget.scroll_position = x, y
+
     def cursor_up(self):
         if self._is_summary_focused:
             self._summary.cursor_up()
@@ -656,23 +673,6 @@ class Screen:
             self._summary.cursor_home()
         else:
             self._page_listing(_LEFT)
-
-    def _move_listing(self, vector):
-        dx, dy = vector
-        selected_widget = self._summary.get_selection()
-        x, y = selected_widget.scroll_position
-        if dy < 0 or dx < 0:  # up or left
-            x, y = max(x + dx, 0), max(y + dy, 0)
-        else:  # down or right
-            widget_width, widget_height = fill3.appearance_dimensions(
-                selected_widget.result.appearance_min())
-            listing_width, listing_height = (self._listing.widget.
-                                             last_dimensions)
-            listing_width -= 1  # scrollbars
-            listing_height -= 1
-            x = min(x + dx, max(widget_width - listing_width, 0))
-            y = min(y + dy, max(widget_height - listing_height, 0))
-        selected_widget.scroll_position = x, y
 
     def _page_listing(self, vector):
         dx, dy = vector
