@@ -368,6 +368,14 @@ class Summary:
         jump = view_height - 1
         self._cursor_position = (x, min(y + jump, len(self._column) - 1))
 
+    def cursor_home(self):
+        x, y = self._cursor_position
+        self._cursor_position = 0, y
+
+    def cursor_end(self):
+        x, y = self._cursor_position
+        self._cursor_position = len(self._column[y]) - 1, y
+
     def _issue_generator(self):
         x, y = self.cursor_position()
         for index in range(len(self._column) + 1):
@@ -639,13 +647,13 @@ class Screen:
 
     def cursor_page_right(self):
         if self._is_summary_focused:
-            pass  # Fix
+            self._summary.cursor_end()
         else:
             self._page_listing(_RIGHT)
 
     def cursor_page_left(self):
         if self._is_summary_focused:
-            pass  # Fix
+            self._summary.cursor_home()
         else:
             self._page_listing(_LEFT)
 
