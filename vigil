@@ -79,6 +79,7 @@ KEYS_DOC = """Keys:
   *p - Pause workers. (toggle)
   *o - Order files by type, or by directory location. (toggle)
   *r - Refresh the currently selected report.
+  *f - Resize the focused pane to the full screen. (toggle)
 """
 
 
@@ -551,6 +552,7 @@ class Screen:
         self._is_log_visible = True
         self._is_help_visible = False
         self._is_paused = False
+        self._is_fullscreen = False
         self._make_widgets()
         self._key_map = make_key_map(Screen._KEY_DATA)
 
@@ -746,6 +748,9 @@ class Screen:
         self._is_summary_focused = not self._is_summary_focused
         self._set_focus()
 
+    def toggle_fullscreen(self):
+        self._is_fullscreen = not self._is_fullscreen
+
     def _on_mouse_event(self, event):
         if event[0] not in ["mouse press", "mouse drag"]:
             return
@@ -797,7 +802,7 @@ class Screen:
 
     _STATUS_BAR = highlight_chars(
         " *help *quit *t*a*b:focus *turn *log *edit *next *pause *order"
-        " *refresh", Log._GREEN_STYLE)
+        " *refresh *fullscreen", Log._GREEN_STYLE)
 
     @functools.lru_cache(maxsize=2)
     def _get_status_bar_appearance(self, width, is_directory_sort, is_paused,
@@ -813,9 +818,11 @@ class Screen:
         return [bar[:progress_bar_size].underline() + bar[progress_bar_size:]]
 
     def appearance(self, dimensions):
-        width, height = max(dimensions[0], 10), max(dimensions[1], 20)
+        if self._is_fullscreen and self._is_summary_focused:
+            return self._summary_border.appearance(dimensions)
         if self._is_help_visible:
             return self._help_widget.appearance(dimensions)
+        width, height = max(dimensions[0], 10), max(dimensions[1], 20)
         widget = self._summary.get_selection()
         view = self._listing.widget.view
         view.position = widget.scroll_position
@@ -825,6 +832,8 @@ class Screen:
         self._listing.title = (
             tools.path_colored(widget.path) + divider + tool_name + " " +
             tools.status_to_str(widget.status))
+        if self._is_fullscreen:
+            return self._listing.appearance(dimensions)
         incomplete = self._summary.result_total - self._summary.completed_total
         progress_bar_size = max(0, width * incomplete //
                                 self._summary.result_total)
@@ -848,7 +857,7 @@ class Screen:
         ({"end", "ctrl e"}, cursor_page_right), ({"n"}, move_to_next_issue),
         ({"N"}, move_to_next_issue_of_tool), ({"e"}, edit_file),
         ({"q"}, quit_), ({"p"}, toggle_pause), ({"r"}, refresh),
-        ({"tab"}, toggle_focus)]
+        ({"tab"}, toggle_focus), ({"f"}, toggle_fullscreen)]
 
 
 def add_watch_manager_to_mainloop(root_path, mainloop, on_filesystem_change,
