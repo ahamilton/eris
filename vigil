@@ -800,6 +800,17 @@ class Screen:
             action(self)
             self._appearance_changed_event.set()
 
+    def _fix_listing(self):
+        widget = self._summary.get_selection()
+        view = self._listing.widget.view
+        view.position = widget.scroll_position
+        view.widget = widget.result
+        tool_name = tools.tool_name_colored(widget.tool, widget.path)
+        divider = " " + self._listing.top * 4 + " "
+        self._listing.title = (
+            tools.path_colored(widget.path) + divider + tool_name + " " +
+            tools.status_to_str(widget.status))
+
     _STATUS_BAR = highlight_chars(
         " *help *quit *t*a*b:focus *turn *log *edit *next *pause *order"
         " *refresh *fullscreen", Log._GREEN_STYLE)
@@ -817,31 +828,26 @@ class Screen:
                indicators)[:width]
         return [bar[:progress_bar_size].underline() + bar[progress_bar_size:]]
 
+    def _get_status_bar(self, width):
+        incomplete = self._summary.result_total - self._summary.completed_total
+        progress_bar_size = max(0, width * incomplete //
+                                self._summary.result_total)
+        return self._get_status_bar_appearance(
+            width, self._summary.is_directory_sort, self._is_paused,
+            progress_bar_size)
+
     def appearance(self, dimensions):
         if self._is_fullscreen and self._is_summary_focused:
             return self._summary_border.appearance(dimensions)
         if self._is_help_visible:
             return self._help_widget.appearance(dimensions)
-        width, height = max(dimensions[0], 10), max(dimensions[1], 20)
-        widget = self._summary.get_selection()
-        view = self._listing.widget.view
-        view.position = widget.scroll_position
-        view.widget = widget.result
-        tool_name = tools.tool_name_colored(widget.tool, widget.path)
-        divider = " " + self._listing.top * 4 + " "
-        self._listing.title = (
-            tools.path_colored(widget.path) + divider + tool_name + " " +
-            tools.status_to_str(widget.status))
+        self._fix_listing()
         if self._is_fullscreen:
             return self._listing.appearance(dimensions)
-        incomplete = self._summary.result_total - self._summary.completed_total
-        progress_bar_size = max(0, width * incomplete //
-                                self._summary.result_total)
-        status_bar_appearance = self._get_status_bar_appearance(
-            width, self._summary.is_directory_sort, self._is_paused,
-            progress_bar_size)
+        width, height = max(dimensions[0], 10), max(dimensions[1], 20)
+        status_bar_appearance = self._get_status_bar(width)
         result = (self._layouts[self._is_log_visible]
-                  [self._is_listing_portrait] .appearance(
+                  [self._is_listing_portrait].appearance(
                       (width, height-len(status_bar_appearance))) +
                   status_bar_appearance)
         return (result if (width, height) == dimensions
