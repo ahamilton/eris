@@ -4,13 +4,13 @@
 # Copyright (C) 2015-2016 Andrew Hamilton. All rights reserved.
 # Licensed under the Artistic License 2.0.
 
+import asyncio
 import collections
 import contextlib
 import itertools
 import os
 import signal
 import sys
-import threading
 
 import urwid
 import urwid.raw_display
@@ -401,6 +401,9 @@ class Placeholder:
         return self.widget.appearance(dimensions)
 
 
+##########################
+
+
 def draw_screen(widget):
     appearance = widget.appearance(os.get_terminal_size())
     print(terminal.move(0, 0), *appearance, sep="", end="", flush=True)
@@ -433,43 +436,27 @@ def _urwid_screen():
         screen.stop()
 
 
-_UPDATE_THREAD_STOPPED = threading.Event()
-
-
-def _update_screen(main_widget, appearance_changed_event):
+async def _update_screen(screen_widget, appearance_changed_event):
     while True:
-        appearance_changed_event.wait()
+        await appearance_changed_event.wait()
         appearance_changed_event.clear()
-        if _UPDATE_THREAD_STOPPED.is_set():
-            break
-        patch_screen(main_widget)
+        patch_screen(screen_widget)
 
 
-def main(loop, appearance_changed_event, screen, exit_loop=None):
+def main(loop, appearance_changed_event, screen_widget, exit_loop=None):
     appearance_changed_event.set()
-    update_display_thread = threading.Thread(
-        target=_update_screen, args=(screen, appearance_changed_event),
-        daemon=True)
-
-    def exit_loop_():
-        loop.stop()
     if exit_loop is None:
-        exit_loop = exit_loop_
+        exit_loop = loop.stop
     loop.add_signal_handler(signal.SIGWINCH, appearance_changed_event.set)
     loop.add_signal_handler(signal.SIGINT, exit_loop)
     loop.add_signal_handler(signal.SIGTERM, exit_loop)
+    asyncio.ensure_future(_update_screen(screen_widget,
+                                         appearance_changed_event))
     with terminal.hidden_cursor():
         with _urwid_screen() as urwid_screen:
 
             def on_input(urwid_screen):
                 for event in urwid_screen.get_input():
-                    screen.on_input_event(event)
+                    screen_widget.on_input_event(event)
             loop.add_reader(sys.stdin, on_input, urwid_screen)
-            update_display_thread.start()
-            try:
-                loop.run_forever()
-            finally:
-                _UPDATE_THREAD_STOPPED.set()
-                appearance_changed_event.set()
-                update_display_thread.join()
-                # loop.close()
+            loop.run_forever()

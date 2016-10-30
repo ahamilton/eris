@@ -33,7 +33,6 @@ import signal
 import subprocess
 import sys
 import tempfile
-import threading
 import time
 
 import docopt
@@ -198,7 +197,6 @@ class Summary:
         self._view_widget = fill3.View.from_widget(self)
         self.__cursor_position = (0, 0)
         self.closest_placeholder_generator = None
-        self._lock = threading.Lock()
         self._cache = {}
         self.is_directory_sort = True
         self._max_width = None
@@ -296,12 +294,11 @@ class Summary:
                         yield result
 
     def get_closest_placeholder(self):
-        with self._lock:
-            try:
-                return self.closest_placeholder_generator.send(None)
-            except AttributeError:
-                self.closest_placeholder_generator = self._placeholder_spiral()
-                return self.closest_placeholder_generator.send(None)
+        try:
+            return self.closest_placeholder_generator.send(None)
+        except AttributeError:
+            self.closest_placeholder_generator = self._placeholder_spiral()
+            return self.closest_placeholder_generator.send(None)
 
     def appearance_dimensions(self):
         return self._max_path_length + 1 + self._max_width, len(self._column)
@@ -919,7 +916,6 @@ def load_state(pickle_path, jobs_added_event, appearance_changed_event,
         screen._appearance_changed_event = appearance_changed_event
         screen._main_loop = loop
         summary = screen._summary
-        summary._lock = threading.Lock()
         summary._jobs_added_event = jobs_added_event
         summary._root_path = root_path
         log = screen._log
@@ -943,7 +939,7 @@ def main(root_path, loop, worker_count=None, is_sandboxed=True,
         worker_count = multiprocessing.cpu_count() * 2
     pickle_path = os.path.join(tools.CACHE_PATH, "summary.pickle")
     jobs_added_event = asyncio.Event()
-    appearance_changed_event = threading.Event()
+    appearance_changed_event = asyncio.Event()
     summary, screen, log, is_first_run = load_state(
         pickle_path, jobs_added_event, appearance_changed_event, root_path,
         loop)
