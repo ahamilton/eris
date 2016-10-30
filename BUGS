@@ -1,4 +1,5 @@
 Current
+- The brightness of the summary's title slightly changes when focused.
 - Within the sandbox sudo is not working for tools.
   <- Sudo is working now but its always asking for a password.
 - When paging the summary window, with the bottom scroll bar showing, the
