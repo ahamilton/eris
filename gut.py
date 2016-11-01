@@ -30,7 +30,7 @@ def indentation_of_line(line):
 
 
 def is_start_line_of_signature(line):
-    return re.match("^\s*def\s", line) is not None
+    return re.match("^\s*(async)?\s*def\s", line) is not None
 
 
 def is_end_line_of_signature(line):
