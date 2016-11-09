@@ -18,7 +18,6 @@ import tools
 
 os.environ["TZ"] = "GMT"
 VIGIL_ROOT = os.path.dirname(__file__)
-TMP_ROOT = "/tmp/vigil"
 
 
 def widget_to_string(widget):
@@ -42,7 +41,7 @@ def result_path(tool, input_filename):
 
 
 def run_tool(tool, input_filename):
-    with chdir(os.path.join(TMP_ROOT, "golden-files")):
+    with chdir("golden-files"):
         return tool(os.path.join(".", "input", input_filename))
 
 
@@ -53,7 +52,9 @@ class ToolsTestCase(unittest.TestCase):
             with self.subTest(input_filename=input_filename):
                 status, result = run_tool(tool, input_filename)
                 golden_path = result_path(tool, input_filename)
-                golden.assertGolden(widget_to_string(result), golden_path)
+                text = widget_to_string(result)
+                text = text.replace(os.environ["HOME"], "/home/EVERY_USER")
+                golden.assertGolden(text, golden_path)
                 self.assertEqual(status, expected_status)
 
     def test_metadata(self):
@@ -222,10 +223,4 @@ class LruCacheWithEvictionTestCase(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    os.makedirs(TMP_ROOT, exist_ok=True)
-    subprocess.check_call(["sudo", "mount", "--bind", VIGIL_ROOT, TMP_ROOT])
-    try:
-        golden.main()
-    finally:
-        subprocess.check_call(["sudo", "umount", "--lazy", TMP_ROOT])
-        os.rmdir(TMP_ROOT)
+    golden.main()

@@ -2,7 +2,6 @@
 
 
 CODEBASE_PATH=$(dirname $0)
-sudo -p "Some tests need sudo to run...  [sudo] password for %u: " true
 for test in ${CODEBASE_PATH}/*_test.py; do
     echo "Testing $test ..."
     ./${test} 2>&1

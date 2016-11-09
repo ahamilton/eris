@@ -1,12 +1,12 @@
-Help on module hi:                     
-                                       
-NAME                                   
-    hi                                 
-                                       
-FILE                                   
-    /tmp/vigil/golden-files/input/hi.py
-                                       
-FUNCTIONS                              
-    hi()                               
-                                       
-                                       
+Help on module hi:                                     
+                                                       
+NAME                                                   
+    hi                                                 
+                                                       
+FILE                                                   
+    /home/EVERY_USER/code/vigil/golden-files/input/hi.py
+                                                       
+FUNCTIONS                                              
+    hi()                                               
+                                                       
+                                                       
