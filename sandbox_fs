@@ -6,4 +6,4 @@ set -e
 
 SCRIPT_PATH=$(realpath $0)
 SCRIPT_DIR=$(dirname $SCRIPT_PATH)
-unshare --mount --map-root-user "$SCRIPT_DIR/sandbox_fs.py" "$@"
+exec unshare --mount --map-root-user "$SCRIPT_DIR/sandbox_fs.py" "$@"

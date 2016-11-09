@@ -10,10 +10,6 @@ import signal
 import tools
 
 
-def nice_command(command):
-    return ["nice", "-n", "19", "ionice", "-c", "3"] + command
-
-
 class Worker:
 
     def __init__(self, is_sandboxed, is_already_paused, is_being_tested):
@@ -33,12 +29,13 @@ class Worker:
         else:
             command = [__file__]
         create = asyncio.create_subprocess_exec(
-            *nice_command(command), stdin=asyncio.subprocess.PIPE,
+            *command, stdin=asyncio.subprocess.PIPE,
             stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
             preexec_fn=os.setsid)
         self.process = await create
         pid_line = await self.process.stdout.readline()
         self.child_pgid = int(pid_line.strip())
+        os.setpriority(os.PRIO_PGRP, self.child_pgid, 19)
 
     async def run_tool(self, path, tool):
         self.process.stdin.write(("%s\n%s\n" %
