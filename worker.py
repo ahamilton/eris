@@ -26,7 +26,7 @@ class Worker:
         self.is_being_tested = is_being_tested
         self.result = None
         self.process = None
-        self.child_pid = None
+        self.child_pgid = None
 
     async def create_process(self):
         if self.is_sandboxed:
@@ -38,10 +38,11 @@ class Worker:
             command = [__file__]
         create = asyncio.create_subprocess_exec(
             *command, stdin=asyncio.subprocess.PIPE,
-            stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+            stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
+            preexec_fn=os.setsid)
         self.process = await create
         pid_line = await self.process.stdout.readline()
-        self.child_pid = int(pid_line.strip())
+        self.child_pgid = int(pid_line.strip())
 
     async def run_tool(self, path, tool):
         self.process.stdin.write(("%s\n%s\n" %
@@ -52,7 +53,7 @@ class Worker:
     async def job_runner(self, summary, log, jobs_added_event,
                          appearance_changed_event):
         await self.create_process()
-        _make_process_nicest(self.child_pid)
+        _make_process_nicest(self.child_pgid)
         while True:
             await jobs_added_event.wait()
             while True:
@@ -73,18 +74,18 @@ class Worker:
     def pause(self):
         if self.result is not None and \
            self.result.status == tools.Status.running:
-            os.kill(self.child_pid, signal.SIGSTOP)
+            os.killpg(self.child_pgid, signal.SIGSTOP)
             self.result.set_status(tools.Status.paused)
 
     def continue_(self):
         if self.result is not None and \
            self.result.status == tools.Status.paused:
             self.result.set_status(tools.Status.running)
-            os.kill(self.child_pid, signal.SIGCONT)
+            os.killpg(self.child_pgid, signal.SIGCONT)
 
 
 def main():
-    print(os.getpid(), flush=True)
+    print(os.getpgid(os.getpid()), flush=True)
     try:
         while True:
             tool_name, path = input(), input()
