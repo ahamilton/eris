@@ -1,15 +1,10 @@
 Current
 - The brightness of the summary's title slightly changes when focused.
-- Within the sandbox sudo is not working for tools.
-  <- Sudo is working now but its always asking for a password.
 - When paging the summary window, with the bottom scroll bar showing, the
   cursor line drifts up or down a row.
 - When pausing, sometimes not all the workers are paused.
-- Sometimes there is more than one "All results are up to date" message.
 - If a job is paused for longer than the timeout period, sometimes it has
   the timed out status when un-paused.
-- sandbox_fs_test.py is failing when run by the vigil that was started in
-  my startup script, but passing otherwise.
 - When shutting down "Exception ignored in:" noise appears. Four messages
   for every worker running. This started with the move to asyncio for the
   workers.
@@ -236,7 +231,14 @@ Fixed
 - The tests fail when run in gnome-terminal.
 - When pausing, often getting a ProcessLookupError.
   <- Somehow the worker was dying when running perl6. Revisiting this later.
-
+- Within the sandbox sudo is not working for tools.
+  <- Sudo is working now but its always asking for a password.
+    <- Not using sudo anymore anyway.
+- Sometimes there is more than one "All results are up to date" message.
+  <- Haven't seen this since removing all threads. Fingers crossed...
+- sandbox_fs_test.py is failing when run by the vigil that was started in
+  my startup script, but passing otherwise.
+  <- sandbox_fs_test.py is totally different now.
 
 Won't fix
 - If the summary window is narrower then max_path_length the paths are never
