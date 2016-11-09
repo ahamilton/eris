@@ -7,15 +7,11 @@ import asyncio
 import os
 import signal
 
-import psutil
-
 import tools
 
 
-def _make_process_nicest(pid):
-    process = psutil.Process(pid)
-    process.nice(19)
-    process.ionice(psutil.IOPRIO_CLASS_IDLE)
+def nice_command(command):
+    return ["nice", "-n", "19", "ionice", "-c", "3"] + command
 
 
 class Worker:
@@ -37,7 +33,7 @@ class Worker:
         else:
             command = [__file__]
         create = asyncio.create_subprocess_exec(
-            *command, stdin=asyncio.subprocess.PIPE,
+            *nice_command(command), stdin=asyncio.subprocess.PIPE,
             stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
             preexec_fn=os.setsid)
         self.process = await create
@@ -53,7 +49,6 @@ class Worker:
     async def job_runner(self, summary, log, jobs_added_event,
                          appearance_changed_event):
         await self.create_process()
-        _make_process_nicest(self.child_pgid)
         while True:
             await jobs_added_event.wait()
             while True:

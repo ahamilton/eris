@@ -11,8 +11,6 @@ import shutil
 import tempfile
 import unittest
 
-import psutil
-
 os.environ["TERM"] = "xterm-256color"
 
 import fill3
@@ -213,17 +211,12 @@ def _tmp_total():
     return len(os.listdir("/tmp"))
 
 
-def _all_processes():
-    return set(psutil.process_iter())
-
-
 class MainTestCase(unittest.TestCase):
 
     def test_main_and_restart_and_no_leaks_and_is_relocatable(self):
         def test_run(root_path, loop):
             mount_total = _mount_total()
             # tmp_total = _tmp_total()
-            # processes = _all_processes()
             foo_path = os.path.join(root_path, "foo")
             open(foo_path, "w").close()
             vigil.manage_cache(root_path)
@@ -236,7 +229,6 @@ class MainTestCase(unittest.TestCase):
                     self.assertTrue(os.path.exists(".vigil/" + file_name))
             self.assertEqual(_mount_total(), mount_total)
             # self.assertEqual(_tmp_total(), tmp_total)
-            # self.assertEqual(_all_processes(), processes)  # Fix
         temp_dir = tempfile.mkdtemp()
         try:
             loop = asyncio.get_event_loop()

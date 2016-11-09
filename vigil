@@ -918,7 +918,7 @@ def save_state(pickle_path, summary, screen, log):
 def main(root_path, loop, worker_count=None, is_sandboxed=True,
          editor_command=None, is_being_tested=False):
     if worker_count is None:
-        worker_count = multiprocessing.cpu_count() * 2
+        worker_count = multiprocessing.cpu_count()
     pickle_path = os.path.join(tools.CACHE_PATH, "summary.pickle")
     jobs_added_event = asyncio.Event()
     appearance_changed_event = asyncio.Event()
