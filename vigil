@@ -32,14 +32,12 @@ import shutil
 import signal
 import subprocess
 import sys
-import tempfile
 import time
 
 import docopt
 import pyinotify
 
 import fill3
-import sandbox_fs
 import terminal
 import termstr
 import tools
@@ -553,10 +551,11 @@ class Screen:
         self._make_widgets()
         self._key_map = make_key_map(Screen._KEY_DATA)
 
-    def make_workers(self, worker_count, sandbox, is_being_tested):
+    def make_workers(self, worker_count, is_sandboxed, is_being_tested):
         workers = []
         for index in range(worker_count):
-            worker_ = worker.Worker(sandbox, self._is_paused, is_being_tested)
+            worker_ = worker.Worker(is_sandboxed, self._is_paused,
+                                    is_being_tested)
             workers.append(worker_)
             future = worker_.job_runner(
                 self._summary, self._log, self._summary._jobs_added_event,
@@ -884,23 +883,6 @@ def add_watch_manager_to_mainloop(root_path, mainloop, on_filesystem_change,
     return watch_manager_fd
 
 
-def make_sandbox():
-    mount_point = tempfile.mkdtemp()
-    sandbox = sandbox_fs.SandboxFs(mount_point)
-    sandbox.mount()
-    cache_path = os.path.join(os.getcwd(), tools.CACHE_PATH)
-    subprocess.check_call(["sudo", "mount", "--bind", cache_path,
-                           mount_point + cache_path])
-    return sandbox
-
-
-def remove_sandbox(sandbox):
-    cache_path = os.path.join(os.getcwd(), tools.CACHE_PATH)
-    subprocess.check_call(["sudo", "umount", sandbox.mount_point + cache_path])
-    sandbox.umount()
-    os.rmdir(sandbox.mount_point)
-
-
 def load_state(pickle_path, jobs_added_event, appearance_changed_event,
                root_path, loop):
     is_first_run = True
@@ -955,12 +937,9 @@ def main(root_path, loop, worker_count=None, is_sandboxed=True,
         appearance_changed_event.set()
     watch_manager_fd = add_watch_manager_to_mainloop(
         root_path, loop, on_filesystem_change, is_path_excluded)
-    if is_sandboxed:
-        log.log_message("Making sandbox...")
-    sandbox = make_sandbox() if is_sandboxed else None
     try:
         log.log_message("Starting workers (%s) ..." % worker_count)
-        screen.make_workers(worker_count, sandbox, is_being_tested)
+        screen.make_workers(worker_count, is_sandboxed, is_being_tested)
 
         def exit_loop():
             log.log_command("Exiting...")
@@ -970,8 +949,6 @@ def main(root_path, loop, worker_count=None, is_sandboxed=True,
         fill3.main(loop, appearance_changed_event, screen, exit_loop=exit_loop)
         log.log_message("Program stopped.")
     finally:
-        if is_sandboxed:
-            remove_sandbox(sandbox)
         loop.remove_reader(watch_manager_fd)
     save_state(pickle_path, summary, screen, log)
 
@@ -1034,8 +1011,6 @@ def check_arguments():
 
 if __name__ == "__main__":
     root_path, worker_count, is_sandboxed, editor_command = check_arguments()
-    subprocess.call(["sudo", "-p", "Vigil uses sudo...  "
-                     "[sudo] password for %u: ", "true"])
     with terminal.console_title("vigil: " + os.path.basename(root_path)):
         manage_cache(root_path)
         with chdir(root_path):  # FIX: Don't change directory if possible.

@@ -28,9 +28,9 @@ class WorkerTestCase(unittest.TestCase):
         shutil.rmtree(self.temp_dir)
         os.chdir(self.original_working_dir)
 
-    def _test_worker(self, sandbox):
+    def _test_worker(self, is_sandboxed):
         loop = asyncio.get_event_loop()
-        worker_ = worker.Worker(sandbox, False, False)
+        worker_ = worker.Worker(is_sandboxed, False, False)
         loop.run_until_complete(worker_.create_process())
         future = worker_.run_tool("foo", tools.metadata)
         status = loop.run_until_complete(future)
@@ -39,15 +39,10 @@ class WorkerTestCase(unittest.TestCase):
         self.assertTrue(os.path.exists(result_path))
 
     def test_run_job_without_sandbox(self):
-        self._test_worker(None)
+        self._test_worker(False)
 
     def test_run_job_with_sandbox(self):
-        sandbox = vigil.make_sandbox()
-        try:
-            self._test_worker(sandbox)
-        finally:
-            sandbox.umount()
-            os.rmdir(sandbox.mount_point)
+        self._test_worker(True)
 
 
 if __name__ == "__main__":

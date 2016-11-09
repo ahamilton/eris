@@ -20,8 +20,8 @@ def _make_process_nicest(pid):
 
 class Worker:
 
-    def __init__(self, sandbox, is_already_paused, is_being_tested):
-        self.sandbox = sandbox
+    def __init__(self, is_sandboxed, is_already_paused, is_being_tested):
+        self.is_sandboxed = is_sandboxed
         self.is_already_paused = is_already_paused
         self.is_being_tested = is_being_tested
         self.result = None
@@ -29,9 +29,13 @@ class Worker:
         self.child_pid = None
 
     async def create_process(self):
-        command = [__file__]
-        if self.sandbox is not None:
-            command = self.sandbox.command(command)
+        if self.is_sandboxed:
+            sandbox_fs_path = os.path.join(os.path.dirname(__file__),
+                                           "sandbox_fs")
+            cache_path = os.path.join(os.getcwd(), tools.CACHE_PATH)
+            command = [sandbox_fs_path, cache_path, "--", __file__]
+        else:
+            command = [__file__]
         create = asyncio.create_subprocess_exec(
             *command, stdin=asyncio.subprocess.PIPE,
             stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
