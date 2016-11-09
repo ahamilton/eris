@@ -1,8 +1,10 @@
 Current
+- The worker processes are left over after vigil stops. (In sandbox or not)
 - The brightness of the summary's title slightly changes when focused.
 - When paging the summary window, with the bottom scroll bar showing, the
   cursor line drifts up or down a row.
-- When pausing, sometimes not all the workers are paused.
+- Sometimes a paused worker has the running status (blue), when it should
+  have the paused status (yellow).
 - If a job is paused for longer than the timeout period, sometimes it has
   the timed out status when un-paused.
 - When shutting down "Exception ignored in:" noise appears. Four messages
