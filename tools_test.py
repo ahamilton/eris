@@ -54,6 +54,9 @@ class ToolsTestCase(unittest.TestCase):
                 golden_path = result_path(tool, input_filename)
                 text = widget_to_string(result)
                 text = text.replace(os.environ["HOME"], "/home/EVERY_USER")
+                text = text.replace(
+                    "%s/%s" % (os.environ["USER"], os.environ["USER"]),
+                    "EVERY_USER/EVERY_USER")
                 golden.assertGolden(text, golden_path)
                 self.assertEqual(status, expected_status)
 
