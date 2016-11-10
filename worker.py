@@ -75,6 +75,10 @@ class Worker:
             self.result.set_status(tools.Status.running)
             os.killpg(self.child_pgid, signal.SIGCONT)
 
+    def kill(self):
+        if self.child_pgid is not None:
+            os.killpg(self.child_pgid, signal.SIGKILL)
+
 
 def main():
     print(os.getpgid(os.getpid()), flush=True)

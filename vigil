@@ -570,6 +570,7 @@ class Screen:
             worker_.future.cancel()
             if worker_.result is not None:
                 worker_.result.reset()
+            worker_.kill()
 
     def _partition(self, widgets, height):
         smaller_height = max(height // 4, 10)
