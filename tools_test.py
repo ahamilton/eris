@@ -41,7 +41,7 @@ def result_path(tool, input_filename):
 
 
 def run_tool(tool, input_filename):
-    with chdir("golden-files"):
+    with chdir(os.path.join(VIGIL_ROOT, "golden-files")):
         return tool(os.path.join(".", "input", input_filename))
 
 

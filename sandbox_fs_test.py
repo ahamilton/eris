@@ -11,6 +11,7 @@ import unittest
 
 
 tempfile.tempdir = os.getcwd()  # This tests fails when using /tmp.
+VIGIL_ROOT = os.path.dirname(__file__)
 
 
 def _get_test_paths(temp_dir):
@@ -26,7 +27,8 @@ class SandboxFilesystemTestCase(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             a_dir, foo_path, bar_path = _get_test_paths(temp_dir)
             os.mkdir(a_dir)
-            subprocess.check_call(["./sandbox_fs", a_dir, "--", __file__,
+            sandbox_fs_path = os.path.join(VIGIL_ROOT, "sandbox_fs")
+            subprocess.check_call([sandbox_fs_path, a_dir, "--", __file__,
                                    temp_dir])
             self.assertTrue(os.path.exists(foo_path))
             self.assertFalse(os.path.exists(bar_path))
