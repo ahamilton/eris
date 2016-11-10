@@ -1017,4 +1017,4 @@ if __name__ == "__main__":
         with chdir(root_path):  # FIX: Don't change directory if possible.
             loop = asyncio.get_event_loop()
             main(root_path, loop, worker_count, is_sandboxed, editor_command)
-            loop.close()
+    os._exit(0)

@@ -6,9 +6,6 @@ Current
   have the paused status (yellow).
 - If a job is paused for longer than the timeout period, sometimes it has
   the timed out status when un-paused.
-- When shutting down "Exception ignored in:" noise appears. Four messages
-  for every worker running. This started with the move to asyncio for the
-  workers.
 
 
 Current (tool related)
@@ -241,6 +238,9 @@ Fixed
   my startup script, but passing otherwise.
   <- sandbox_fs_test.py is totally different now.
 - The worker processes are left over after vigil stops. (In sandbox or not)
+- When shutting down "Exception ignored in:" noise appears. Four messages
+  for every worker running. This started with the move to asyncio for the
+  workers.
 
 
 Won't fix
