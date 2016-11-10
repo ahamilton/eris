@@ -5,7 +5,6 @@
 
 import contextlib
 import os
-import subprocess
 import unittest
 import unittest.mock
 

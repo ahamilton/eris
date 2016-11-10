@@ -11,7 +11,6 @@ import tempfile
 import unittest
 
 import tools
-import vigil
 import worker
 
 
