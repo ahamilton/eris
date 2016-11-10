@@ -1,9 +1,17 @@
 #!/bin/bash
 
 
+FAILURE=0
 CODEBASE_PATH=$(dirname $0)
 for test in ${CODEBASE_PATH}/*_test.py; do
     echo "Testing $test ..."
-    ./${test} 2>&1
+    ${test} 2>&1
+    FAILURE=$(($FAILURE | $?))
     echo
 done
+if [ $FAILURE -eq 0 ]; then
+    echo "Tests passed."
+else
+    echo "Tests failed."
+fi
+exit $FAILURE
