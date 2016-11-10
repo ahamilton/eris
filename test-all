@@ -10,8 +10,11 @@ for test in ${CODEBASE_PATH}/*_test.py; do
     echo
 done
 if [ $FAILURE -eq 0 ]; then
+    echo -e "\e[32m"  # Green
     echo "Tests passed."
 else
+    echo -e "\e[91m"  # Red
     echo "Tests failed."
 fi
+echo -e "\e[39m"  # Normal
 exit $FAILURE
