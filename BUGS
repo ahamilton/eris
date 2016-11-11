@@ -6,6 +6,7 @@ Current
   have the paused status (yellow).
 - If a job is paused for longer than the timeout period, sometimes it has
   the timed out status when un-paused.
+- Tmp files are being left behind after shutdown.
 
 
 Current (tool related)
