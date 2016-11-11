@@ -102,8 +102,8 @@ class ToolsTestCase(unittest.TestCase):
 
     # Not testing python_profile, because it is non-deterministic.
 
-    def test_pep8(self):
-        self._test_tool(tools.pep8, self.HI_OK)
+    def test_pycodestyle(self):
+        self._test_tool(tools.pycodestyle, self.HI_OK)
 
     def test_pyflakes(self):
         self._test_tool(tools.pyflakes, self.HI_OK)

@@ -375,11 +375,11 @@ def python_profile(path):
 python_profile.dependencies = {"python", "python3"}
 
 
-def pep8(path):
-    cmd = (["pep8"] if _python_version(path) == "python"
-           else ["python3", "-m", "pep8"])
+def pycodestyle(path):
+    cmd = (["pycodestyle"] if _python_version(path) == "python"
+           else ["python3", "-m", "pycodestyle"])
     return _run_command(cmd + [path])
-pep8.dependencies = {"pep8", "python3-pep8"}
+pycodestyle.dependencies = {"pycodestyle", "python3-pycodestyle"}
 
 
 def pyflakes(path):
@@ -706,7 +706,7 @@ def _generic_tools():
 def _tools_for_extension():
     return {
         "py": [python_syntax, python_unittests, pydoc, mypy, python_coverage,
-               python_profile, pep8, pyflakes, pylint, python_gut,
+               python_profile, pycodestyle, pyflakes, pylint, python_gut,
                python_modulefinder, python_mccabe, bandit],
         "pyc": [disassemble_pyc],
         "pl": [perl_syntax, perldoc, perltidy],
