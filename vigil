@@ -12,8 +12,7 @@ up to date as the codebase changes.
 A set of reports is produced for every file, which depend on the file's type.
 
 A status indicator summarises the state of each report, and a report is viewed
-by selecting this status indicator with the cursor. The types of status are
-listed below.
+by selecting this status indicator with the cursor.
 
 The reports are cached in the codebase's root directory in a ".vigil"
 directory.
@@ -982,7 +981,6 @@ def check_arguments():
     arguments = docopt.docopt(cmdline_help, help=False)
     if arguments["--help"]:
         print(cmdline_help)
-        print(get_status_help())
         sys.exit(0)
     worker_count = None
     try:
