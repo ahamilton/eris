@@ -4,52 +4,45 @@
 
 
 import contextlib
-import curses
-import os
 import sys
 
 
-curses.setupterm(os.environ.get("TERM", "unknown"), sys.stdout.fileno())
+_PREFIX = "\x1b"
 
 
-def _get_code(capability):
-    code = curses.tigetstr(capability)
-    return code.decode("latin1") if code is not None else code
+normal = _PREFIX + "(B\x1b[m"  # sgr0   "[0m" ?
+bold = _PREFIX + "[1m"  # bold
+italic = _PREFIX + "[3m"  # sitm
+standout = _PREFIX + "[7m"  # smso
+underline = _PREFIX + "[4m"  # smul
+enter_fullscreen = _PREFIX + "[?1049h"  # smcup
+exit_fullscreen = _PREFIX + "[?1049l"  # rmcup
+hide_cursor = _PREFIX + "[?25l"  # civis
+normal_cursor = _PREFIX + "[?25l\x1b[?25h"  # cnorm
+clear = _PREFIX + "[H\x1b[2J"  # clear
+save = _PREFIX + "7"  # sc
+restore = _PREFIX + "8"  # rc
 
 
-normal = _get_code("sgr0")
-bold = _get_code("bold")
-italic = _get_code("sitm")
-shadow = _get_code("sshm")
-standout = _get_code("smso")
-subscript = _get_code("ssubm")
-superscript = _get_code("ssupm")
-underline = _get_code("smul")
-enter_fullscreen = _get_code("smcup")
-exit_fullscreen = _get_code("rmcup")
-hide_cursor = _get_code("civis")
-normal_cursor = _get_code("cnorm")
-clear = _get_code("clear")
-save = _get_code("sc")
-restore = _get_code("rc")
-# reverse:rev, blink:blink, dim:dim, flash:flash
+_FG_CODES = ["30", "31", "32", "33", "34", "35", "36", "37",
+             "90", "91", "92", "93", "94", "95", "96", "97"]
 
 
-_fg_color = curses.tigetstr("setaf")
-_bg_color = curses.tigetstr("setab")
-_move = curses.tigetstr("cup")
+def fg_color(color_number):  # setaf
+    return ("\x1b[38;5;%im" % color_number if color_number > 15
+            else "\x1b[%sm" % _FG_CODES[color_number])
 
 
-def fg_color(color_number):
-    return curses.tparm(_fg_color, color_number).decode("latin1")
+_BG_CODES = ["40", "41", "42", "43", "44", "45", "46", "47",
+             "100", "101", "102", "103", "104", "105", "106", "107"]
 
 
-def bg_color(color_number):
-    return curses.tparm(_bg_color, color_number).decode("latin1")
+def bg_color(color_number):  # setab
+    return ("\x1b[48;5;%im" % color_number if color_number > 15
+            else "\x1b[%sm" % _BG_CODES[color_number])
 
 
 def fg_rgb_color(rgb):
-    # Is there a better way?
     return "\x1b[38;2;%i;%i;%im" % rgb
 
 
@@ -57,8 +50,8 @@ def bg_rgb_color(rgb):
     return "\x1b[48;2;%i;%i;%im" % rgb
 
 
-def move(x, y):
-    return curses.tparm(_move, y, x).decode("latin1")
+def move(x, y):  # cup
+    return "\x1b[%i;%iH" % (y + 1, x + 1)
 
 
 @contextlib.contextmanager
