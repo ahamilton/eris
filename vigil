@@ -922,8 +922,6 @@ def main(root_path, loop, worker_count=None, is_sandboxed=True,
          editor_command=None, theme=None, is_being_tested=False):
     if worker_count is None:
         worker_count = multiprocessing.cpu_count()
-    if theme == None:
-        theme = "native"
     os.environ["PYGMENT_STYLE"] = theme
     pickle_path = os.path.join(tools.CACHE_PATH, "summary.pickle")
     jobs_added_event = asyncio.Event()
@@ -1009,14 +1007,15 @@ def check_arguments():
         print("--sandbox argument must be 'on' or 'off'")
         sys.exit(1)
     is_sandboxed = arguments["--sandbox"] in ["on", None]
+    theme = ("native" if arguments["--theme"] is None
+             else arguments["--theme"])
     themes = list(pygments.styles.get_all_styles())
-    if arguments["--theme"] not in themes:
+    if theme not in themes:
         print("--theme must be one of: %s" % " ".join(themes))
         sys.exit(1)
     editor_command = arguments["--editor"] or os.environ.get("EDITOR", None)\
         or os.environ.get("VISUAL", None)
-    return root_path, worker_count, is_sandboxed, editor_command, \
-        arguments["--theme"]
+    return root_path, worker_count, is_sandboxed, editor_command, theme
 
 
 if __name__ == "__main__":
