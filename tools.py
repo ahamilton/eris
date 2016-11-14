@@ -35,6 +35,10 @@ import termstr
 CACHE_PATH = ".vigil"
 
 
+if "PYGMENT_STYLE" not in os.environ:
+    os.environ["PYGMENT_STYLE"] = "native"
+
+
 class Status(enum.IntEnum):
 
     ok = 1
