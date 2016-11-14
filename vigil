@@ -34,6 +34,7 @@ import sys
 import time
 
 import docopt
+import pygments.styles
 import pyinotify
 
 import fill3
@@ -59,6 +60,8 @@ Options:
                                    By default it is twice the number of cpus.
   -e "COMMAND", --editor="COMMAND" The command used to start the editor, in
                                    the *edit command. It may contain options.
+  -t THEME, --theme=THEME          The pygment theme used for syntax
+                                   highlighting. Defaults to "native".
 """
 
 
@@ -916,9 +919,12 @@ def save_state(pickle_path, summary, screen, log):
 
 
 def main(root_path, loop, worker_count=None, is_sandboxed=True,
-         editor_command=None, is_being_tested=False):
+         editor_command=None, theme=None, is_being_tested=False):
     if worker_count is None:
         worker_count = multiprocessing.cpu_count()
+    if theme == None:
+        theme = "native"
+    os.environ["PYGMENT_STYLE"] = theme
     pickle_path = os.path.join(tools.CACHE_PATH, "summary.pickle")
     jobs_added_event = asyncio.Event()
     appearance_changed_event = asyncio.Event()
@@ -1003,16 +1009,23 @@ def check_arguments():
         print("--sandbox argument must be 'on' or 'off'")
         sys.exit(1)
     is_sandboxed = arguments["--sandbox"] in ["on", None]
+    themes = list(pygments.styles.get_all_styles())
+    if arguments["--theme"] not in themes:
+        print("--theme must be one of: %s" % " ".join(themes))
+        sys.exit(1)
     editor_command = arguments["--editor"] or os.environ.get("EDITOR", None)\
         or os.environ.get("VISUAL", None)
-    return root_path, worker_count, is_sandboxed, editor_command
+    return root_path, worker_count, is_sandboxed, editor_command, \
+        arguments["--theme"]
 
 
 if __name__ == "__main__":
-    root_path, worker_count, is_sandboxed, editor_command = check_arguments()
+    root_path, worker_count, is_sandboxed, editor_command, theme = \
+        check_arguments()
     with terminal.console_title("vigil: " + os.path.basename(root_path)):
         manage_cache(root_path)
         with chdir(root_path):  # FIX: Don't change directory if possible.
             loop = asyncio.get_event_loop()
-            main(root_path, loop, worker_count, is_sandboxed, editor_command)
+            main(root_path, loop, worker_count, is_sandboxed, editor_command,
+                 theme)
     os._exit(0)

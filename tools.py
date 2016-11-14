@@ -135,7 +135,7 @@ def _syntax_highlight(text, lexer, style):
 
     def _char_style_for_token_type(token_type, default_bg_color):
         token_style = style.style_for_token(token_type)
-        fg_color = (None if token_style["color"] is None
+        fg_color = (termstr.Color.black if token_style["color"] is None
                     else _parse_rgb(token_style["color"]))
         bg_color = (default_bg_color if token_style["bgcolor"] is None
                     else _parse_rgb(token_style["bgcolor"]))
@@ -153,8 +153,8 @@ def _syntax_highlight(text, lexer, style):
 
 def _syntax_highlight_using_path(text, path):
     lexer = pygments.lexers.get_lexer_for_filename(path, text)
-    native_style = pygments.styles.get_style_by_name("native")
-    return _syntax_highlight(text, lexer, native_style)
+    style = pygments.styles.get_style_by_name(os.environ["PYGMENT_STYLE"])
+    return _syntax_highlight(text, lexer, style)
 
 
 def pygments_(path):
@@ -770,7 +770,7 @@ def run_tool_no_error(path, tool):
     except:
         status, result = Status.error, _syntax_highlight(
             traceback.format_exc(), pygments.lexers.PythonTracebackLexer(),
-            pygments.styles.get_style_by_name("native"))
+            pygments.styles.get_style_by_name(os.environ["PYGMENT_STYLE"]))
     return status, result
 
 
