@@ -460,6 +460,7 @@ def bandit(path):
     text_without_timestamp = "".join(text.splitlines(keepends=True)[2:])
     return status, fill3.Text(text_without_timestamp)
 bandit.dependencies = {"python-bandit", "python3-bandit"}
+bandit.url = "http://wiki.openstack.org/wiki/Security/Project/Bandit"
 
 
 def _perl_version(path):

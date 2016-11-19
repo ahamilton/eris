@@ -27,7 +27,7 @@ e.g. After cloning do:
 
 Extensions | Tools
 ---------- | -----
-.py | python_syntax • python_unittests • pydoc • mypy • python_coverage • python_profile • pycodestyle • pyflakes • pylint • python_gut • python_modulefinder • python_mccabe • bandit
+.py | python_syntax • python_unittests • pydoc • mypy • python_coverage • python_profile • pycodestyle • pyflakes • pylint • python_gut • python_modulefinder • python_mccabe • [bandit](http://wiki.openstack.org/wiki/Security/Project/Bandit)
 .pyc | disassemble_pyc
 .pl .pm .t | perl_syntax • perldoc • perltidy
 .pod .pod6 | perldoc
