@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 
+# Copyright (C) 2016 Andrew Hamilton. All rights reserved.
+# Licensed under the Artistic License 2.0.
+
 
 import tools
 
 
-BODY = """\
+print("""\
 # Vigil Code Monitor
 
 ### Summary
@@ -30,10 +33,7 @@ e.g. After cloning do:
 
     # git checkout ubuntu-15.10
 
-### Tools"""
-
-
-print(BODY)
+### Tools""")
 for extensions, tools_ in tools.TOOLS_FOR_EXTENSIONS:
     print()
     print("#### " + " ".join(extensions))
