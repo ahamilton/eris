@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 # Copyright (C) 2016 Andrew Hamilton. All rights reserved.
 # Licensed under the Artistic License 2.0.
@@ -39,4 +40,4 @@ Extensions | Tools
 ---------- | -----""")
 for extensions, tools_ in tools.TOOLS_FOR_EXTENSIONS:
     print("%s | %s" % (" ".join("." + extension for extension in extensions),
-                       " ".join(tool.__name__ for tool in tools_)))
+                       " • ".join(tool.__name__ for tool in tools_)))

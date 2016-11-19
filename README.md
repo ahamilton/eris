@@ -27,16 +27,16 @@ e.g. After cloning do:
 
 Extensions | Tools
 ---------- | -----
-.py | python_syntax python_unittests pydoc mypy python_coverage python_profile pycodestyle pyflakes pylint python_gut python_modulefinder python_mccabe bandit
+.py | python_syntax • python_unittests • pydoc • mypy • python_coverage • python_profile • pycodestyle • pyflakes • pylint • python_gut • python_modulefinder • python_mccabe • bandit
 .pyc | disassemble_pyc
-.pl .pm .t | perl_syntax perldoc perltidy
+.pl .pm .t | perl_syntax • perldoc • perltidy
 .pod .pod6 | perldoc
 .java | uncrustify
-.c .h | splint uncrustify
-.o | objdump_headers objdump_disassemble readelf
-.cpp | bcpp uncrustify
+.c .h | splint • uncrustify
+.o | objdump_headers • objdump_disassemble • readelf
+.cpp | bcpp • uncrustify
 .pdf | pdf2txt
-.html | html_syntax tidy html2text
+.html | html_syntax • tidy • html2text
 .php | php5_syntax
 .zip | unzip
 .tar.gz .tgz | tar_gz
