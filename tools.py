@@ -707,34 +707,36 @@ def _generic_tools():
     return [contents, metadata]
 
 
+TOOLS_FOR_EXTENSIONS = \
+    [
+        (["py"], [python_syntax, python_unittests, pydoc, mypy, python_coverage,
+                  python_profile, pycodestyle, pyflakes, pylint, python_gut,
+                  python_modulefinder, python_mccabe, bandit]),
+        (["pyc"], [disassemble_pyc]),
+        (["pl", "pm", "t"], [perl_syntax, perldoc, perltidy]),
+        # (["p6", "pm6"], [perl6_syntax, perldoc]),
+        (["pod", "pod6"], [perldoc]),
+        (["java"], [uncrustify]),
+        (["c", "h"], [splint, uncrustify]),
+        (["o"], [objdump_headers, objdump_disassemble, readelf]),
+        (["cpp"], [bcpp, uncrustify]),
+        (["pdf"], [pdf2txt]),
+        (["html"], [html_syntax, tidy, html2text]),
+        (["php"], [php5_syntax]),
+        (["zip"], [unzip]),
+        (["tar.gz", "tgz"], [tar_gz]),
+        (["tar.bz2"], [tar_bz2]),
+        (["a", "so"], [nm]),
+    ]
+
+
+@functools.lru_cache(maxsize=1)
 def _tools_for_extension():
-    return {
-        "py": [python_syntax, python_unittests, pydoc, mypy, python_coverage,
-               python_profile, pycodestyle, pyflakes, pylint, python_gut,
-               python_modulefinder, python_mccabe, bandit],
-        "pyc": [disassemble_pyc],
-        "pl": [perl_syntax, perldoc, perltidy],
-        "pm": [perl_syntax, perldoc, perltidy],
-        "t": [perl_syntax, perldoc, perltidy],
-        # "p6": [perl6_syntax, perldoc],
-        # "pm6": [perl6_syntax, perldoc],
-        "pod": [perldoc],
-        "pod6": [perldoc],
-        "java": [uncrustify],
-        "c": [splint, uncrustify],
-        "h": [splint, uncrustify],
-        "o": [objdump_headers, objdump_disassemble, readelf],
-        "zip": [unzip],
-        "tar.gz": [tar_gz],
-        "tgz": [tar_gz],
-        "tar.bz2": [tar_bz2],
-        "a": [nm],
-        "so": [nm],
-        "pdf": [pdf2txt],
-        "html": [html_syntax, tidy, html2text],
-        "cpp": [bcpp, uncrustify],
-        "php": [php5_syntax],
-    }
+    result = {}
+    for extensions, tools in TOOLS_FOR_EXTENSIONS:
+        for extension in extensions:
+            result[extension] = tools
+    return result
 
 
 def tools_all():
