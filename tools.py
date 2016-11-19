@@ -339,6 +339,7 @@ def mypy(path):
     status = Status.ok if returncode == 0 else Status.normal
     return status, fill3.Text(stdout)
 mypy.dependencies = {"mypy"}
+mypy.url = "mypy"
 
 
 def _colorize_coverage_report(text):
@@ -370,6 +371,7 @@ def python_coverage(path):
         return Status.not_applicable, fill3.Text(
             "No corresponding test file: " + os.path.normpath(test_path))
 python_coverage.dependencies = {"python-coverage", "python3-coverage"}
+python_coverage.url = "python3-coverage"
 
 
 def python_profile(path):
@@ -384,17 +386,20 @@ def pycodestyle(path):
            else ["python3", "-m", "pycodestyle"])
     return _run_command(cmd + [path])
 pycodestyle.dependencies = {"pycodestyle", "python3-pycodestyle"}
+pycodestyle.url = "pycodestyle"
 
 
 def pyflakes(path):
     return _run_command([_python_version(path), "-m", "pyflakes", path])
 pyflakes.dependencies = {"pyflakes"}
+pyflakes.url = "pyflakes"
 
 
 def pylint(path):
     return _run_command([_python_version(path), "-m", "pylint",
                          "--errors-only", path])
 pylint.dependencies = {"pylint", "pylint3"}
+pylint.url = "pylint3"
 
 
 def python_gut(path):
@@ -433,6 +438,7 @@ def python_mccabe(path):
     status = Status.problem if max_score > 10 else Status.ok
     return status, fill3.Text(_colorize_mccabe(stdout, python_version))
 python_mccabe.dependencies = {"python-mccabe", "python3-mccabe"}
+python_mccabe.url = "python3-mccabe"
 
 
 def python_tidy(path):  # Deps: found on internet?
@@ -498,6 +504,7 @@ def splint(path):
     status = Status.ok if returncode == 0 else Status.problem
     return status, fill3.Text(stdout + stderr)
 splint.dependencies = {"splint"}
+splint.url = "splint"
 
 
 def objdump_headers(path):
@@ -520,6 +527,7 @@ readelf.dependencies = {"binutils"}
 def unzip(path):
     return _run_command(["unzip", "-l", path], Status.normal)
 unzip.dependencies = {"unzip"}
+unzip.url = "unzip"
 
 
 def tar_gz(path):
@@ -540,6 +548,7 @@ nm.dependencies = {"binutils"}
 def pdf2txt(path):
     return _run_command(["pdf2txt", path], Status.normal)
 pdf2txt.dependencies = {"python-pdfminer"}
+pdf2txt.url = "python-pdfminer"
 
 
 def html_syntax(path):
@@ -548,17 +557,20 @@ def html_syntax(path):
     status = Status.ok if returncode == 0 else Status.problem
     return status, fill3.Text(stderr)
 html_syntax.dependencies = {"tidy"}
+html_syntax.url = "tidy"
 
 
 def tidy(path):
     stdout, *rest = _do_command(["tidy", path])
     return Status.normal, fill3.Text(stdout)
 tidy.dependencies = {"tidy"}
+tidy.url = "tidy"
 
 
 def html2text(path):
     return _run_command(["html2text", path], Status.normal)
 html2text.dependencies = {"html2text"}
+html2text.url = "html2text"
 
 
 def bcpp(path):
@@ -579,6 +591,7 @@ def uncrustify(path):
     status = Status.normal if returncode == 0 else Status.problem
     return status, _syntax_highlight_using_path(stdout, path)
 uncrustify.dependencies = {"uncrustify"}
+uncrustify.url = "uncrustify"
 
 
 def php5_syntax(path):

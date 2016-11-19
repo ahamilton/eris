@@ -27,18 +27,18 @@ e.g. After cloning do:
 
 Extensions | Tools
 ---------- | -----
-.py | python_syntax • python_unittests • pydoc • mypy • python_coverage • python_profile • pycodestyle • pyflakes • pylint • python_gut • python_modulefinder • python_mccabe • [bandit](https://wiki.openstack.org/wiki/Security/Projects/Bandit)
+.py | python_syntax • python_unittests • pydoc • [mypy](http://www.mypy-lang.org/) • [python_coverage](http://nedbatchelder.com/code/coverage/) • python_profile • [pycodestyle](https://pypi.python.org/pypi/pycodestyle) • [pyflakes](https://launchpad.net/pyflakes) • [pylint](http://www.pylint.org/) • python_gut • python_modulefinder • [python_mccabe](https://github.com/flintwork/mccabe) • [bandit](https://wiki.openstack.org/wiki/Security/Projects/Bandit)
 .pyc | disassemble_pyc
 .pl .pm .t | perl_syntax • perldoc • perltidy
 .pod .pod6 | perldoc
-.java | uncrustify
-.c .h | splint • uncrustify
+.java | [uncrustify](http://uncrustify.sourceforge.net/)
+.c .h | [splint](http://www.splint.org/) • [uncrustify](http://uncrustify.sourceforge.net/)
 .o | objdump_headers • objdump_disassemble • readelf
-.cpp | bcpp • uncrustify
-.pdf | pdf2txt
-.html | html_syntax • tidy • html2text
+.cpp | bcpp • [uncrustify](http://uncrustify.sourceforge.net/)
+.pdf | [pdf2txt](http://www.unixuser.org/~euske/python/pdfminer/)
+.html | [html_syntax](http://www.html-tidy.org/) • [tidy](http://www.html-tidy.org/) • [html2text](http://www.mbayer.de/html2text/)
 .php | php5_syntax
-.zip | unzip
+.zip | [unzip](http://www.info-zip.org/UnZip.html)
 .tar.gz .tgz | tar_gz
 .tar.bz2 | tar_bz2
 .a .so | nm
