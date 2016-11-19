@@ -460,7 +460,7 @@ def bandit(path):
     text_without_timestamp = "".join(text.splitlines(keepends=True)[2:])
     return status, fill3.Text(text_without_timestamp)
 bandit.dependencies = {"python-bandit", "python3-bandit"}
-bandit.url = "http://wiki.openstack.org/wiki/Security/Project/Bandit"
+bandit.url = "python3-bandit"
 
 
 def _perl_version(path):
@@ -819,3 +819,17 @@ def tool_name_colored(tool, path):
     char_style = (termstr.CharStyle(is_bold=True) if tool in _generic_tools()
                   else _charstyle_of_path(path))
     return termstr.TermStr(tool.__name__, char_style)
+
+
+@functools.lru_cache()
+def get_homepage_of_package(package):
+    line = subprocess.getoutput("dpkg-query --status %s | grep Homepage" % package)
+    return line.split()[1]
+
+
+def url_of_tool(tool):
+    try:
+        url = tool.url
+        return url if url.startswith("http") else get_homepage_of_package(url)
+    except AttributeError:
+        return None
