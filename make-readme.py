@@ -33,8 +33,10 @@ e.g. After cloning do:
 
     # git checkout ubuntu-15.10
 
-### Tools""")
+### Tools
+
+Extensions | Tools
+---------- | -----""")
 for extensions, tools_ in tools.TOOLS_FOR_EXTENSIONS:
-    print()
-    print("#### " + " ".join(extensions))
-    print("    " + " ".join(tool.__name__ for tool in tools_))
+    print("%s | %s" % (" ".join("." + extension for extension in extensions),
+                       " ".join(tool.__name__ for tool in tools_)))
