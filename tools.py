@@ -296,6 +296,7 @@ def python_syntax(path):
     python_version = _python_version(path)
     return _run_command([python_version, "-m", "py_compile", path])
 python_syntax.dependencies = {"python", "python3"}
+python_syntax.url = "https://en.wikipedia.org/wiki/Python_syntax_and_semantics"
 
 
 def _has_shebang_line(path):
@@ -318,6 +319,7 @@ def python_unittests(path):
     else:
         return Status.not_applicable, fill3.Text("No tests.")
 python_unittests.dependencies = {"python", "python3"}
+python_unittests.url = "https://docs.python.org/3/library/unittest.html"
 
 
 def pydoc(path):
@@ -332,6 +334,7 @@ def pydoc(path):
         status = Status.not_applicable
     return status, fill3.Text(output)
 pydoc.dependencies = {"python", "python3"}
+pydoc.url = "https://docs.python.org/3/library/pydoc.html"
 
 
 def mypy(path):
@@ -379,6 +382,7 @@ def python_profile(path):
                                  "--sort=cumulative", path], timeout=TIMEOUT)
     return Status.normal, fill3.Text(stdout)
 python_profile.dependencies = {"python", "python3"}
+python_profile.url = "https://docs.python.org/3/library/profile.html"
 
 
 def pycodestyle(path):
@@ -408,12 +412,14 @@ def python_gut(path):
     source_widget = _syntax_highlight_using_path(_fix_input(output), path)
     return Status.normal, source_widget
 python_gut.dependencies = set()
+python_gut.url = "https://github.com/ahamilton/vigil/blob/master/gut.py"
 
 
 def python_modulefinder(path):
     return _run_command([_python_version(path), "-m", "modulefinder", path],
                         Status.normal)
 python_modulefinder.dependencies = {"python", "python3"}
+python_modulefinder.url = "https://docs.python.org/3/library/modulefinder.html"
 
 
 def _get_mccabe_line_score(line, python_version):
@@ -454,6 +460,7 @@ def disassemble_pyc(path):
     stringio.seek(0)
     return Status.normal, fill3.Text(stringio.read())
 disassemble_pyc.dependencies = set()
+disassemble_pyc.url = "https://docs.python.org/3/library/dis.html"
 
 
 def bandit(path):
@@ -479,6 +486,7 @@ def perl_syntax(path):
     return _run_command([_perl_version(path), "-c", path])
 # perl_syntax.dependencies = {"perl", "rakudo"}
 perl_syntax.dependencies = {"perl"}
+perl_syntax.url = "https://en.wikipedia.org/wiki/Perl"
 
 
 def perldoc(path):
@@ -486,12 +494,14 @@ def perldoc(path):
     return ((Status.normal, fill3.Text(stdout)) if returncode == 0
             else (Status.not_applicable, fill3.Text(stderr)))
 perldoc.dependencies = {"perl-doc"}
+perldoc.url = "http://perldoc.perl.org/"
 
 
 def perltidy(path):
     stdout, *rest = _do_command(["perltidy", "-st", path])
     return Status.normal, _syntax_highlight_using_path(stdout, path)
 perltidy.dependencies = {"perltidy"}
+perltidy.url = "http://perltidy.sourceforge.net/"
 
 
 # def perl6_syntax(path):
@@ -507,9 +517,13 @@ splint.dependencies = {"splint"}
 splint.url = "splint"
 
 
+_OBJDUMP_URL = "https://en.wikipedia.org/wiki/Objdump"
+
+
 def objdump_headers(path):
     return _run_command(["objdump", "--all-headers", path], Status.normal)
 objdump_headers.dependencies = {"binutils"}
+objdump_headers.url = _OBJDUMP_URL
 
 
 def objdump_disassemble(path):
@@ -517,11 +531,13 @@ def objdump_disassemble(path):
         ["objdump", "--disassemble", "--reloc", "--dynamic-reloc", path],
         Status.normal)
 objdump_disassemble.dependencies = {"binutils"}
+objdump_disassemble.url = _OBJDUMP_URL
 
 
 def readelf(path):
     return _run_command(["readelf", "--all", path], Status.normal)
 readelf.dependencies = {"binutils"}
+readelf.url = _OBJDUMP_URL
 
 
 def unzip(path):
@@ -530,19 +546,25 @@ unzip.dependencies = {"unzip"}
 unzip.url = "unzip"
 
 
+_TAR_URL = "http://www.gnu.org/software/tar/manual/tar.html"
+
+
 def tar_gz(path):
     return _run_command(["tar", "ztvf", path], Status.normal)
 tar_gz.dependencies = {"tar"}
+tar_gz.url = _TAR_URL
 
 
 def tar_bz2(path):
     return _run_command(["tar", "jtvf", path], Status.normal)
 tar_bz2.dependencies = {"tar"}
+tar_bz2.url = _TAR_URL
 
 
 def nm(path):
     return _run_command(["nm", "--demangle", path], Status.normal)
 nm.dependencies = {"binutils"}
+nm.url = "https://linux.die.net/man/1/nm"
 
 
 def pdf2txt(path):
@@ -597,6 +619,7 @@ uncrustify.url = "uncrustify"
 def php5_syntax(path):
     return _run_command(["php", "--syntax-check", path])
 php5_syntax.dependencies = {"php"}
+php5_syntax.url = "https://en.wikipedia.org/wiki/PHP"
 
 
 #############################

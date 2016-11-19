@@ -27,18 +27,18 @@ e.g. After cloning do:
 
 Extensions | Tools
 ---------- | -----
-.py | python_syntax • python_unittests • pydoc • [mypy](http://www.mypy-lang.org/) • [python_coverage](http://nedbatchelder.com/code/coverage/) • python_profile • [pycodestyle](https://pypi.python.org/pypi/pycodestyle) • [pyflakes](https://launchpad.net/pyflakes) • [pylint](http://www.pylint.org/) • python_gut • python_modulefinder • [python_mccabe](https://github.com/flintwork/mccabe) • [bandit](https://wiki.openstack.org/wiki/Security/Projects/Bandit)
-.pyc | disassemble_pyc
-.pl .pm .t | perl_syntax • perldoc • perltidy
-.pod .pod6 | perldoc
+.py | [python_syntax](https://en.wikipedia.org/wiki/Python_syntax_and_semantics) • [python_unittests](https://docs.python.org/3/library/unittest.html) • [pydoc](https://docs.python.org/3/library/pydoc.html) • [mypy](http://www.mypy-lang.org/) • [python_coverage](http://nedbatchelder.com/code/coverage/) • [python_profile](https://docs.python.org/3/library/profile.html) • [pycodestyle](https://pypi.python.org/pypi/pycodestyle) • [pyflakes](https://launchpad.net/pyflakes) • [pylint](http://www.pylint.org/) • [python_gut](https://github.com/ahamilton/vigil/blob/master/gut.py) • [python_modulefinder](https://docs.python.org/3/library/modulefinder.html) • [python_mccabe](https://github.com/flintwork/mccabe) • [bandit](https://wiki.openstack.org/wiki/Security/Projects/Bandit)
+.pyc | [disassemble_pyc](https://docs.python.org/3/library/dis.html)
+.pl .pm .t | [perl_syntax](https://en.wikipedia.org/wiki/Perl) • [perldoc](http://perldoc.perl.org/) • [perltidy](http://perltidy.sourceforge.net/)
+.pod .pod6 | [perldoc](http://perldoc.perl.org/)
 .java | [uncrustify](http://uncrustify.sourceforge.net/)
 .c .h | [splint](http://www.splint.org/) • [uncrustify](http://uncrustify.sourceforge.net/)
-.o | objdump_headers • objdump_disassemble • readelf
+.o | [objdump_headers](https://en.wikipedia.org/wiki/Objdump) • [objdump_disassemble](https://en.wikipedia.org/wiki/Objdump) • [readelf](https://en.wikipedia.org/wiki/Objdump)
 .cpp | bcpp • [uncrustify](http://uncrustify.sourceforge.net/)
 .pdf | [pdf2txt](http://www.unixuser.org/~euske/python/pdfminer/)
 .html | [html_syntax](http://www.html-tidy.org/) • [tidy](http://www.html-tidy.org/) • [html2text](http://www.mbayer.de/html2text/)
-.php | php5_syntax
+.php | [php5_syntax](https://en.wikipedia.org/wiki/PHP)
 .zip | [unzip](http://www.info-zip.org/UnZip.html)
-.tar.gz .tgz | tar_gz
-.tar.bz2 | tar_bz2
-.a .so | nm
+.tar.gz .tgz | [tar_gz](http://www.gnu.org/software/tar/manual/tar.html)
+.tar.bz2 | [tar_bz2](http://www.gnu.org/software/tar/manual/tar.html)
+.a .so | [nm](https://linux.die.net/man/1/nm)
