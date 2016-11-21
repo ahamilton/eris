@@ -153,6 +153,9 @@ class ToolsTestCase(unittest.TestCase):
                          ("hello.h", tools.Status.normal),
                          ("hello.cpp", tools.Status.normal)])
 
+    def test_c_syntax(self):
+        self._test_tool(tools.c_syntax, [("hello.c", tools.Status.ok)])
+
     def test_splint(self):
         self._test_tool(tools.splint, [("hello.c", tools.Status.ok),
                                        ("hello.h", tools.Status.ok)])
@@ -193,6 +196,9 @@ class ToolsTestCase(unittest.TestCase):
 
     def test_html2text(self):
         self._test_tool(tools.html2text, [("hi.html", tools.Status.normal)])
+
+    def test_cpp_syntax(self):
+        self._test_tool(tools.cpp_syntax, [("hello.cpp", tools.Status.ok)])
 
     def test_bcpp(self):
         self._test_tool(tools.bcpp, [("hello.cpp", tools.Status.normal)])
