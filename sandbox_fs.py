@@ -59,6 +59,7 @@ class SandboxFs:
 
     def __init__(self, holes=None):
         self.holes = [] if holes is None else holes
+        self.holes += ["/dev/null"]
         for hole in self.holes:
             if not hole.startswith("/"):
                 raise ValueError("Holes must be absolute paths: %r" % hole)

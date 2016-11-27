@@ -7,7 +7,6 @@ Current
 - If a job is paused for longer than the timeout period, sometimes it has
   the timed out status when un-paused.
 - Tmp files are being left behind after shutdown.
-- gcc is not working inside the sandbox.
 
 
 Current (tool related)
@@ -243,6 +242,8 @@ Fixed
 - When shutting down "Exception ignored in:" noise appears. Four messages
   for every worker running. This started with the move to asyncio for the
   workers.
+- gcc is not working inside the sandbox.
+  <- Let /dev/null through the sandbox.
 
 
 Won't fix
