@@ -156,6 +156,9 @@ class ToolsTestCase(unittest.TestCase):
     def test_c_syntax_gcc(self):
         self._test_tool(tools.c_syntax_gcc, [("hello.c", tools.Status.ok)])
 
+    def test_c_syntax_clang(self):
+        self._test_tool(tools.c_syntax_clang, [("hello.c", tools.Status.ok)])
+
     def test_splint(self):
         self._test_tool(tools.splint, [("hello.c", tools.Status.ok),
                                        ("hello.h", tools.Status.ok)])
@@ -199,6 +202,9 @@ class ToolsTestCase(unittest.TestCase):
 
     def test_cpp_syntax_gcc(self):
         self._test_tool(tools.cpp_syntax_gcc, [("hello.cpp", tools.Status.ok)])
+
+    def test_cpp_syntax_clang(self):
+        self._test_tool(tools.cpp_syntax_clang, [("hello.cpp", tools.Status.ok)])
 
     def test_bcpp(self):
         self._test_tool(tools.bcpp, [("hello.cpp", tools.Status.normal)])

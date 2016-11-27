@@ -515,6 +515,12 @@ c_syntax_gcc.dependencies = {"gcc"}
 c_syntax_gcc.url = "https://gcc.gnu.org/"
 
 
+def c_syntax_clang(path):
+    return _run_command(["clang", "-fsyntax-only", path])
+c_syntax_clang.dependencies = {"clang"}
+c_syntax_clang.url = "http://clang.llvm.org/"
+
+
 def splint(path):
     stdout, stderr, returncode = _do_command(["splint", "-preproc", path])
     status = Status.ok if returncode == 0 else Status.problem
@@ -605,6 +611,12 @@ def cpp_syntax_gcc(path):
     return _run_command(["gcc", "-fsyntax-only", path])
 cpp_syntax_gcc.dependencies = {"gcc"}
 cpp_syntax_gcc.url = "https://gcc.gnu.org/"
+
+
+def cpp_syntax_clang(path):
+    return _run_command(["clang", "-fsyntax-only", path])
+cpp_syntax_clang.dependencies = {"clang"}
+cpp_syntax_clang.url = "http://clang.llvm.org/"
 
 
 def bcpp(path):
@@ -766,9 +778,9 @@ TOOLS_FOR_EXTENSIONS = \
         # (["p6", "pm6"], [perl6_syntax, perldoc]),
         (["pod", "pod6"], [perldoc]),
         (["java"], [uncrustify]),
-        (["c", "h"], [c_syntax_gcc, splint, uncrustify]),
+        (["c", "h"], [c_syntax_gcc, c_syntax_clang, splint, uncrustify]),
         (["o"], [objdump_headers, objdump_disassemble, readelf]),
-        (["cpp"], [cpp_syntax_gcc, bcpp, uncrustify]),
+        (["cpp"], [cpp_syntax_gcc, cpp_syntax_clang, bcpp, uncrustify]),
         (["pdf"], [pdf2txt]),
         (["html"], [html_syntax, tidy, html2text]),
         (["php"], [php5_syntax]),
