@@ -509,10 +509,10 @@ perltidy.url = "http://perltidy.sourceforge.net/"
 # perl6_syntax.dependencies = {"rakudo"}
 
 
-def c_syntax(path):
+def c_syntax_gcc(path):
     return _run_command(["gcc", "-fsyntax-only", path])
-c_syntax.dependencies = {"gcc"}
-c_syntax.url = "https://gcc.gnu.org/"
+c_syntax_gcc.dependencies = {"gcc"}
+c_syntax_gcc.url = "https://gcc.gnu.org/"
 
 
 def splint(path):
@@ -601,10 +601,10 @@ html2text.dependencies = {"html2text"}
 html2text.url = "html2text"
 
 
-def cpp_syntax(path):
+def cpp_syntax_gcc(path):
     return _run_command(["gcc", "-fsyntax-only", path])
-cpp_syntax.dependencies = {"gcc"}
-cpp_syntax.url = "https://gcc.gnu.org/"
+cpp_syntax_gcc.dependencies = {"gcc"}
+cpp_syntax_gcc.url = "https://gcc.gnu.org/"
 
 
 def bcpp(path):
@@ -766,9 +766,9 @@ TOOLS_FOR_EXTENSIONS = \
         # (["p6", "pm6"], [perl6_syntax, perldoc]),
         (["pod", "pod6"], [perldoc]),
         (["java"], [uncrustify]),
-        (["c", "h"], [c_syntax, splint, uncrustify]),
+        (["c", "h"], [c_syntax_gcc, splint, uncrustify]),
         (["o"], [objdump_headers, objdump_disassemble, readelf]),
-        (["cpp"], [cpp_syntax, bcpp, uncrustify]),
+        (["cpp"], [cpp_syntax_gcc, bcpp, uncrustify]),
         (["pdf"], [pdf2txt]),
         (["html"], [html_syntax, tidy, html2text]),
         (["php"], [php5_syntax]),
