@@ -56,17 +56,11 @@ def move(x, y):  # cup
 
 @contextlib.contextmanager
 def fullscreen():
-    if enter_fullscreen is None:
-        try:
-            yield
-        finally:
-            sys.stdout.write(clear)
-    else:
-        sys.stdout.write(enter_fullscreen)
-        try:
-            yield
-        finally:
-            sys.stdout.write(exit_fullscreen)
+    sys.stdout.write(enter_fullscreen)
+    try:
+        yield
+    finally:
+        sys.stdout.write(exit_fullscreen)
 
 
 @contextlib.contextmanager
