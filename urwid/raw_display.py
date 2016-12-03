@@ -31,16 +31,13 @@ import tty
 
 from urwid import escape
 
-from urwid.display_common import BaseScreen, RealTerminal
 
+class Screen:
 
-class Screen(BaseScreen, RealTerminal):
     def __init__(self, input=sys.stdin, output=sys.stdout):
         """Initialize a screen that directly prints escape codes to an output
         terminal.
         """
-        super(Screen, self).__init__()
-        self._keyqueue = []
         self.prev_input_resize = 0
         self.set_input_timeouts()
         self._mouse_tracking_enabled = False
@@ -95,7 +92,7 @@ class Screen(BaseScreen, RealTerminal):
         else:
             self.write(escape.MOUSE_TRACKING_OFF)
 
-    def _start(self, alternate_buffer=True):
+    def start(self, alternate_buffer=True):
         """
         Initialize the screen and input mode.
 
@@ -115,14 +112,9 @@ class Screen(BaseScreen, RealTerminal):
         self._alternate_buffer = alternate_buffer
         self._next_timeout = self.max_wait
 
-        if not self._signal_keys_set:
-            self._old_signal_keys = self.tty_signal_keys(fileno=fd)
-
         self._mouse_tracking(self._mouse_tracking_enabled)
 
-        return super(Screen, self)._start()
-
-    def _stop(self):
+    def stop(self):
         """
         Restore the screen.
         """
@@ -143,12 +135,6 @@ class Screen(BaseScreen, RealTerminal):
             + move_cursor
             + escape.SHOW_CURSOR)
         self.flush()
-
-        if self._old_signal_keys:
-            self.tty_signal_keys(*(self._old_signal_keys + (fd,)))
-
-        super(Screen, self)._stop()
-
 
     def write(self, data):
         """Write some data to the terminal.
@@ -210,7 +196,6 @@ class Screen(BaseScreen, RealTerminal):
         * Mouse button release: ('mouse release', 0, 18, 13),
                                 ('ctrl mouse release', 0, 17, 23)
         """
-        assert self._started
 
         self._wait_for_input_ready(self._next_timeout)
         keys, raw = self.parse_input(None, None, self.get_available_raw_input())

@@ -26,11 +26,6 @@ Terminal Escape Sequences for input and display
 
 import re
 
-from urwid import old_str_util as str_util
-
-from urwid.compat import bytes, bytes3
-
-within_double_byte = str_util.within_double_byte
 
 SO = "\x0e"
 SI = "\x0f"
@@ -323,45 +318,6 @@ def process_keyqueue(codes, more_available):
         return ["ctrl %s" % chr(ord('a')+code-1)], codes[1:]
     if code >27 and code <32:
         return ["ctrl %s" % chr(ord('A')+code-1)], codes[1:]
-
-    em = str_util.get_byte_encoding()
-
-    if (em == 'wide' and code < 256 and
-        within_double_byte(chr(code),0,0)):
-        if not codes[1:]:
-            if more_available:
-                raise MoreInputRequired()
-        if codes[1:] and codes[1] < 256:
-            db = chr(code)+chr(codes[1])
-            if within_double_byte(db, 0, 1):
-                return [db], codes[2:]
-    if em == 'utf8' and code>127 and code<256:
-        if code & 0xe0 == 0xc0: # 2-byte form
-            need_more = 1
-        elif code & 0xf0 == 0xe0: # 3-byte form
-            need_more = 2
-        elif code & 0xf8 == 0xf0: # 4-byte form
-            need_more = 3
-        else:
-            return ["<%d>"%code], codes[1:]
-
-        for i in range(need_more):
-            if len(codes)-1 <= i:
-                if more_available:
-                    raise MoreInputRequired()
-                else:
-                    return ["<%d>"%code], codes[1:]
-            k = codes[i+1]
-            if k>256 or k&0xc0 != 0x80:
-                return ["<%d>"%code], codes[1:]
-
-        s = bytes3(codes[:need_more+1])
-
-        assert isinstance(s, bytes)
-        try:
-            return [s.decode("utf-8")], codes[need_more+1:]
-        except UnicodeDecodeError:
-            return ["<%d>"%code], codes[1:]
 
     if code >127 and code <256:
         key = chr(code)
