@@ -7,21 +7,21 @@ import contextlib
 import sys
 
 
-_PREFIX = "\x1b"
+ESC = "\x1b"
 
 
-normal = _PREFIX + "(B\x1b[m"  # sgr0   "[0m" ?
-bold = _PREFIX + "[1m"  # bold
-italic = _PREFIX + "[3m"  # sitm
-standout = _PREFIX + "[7m"  # smso
-underline = _PREFIX + "[4m"  # smul
-enter_fullscreen = _PREFIX + "[?1049h"  # smcup
-exit_fullscreen = _PREFIX + "[?1049l"  # rmcup
-hide_cursor = _PREFIX + "[?25l"  # civis
-normal_cursor = _PREFIX + "[?25l\x1b[?25h"  # cnorm
-clear = _PREFIX + "[H\x1b[2J"  # clear
-save = _PREFIX + "7"  # sc
-restore = _PREFIX + "8"  # rc
+normal = ESC + "(B\x1b[m"  # sgr0   "[0m" ?
+bold = ESC + "[1m"  # bold
+italic = ESC + "[3m"  # sitm
+standout = ESC + "[7m"  # smso
+underline = ESC + "[4m"  # smul
+enter_fullscreen = ESC + "[?1049h"  # smcup
+exit_fullscreen = ESC + "[?1049l"  # rmcup
+hide_cursor = ESC + "[?25l"  # civis
+normal_cursor = ESC + "[?25l\x1b[?25h"  # cnorm
+clear = ESC + "[H\x1b[2J"  # clear
+save = ESC + "7"  # sc
+restore = ESC + "8"  # rc
 
 
 _FG_CODES = ["30", "31", "32", "33", "34", "35", "36", "37",
