@@ -1,4 +1,3 @@
-#!/usr/bin/python
 #
 # Urwid raw display module
 #    Copyright (C) 2004-2009  Ian Ward
@@ -331,11 +330,3 @@ class Screen:
 
     def _getch_nodelay(self):
         return self._getch(0)
-
-
-def _test():
-    import doctest
-    doctest.testmod()
-
-if __name__=='__main__':
-    _test()

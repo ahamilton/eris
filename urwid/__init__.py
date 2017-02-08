@@ -1,4 +1,3 @@
-#!/usr/bin/python
 #
 # Urwid __init__.py - all the stuff you're likely to care about
 #

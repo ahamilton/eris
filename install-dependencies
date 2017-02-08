@@ -5,7 +5,7 @@ set -e
 
 
 echo "Install the dependencies of the vigil script..."
-sudo apt-get --yes install python3-minimal python3-pygments python3-pyinotify \
+sudo apt-get --yes install python3.5 python3-minimal python3-pygments python3-pyinotify \
      python3-docopt util-linux
 echo
 echo "Install all the tools vigil may need..."
