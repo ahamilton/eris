@@ -244,14 +244,13 @@ Fixed
   workers.
 - gcc is not working inside the sandbox.
   <- Let /dev/null through the sandbox.
+- There is no color in lxterminal, only shades of grey.
 
 
 Won't fix
 - If the summary window is narrower then max_path_length the paths are never
   visible.
   <- Only a problem for very narrow windows.
-- There is no color in lxterminal, only shades of grey.
-  <- Only testing gnome-terminal & stterm at the moment.
 - Sometimes a lot (or all?) of the results are "?" even with correct statuses.
   <- Happens when the cache is deleted from underneath a running vigil.
 - In stterm the previous console title isn't being restored.

@@ -3,7 +3,10 @@
 # Licensed under the Artistic License 2.0.
 
 import collections
+import os
 import weakref
+
+import pygments.formatters.terminal256
 
 import terminal
 
@@ -35,6 +38,7 @@ class Color:
 class CharStyle:
 
     _POOL = weakref.WeakValueDictionary()
+    _TERMINAL256_FORMATTER = pygments.formatters.terminal256.Terminal256Formatter()
 
     def __new__(cls, fg_color=None, bg_color=None, is_bold=False,
                 is_italic=False, is_underlined=False):
@@ -66,18 +70,26 @@ class CharStyle:
         return ("<CharStyle: fg:%s bg:%s attr:%s>" %
                 (self.fg_color, self.bg_color, ",".join(attributes)))
 
+    def termcode_of_color(self, color, is_foreground):
+        if isinstance(color, int):
+            return terminal.color(color, is_foreground)
+        else:  # true color
+            if os.environ["TERM"] == "xterm":
+                closest_color = self._TERMINAL256_FORMATTER._closest_color(
+                    *color)
+                return terminal.color(closest_color, is_foreground)
+            else:
+                return terminal.rgb_color(color, is_foreground)
+
     @_cache_first_result
     def code_for_term(self):
-        fg_func = (terminal.fg_color if isinstance(self.fg_color, int)
-                   else terminal.fg_rgb_color)
-        bg_func = (terminal.bg_color if isinstance(self.bg_color, int)
-                   else terminal.bg_rgb_color)
+        fg_termcode = self.termcode_of_color(self.fg_color, True)
+        bg_termcode = self.termcode_of_color(self.bg_color, False)
         bold_code = terminal.bold if self.is_bold else ""
         italic_code = terminal.italic if self.is_italic else ""
         underline_code = terminal.underline if self.is_underlined else ""
-        return "".join([terminal.normal, fg_func(self.fg_color),
-                        bg_func(self.bg_color), bold_code, italic_code,
-                        underline_code])
+        return "".join([terminal.normal, fg_termcode, bg_termcode, bold_code,
+                        italic_code, underline_code])
 
 
 def _join_lists(lists):

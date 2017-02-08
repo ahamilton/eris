@@ -24,30 +24,12 @@ save = ESC + "7"  # sc
 restore = ESC + "8"  # rc
 
 
-_FG_CODES = ["30", "31", "32", "33", "34", "35", "36", "37",
-             "90", "91", "92", "93", "94", "95", "96", "97"]
+def color(color_number, is_foreground):
+    return "\x1b[%s;5;%im" % ("38" if is_foreground else "48", color_number)
 
 
-def fg_color(color_number):  # setaf
-    return ("\x1b[38;5;%im" % color_number if color_number > 15
-            else "\x1b[%sm" % _FG_CODES[color_number])
-
-
-_BG_CODES = ["40", "41", "42", "43", "44", "45", "46", "47",
-             "100", "101", "102", "103", "104", "105", "106", "107"]
-
-
-def bg_color(color_number):  # setab
-    return ("\x1b[48;5;%im" % color_number if color_number > 15
-            else "\x1b[%sm" % _BG_CODES[color_number])
-
-
-def fg_rgb_color(rgb):
-    return "\x1b[38;2;%i;%i;%im" % rgb
-
-
-def bg_rgb_color(rgb):
-    return "\x1b[48;2;%i;%i;%im" % rgb
+def rgb_color(rgb, is_foreground):
+    return "\x1b[%s;2;" % ("38" if is_foreground else "48") + "%i;%i;%im" % rgb
 
 
 def move(x, y):  # cup
