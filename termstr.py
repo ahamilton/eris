@@ -59,6 +59,15 @@ class CharStyle:
         return (self.fg_color, self.bg_color, self.is_bold, self.is_italic,
                 self.is_underlined)
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        if "_cache" in state:
+            del state["_cache"]
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__ = state
+
     def __repr__(self):
         attributes = []
         if self.is_bold:
