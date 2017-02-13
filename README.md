@@ -3,7 +3,7 @@
 ### Summary
 
 Vigil shows a list of status reports for a given codebase, and keeps them
-up to date as the codebase changes.
+up to date as the code changes.
 
 ### Installation
 
