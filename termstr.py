@@ -3,6 +3,7 @@
 # Licensed under the Artistic License 2.0.
 
 import collections
+import itertools
 import os
 import weakref
 
@@ -102,10 +103,7 @@ class CharStyle:
 
 
 def _join_lists(lists):
-    result = []
-    for list_ in lists:
-        result.extend(list_)
-    return result
+    return list(itertools.chain.from_iterable(lists))
 
 
 class TermStr(collections.UserString):

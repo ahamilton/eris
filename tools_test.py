@@ -212,6 +212,14 @@ class ToolsTestCase(unittest.TestCase):
     def test_php5_syntax(self):
         self._test_tool(tools.php5_syntax, [("root.php", tools.Status.ok)])
 
+    def test_pil(self):
+        for extension in tools.IMAGE_EXTENSIONS:
+            self._test_tool(tools.pil, [("circle." + extension,
+                                         tools.Status.normal)])
+
+    def test_pil_half(self):
+        self._test_tool(tools.pil_half, [("circle.png", tools.Status.normal)])
+
 
 class LruCacheWithEvictionTestCase(unittest.TestCase):
 

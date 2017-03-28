@@ -42,3 +42,4 @@ Extensions | Tools
 .tar.gz .tgz | [tar_gz](http://www.gnu.org/software/tar/manual/tar.html)
 .tar.bz2 | [tar_bz2](http://www.gnu.org/software/tar/manual/tar.html)
 .a .so | [nm](https://linux.die.net/man/1/nm)
+.png .jpg .gif .bmp .ppm .tiff .tga | [pil](http://python-pillow.github.io/) • [pil_half](http://python-pillow.github.io/)

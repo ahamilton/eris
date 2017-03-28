@@ -401,6 +401,15 @@ class Placeholder:
         return self.widget.appearance(dimensions)
 
 
+class Fixed:
+
+    def __init__(self, appearance):
+        self.appearance_min_ = appearance
+
+    def appearance_min(self):
+        return self.appearance_min_
+
+
 ##########################
 
 

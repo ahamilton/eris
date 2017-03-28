@@ -22,6 +22,7 @@ import tempfile
 import time
 import traceback
 
+import PIL.Image
 import pygments
 import pygments.lexers
 import pygments.styles
@@ -646,6 +647,59 @@ php5_syntax.dependencies = {"php"}
 php5_syntax.url = "https://en.wikipedia.org/wiki/PHP"
 
 
+def _pil_pixels(pil_image):
+    data = list(pil_image.getdata())
+    width = pil_image.width
+    return [data[row_index*width:(row_index+1)*width]
+            for row_index in range(pil_image.height)]
+
+
+MAX_IMAGE_SIZE = 80
+
+
+def _resize_image(image, new_width):
+    scale = new_width / image.width
+    return image.resize((int(image.width * scale), int(image.height * scale)),
+                        PIL.Image.ANTIALIAS)
+
+
+def pil(path):
+    with open(path, "rb") as image_file:
+        with PIL.Image.open(image_file).convert("RGB") as image:
+            if image.width > (MAX_IMAGE_SIZE // 2):
+                image = _resize_image(image, MAX_IMAGE_SIZE // 2)
+            text = " " * 2 * image.width
+            result = []
+            for row in _pil_pixels(image):
+                row_style = []
+                for pixel in row:
+                    style = termstr.CharStyle(bg_color=pixel)
+                    row_style.extend([style, style])
+                result.append(termstr.TermStr(text, tuple(row_style)))
+    return Status.normal, fill3.Fixed(result)
+pil.dependencies = {"python3-pil"}
+pil.url = "python3-pil"
+
+
+def pil_half(path):
+    with open(path, "rb") as image_file:
+        with PIL.Image.open(image_file).convert("RGB") as image:
+            if image.width > MAX_IMAGE_SIZE:
+                image = _resize_image(image, MAX_IMAGE_SIZE)
+            text = "▀" * image.width
+            rows = _pil_pixels(image)
+            if image.height % 2 == 1:
+                rows.append([None] * image.width)
+            result =  fill3.Fixed([
+                termstr.TermStr(text, tuple(termstr.CharStyle(
+                    fg_color=top_pixel, bg_color=bottom_pixel)
+                    for top_pixel, bottom_pixel in zip(rows[index], rows[index+1])))
+                for index in range(0, image.height, 2)])
+    return Status.normal, result
+pil_half.dependencies = {"python3-pil"}
+pil_half.url = "python3-pil"
+
+
 #############################
 
 
@@ -768,6 +822,9 @@ def _generic_tools():
     return [contents, metadata]
 
 
+IMAGE_EXTENSIONS = ["png", "jpg", "gif", "bmp", "ppm", "tiff", "tga"]
+
+
 TOOLS_FOR_EXTENSIONS = \
     [
         (["py"], [python_syntax, python_unittests, pydoc, mypy, python_coverage,
@@ -789,6 +846,7 @@ TOOLS_FOR_EXTENSIONS = \
         (["tar.gz", "tgz"], [tar_gz]),
         (["tar.bz2"], [tar_bz2]),
         (["a", "so"], [nm]),
+        (IMAGE_EXTENSIONS, [pil, pil_half])
     ]
 
 
