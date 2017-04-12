@@ -1,2 +1,1 @@
-input/hi.py: note: In function "hi":                   
 input/hi.py:4: error: Parse error before string literal
