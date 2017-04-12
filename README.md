@@ -2,8 +2,7 @@
 
 ### Summary
 
-Vigil shows a list of status reports for a given codebase, and keeps them
-up to date as the code changes.
+Vigil maintains an up-to-date set of reports for every file in a codebase.
 
 ### Installation
 
@@ -31,10 +30,10 @@ Extensions | Tools
 .pyc | [disassemble_pyc](https://docs.python.org/3/library/dis.html)
 .pl .pm .t | [perl_syntax](https://en.wikipedia.org/wiki/Perl) • [perldoc](http://perldoc.perl.org/) • [perltidy](http://perltidy.sourceforge.net/)
 .pod .pod6 | [perldoc](http://perldoc.perl.org/)
-.java | [uncrustify](http://uncrustify.sourceforge.net/)
-.c .h | [c_syntax_gcc](https://gcc.gnu.org/) • [c_syntax_clang](http://clang.llvm.org/) • [splint](http://www.splint.org/) • [uncrustify](http://uncrustify.sourceforge.net/)
+.java | [uncrustify](https://github.com/uncrustify/uncrustify)
+.c .h | [c_syntax_gcc](https://gcc.gnu.org/) • [c_syntax_clang](http://clang.llvm.org/) • [splint](http://www.splint.org/) • [uncrustify](https://github.com/uncrustify/uncrustify)
 .o | [objdump_headers](https://en.wikipedia.org/wiki/Objdump) • [objdump_disassemble](https://en.wikipedia.org/wiki/Objdump) • [readelf](https://en.wikipedia.org/wiki/Objdump)
-.cc .cpp .hpp | [cpp_syntax_gcc](https://gcc.gnu.org/) • [cpp_syntax_clang](http://clang.llvm.org/) • bcpp • [uncrustify](http://uncrustify.sourceforge.net/)
+.cc .cpp .hpp | [cpp_syntax_gcc](https://gcc.gnu.org/) • [cpp_syntax_clang](http://clang.llvm.org/) • bcpp • [uncrustify](https://github.com/uncrustify/uncrustify)
 .pdf | [pdf2txt](http://www.unixuser.org/~euske/python/pdfminer/)
 .html | [html_syntax](http://www.html-tidy.org/) • [tidy](http://www.html-tidy.org/) • [html2text](http://www.mbayer.de/html2text/)
 .php | [php5_syntax](https://en.wikipedia.org/wiki/PHP)

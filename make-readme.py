@@ -19,8 +19,7 @@ print("""\
 
 ### Summary
 
-Vigil shows a list of status reports for a given codebase, and keeps them
-up to date as the code changes.
+Vigil maintains an up-to-date set of reports for every file in a codebase.
 
 ### Installation
 
