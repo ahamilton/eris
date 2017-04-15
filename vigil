@@ -921,7 +921,7 @@ def save_state(pickle_path, summary, screen, log):
 def main(root_path, loop, worker_count=None, is_sandboxed=True,
          editor_command=None, theme=None, is_being_tested=False):
     if worker_count is None:
-        worker_count = multiprocessing.cpu_count()
+        worker_count = max(multiprocessing.cpu_count() - 1, 1)
     if theme is None:
         theme = "native"
     os.environ["PYGMENT_STYLE"] = theme
