@@ -204,7 +204,8 @@ class ToolsTestCase(unittest.TestCase):
         self._test_tool(tools.cpp_syntax_gcc, [("hello.cpp", tools.Status.ok)])
 
     def test_cpp_syntax_clang(self):
-        self._test_tool(tools.cpp_syntax_clang, [("hello.cpp", tools.Status.ok)])
+        self._test_tool(tools.cpp_syntax_clang,
+                        [("hello.cpp", tools.Status.ok)])
 
     def test_bcpp(self):
         self._test_tool(tools.bcpp, [("hello.cpp", tools.Status.normal)])

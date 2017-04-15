@@ -39,7 +39,8 @@ class Color:
 class CharStyle:
 
     _POOL = weakref.WeakValueDictionary()
-    _TERMINAL256_FORMATTER = pygments.formatters.terminal256.Terminal256Formatter()
+    _TERMINAL256_FORMATTER = \
+        pygments.formatters.terminal256.Terminal256Formatter()
 
     def __new__(cls, fg_color=None, bg_color=None, is_bold=False,
                 is_italic=False, is_underlined=False):

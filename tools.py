@@ -690,7 +690,7 @@ def pil_half(path):
             rows = _pil_pixels(image)
             if image.height % 2 == 1:
                 rows.append([None] * image.width)
-            result =  fill3.Fixed([
+            result = fill3.Fixed([
                 termstr.TermStr(text, tuple(termstr.CharStyle(
                     fg_color=top_pixel, bg_color=bottom_pixel)
                     for top_pixel, bottom_pixel in zip(rows[index], rows[index+1])))
