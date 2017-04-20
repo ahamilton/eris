@@ -6,10 +6,7 @@
 
 """Vigil Code Monitor
 
-Vigil shows a list of status reports for a given codebase, and keeps them
-up to date as the codebase changes.
-
-A set of reports is produced for every file, which depend on the file's type.
+Vigil maintains an up-to-date set of reports for every file in a codebase.
 
 A status indicator summarises the state of each report, and a report is viewed
 by selecting this status indicator with the cursor.
@@ -57,7 +54,7 @@ Options:
   -s on|off, --sandbox=on|off      Use a sandbox to prevent changes to the
                                    filesystem. The sandbox is on by default.
   -w COUNT, --workers=COUNT        The number of processes working in parallel.
-                                   By default it is twice the number of cpus.
+                                   By default it is the number of cpus minus 1.
   -e "COMMAND", --editor="COMMAND" The command used to start the editor, in
                                    the *edit command. It may contain options.
   -t THEME, --theme=THEME          The pygment theme used for syntax
