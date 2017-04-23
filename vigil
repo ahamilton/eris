@@ -365,11 +365,11 @@ class Summary:
 
     def cursor_home(self):
         x, y = self._cursor_position
-        self._cursor_position = 0, y
+        self._cursor_position = x, 0
 
     def cursor_end(self):
         x, y = self._cursor_position
-        self._cursor_position = len(self._column[y]) - 1, y
+        self._cursor_position = x, len(self._column) - 1
 
     def _issue_generator(self):
         x, y = self.cursor_position()
@@ -660,13 +660,13 @@ class Screen:
         else:
             self.listing_page_down()
 
-    def cursor_page_right(self):
+    def cursor_end(self):
         if self._is_summary_focused:
             self._summary.cursor_end()
         else:
             self._page_listing(_RIGHT)
 
-    def cursor_page_left(self):
+    def cursor_home(self):
         if self._is_summary_focused:
             self._summary.cursor_home()
         else:
@@ -855,8 +855,8 @@ class Screen:
         ({"down"}, cursor_down), ({"left"}, cursor_left),
         ({"right"}, cursor_right), ({"page down", "ctrl v"}, cursor_page_down),
         ({"page up", "meta v"}, cursor_page_up), ({"o"}, toggle_order),
-        ({"home", "ctrl a"}, cursor_page_left),
-        ({"end", "ctrl e"}, cursor_page_right), ({"n"}, move_to_next_issue),
+        ({"home", "ctrl a"}, cursor_home),
+        ({"end", "ctrl e"}, cursor_end), ({"n"}, move_to_next_issue),
         ({"N"}, move_to_next_issue_of_tool), ({"e"}, edit_file),
         ({"q"}, quit_), ({"p"}, toggle_pause), ({"r"}, refresh),
         ({"tab"}, toggle_focus), ({"f"}, toggle_fullscreen)]
