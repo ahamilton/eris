@@ -6,7 +6,7 @@ Vigil maintains an up-to-date set of reports for every file in a codebase.
 
 ### Installation
 
-To run vigil: (Tested in Ubuntu 16.10 in gnome-terminal, lxterminal and stterm)
+To run vigil: (Tested in Ubuntu 17.04 in gnome-terminal, lxterminal and stterm)
 
     # git clone https://github.com/ahamilton/vigil
     # cd vigil
