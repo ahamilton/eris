@@ -1,9 +1,30 @@
-#!/usr/bin/env python3.5
+#!/usr/bin/env python3
 
 
+import platform
 import subprocess
 import tools
 
 
-command = ["sudo", "apt-get", "--yes", "install"] + list(tools.dependencies())
-subprocess.check_call(command)
+dist_id = platform.linux_distribution()[0].lower()
+pip_deps, pip3_deps, dist_deps = set(), set(), set()
+for dependency in tools.dependencies(dist_id):
+    if "/" in dependency:
+        pip_version, pip_dependency = dependency.split("/")
+        (pip_deps if pip_version == "pip" else pip3_deps).add(pip_dependency)
+    else:
+        dist_deps.add(dependency)
+cmd_for_dist = {"ubuntu": ["apt-get", "-y", "install"],
+                "debian": ["apt-get", "-y", "install"],
+                "fedora": ["dnf", "-y", "install"],
+                "arch": ["pacman", "-S", "--noconfirm"]}
+if pip_deps:
+    dist_deps.add("python2-pip" if dist_id == "arch" else "python-pip")
+if pip3_deps:
+    dist_deps.add("python-pip" if dist_id == "arch" else "python3-pip")
+if dist_deps:
+    subprocess.check_call(["sudo"] + cmd_for_dist[dist_id] + list(dist_deps))
+if pip_deps:
+    subprocess.check_call(["sudo", "pip", "install"] + list(pip_deps))
+if pip3_deps:
+    subprocess.check_call(["sudo", "pip3", "install"] + list(pip3_deps))

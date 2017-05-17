@@ -1,0 +1,78 @@
+#!/bin/bash
+
+
+set -e
+
+
+VIGIL_PATH=$(realpath $(dirname $0))
+
+
+function run_in_container {
+    CONTAINER=$1
+    shift
+    [ -f $CONTAINER ] && OPTION="--image" || OPTION="--directory"
+    sudo systemd-nspawn --chdir=/vigil --overlay=$VIGIL_PATH:/vigil \
+	 $OPTION=$CONTAINER $@
+}
+
+
+function build_ubuntu {
+    sudo debootstrap --components=main,restricted,universe,multiverse \
+	 zesty ubuntu.part
+    run_in_container ubuntu.part \
+		     ln -sf /lib/systemd/resolv.conf /etc/resolv.conf
+    run_in_container ubuntu.part apt-get update
+    mv ubuntu.part ubuntu
+}
+
+
+function build_fedora {
+    IMAGE="Fedora-Cloud-Base-25-1.3.x86_64.raw"
+    wget --continue "https://dl.fedoraproject.org/pub/fedora/linux/releases/25/CloudImages/x86_64/images/$IMAGE.xz"
+    unxz $IMAGE.xz
+    mv $IMAGE fedora
+}
+
+
+function build_debian {
+    sudo debootstrap --components=main,contrib,non-free \
+	 --include=sudo jessie debian.part
+    run_in_container debian.part apt-get update
+    mv debian.part debian
+}
+
+
+function build_archlinux {
+    ARCHIVE="archlinux-bootstrap-2017.05.01-x86_64.tar.gz"
+    wget --continue "http://mirrors.kernel.org/archlinux/iso/latest/$ARCHIVE"
+    tar -zxf $ARCHIVE
+    mv root.x86_64 archlinux.part
+    run_in_container archlinux.part pacman-key --init
+    run_in_container archlinux.part pacman-key --populate archlinux
+    echo "Server = http://mirror.rackspace.com/archlinux/\$repo/os/\$arch" > \
+	 archlinux.part/etc/pacman.d/mirrorlist
+    run_in_container archlinux.part pacman -Syyu --noconfirm
+    run_in_container archlinux.part pacman -S --noconfirm sudo grep
+    rm $ARCHIVE
+    mv archlinux.part archlinux
+}
+
+
+[ $# -eq 0 ] && WORK_PATH=$(mktemp -d --suffix=-vigil) || WORK_PATH="$1"
+sudo apt-get install -y systemd-container debootstrap xz-utils wget
+cd $WORK_PATH
+for DISTRIBUTION in ubuntu fedora debian archlinux; do
+    if [ -e $DISTRIBUTION ]; then
+	echo "$DISTRIBUTION container already exists."
+    else
+	echo "Building $DISTRIBUTION container..."
+	build_$DISTRIBUTION
+    fi
+    echo "Installing vigil's dependencies in $DISTRIBUTION..."
+    run_in_container $DISTRIBUTION ./install-dependencies
+    echo "Successfully installed vigil's dependencies in $DISTRIBUTION."
+    echo "Removing $DISTRIBUTION container..."
+    sudo rm -rf $DISTRIBUTION
+done
+rmdir $WORK_PATH
+echo "Finished."

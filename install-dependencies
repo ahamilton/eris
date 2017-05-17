@@ -4,9 +4,19 @@
 set -e
 
 
+DIST_ID=$(cat /etc/os-release | grep "^ID=" | cut -d "=" -f 2)
+if [ $DIST_ID == "fedora" ]; then
+    INSTALL_CMD="dnf -y install"
+    INOTIFY_NAME="python3-inotify python3-pygments python3-docopt python3-pillow"
+elif [ $DIST_ID == "arch" ]; then
+    INSTALL_CMD="pacman -S --noconfirm"
+    INOTIFY_NAME="python-pyinotify python-pygments python-docopt python-pillow"
+else
+    INSTALL_CMD="apt --yes install"
+    INOTIFY_NAME="python3-pyinotify python3-pygments python3-docopt python3-pillow"
+fi
 echo "Install the dependencies of the vigil script..."
-sudo apt-get --yes install python3.5 python3-minimal python3-pygments python3-pyinotify \
-     python3-docopt util-linux python3-pil
+sudo $INSTALL_CMD $INOTIFY_NAME util-linux
 echo
 echo "Install all the tools vigil may need..."
 ./install-tools

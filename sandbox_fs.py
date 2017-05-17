@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.5
+#!/usr/bin/env python3
 
 # Copyright (C) 2017 Andrew Hamilton. All rights reserved.
 # Licensed under the Artistic License 2.0.
@@ -51,7 +51,7 @@ def _parse_proc_mounts():
 def _find_mounts():
     all_mounts = set(part[1] for part in _parse_proc_mounts())
     mount_points = {"/", "/usr", "/bin", "/etc", "/lib", "/dev", "/home",
-                    "/boot", "/opt", "/run", "/root", "/var"}
+                    "/boot", "/opt", "/run", "/root", "/var", "/vigil"}
     return all_mounts.intersection(mount_points)
 
 

@@ -4,6 +4,7 @@
 # Licensed under the Artistic License 2.0.
 
 import ast
+import asyncio
 import contextlib
 import dis
 import enum
@@ -268,6 +269,7 @@ def contents(path):
     else:
         return pygments_(path)
 contents.dependencies = {"python3-pygments"}
+contents.arch_dependencies = {"python-pygments"}
 
 
 def _is_python_syntax_correct(path, python_version):
@@ -343,6 +345,9 @@ def mypy(path):
     status = Status.ok if returncode == 0 else Status.normal
     return status, fill3.Text(stdout)
 mypy.dependencies = {"mypy"}
+mypy.fedora_dependencies = {"python3-mypy"}
+mypy.debian_dependencies = {"pip3/mypy"}
+mypy.arch_dependencies = {"pip3/mypy"}
 mypy.url = "mypy"
 
 
@@ -375,6 +380,7 @@ def python_coverage(path):
         return Status.not_applicable, fill3.Text(
             "No corresponding test file: " + os.path.normpath(test_path))
 python_coverage.dependencies = {"python-coverage", "python3-coverage"}
+python_coverage.arch_dependencies = {"python2-coverage", "python-coverage"}
 python_coverage.url = "python3-coverage"
 
 
@@ -387,16 +393,18 @@ python_profile.url = "https://docs.python.org/3/library/profile.html"
 
 
 def pycodestyle(path):
-    cmd = (["pycodestyle"] if _python_version(path) == "python"
-           else ["python3", "-m", "pycodestyle"])
-    return _run_command(cmd + [path])
-pycodestyle.dependencies = {"pycodestyle", "python3-pycodestyle"}
-pycodestyle.url = "pycodestyle"
+    return _run_command([_python_version(path), "-m", "pycodestyle", path])
+pycodestyle.dependencies = {"python-pycodestyle", "python3-pycodestyle"}
+pycodestyle.fedora_dependencies = {"python2-pycodestyle", "python3-pycodestyle"}
+pycodestyle.debian_dependencies = {"pip/pycodestyle", "pip3/pycodestyle"}
+pycodestyle.arch_dependencies = {"python-pycodestyle", "python2-pycodestyle"}
+pycodestyle.url = "python-pycodestyle"
 
 
 def pyflakes(path):
     return _run_command([_python_version(path), "-m", "pyflakes", path])
 pyflakes.dependencies = {"pyflakes"}
+pyflakes.arch_dependencies = {"python2-pyflakes", "python-pyflakes"}
 pyflakes.url = "pyflakes"
 
 
@@ -404,6 +412,9 @@ def pylint(path):
     return _run_command([_python_version(path), "-m", "pylint",
                          "--errors-only", path])
 pylint.dependencies = {"pylint", "pylint3"}
+pylint.fedora_dependencies = {"pylint", "python3-pylint"}
+pylint.arch_dependencies = {"python2-pylint", "python-pylint"}
+pylint.debian_dependencies = {"pip/pylint", "pip3/pylint"}
 pylint.url = "pylint3"
 
 
@@ -445,6 +456,7 @@ def python_mccabe(path):
     status = Status.problem if max_score > 10 else Status.ok
     return status, fill3.Text(_colorize_mccabe(stdout, python_version))
 python_mccabe.dependencies = {"python-mccabe", "python3-mccabe"}
+python_mccabe.arch_dependencies = {"python2-mccabe", "python-mccabe"}
 python_mccabe.url = "python3-mccabe"
 
 
@@ -474,6 +486,9 @@ def bandit(path):
     text_without_timestamp = "".join(text.splitlines(keepends=True)[2:])
     return status, fill3.Text(text_without_timestamp)
 bandit.dependencies = {"python-bandit", "python3-bandit"}
+bandit.fedora_dependencies = {"bandit"}
+bandit.debian_dependencies = {"pip/bandit", "pip3/bandit"}
+bandit.arch_dependencies = {"bandit"}
 bandit.url = "python3-bandit"
 
 
@@ -495,6 +510,8 @@ def perldoc(path):
     return ((Status.normal, fill3.Text(stdout)) if returncode == 0
             else (Status.not_applicable, fill3.Text(stderr)))
 perldoc.dependencies = {"perl-doc"}
+perldoc.fedora_dependencies = {"perl-Pod-Perldoc"}
+perldoc.arch_dependencies = {"perl-pod-perldoc"}
 perldoc.url = "http://perldoc.perl.org/"
 
 
@@ -502,6 +519,7 @@ def perltidy(path):
     stdout, *rest = _do_command(["perltidy", "-st", path])
     return Status.normal, _syntax_highlight_using_path(stdout, path)
 perltidy.dependencies = {"perltidy"}
+perltidy.arch_dependencies = {"perl-test-perltidy"}
 perltidy.url = "http://perltidy.sourceforge.net/"
 
 
@@ -583,6 +601,7 @@ nm.url = "https://linux.die.net/man/1/nm"
 def pdf2txt(path):
     return _run_command(["pdf2txt", path], Status.normal)
 pdf2txt.dependencies = {"python-pdfminer"}
+pdf2txt.arch_dependencies = set()
 pdf2txt.url = "python-pdfminer"
 
 
@@ -605,6 +624,7 @@ tidy.url = "tidy"
 def html2text(path):
     return _run_command(["html2text", path], Status.normal)
 html2text.dependencies = {"html2text"}
+html2text.arch_dependencies = {"python-html2text"}
 html2text.url = "html2text"
 
 
@@ -625,6 +645,8 @@ def bcpp(path):
     status = Status.normal if returncode == 0 else Status.problem
     return status, _syntax_highlight_using_path(stdout, path)
 bcpp.dependencies = {"bcpp"}
+bcpp.fedora_dependencies = set()
+bcpp.arch_dependencies = set()
 
 
 def uncrustify(path):
@@ -638,12 +660,14 @@ def uncrustify(path):
     status = Status.normal if returncode == 0 else Status.problem
     return status, _syntax_highlight_using_path(stdout, path)
 uncrustify.dependencies = {"uncrustify"}
+uncrustify.debian_dependencies = set()
 uncrustify.url = "uncrustify"
 
 
 def php5_syntax(path):
     return _run_command(["php", "--syntax-check", path])
 php5_syntax.dependencies = {"php"}
+php5_syntax.debian_dependencies = {"pip3/php"}
 php5_syntax.url = "https://en.wikipedia.org/wiki/PHP"
 
 
@@ -678,6 +702,8 @@ def pil(path):
                 result.append(termstr.TermStr(text, tuple(row_style)))
     return Status.normal, fill3.Fixed(result)
 pil.dependencies = {"python3-pil"}
+pil.fedora_dependencies = {"python3-pillow"}
+pil.arch_dependencies = {"python-pillow"}
 pil.url = "python3-pil"
 
 
@@ -697,6 +723,8 @@ def pil_half(path):
                 for index in range(0, image.height, 2)])
     return Status.normal, result
 pil_half.dependencies = {"python3-pil"}
+pil_half.fedora_dependencies = {"python3-pillow"}
+pil_half.arch_dependencies = {"python-pillow"}
 pil_half.url = "python3-pil"
 
 
@@ -788,7 +816,8 @@ class Result:
         self.status = status
         self.entry.appearance_cache = None
 
-    async def run(self, log, appearance_changed_event, runner):
+    @asyncio.coroutine
+    def run(self, log, appearance_changed_event, runner):
         self.is_placeholder = False
         tool_name = tool_name_colored(self.tool, self.path)
         path = path_colored(self.path)
@@ -799,7 +828,7 @@ class Result:
             runner.pause()
         appearance_changed_event.set()
         start_time = time.time()
-        new_status = await runner.run_tool(self.path, self.tool)
+        new_status = yield from runner.run_tool(self.path, self.tool)
         Result.result.fget.evict(self)
         end_time = time.time()
         self.set_status(new_status)
@@ -866,10 +895,32 @@ def tools_all():
     return tools_
 
 
-def dependencies():
+def tool_dependencies(tool, distribution="ubuntu"):
+    if distribution == "ubuntu":
+        return tool.dependencies
+    elif distribution == "debian":
+        try:
+            return tool.debian_dependencies
+        except AttributeError:
+            return tool.dependencies
+    elif distribution == "fedora":
+        try:
+            return tool.fedora_dependencies
+        except AttributeError:
+            return tool.dependencies
+    elif distribution == "arch":
+        try:
+            return tool.arch_dependencies
+        except AttributeError:
+            return tool.dependencies
+    else:
+        raise NotImplementedError
+
+
+def dependencies(distribution="ubuntu"):
     dependencies_all = set()
     for tool in tools_all():
-        dependencies_all.update(tool.dependencies)
+        dependencies_all.update(tool_dependencies(tool, distribution))
     return dependencies_all
 
 

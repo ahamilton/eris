@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.5
+#!/usr/bin/env python3
 
 # Copyright (C) 2015-2017 Andrew Hamilton. All rights reserved.
 # Licensed under the Artistic License 2.0.
@@ -20,7 +20,8 @@ class Worker:
         self.process = None
         self.child_pgid = None
 
-    async def create_process(self):
+    @asyncio.coroutine
+    def create_process(self):
         if self.is_sandboxed:
             sandbox_fs_path = os.path.join(os.path.dirname(__file__),
                                            "sandbox_fs")
@@ -32,22 +33,24 @@ class Worker:
             *command, stdin=asyncio.subprocess.PIPE,
             stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
             preexec_fn=os.setsid)
-        self.process = await create
-        pid_line = await self.process.stdout.readline()
+        self.process = yield from create
+        pid_line = yield from self.process.stdout.readline()
         self.child_pgid = int(pid_line.strip())
         os.setpriority(os.PRIO_PGRP, self.child_pgid, 19)
 
-    async def run_tool(self, path, tool):
+    @asyncio.coroutine
+    def run_tool(self, path, tool):
         self.process.stdin.write(("%s\n%s\n" %
                                   (tool.__qualname__, path)).encode("utf-8"))
-        data = await self.process.stdout.readline()
+        data = yield from self.process.stdout.readline()
         return tools.Status(int(data))
 
-    async def job_runner(self, summary, log, jobs_added_event,
-                         appearance_changed_event):
-        await self.create_process()
+    @asyncio.coroutine
+    def job_runner(self, summary, log, jobs_added_event,
+                   appearance_changed_event):
+        yield from self.create_process()
         while True:
-            await jobs_added_event.wait()
+            yield from jobs_added_event.wait()
             while True:
                 try:
                     self.result = summary.get_closest_placeholder()
@@ -58,8 +61,7 @@ class Worker:
                         if self.is_being_tested:
                             os.kill(os.getpid(), signal.SIGINT)
                     break
-                await self.result.run(log, appearance_changed_event,
-                                      self)
+                yield from self.result.run(log, appearance_changed_event, self)
                 summary.completed_total += 1
             jobs_added_event.clear()
 
