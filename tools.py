@@ -16,6 +16,7 @@ import math
 import os
 import os.path
 import pickle
+import platform
 import pwd
 import stat
 import subprocess
@@ -259,6 +260,7 @@ def metadata(path):
             text.append(name + fill3.join("", value) + "\n")
     return (Status.normal, fill3.Text(fill3.join("", text)))
 metadata.dependencies = {"file", "coreutils"}
+metadata.executables = {"file", "sha1sum"}
 
 
 def contents(path):
@@ -338,6 +340,7 @@ def pydoc(path):
     return status, fill3.Text(output)
 pydoc.dependencies = {"python", "python3"}
 pydoc.url = "https://docs.python.org/3/library/pydoc.html"
+pydoc.executables = {"pydoc", "pydoc3"}
 
 
 def mypy(path):
@@ -349,6 +352,7 @@ mypy.fedora_dependencies = {"python3-mypy"}
 mypy.debian_dependencies = {"pip3/mypy"}
 mypy.arch_dependencies = {"pip3/mypy"}
 mypy.url = "mypy"
+mypy.executables = {"mypy"}
 
 
 def _colorize_coverage_report(text):
@@ -363,15 +367,16 @@ def python_coverage(path):
     test_path = path[:-(len(".py"))] + "_test.py"
     if os.path.exists(test_path):
         with tempfile.TemporaryDirectory() as temp_dir:
-            python_exe = "%s-coverage" % _python_version(path)
+            coverage_cmd = [_python_version(path), "-m", "coverage"]
             coverage_path = os.path.join(temp_dir, "coverage")
             env = os.environ.copy()
             env["COVERAGE_FILE"] = coverage_path
             stdout, *rest = _do_command(
-                [python_exe, "run", test_path], env=env, timeout=TIMEOUT)
+                coverage_cmd + ["run", test_path], env=env, timeout=TIMEOUT)
             path = os.path.normpath(path)
-            stdout, *rest = _do_command([python_exe, "annotate", "--directory",
-                                         temp_dir, path], env=env)
+            stdout, *rest = _do_command(
+                coverage_cmd + ["annotate", "--directory", temp_dir, path],
+                env=env)
             flat_path = path.replace("/", "_")
             with open(os.path.join(temp_dir, flat_path + ",cover"), "r") as f:
                 stdout = f.read()
@@ -513,6 +518,7 @@ perldoc.dependencies = {"perl-doc"}
 perldoc.fedora_dependencies = {"perl-Pod-Perldoc"}
 perldoc.arch_dependencies = {"perl-pod-perldoc"}
 perldoc.url = "http://perldoc.perl.org/"
+perldoc.executables = {"perldoc"}
 
 
 def perltidy(path):
@@ -521,6 +527,7 @@ def perltidy(path):
 perltidy.dependencies = {"perltidy"}
 perltidy.arch_dependencies = {"perl-test-perltidy"}
 perltidy.url = "http://perltidy.sourceforge.net/"
+perltidy.executables = {"perltidy"}
 
 
 # def perl6_syntax(path):
@@ -532,12 +539,14 @@ def c_syntax_gcc(path):
     return _run_command(["gcc", "-fsyntax-only", path])
 c_syntax_gcc.dependencies = {"gcc"}
 c_syntax_gcc.url = "https://gcc.gnu.org/"
+c_syntax_gcc.executables = {"gcc"}
 
 
 def c_syntax_clang(path):
     return _run_command(["clang", "-fsyntax-only", path])
 c_syntax_clang.dependencies = {"clang"}
 c_syntax_clang.url = "http://clang.llvm.org/"
+c_syntax_clang.executables = {"clang"}
 
 
 def splint(path):
@@ -546,6 +555,7 @@ def splint(path):
     return status, fill3.Text(stdout + stderr)
 splint.dependencies = {"splint"}
 splint.url = "splint"
+splint.executables = {"splint"}
 
 
 _OBJDUMP_URL = "https://en.wikipedia.org/wiki/Objdump"
@@ -555,6 +565,7 @@ def objdump_headers(path):
     return _run_command(["objdump", "--all-headers", path], Status.normal)
 objdump_headers.dependencies = {"binutils"}
 objdump_headers.url = _OBJDUMP_URL
+objdump_headers.executables = {"objdump"}
 
 
 def objdump_disassemble(path):
@@ -563,18 +574,21 @@ def objdump_disassemble(path):
         Status.normal)
 objdump_disassemble.dependencies = {"binutils"}
 objdump_disassemble.url = _OBJDUMP_URL
+objdump_disassemble.executables = {"objdump"}
 
 
 def readelf(path):
     return _run_command(["readelf", "--all", path], Status.normal)
 readelf.dependencies = {"binutils"}
 readelf.url = _OBJDUMP_URL
+readelf.executables = {"readelf"}
 
 
 def unzip(path):
     return _run_command(["unzip", "-l", path], Status.normal)
 unzip.dependencies = {"unzip"}
 unzip.url = "unzip"
+unzip.executables = {"unzip"}
 
 
 _TAR_URL = "http://www.gnu.org/software/tar/manual/tar.html"
@@ -584,18 +598,21 @@ def tar_gz(path):
     return _run_command(["tar", "ztvf", path], Status.normal)
 tar_gz.dependencies = {"tar"}
 tar_gz.url = _TAR_URL
+tar_gz.executables = {"tar"}
 
 
 def tar_bz2(path):
     return _run_command(["tar", "jtvf", path], Status.normal)
 tar_bz2.dependencies = {"tar"}
 tar_bz2.url = _TAR_URL
+tar_bz2.executables = {"tar"}
 
 
 def nm(path):
     return _run_command(["nm", "--demangle", path], Status.normal)
 nm.dependencies = {"binutils"}
 nm.url = "https://linux.die.net/man/1/nm"
+nm.executables = {"nm"}
 
 
 def pdf2txt(path):
@@ -603,6 +620,8 @@ def pdf2txt(path):
 pdf2txt.dependencies = {"python-pdfminer"}
 pdf2txt.arch_dependencies = set()
 pdf2txt.url = "python-pdfminer"
+pdf2txt.executables = {"pdf2txt"}
+pdf2txt.missing_in = {"arch", "fedora"}
 
 
 def html_syntax(path):
@@ -612,6 +631,7 @@ def html_syntax(path):
     return status, fill3.Text(stderr)
 html_syntax.dependencies = {"tidy"}
 html_syntax.url = "tidy"
+html_syntax.executables = {"tidy"}
 
 
 def tidy(path):
@@ -619,6 +639,7 @@ def tidy(path):
     return Status.normal, fill3.Text(stdout)
 tidy.dependencies = {"tidy"}
 tidy.url = "tidy"
+tidy.executables = {"tidy"}
 
 
 def html2text(path):
@@ -626,18 +647,21 @@ def html2text(path):
 html2text.dependencies = {"html2text"}
 html2text.arch_dependencies = {"python-html2text"}
 html2text.url = "html2text"
+html2text.executables = {"html2text"}
 
 
 def cpp_syntax_gcc(path):
     return _run_command(["gcc", "-fsyntax-only", path])
 cpp_syntax_gcc.dependencies = {"gcc"}
 cpp_syntax_gcc.url = "https://gcc.gnu.org/"
+cpp_syntax_gcc.executables = {"gcc"}
 
 
 def cpp_syntax_clang(path):
     return _run_command(["clang", "-fsyntax-only", path])
 cpp_syntax_clang.dependencies = {"clang"}
 cpp_syntax_clang.url = "http://clang.llvm.org/"
+cpp_syntax_clang.executables = {"clang"}
 
 
 def bcpp(path):
@@ -647,6 +671,8 @@ def bcpp(path):
 bcpp.dependencies = {"bcpp"}
 bcpp.fedora_dependencies = set()
 bcpp.arch_dependencies = set()
+bcpp.executables = {"bcpp"}
+bcpp.missing_in = {"arch", "fedora"}
 
 
 def uncrustify(path):
@@ -662,13 +688,16 @@ def uncrustify(path):
 uncrustify.dependencies = {"uncrustify"}
 uncrustify.debian_dependencies = set()
 uncrustify.url = "uncrustify"
+uncrustify.executables = {"uncrustify"}
+uncrustify.missing_in = {"debian"}
 
 
 def php5_syntax(path):
     return _run_command(["php", "--syntax-check", path])
 php5_syntax.dependencies = {"php"}
-php5_syntax.debian_dependencies = {"pip3/php"}
 php5_syntax.url = "https://en.wikipedia.org/wiki/PHP"
+php5_syntax.executables = {"php"}
+php5_syntax.missing_in = {"debian"}
 
 
 def _pil_pixels(pil_image):
@@ -879,12 +908,21 @@ TOOLS_FOR_EXTENSIONS = \
     ]
 
 
+def is_tool_in_distribution(tool, distribution):
+    try:
+        return distribution not in tool.missing_in
+    except AttributeError:
+        return tool
+
+
 @functools.lru_cache(maxsize=1)
 def _tools_for_extension():
+    distribution = platform.linux_distribution()[0].lower()
     result = {}
     for extensions, tools in TOOLS_FOR_EXTENSIONS:
         for extension in extensions:
-            result[extension] = tools
+            result[extension] = [tool for tool in tools if
+                                 is_tool_in_distribution(tool, distribution)]
     return result
 
 

@@ -17,7 +17,7 @@ for dependency in tools.dependencies(dist_id):
 cmd_for_dist = {"ubuntu": ["apt-get", "-y", "install"],
                 "debian": ["apt-get", "-y", "install"],
                 "fedora": ["dnf", "-y", "install"],
-                "arch": ["pacman", "-S", "--noconfirm"]}
+                "arch": ["pacman", "-S", "--noconfirm", "--needed"]}
 if pip_deps:
     dist_deps.add("python2-pip" if dist_id == "arch" else "python-pip")
 if pip3_deps:

@@ -12,7 +12,7 @@ function run_in_container {
     shift
     [ -f $CONTAINER ] && OPTION="--image" || OPTION="--directory"
     sudo systemd-nspawn --chdir=/vigil --overlay=$VIGIL_PATH:/vigil \
-	 $OPTION=$CONTAINER $@
+	 $OPTION=$CONTAINER /bin/bash --login -c "$*"
 }
 
 
@@ -70,6 +70,8 @@ for DISTRIBUTION in ubuntu fedora debian archlinux; do
     fi
     echo "Installing vigil's dependencies in $DISTRIBUTION..."
     run_in_container $DISTRIBUTION ./install-dependencies
+    echo "Testing executables are installed in $DISTRIBUTION..."
+    run_in_container $DISTRIBUTION ./tools_test.py ExecutablesTestCase
     echo "Successfully installed vigil's dependencies in $DISTRIBUTION."
     echo "Removing $DISTRIBUTION container..."
     sudo rm -rf $DISTRIBUTION

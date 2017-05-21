@@ -9,7 +9,7 @@ if [ $DIST_ID == "fedora" ]; then
     INSTALL_CMD="dnf -y install"
     INOTIFY_NAME="python3-inotify python3-pygments python3-docopt python3-pillow"
 elif [ $DIST_ID == "arch" ]; then
-    INSTALL_CMD="pacman -S --noconfirm"
+    INSTALL_CMD="pacman -S --noconfirm --needed"
     INOTIFY_NAME="python-pyinotify python-pygments python-docopt python-pillow"
 else
     INSTALL_CMD="apt --yes install"
