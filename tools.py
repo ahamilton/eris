@@ -934,25 +934,12 @@ def tools_all():
 
 
 def tool_dependencies(tool, distribution="ubuntu"):
-    if distribution == "ubuntu":
+    if distribution not in ["ubuntu", "debian", "fedora", "archlinux"]:
+        raise ValueError
+    try:
+        return getattr(tool, distribution + "_dependencies")
+    except AttributeError:
         return tool.dependencies
-    elif distribution == "debian":
-        try:
-            return tool.debian_dependencies
-        except AttributeError:
-            return tool.dependencies
-    elif distribution == "fedora":
-        try:
-            return tool.fedora_dependencies
-        except AttributeError:
-            return tool.dependencies
-    elif distribution == "arch":
-        try:
-            return tool.arch_dependencies
-        except AttributeError:
-            return tool.dependencies
-    else:
-        raise NotImplementedError
 
 
 def dependencies(distribution="ubuntu"):
