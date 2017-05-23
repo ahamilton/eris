@@ -11,7 +11,7 @@ function run_in_container {
     CONTAINER=$1
     shift
     [ -f $CONTAINER ] && OPTION="--image" || OPTION="--directory"
-    sudo systemd-nspawn --chdir=/vigil --overlay=$VIGIL_PATH:/vigil \
+    sudo systemd-nspawn --quiet --chdir=/vigil --overlay=$VIGIL_PATH:/vigil \
 	 $OPTION=$CONTAINER /bin/bash --login -c "$*"
 }
 
@@ -26,6 +26,11 @@ function build_ubuntu {
 }
 
 
+function remove_ubuntu {
+    sudo rm -rf ubuntu
+}
+
+
 function build_fedora {
     IMAGE="Fedora-Cloud-Base-25-1.3.x86_64.raw"
     wget --continue "https://dl.fedoraproject.org/pub/fedora/linux/releases/25/CloudImages/x86_64/images/$IMAGE.xz"
@@ -34,11 +39,21 @@ function build_fedora {
 }
 
 
+function remove_fedora {
+    sudo rm -rf fedora
+}
+
+
 function build_debian {
     sudo debootstrap --components=main,contrib,non-free \
 	 --include=sudo jessie debian.part
     run_in_container debian.part apt-get update
     mv debian.part debian
+}
+
+
+function remove_debian {
+    sudo rm -rf debian
 }
 
 
@@ -58,10 +73,41 @@ function build_archlinux {
 }
 
 
+function remove_archlinux {
+    sudo rm -rf archlinux
+}
+
+
+PIXEL_ISO=2016-12-13-pixel-x86-jessie.iso
+
+
+function build_pixel {
+    wget --continue http://downloads.raspberrypi.org/pixel_x86/images/pixel_x86-2016-12-13/$PIXEL_ISO
+    mkdir iso
+    sudo mount -o loop $PIXEL_ISO iso
+    mkdir lower
+    sudo mount -t squashfs iso/live/filesystem.squashfs lower
+    mkdir upper work pixel
+    sudo mount -t overlay -o lowerdir=lower,upperdir=upper,workdir=work \
+	 overlay pixel
+    sudo rm pixel/etc/resolv.conf
+    echo "nameserver 127.0.0.53" | sudo dd of=pixel/etc/resolv.conf
+    run_in_container pixel apt-get update
+}
+
+
+function remove_pixel {
+    sudo umount pixel && sudo rm -rf upper work pixel
+    sudo umount lower && rmdir lower
+    sudo umount iso && rmdir iso
+    rm $PIXEL_ISO
+}
+
+
 [ $# -eq 0 ] && WORK_PATH=$(mktemp -d --suffix=-vigil) || WORK_PATH="$1"
 sudo apt-get install -y systemd-container debootstrap xz-utils wget
 cd $WORK_PATH
-for DISTRIBUTION in ubuntu fedora debian archlinux; do
+for DISTRIBUTION in ubuntu fedora debian archlinux pixel; do
     if [ -e $DISTRIBUTION ]; then
 	echo "$DISTRIBUTION container already exists."
     else
@@ -74,7 +120,7 @@ for DISTRIBUTION in ubuntu fedora debian archlinux; do
     run_in_container $DISTRIBUTION ./tools_test.py ExecutablesTestCase
     echo "Successfully installed vigil's dependencies in $DISTRIBUTION."
     echo "Removing $DISTRIBUTION container..."
-    sudo rm -rf $DISTRIBUTION
+    remove_$DISTRIBUTION
 done
 rmdir $WORK_PATH
 echo "Finished."
