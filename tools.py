@@ -934,7 +934,7 @@ def tools_all():
 
 
 def tool_dependencies(tool, distribution="ubuntu"):
-    if distribution not in ["ubuntu", "debian", "fedora", "archlinux"]:
+    if distribution not in ["ubuntu", "debian", "fedora", "arch"]:
         raise ValueError
     try:
         return getattr(tool, distribution + "_dependencies")
