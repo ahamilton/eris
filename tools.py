@@ -134,6 +134,14 @@ def _run_command(command, status_text=Status.ok):
     return status, fill3.Text(_fix_input(output))
 
 
+def deps(**kwargs):
+    def decorating_func(func):
+        for key, value in kwargs.items():
+            setattr(func, key, value)
+        return func
+    return decorating_func
+
+
 def _syntax_highlight(text, lexer, style):
     def _parse_rgb(hex_rgb):
         if hex_rgb.startswith("#"):
@@ -210,6 +218,7 @@ def _md5(path):
         return hashlib.md5(file.read()).hexdigest()
 
 
+@deps(deps={"file", "coreutils"}, executables={"file", "sha1sum"})
 def metadata(path):
 
     def detail(value, unit):
@@ -259,10 +268,9 @@ def metadata(path):
                 termstr.Color.light_blue).ljust(16)
             text.append(name + fill3.join("", value) + "\n")
     return (Status.normal, fill3.Text(fill3.join("", text)))
-metadata.dependencies = {"file", "coreutils"}
-metadata.executables = {"file", "sha1sum"}
 
 
+@deps(deps={"python3-pygments"}, arch_deps={"python-pygments"})
 def contents(path):
     root, ext = splitext(path)
     if ext == "":
@@ -270,8 +278,6 @@ def contents(path):
             return Status.normal, fill3.Text(_fix_input(file_.read()))
     else:
         return pygments_(path)
-contents.dependencies = {"python3-pygments"}
-contents.arch_dependencies = {"python-pygments"}
 
 
 def _is_python_syntax_correct(path, python_version):
@@ -297,11 +303,11 @@ def _python_version(path):  # Need a better hueristic
     return "python3"
 
 
+@deps(deps={"python", "python3"},
+      url="https://en.wikipedia.org/wiki/Python_syntax_and_semantics")
 def python_syntax(path):
     python_version = _python_version(path)
     return _run_command([python_version, "-m", "py_compile", path])
-python_syntax.dependencies = {"python", "python3"}
-python_syntax.url = "https://en.wikipedia.org/wiki/Python_syntax_and_semantics"
 
 
 def _has_shebang_line(path):
@@ -314,6 +320,8 @@ def _is_python_test_file(path):
     return path.endswith("_test.py") or path.startswith("test_")
 
 
+@deps(deps={"python", "python3"},
+      url="https://docs.python.org/3/library/unittest.html")
 def python_unittests(path):
     if _is_python_test_file(path):
         command = ([path] if _has_shebang_line(path)
@@ -323,10 +331,11 @@ def python_unittests(path):
         return status, fill3.Text(stdout + "\n" + stderr)
     else:
         return Status.not_applicable, fill3.Text("No tests.")
-python_unittests.dependencies = {"python", "python3"}
-python_unittests.url = "https://docs.python.org/3/library/unittest.html"
 
 
+@deps(deps={"python", "python3"},
+      url="https://docs.python.org/3/library/pydoc.html",
+      executables={"pydoc", "pydoc3"})
 def pydoc(path):
     pydoc_exe = "pydoc3" if _python_version(path) == "python3" else "pydoc"
     status, output = Status.normal, ""
@@ -338,21 +347,14 @@ def pydoc(path):
     if not output.startswith("Help on module"):
         status = Status.not_applicable
     return status, fill3.Text(output)
-pydoc.dependencies = {"python", "python3"}
-pydoc.url = "https://docs.python.org/3/library/pydoc.html"
-pydoc.executables = {"pydoc", "pydoc3"}
 
 
+@deps(deps="mypy", url="mypy", fedora_deps={"python3-mypy"},
+      debian_deps={"pip3/mypy"}, arch_deps={"pip3/mypy"}, executables={"mypy"})
 def mypy(path):
     stdout, stderr, returncode = _do_command(["mypy", path], timeout=TIMEOUT)
     status = Status.ok if returncode == 0 else Status.normal
     return status, fill3.Text(stdout)
-mypy.dependencies = {"mypy"}
-mypy.fedora_dependencies = {"python3-mypy"}
-mypy.debian_dependencies = {"pip3/mypy"}
-mypy.arch_dependencies = {"pip3/mypy"}
-mypy.url = "mypy"
-mypy.executables = {"mypy"}
 
 
 def _colorize_coverage_report(text):
@@ -362,6 +364,9 @@ def _colorize_coverage_report(text):
                            for line in text.splitlines(keepends=True)])
 
 
+@deps(deps={"python-coverage", "python3-coverage"},
+      arch_deps={"python2-coverage", "python-coverage"},
+      url="python3-coverage")
 def python_coverage(path):
     # FIX: Also use test_*.py files.
     test_path = path[:-(len(".py"))] + "_test.py"
@@ -384,59 +389,52 @@ def python_coverage(path):
     else:
         return Status.not_applicable, fill3.Text(
             "No corresponding test file: " + os.path.normpath(test_path))
-python_coverage.dependencies = {"python-coverage", "python3-coverage"}
-python_coverage.arch_dependencies = {"python2-coverage", "python-coverage"}
-python_coverage.url = "python3-coverage"
 
 
+@deps(deps={"python", "python3"},
+      url="https://docs.python.org/3/library/profile.html")
 def python_profile(path):
     stdout, *rest = _do_command([_python_version(path), "-m", "cProfile",
                                  "--sort=cumulative", path], timeout=TIMEOUT)
     return Status.normal, fill3.Text(stdout)
-python_profile.dependencies = {"python", "python3"}
-python_profile.url = "https://docs.python.org/3/library/profile.html"
 
 
+@deps(deps={"python-pycodestyle", "python3-pycodestyle"},
+      fedora_deps={"python2-pycodestyle", "python3-pycodestyle"},
+      debian_deps={"pip/pycodestyle", "pip3/pycodestyle"},
+      arch_deps={"python-pycodestyle", "python2-pycodestyle"},
+      url="python-pycodestyle")
 def pycodestyle(path):
     return _run_command([_python_version(path), "-m", "pycodestyle", path])
-pycodestyle.dependencies = {"python-pycodestyle", "python3-pycodestyle"}
-pycodestyle.fedora_dependencies = {"python2-pycodestyle", "python3-pycodestyle"}
-pycodestyle.debian_dependencies = {"pip/pycodestyle", "pip3/pycodestyle"}
-pycodestyle.arch_dependencies = {"python-pycodestyle", "python2-pycodestyle"}
-pycodestyle.url = "python-pycodestyle"
 
 
+@deps(deps={"pyflakes"}, arch_deps={"python2-pyflakes", "python-pyflakes"},
+      url="pyflakes")
 def pyflakes(path):
     return _run_command([_python_version(path), "-m", "pyflakes", path])
-pyflakes.dependencies = {"pyflakes"}
-pyflakes.arch_dependencies = {"python2-pyflakes", "python-pyflakes"}
-pyflakes.url = "pyflakes"
 
 
+@deps(deps={"pylint", "pylint3"}, fedora_deps={"pylint", "python3-pylint"},
+      arch_deps={"python2-pylint", "python-pylint"},
+      debian_deps={"pip/pylint", "pip3/pylint"}, url="pylint3")
 def pylint(path):
     return _run_command([_python_version(path), "-m", "pylint",
                          "--errors-only", path])
-pylint.dependencies = {"pylint", "pylint3"}
-pylint.fedora_dependencies = {"pylint", "python3-pylint"}
-pylint.arch_dependencies = {"python2-pylint", "python-pylint"}
-pylint.debian_dependencies = {"pip/pylint", "pip3/pylint"}
-pylint.url = "pylint3"
 
 
+@deps(deps=set(), url="https://github.com/ahamilton/vigil/blob/master/gut.py")
 def python_gut(path):
     with open(path) as module_file:
         output = gut.gut_module(module_file.read())
     source_widget = _syntax_highlight_using_path(_fix_input(output), path)
     return Status.normal, source_widget
-python_gut.dependencies = set()
-python_gut.url = "https://github.com/ahamilton/vigil/blob/master/gut.py"
 
 
+@deps(deps={"python", "python3"},
+      url="https://docs.python.org/3/library/modulefinder.html")
 def python_modulefinder(path):
     return _run_command([_python_version(path), "-m", "modulefinder", path],
                         Status.normal)
-python_modulefinder.dependencies = {"python", "python3"}
-python_modulefinder.url = "https://docs.python.org/3/library/modulefinder.html"
 
 
 def _get_mccabe_line_score(line, python_version):
@@ -451,6 +449,8 @@ def _colorize_mccabe(text, python_version):
         for line in text.splitlines(keepends=True)])
 
 
+@deps(deps={"python-mccabe", "python3-mccabe"},
+      arch_deps={"python2-mccabe", "python-mccabe"}, url="python3-mccabe")
 def python_mccabe(path):
     python_version = _python_version(path)
     stdout, *rest = _do_command([python_version, "-m", "mccabe", path])
@@ -460,9 +460,6 @@ def python_mccabe(path):
                         for line in stdout.splitlines())
     status = Status.problem if max_score > 10 else Status.ok
     return status, fill3.Text(_colorize_mccabe(stdout, python_version))
-python_mccabe.dependencies = {"python-mccabe", "python3-mccabe"}
-python_mccabe.arch_dependencies = {"python2-mccabe", "python-mccabe"}
-python_mccabe.url = "python3-mccabe"
 
 
 def python_tidy(path):  # Deps: found on internet?
@@ -470,6 +467,7 @@ def python_tidy(path):  # Deps: found on internet?
     return Status.normal, _syntax_highlight_using_path(stdout, path)
 
 
+@deps(deps=set(), url="https://docs.python.org/3/library/dis.html")
 def disassemble_pyc(path):
     with open(path, "rb") as file_:
         bytecode = file_.read()
@@ -477,10 +475,11 @@ def disassemble_pyc(path):
     dis.dis(bytecode, file=stringio)
     stringio.seek(0)
     return Status.normal, fill3.Text(stringio.read())
-disassemble_pyc.dependencies = set()
-disassemble_pyc.url = "https://docs.python.org/3/library/dis.html"
 
 
+@deps(deps={"python-bandit", "python3-bandit"}, fedora_deps={"bandit"},
+      debian_deps={"pip/bandit", "pip3/bandit"}, arch_deps={"bandit"},
+      url="python3-bandit")
 def bandit(path):
     python_version = _python_version(path)
     stdout, stderr, returncode = _do_command(
@@ -490,11 +489,6 @@ def bandit(path):
     text = stdout if python_version == "python" else _fix_input(eval(stdout))
     text_without_timestamp = "".join(text.splitlines(keepends=True)[2:])
     return status, fill3.Text(text_without_timestamp)
-bandit.dependencies = {"python-bandit", "python3-bandit"}
-bandit.fedora_dependencies = {"bandit"}
-bandit.debian_dependencies = {"pip/bandit", "pip3/bandit"}
-bandit.arch_dependencies = {"bandit"}
-bandit.url = "python3-bandit"
 
 
 def _perl_version(path):
@@ -503,178 +497,139 @@ def _perl_version(path):
     return "perl"
 
 
+@deps(deps={"perl"}, url="https://en.wikipedia.org/wiki/Perl")
 def perl_syntax(path):
     return _run_command([_perl_version(path), "-c", path])
-# perl_syntax.dependencies = {"perl", "rakudo"}
-perl_syntax.dependencies = {"perl"}
-perl_syntax.url = "https://en.wikipedia.org/wiki/Perl"
 
 
+@deps(deps={"perl-doc"}, fedora_deps={"perl-Pod-Perldoc"},
+      arch_deps={"perl-pod-perldoc"}, url="http://perldoc.perl.org/",
+      executables={"perldoc"})
 def perldoc(path):
     stdout, stderr, returncode = _do_command(["perldoc", "-t", path])
     return ((Status.normal, fill3.Text(stdout)) if returncode == 0
             else (Status.not_applicable, fill3.Text(stderr)))
-perldoc.dependencies = {"perl-doc"}
-perldoc.fedora_dependencies = {"perl-Pod-Perldoc"}
-perldoc.arch_dependencies = {"perl-pod-perldoc"}
-perldoc.url = "http://perldoc.perl.org/"
-perldoc.executables = {"perldoc"}
 
 
+@deps(deps={"perltidy"}, arch_deps={"perl-test-perltidy"},
+      url="http://perltidy.sourceforge.net/", executables={"perltidy"})
 def perltidy(path):
     stdout, *rest = _do_command(["perltidy", "-st", path])
     return Status.normal, _syntax_highlight_using_path(stdout, path)
-perltidy.dependencies = {"perltidy"}
-perltidy.arch_dependencies = {"perl-test-perltidy"}
-perltidy.url = "http://perltidy.sourceforge.net/"
-perltidy.executables = {"perltidy"}
 
 
 # def perl6_syntax(path):
 #     return _run_command(["perl6", "-c", path])
-# perl6_syntax.dependencies = {"rakudo"}
+# perl6_syntax.deps={"rakudo"}
 
 
+@deps(deps={"gcc"}, url="https://gcc.gnu.org/", executables={"gcc"})
 def c_syntax_gcc(path):
     return _run_command(["gcc", "-fsyntax-only", path])
-c_syntax_gcc.dependencies = {"gcc"}
-c_syntax_gcc.url = "https://gcc.gnu.org/"
-c_syntax_gcc.executables = {"gcc"}
 
 
+@deps(deps={"clang"}, url="http://clang.llvm.org/", executables={"clang"})
 def c_syntax_clang(path):
     return _run_command(["clang", "-fsyntax-only", path])
-c_syntax_clang.dependencies = {"clang"}
-c_syntax_clang.url = "http://clang.llvm.org/"
-c_syntax_clang.executables = {"clang"}
 
 
+@deps(deps={"splint"}, url="splint", executables={"splint"})
 def splint(path):
     stdout, stderr, returncode = _do_command(["splint", "-preproc", path])
     status = Status.ok if returncode == 0 else Status.problem
     return status, fill3.Text(stdout + stderr)
-splint.dependencies = {"splint"}
-splint.url = "splint"
-splint.executables = {"splint"}
 
 
 _OBJDUMP_URL = "https://en.wikipedia.org/wiki/Objdump"
 
 
+@deps(deps={"binutils"}, url=_OBJDUMP_URL, executables={"objdump"})
 def objdump_headers(path):
     return _run_command(["objdump", "--all-headers", path], Status.normal)
-objdump_headers.dependencies = {"binutils"}
-objdump_headers.url = _OBJDUMP_URL
-objdump_headers.executables = {"objdump"}
 
 
+@deps(deps={"binutils"}, url=_OBJDUMP_URL, executables={"objdump"})
 def objdump_disassemble(path):
     return _run_command(
         ["objdump", "--disassemble", "--reloc", "--dynamic-reloc", path],
         Status.normal)
-objdump_disassemble.dependencies = {"binutils"}
-objdump_disassemble.url = _OBJDUMP_URL
-objdump_disassemble.executables = {"objdump"}
 
 
+@deps(deps={"binutils"}, url=_OBJDUMP_URL, executables={"readelf"})
 def readelf(path):
     return _run_command(["readelf", "--all", path], Status.normal)
-readelf.dependencies = {"binutils"}
-readelf.url = _OBJDUMP_URL
-readelf.executables = {"readelf"}
 
 
+@deps(deps={"unzip"}, url="unzip", executables={"unzip"})
 def unzip(path):
     return _run_command(["unzip", "-l", path], Status.normal)
-unzip.dependencies = {"unzip"}
-unzip.url = "unzip"
-unzip.executables = {"unzip"}
 
 
 _TAR_URL = "http://www.gnu.org/software/tar/manual/tar.html"
 
 
+@deps(deps={"tar"}, url=_TAR_URL, executables={"tar"})
 def tar_gz(path):
     return _run_command(["tar", "ztvf", path], Status.normal)
-tar_gz.dependencies = {"tar"}
-tar_gz.url = _TAR_URL
-tar_gz.executables = {"tar"}
 
 
+@deps(deps={"tar"}, url=_TAR_URL, executables={"tar"})
 def tar_bz2(path):
     return _run_command(["tar", "jtvf", path], Status.normal)
-tar_bz2.dependencies = {"tar"}
-tar_bz2.url = _TAR_URL
-tar_bz2.executables = {"tar"}
 
 
+@deps(deps={"binutils"}, url="https://linux.die.net/man/1/nm",
+      executables={"nm"})
 def nm(path):
     return _run_command(["nm", "--demangle", path], Status.normal)
-nm.dependencies = {"binutils"}
-nm.url = "https://linux.die.net/man/1/nm"
-nm.executables = {"nm"}
 
 
+@deps(deps={"python-pdfminer"}, arch_deps=set(), url="python-pdfminer",
+      executables={"pdf2txt"}, missing_in={"arch", "fedora"})
 def pdf2txt(path):
     return _run_command(["pdf2txt", path], Status.normal)
-pdf2txt.dependencies = {"python-pdfminer"}
-pdf2txt.arch_dependencies = set()
-pdf2txt.url = "python-pdfminer"
-pdf2txt.executables = {"pdf2txt"}
-pdf2txt.missing_in = {"arch", "fedora"}
 
 
+@deps(deps={"tidy"}, url="tidy", executables={"tidy"})
 def html_syntax(path):
     # Maybe only show errors
     stdout, stderr, returncode = _do_command(["tidy", path])
     status = Status.ok if returncode == 0 else Status.problem
     return status, fill3.Text(stderr)
-html_syntax.dependencies = {"tidy"}
-html_syntax.url = "tidy"
-html_syntax.executables = {"tidy"}
 
 
+@deps(deps={"tidy"}, url="tidy", executables={"tidy"})
 def tidy(path):
     stdout, *rest = _do_command(["tidy", path])
     return Status.normal, fill3.Text(stdout)
-tidy.dependencies = {"tidy"}
-tidy.url = "tidy"
-tidy.executables = {"tidy"}
 
 
+@deps(deps={"html2text"}, arch_deps={"python-html2text"}, url="html2text",
+      executables={"html2text"})
 def html2text(path):
     return _run_command(["html2text", path], Status.normal)
-html2text.dependencies = {"html2text"}
-html2text.arch_dependencies = {"python-html2text"}
-html2text.url = "html2text"
-html2text.executables = {"html2text"}
 
 
+@deps(deps={"gcc"}, url="https://gcc.gnu.org/", executables={"gcc"})
 def cpp_syntax_gcc(path):
     return _run_command(["gcc", "-fsyntax-only", path])
-cpp_syntax_gcc.dependencies = {"gcc"}
-cpp_syntax_gcc.url = "https://gcc.gnu.org/"
-cpp_syntax_gcc.executables = {"gcc"}
 
 
+@deps(deps={"clang"}, url="http://clang.llvm.org/", executables={"clang"})
 def cpp_syntax_clang(path):
     return _run_command(["clang", "-fsyntax-only", path])
-cpp_syntax_clang.dependencies = {"clang"}
-cpp_syntax_clang.url = "http://clang.llvm.org/"
-cpp_syntax_clang.executables = {"clang"}
 
 
+@deps(deps={"bcpp"}, fedora_deps=set(), arch_deps=set(), executables={"bcpp"},
+      missing_in={"arch", "fedora"})
 def bcpp(path):
     stdout, stderr, returncode = _do_command(["bcpp", "-fi", path])
     status = Status.normal if returncode == 0 else Status.problem
     return status, _syntax_highlight_using_path(stdout, path)
-bcpp.dependencies = {"bcpp"}
-bcpp.fedora_dependencies = set()
-bcpp.arch_dependencies = set()
-bcpp.executables = {"bcpp"}
-bcpp.missing_in = {"arch", "fedora"}
 
 
+@deps(deps={"uncrustify"}, debian_deps=set(), url="uncrustify",
+      executables={"uncrustify"}, missing_in={"debian"})
 def uncrustify(path):
     with tempfile.TemporaryDirectory() as temp_dir:
         config_path = os.path.join(temp_dir, "uncrustify.cfg")
@@ -685,19 +640,12 @@ def uncrustify(path):
                 ["uncrustify", "-c", config_path, "-f", path])
     status = Status.normal if returncode == 0 else Status.problem
     return status, _syntax_highlight_using_path(stdout, path)
-uncrustify.dependencies = {"uncrustify"}
-uncrustify.debian_dependencies = set()
-uncrustify.url = "uncrustify"
-uncrustify.executables = {"uncrustify"}
-uncrustify.missing_in = {"debian"}
 
 
+@deps(deps={"php"}, url="https://en.wikipedia.org/wiki/PHP",
+      executables={"php"}, missing_in={"debian"})
 def php5_syntax(path):
     return _run_command(["php", "--syntax-check", path])
-php5_syntax.dependencies = {"php"}
-php5_syntax.url = "https://en.wikipedia.org/wiki/PHP"
-php5_syntax.executables = {"php"}
-php5_syntax.missing_in = {"debian"}
 
 
 def _pil_pixels(pil_image):
@@ -716,6 +664,8 @@ def _resize_image(image, new_width):
                         PIL.Image.ANTIALIAS)
 
 
+@deps(deps={"python3-pil"}, fedora_deps={"python3-pillow"},
+      arch_deps={"python-pillow"}, url="python3-pil")
 def pil(path):
     with open(path, "rb") as image_file:
         with PIL.Image.open(image_file).convert("RGB") as image:
@@ -730,12 +680,10 @@ def pil(path):
                     row_style.extend([style, style])
                 result.append(termstr.TermStr(text, tuple(row_style)))
     return Status.normal, fill3.Fixed(result)
-pil.dependencies = {"python3-pil"}
-pil.fedora_dependencies = {"python3-pillow"}
-pil.arch_dependencies = {"python-pillow"}
-pil.url = "python3-pil"
 
 
+@deps(deps={"python3-pil"}, fedora_deps={"python3-pillow"},
+      arch_deps={"python-pillow"}, url="python3-pil")
 def pil_half(path):
     with open(path, "rb") as image_file:
         with PIL.Image.open(image_file).convert("RGB") as image:
@@ -748,13 +696,10 @@ def pil_half(path):
             result = fill3.Fixed([
                 termstr.TermStr(text, tuple(termstr.CharStyle(
                     fg_color=top_pixel, bg_color=bottom_pixel)
-                    for top_pixel, bottom_pixel in zip(rows[index], rows[index+1])))
+                    for top_pixel, bottom_pixel in zip(rows[index],
+                                                       rows[index+1])))
                 for index in range(0, image.height, 2)])
     return Status.normal, result
-pil_half.dependencies = {"python3-pil"}
-pil_half.fedora_dependencies = {"python3-pillow"}
-pil_half.arch_dependencies = {"python-pillow"}
-pil_half.url = "python3-pil"
 
 
 #############################
@@ -885,9 +830,10 @@ IMAGE_EXTENSIONS = ["png", "jpg", "gif", "bmp", "ppm", "tiff", "tga"]
 
 TOOLS_FOR_EXTENSIONS = \
     [
-        (["py"], [python_syntax, python_unittests, pydoc, mypy, python_coverage,
-                  python_profile, pycodestyle, pyflakes, pylint, python_gut,
-                  python_modulefinder, python_mccabe, bandit]),
+        (["py"], [python_syntax, python_unittests, pydoc, mypy,
+                  python_coverage, python_profile, pycodestyle, pyflakes,
+                  pylint, python_gut, python_modulefinder, python_mccabe,
+                  bandit]),
         (["pyc"], [disassemble_pyc]),
         (["pl", "pm", "t"], [perl_syntax, perldoc, perltidy]),
         # (["p6", "pm6"], [perl6_syntax, perldoc]),
@@ -937,9 +883,9 @@ def tool_dependencies(tool, distribution="ubuntu"):
     if distribution not in ["ubuntu", "debian", "fedora", "arch"]:
         raise ValueError
     try:
-        return getattr(tool, distribution + "_dependencies")
+        return getattr(tool, distribution + "_deps")
     except AttributeError:
-        return tool.dependencies
+        return tool.deps
 
 
 def dependencies(distribution="ubuntu"):
@@ -1018,7 +964,8 @@ def tool_name_colored(tool, path):
 
 @functools.lru_cache()
 def get_homepage_of_package(package):
-    line = subprocess.getoutput("dpkg-query --status %s | grep Homepage" % package)
+    line = subprocess.getoutput("dpkg-query --status %s | grep Homepage"
+                                % package)
     return line.split()[1]
 
 

@@ -310,8 +310,7 @@ class Summary:
 
     def appearance(self, dimensions):
         width, height = dimensions
-        x, y = self.cursor_position()
-        screen_x, screen_y = x, y
+        screen_x, screen_y = self.cursor_position()
         width, height = width - 1, height - 1  # Minus one for the scrollbars
         scroll_y = (screen_y // height) * height
         self._view_widget.position = ((screen_x // width) * width, scroll_y)
