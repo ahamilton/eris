@@ -113,8 +113,8 @@ class Entry(collections.UserList):
                 self.widget[self.highlighted] = self._get_cursor()
             new_appearance = self.widget.appearance_min()
             path = tools.path_colored(self.path)
-            padding = " " * (self.summary._max_path_length - len(path) + 1)
-            new_appearance[0] = path + padding + new_appearance[0]
+            padding = " " * (self.summary._max_width - len(self.widget) + 1)
+            new_appearance[0] = new_appearance[0] + padding + path
             self.appearance_cache = appearance = new_appearance
         return appearance
 
@@ -311,7 +311,7 @@ class Summary:
     def appearance(self, dimensions):
         width, height = dimensions
         x, y = self.cursor_position()
-        screen_x, screen_y = self._max_path_length + 1 + x, y
+        screen_x, screen_y = x, y
         width, height = width - 1, height - 1  # Minus one for the scrollbars
         scroll_y = (screen_y // height) * height
         self._view_widget.position = ((screen_x // width) * width, scroll_y)
@@ -766,8 +766,7 @@ class Screen:
             return
         view_x, view_y = self._summary._view_widget.portal.position
         spacer = 1
-        column_index = (x - self._summary._max_path_length - spacer -
-                        border_width + view_x)
+        column_index = x - border_width + view_x
         row_index = y - border_width + view_y
         if row_index >= len(self._summary._column):
             return
