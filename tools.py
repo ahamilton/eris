@@ -16,7 +16,6 @@ import math
 import os
 import os.path
 import pickle
-import platform
 import pwd
 import stat
 import subprocess
@@ -24,6 +23,7 @@ import tempfile
 import time
 import traceback
 
+import distro
 import PIL.Image
 import pygments
 import pygments.lexers
@@ -270,7 +270,8 @@ def metadata(path):
     return (Status.normal, fill3.Text(fill3.join("", text)))
 
 
-@deps(deps={"python3-pygments"}, arch_deps={"python-pygments"})
+@deps(deps={"python3-pygments"}, arch_deps={"python-pygments"},
+      opensuse_deps={"python3-Pygments"})
 def contents(path):
     root, ext = splitext(path)
     if ext == "":
@@ -349,8 +350,9 @@ def pydoc(path):
     return status, fill3.Text(output)
 
 
-@deps(deps="mypy", url="mypy", fedora_deps={"python3-mypy"},
-      debian_deps={"pip3/mypy"}, arch_deps={"pip3/mypy"}, executables={"mypy"})
+@deps(deps={"mypy"}, url="mypy", fedora_deps={"python3-mypy"},
+      debian_deps={"pip3/mypy"}, arch_deps={"pip3/mypy"},
+      opensuse_deps={"pip3/mypy"}, executables={"mypy"})
 def mypy(path):
     stdout, stderr, returncode = _do_command(["mypy", path], timeout=TIMEOUT)
     status = Status.ok if returncode == 0 else Status.normal
@@ -366,6 +368,7 @@ def _colorize_coverage_report(text):
 
 @deps(deps={"python-coverage", "python3-coverage"},
       arch_deps={"python2-coverage", "python-coverage"},
+      opensuse_deps={"python2-coverage", "python3-coverage"},
       url="python3-coverage")
 def python_coverage(path):
     # FIX: Also use test_*.py files.
@@ -403,26 +406,28 @@ def python_profile(path):
       fedora_deps={"python2-pycodestyle", "python3-pycodestyle"},
       debian_deps={"pip/pycodestyle", "pip3/pycodestyle"},
       arch_deps={"python-pycodestyle", "python2-pycodestyle"},
+      opensuse_deps={"python2-pycodestyle", "python3-pycodestyle"},
       url="python-pycodestyle")
 def pycodestyle(path):
     return _run_command([_python_version(path), "-m", "pycodestyle", path])
 
 
 @deps(deps={"pyflakes"}, arch_deps={"python2-pyflakes", "python-pyflakes"},
-      url="pyflakes")
+      opensuse_deps={"python2-pyflakes", "python3-pyflakes"}, url="pyflakes")
 def pyflakes(path):
     return _run_command([_python_version(path), "-m", "pyflakes", path])
 
 
 @deps(deps={"pylint", "pylint3"}, fedora_deps={"pylint", "python3-pylint"},
       arch_deps={"python2-pylint", "python-pylint"},
+      opensuse_deps={"python2-pylint", "python3-pylint"},
       debian_deps={"pip/pylint", "pip3/pylint"}, url="pylint3")
 def pylint(path):
     return _run_command([_python_version(path), "-m", "pylint",
                          "--errors-only", path])
 
 
-@deps(deps=set(), url="https://github.com/ahamilton/vigil/blob/master/gut.py")
+@deps(url="https://github.com/ahamilton/vigil/blob/master/gut.py")
 def python_gut(path):
     with open(path) as module_file:
         output = gut.gut_module(module_file.read())
@@ -450,7 +455,8 @@ def _colorize_mccabe(text, python_version):
 
 
 @deps(deps={"python-mccabe", "python3-mccabe"},
-      arch_deps={"python2-mccabe", "python-mccabe"}, url="python3-mccabe")
+      arch_deps={"python2-mccabe", "python-mccabe"},
+      opensuse_deps={"python2-mccabe", "python3-mccabe"}, url="python3-mccabe")
 def python_mccabe(path):
     python_version = _python_version(path)
     stdout, *rest = _do_command([python_version, "-m", "mccabe", path])
@@ -467,7 +473,7 @@ def python_tidy(path):  # Deps: found on internet?
     return Status.normal, _syntax_highlight_using_path(stdout, path)
 
 
-@deps(deps=set(), url="https://docs.python.org/3/library/dis.html")
+@deps(url="https://docs.python.org/3/library/dis.html")
 def disassemble_pyc(path):
     with open(path, "rb") as file_:
         bytecode = file_.read()
@@ -479,6 +485,7 @@ def disassemble_pyc(path):
 
 @deps(deps={"python-bandit", "python3-bandit"}, fedora_deps={"bandit"},
       debian_deps={"pip/bandit", "pip3/bandit"}, arch_deps={"bandit"},
+      opensuse_deps={"pip/bandit", "pip3/bandit"},
       url="python3-bandit")
 def bandit(path):
     python_version = _python_version(path)
@@ -512,6 +519,7 @@ def perldoc(path):
 
 
 @deps(deps={"perltidy"}, arch_deps={"perl-test-perltidy"},
+      opensuse_deps={"perl-Test-PerlTidy"},
       url="http://perltidy.sourceforge.net/", executables={"perltidy"})
 def perltidy(path):
     stdout, *rest = _do_command(["perltidy", "-st", path])
@@ -585,7 +593,7 @@ def nm(path):
 
 
 @deps(deps={"python-pdfminer"}, arch_deps=set(), url="python-pdfminer",
-      executables={"pdf2txt"}, missing_in={"arch", "fedora"})
+      executables={"pdf2txt"}, missing_in={"arch", "fedora", "opensuse"})
 def pdf2txt(path):
     return _run_command(["pdf2txt", path], Status.normal)
 
@@ -621,7 +629,7 @@ def cpp_syntax_clang(path):
 
 
 @deps(deps={"bcpp"}, fedora_deps=set(), arch_deps=set(), executables={"bcpp"},
-      missing_in={"arch", "fedora"})
+      missing_in={"arch", "fedora", "opensuse"})
 def bcpp(path):
     stdout, stderr, returncode = _do_command(["bcpp", "-fi", path])
     status = Status.normal if returncode == 0 else Status.problem
@@ -642,8 +650,9 @@ def uncrustify(path):
     return status, _syntax_highlight_using_path(stdout, path)
 
 
-@deps(deps={"php"}, url="https://en.wikipedia.org/wiki/PHP",
-      executables={"php"}, missing_in={"debian"})
+@deps(deps={"php"}, opensuse_deps={"php5"},
+      url="https://en.wikipedia.org/wiki/PHP", executables={"php"},
+      missing_in={"debian"})
 def php5_syntax(path):
     return _run_command(["php", "--syntax-check", path])
 
@@ -665,7 +674,8 @@ def _resize_image(image, new_width):
 
 
 @deps(deps={"python3-pil"}, fedora_deps={"python3-pillow"},
-      arch_deps={"python-pillow"}, url="python3-pil")
+      arch_deps={"python-pillow"}, opensuse_deps={"python3-Pillow"},
+      url="python3-pil")
 def pil(path):
     with open(path, "rb") as image_file:
         with PIL.Image.open(image_file).convert("RGB") as image:
@@ -683,7 +693,8 @@ def pil(path):
 
 
 @deps(deps={"python3-pil"}, fedora_deps={"python3-pillow"},
-      arch_deps={"python-pillow"}, url="python3-pil")
+      arch_deps={"python-pillow"}, opensuse_deps={"python3-Pillow"},
+      url="python3-pil")
 def pil_half(path):
     with open(path, "rb") as image_file:
         with PIL.Image.open(image_file).convert("RGB") as image:
@@ -863,7 +874,7 @@ def is_tool_in_distribution(tool, distribution):
 
 @functools.lru_cache(maxsize=1)
 def _tools_for_extension():
-    distribution = platform.linux_distribution()[0].lower()
+    distribution = distro.id()
     result = {}
     for extensions, tools in TOOLS_FOR_EXTENSIONS:
         for extension in extensions:
@@ -880,12 +891,13 @@ def tools_all():
 
 
 def tool_dependencies(tool, distribution="ubuntu"):
-    if distribution not in ["ubuntu", "debian", "fedora", "arch"]:
-        raise ValueError
     try:
         return getattr(tool, distribution + "_deps")
     except AttributeError:
-        return tool.deps
+        try:
+            return tool.deps
+        except AttributeError:
+            return set()
 
 
 def dependencies(distribution="ubuntu"):

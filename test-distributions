@@ -7,6 +7,21 @@ set -e
 VIGIL_PATH=$(realpath $(dirname $0))
 
 
+function mount_squashfs_iso {
+    mkdir iso && sudo mount -o loop $1 iso
+    mkdir lower && sudo mount -t squashfs iso/$2 lower
+    mkdir upper work $3 && sudo mount -t overlay \
+	  -o lowerdir=lower,upperdir=upper,workdir=work overlay $3
+}
+
+
+function umount_squashfs_iso {
+    sudo umount $1 && sudo rm -rf upper work $1
+    sudo umount lower && rmdir lower
+    sudo umount iso && rmdir iso
+}
+
+
 function run_in_container {
     CONTAINER=$1
     shift
@@ -78,18 +93,28 @@ function remove_archlinux {
 }
 
 
-PIXEL_ISO=2016-12-13-pixel-x86-jessie.iso
+OPENSUSE_ISO="openSUSE-Tumbleweed-GNOME-Live-x86_64-Current.iso"
+
+
+function build_opensuse {
+    wget --continue "https://download.opensuse.org/tumbleweed/iso/$OPENSUSE_ISO"
+    mount_squashfs_iso $OPENSUSE_ISO \
+        "openSUSE-tumbleweed-livecd-gnome-read-only.x86_64-2.8.0" opensuse
+}
+
+
+function remove_opensuse {
+    umount_squashfs_iso opensuse
+    rm $OPENSUSE_ISO
+}
+
+
+PIXEL_ISO="2016-12-13-pixel-x86-jessie.iso"
 
 
 function build_pixel {
-    wget --continue http://downloads.raspberrypi.org/pixel_x86/images/pixel_x86-2016-12-13/$PIXEL_ISO
-    mkdir iso
-    sudo mount -o loop $PIXEL_ISO iso
-    mkdir lower
-    sudo mount -t squashfs iso/live/filesystem.squashfs lower
-    mkdir upper work pixel
-    sudo mount -t overlay -o lowerdir=lower,upperdir=upper,workdir=work \
-	 overlay pixel
+    wget --continue "http://downloads.raspberrypi.org/pixel_x86/images/pixel_x86-2016-12-13/$PIXEL_ISO"
+    mount_squashfs_iso $PIXEL_ISO live/filesystem.squashfs pixel
     sudo rm pixel/etc/resolv.conf
     echo "nameserver 127.0.0.53" | sudo dd of=pixel/etc/resolv.conf
     run_in_container pixel apt-get update
@@ -97,9 +122,7 @@ function build_pixel {
 
 
 function remove_pixel {
-    sudo umount pixel && sudo rm -rf upper work pixel
-    sudo umount lower && rmdir lower
-    sudo umount iso && rmdir iso
+    umount_squashfs_iso pixel
     rm $PIXEL_ISO
 }
 
@@ -107,7 +130,7 @@ function remove_pixel {
 [ $# -eq 0 ] && WORK_PATH=$(mktemp -d --suffix=-vigil) || WORK_PATH="$1"
 sudo apt-get install -y systemd-container debootstrap xz-utils wget
 cd $WORK_PATH
-for DISTRIBUTION in ubuntu fedora debian archlinux pixel; do
+for DISTRIBUTION in ubuntu fedora debian archlinux opensuse pixel; do
     if [ -e $DISTRIBUTION ]; then
 	echo "$DISTRIBUTION container already exists."
     else
