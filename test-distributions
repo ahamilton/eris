@@ -75,24 +75,21 @@ function remove_debian {
 }
 
 
+ARCHLINUX_ISO="archlinux-2017.06.01-x86_64.iso"
+
+
 function build_archlinux {
-    ARCHIVE="archlinux-bootstrap-2017.05.01-x86_64.tar.gz"
-    wget --continue "http://mirrors.kernel.org/archlinux/iso/latest/$ARCHIVE"
-    tar -zxf $ARCHIVE
-    mv root.x86_64 archlinux.part
-    run_in_container archlinux.part pacman-key --init
-    run_in_container archlinux.part pacman-key --populate archlinux
-    echo "Server = http://mirror.rackspace.com/archlinux/\$repo/os/\$arch" > \
-	 archlinux.part/etc/pacman.d/mirrorlist
-    run_in_container archlinux.part pacman -Syyu --noconfirm
-    run_in_container archlinux.part pacman -S --noconfirm sudo grep
-    rm $ARCHIVE
-    mv archlinux.part archlinux
+    wget --continue "http://mirrors.kernel.org/archlinux/iso/2017.06.01/$ARCHLINUX_ISO"
+    mount_squashfs_iso $ARCHLINUX_ISO "arch/x86_64/airootfs.sfs" archlinux
+    run_in_container archlinux pacman-key --init
+    run_in_container archlinux pacman-key --populate archlinux
+    run_in_container archlinux pacman -Syyu --noconfirm
 }
 
 
 function remove_archlinux {
-    sudo rm -rf archlinux
+    umount_squashfs_iso archlinux
+    rm $ARCHLINUX_ISO
 }
 
 
