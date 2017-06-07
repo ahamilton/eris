@@ -4,12 +4,11 @@
 # Licensed under the Artistic License 2.0.
 
 
-import distro
 import subprocess
 import tools
 
 
-dist_id = distro.id()
+dist_id = tools.get_distro_id()
 pip_deps, pip3_deps, dist_deps = set(), set(), set()
 for dependency in tools.dependencies(dist_id):
     if "/" in dependency:

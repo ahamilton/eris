@@ -23,7 +23,6 @@ import tempfile
 import time
 import traceback
 
-import distro
 import PIL.Image
 import pygments
 import pygments.lexers
@@ -878,9 +877,17 @@ def is_tool_in_distribution(tool, distribution):
         return tool
 
 
+def get_distro_id():
+    with open("/etc/os-release") as os_release_file:
+        for line in os_release_file:
+            if line.startswith("ID="):
+                return line[len("ID="):].strip()
+    raise AssertionError
+
+
 @functools.lru_cache(maxsize=1)
 def _tools_for_extension():
-    distribution = distro.id()
+    distribution = get_distro_id()
     result = {}
     for extensions, tools in TOOLS_FOR_EXTENSIONS:
         for extension in extensions:
