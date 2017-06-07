@@ -25,6 +25,11 @@ elif [ $DIST_ID == "debian" ]; then
     DEPS="python3-pyinotify python3-pygments python3-docopt python3-pillow"
     sudo apt --yes install python3-pip
     sudo pip3 install distro
+elif [ $DIST_ID == "gentoo" ]; then
+    INSTALL_CMD="emerge --noreplace"
+    DEPS="pyinotify pygments docopt pillow"
+    emerge --noreplace dev-python/pip
+    sudo pip3 install --user distro
 else
     INSTALL_CMD="apt --yes install"
     DEPS="python3-distro python3-pyinotify python3-pygments python3-docopt python3-pillow"

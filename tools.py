@@ -271,7 +271,7 @@ def metadata(path):
 
 
 @deps(deps={"python3-pygments"}, arch_deps={"python-pygments"},
-      opensuse_deps={"python3-Pygments"})
+      opensuse_deps={"python3-Pygments"}, gentoo_deps={"pygments"})
 def contents(path):
     root, ext = splitext(path)
     if ext == "":
@@ -304,7 +304,7 @@ def _python_version(path):  # Need a better hueristic
     return "python3"
 
 
-@deps(deps={"python", "python3"},
+@deps(deps={"python", "python3"}, gentoo_deps={"python"},
       url="https://en.wikipedia.org/wiki/Python_syntax_and_semantics")
 def python_syntax(path):
     python_version = _python_version(path)
@@ -321,7 +321,7 @@ def _is_python_test_file(path):
     return path.endswith("_test.py") or path.startswith("test_")
 
 
-@deps(deps={"python", "python3"},
+@deps(deps={"python", "python3"}, gentoo_deps={"python"},
       url="https://docs.python.org/3/library/unittest.html")
 def python_unittests(path):
     if _is_python_test_file(path):
@@ -336,7 +336,7 @@ def python_unittests(path):
 
 @deps(deps={"python", "python3"},
       url="https://docs.python.org/3/library/pydoc.html",
-      executables={"pydoc", "pydoc3"})
+      executables={"pydoc", "pydoc3"}, missing_in={"gentoo"})
 def pydoc(path):
     pydoc_exe = "pydoc3" if _python_version(path) == "python3" else "pydoc"
     status, output = Status.normal, ""
@@ -352,7 +352,7 @@ def pydoc(path):
 
 @deps(deps={"mypy"}, url="mypy", fedora_deps={"python3-mypy"},
       debian_deps={"pip3/mypy"}, arch_deps={"pip3/mypy"},
-      opensuse_deps={"pip3/mypy"}, executables={"mypy"})
+      opensuse_deps={"pip3/mypy"}, executables={"mypy"}, missing_in={"gentoo"})
 def mypy(path):
     stdout, stderr, returncode = _do_command(["mypy", path], timeout=TIMEOUT)
     status = Status.ok if returncode == 0 else Status.normal
@@ -369,7 +369,7 @@ def _colorize_coverage_report(text):
 @deps(deps={"python-coverage", "python3-coverage"},
       arch_deps={"python2-coverage", "python-coverage"},
       opensuse_deps={"python2-coverage", "python3-coverage"},
-      url="python3-coverage")
+      gentoo_deps={"coverage"}, url="python3-coverage")
 def python_coverage(path):
     # FIX: Also use test_*.py files.
     test_path = path[:-(len(".py"))] + "_test.py"
@@ -394,7 +394,7 @@ def python_coverage(path):
             "No corresponding test file: " + os.path.normpath(test_path))
 
 
-@deps(deps={"python", "python3"},
+@deps(deps={"python", "python3"}, gentoo_deps={"python"},
       url="https://docs.python.org/3/library/profile.html")
 def python_profile(path):
     stdout, *rest = _do_command([_python_version(path), "-m", "cProfile",
@@ -407,13 +407,14 @@ def python_profile(path):
       debian_deps={"pip/pycodestyle", "pip3/pycodestyle"},
       arch_deps={"python-pycodestyle", "python2-pycodestyle"},
       opensuse_deps={"python2-pycodestyle", "python3-pycodestyle"},
-      url="python-pycodestyle")
+      gentoo_deps={"pycodestyle"}, url="python-pycodestyle")
 def pycodestyle(path):
     return _run_command([_python_version(path), "-m", "pycodestyle", path])
 
 
 @deps(deps={"pyflakes"}, arch_deps={"python2-pyflakes", "python-pyflakes"},
-      opensuse_deps={"python2-pyflakes", "python3-pyflakes"}, url="pyflakes")
+      opensuse_deps={"python2-pyflakes", "python3-pyflakes"}, url="pyflakes",
+      missing_in={"gentoo"})
 def pyflakes(path):
     return _run_command([_python_version(path), "-m", "pyflakes", path])
 
@@ -421,7 +422,8 @@ def pyflakes(path):
 @deps(deps={"pylint", "pylint3"}, fedora_deps={"pylint", "python3-pylint"},
       arch_deps={"python2-pylint", "python-pylint"},
       opensuse_deps={"python2-pylint", "python3-pylint"},
-      debian_deps={"pip/pylint", "pip3/pylint"}, url="pylint3")
+      debian_deps={"pip/pylint", "pip3/pylint"}, gentoo_deps={"pylint"},
+      url="pylint3")
 def pylint(path):
     return _run_command([_python_version(path), "-m", "pylint",
                          "--errors-only", path])
@@ -435,7 +437,7 @@ def python_gut(path):
     return Status.normal, source_widget
 
 
-@deps(deps={"python", "python3"},
+@deps(deps={"python", "python3"}, gentoo_deps={"python"},
       url="https://docs.python.org/3/library/modulefinder.html")
 def python_modulefinder(path):
     return _run_command([_python_version(path), "-m", "modulefinder", path],
@@ -456,7 +458,8 @@ def _colorize_mccabe(text, python_version):
 
 @deps(deps={"python-mccabe", "python3-mccabe"},
       arch_deps={"python2-mccabe", "python-mccabe"},
-      opensuse_deps={"python2-mccabe", "python3-mccabe"}, url="python3-mccabe")
+      opensuse_deps={"python2-mccabe", "python3-mccabe"},
+      gentoo_deps={"mccabe"}, url="python3-mccabe")
 def python_mccabe(path):
     python_version = _python_version(path)
     stdout, *rest = _do_command([python_version, "-m", "mccabe", path])
@@ -485,7 +488,7 @@ def disassemble_pyc(path):
 
 @deps(deps={"python-bandit", "python3-bandit"}, fedora_deps={"bandit"},
       debian_deps={"pip/bandit", "pip3/bandit"}, arch_deps={"bandit"},
-      opensuse_deps={"pip/bandit", "pip3/bandit"},
+      opensuse_deps={"pip/bandit", "pip3/bandit"}, gentoo_deps={"bandit"},
       url="python3-bandit")
 def bandit(path):
     python_version = _python_version(path)
@@ -510,8 +513,8 @@ def perl_syntax(path):
 
 
 @deps(deps={"perl-doc"}, fedora_deps={"perl-Pod-Perldoc"},
-      arch_deps={"perl-pod-perldoc"}, url="http://perldoc.perl.org/",
-      executables={"perldoc"})
+      arch_deps={"perl-pod-perldoc"}, gentoo_deps={"perl-IO"},
+      url="http://perldoc.perl.org/", executables={"perldoc"})
 def perldoc(path):
     stdout, stderr, returncode = _do_command(["perldoc", "-t", path])
     return ((Status.normal, fill3.Text(stdout)) if returncode == 0
@@ -519,7 +522,7 @@ def perldoc(path):
 
 
 @deps(deps={"perltidy"}, arch_deps={"perl-test-perltidy"},
-      opensuse_deps={"perl-Test-PerlTidy"},
+      opensuse_deps={"perl-Test-PerlTidy"}, gentoo_deps={"Perl-Tidy"},
       url="http://perltidy.sourceforge.net/", executables={"perltidy"})
 def perltidy(path):
     stdout, *rest = _do_command(["perltidy", "-st", path])
@@ -536,7 +539,8 @@ def c_syntax_gcc(path):
     return _run_command(["gcc", "-fsyntax-only", path])
 
 
-@deps(deps={"clang"}, url="http://clang.llvm.org/", executables={"clang"})
+@deps(deps={"clang"}, url="http://clang.llvm.org/", executables={"clang"},
+      missing_in={"gentoo"})
 def c_syntax_clang(path):
     return _run_command(["clang", "-fsyntax-only", path])
 
@@ -593,12 +597,13 @@ def nm(path):
 
 
 @deps(deps={"python-pdfminer"}, arch_deps=set(), url="python-pdfminer",
-      executables={"pdf2txt"}, missing_in={"arch", "fedora", "opensuse"})
+      executables={"pdf2txt"}, missing_in={"arch", "fedora", "opensuse",
+                                           "gentoo"})
 def pdf2txt(path):
     return _run_command(["pdf2txt", path], Status.normal)
 
 
-@deps(deps={"tidy"}, url="tidy", executables={"tidy"})
+@deps(deps={"tidy"}, url="tidy", executables={"tidy"}, missing_in={"gentoo"})
 def html_syntax(path):
     # Maybe only show errors
     stdout, stderr, returncode = _do_command(["tidy", path])
@@ -606,14 +611,14 @@ def html_syntax(path):
     return status, fill3.Text(stderr)
 
 
-@deps(deps={"tidy"}, url="tidy", executables={"tidy"})
+@deps(deps={"tidy"}, url="tidy", executables={"tidy"}, missing_in={"gentoo"})
 def tidy(path):
     stdout, *rest = _do_command(["tidy", path])
     return Status.normal, fill3.Text(stdout)
 
 
-@deps(deps={"html2text"}, arch_deps={"python-html2text"}, url="html2text",
-      executables={"html2text"})
+@deps(deps={"html2text"}, arch_deps={"python-html2text"},
+      url="html2text", executables={"html2text"}, missing_in={"gentoo"})
 def html2text(path):
     return _run_command(["html2text", path], Status.normal)
 
@@ -623,7 +628,8 @@ def cpp_syntax_gcc(path):
     return _run_command(["gcc", "-fsyntax-only", path])
 
 
-@deps(deps={"clang"}, url="http://clang.llvm.org/", executables={"clang"})
+@deps(deps={"clang"}, url="http://clang.llvm.org/", executables={"clang"},
+      missing_in={"gentoo"})
 def cpp_syntax_clang(path):
     return _run_command(["clang", "-fsyntax-only", path])
 
@@ -675,7 +681,7 @@ def _resize_image(image, new_width):
 
 @deps(deps={"python3-pil"}, fedora_deps={"python3-pillow"},
       arch_deps={"python-pillow"}, opensuse_deps={"python3-Pillow"},
-      url="python3-pil")
+      gentoo_deps={"pillow"}, url="python3-pil")
 def pil(path):
     with open(path, "rb") as image_file:
         with PIL.Image.open(image_file).convert("RGB") as image:
@@ -694,7 +700,7 @@ def pil(path):
 
 @deps(deps={"python3-pil"}, fedora_deps={"python3-pillow"},
       arch_deps={"python-pillow"}, opensuse_deps={"python3-Pillow"},
-      url="python3-pil")
+      gentoo_deps={"pillow"}, url="python3-pil")
 def pil_half(path):
     with open(path, "rb") as image_file:
         with PIL.Image.open(image_file).convert("RGB") as image:

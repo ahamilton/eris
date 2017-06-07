@@ -127,10 +127,27 @@ function remove_pixel {
 }
 
 
+function build_gentoo {
+    TAR_FILE="stage3-amd64-20170525.tar.bz2"
+    wget --continue "http://distfiles.gentoo.org/releases/amd64/autobuilds/20170525/$TAR_FILE"
+    mkdir -p gentoo.part
+    sudo tar --directory=gentoo.part -xjf $TAR_FILE
+    rm $TAR_FILE
+    run_in_container gentoo.part emerge --sync
+    run_in_container gentoo.part emerge sudo
+    mv gentoo.part gentoo
+}
+
+
+function remove_gentoo {
+    sudo rm -rf gentoo
+}
+
+
 [ $# -eq 0 ] && WORK_PATH=$(mktemp -d --suffix=-vigil) || WORK_PATH="$1"
 sudo apt-get install -y systemd-container debootstrap xz-utils wget
 cd $WORK_PATH
-for DISTRIBUTION in ubuntu fedora debian archlinux opensuse pixel; do
+for DISTRIBUTION in ubuntu fedora debian archlinux opensuse pixel gentoo; do
     if [ -e $DISTRIBUTION ]; then
 	echo "$DISTRIBUTION container already exists."
     else
