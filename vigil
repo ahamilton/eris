@@ -308,16 +308,35 @@ class Summary:
                         set_results=False)
         return rows.appearance_interval(interval)
 
+    def _set_scroll_position(self, cursor_x, cursor_y, summary_height):
+        scroll_x, scroll_y = new_scroll_x, new_scroll_y = \
+                             self._view_widget.position
+        if cursor_y < scroll_y:
+            new_scroll_y = max(cursor_y - summary_height, 0)
+        if (scroll_y + summary_height - 1) < cursor_y:
+            new_scroll_y = cursor_y
+        self._view_widget.position = new_scroll_x, new_scroll_y
+
+    def _highlight_cursor_row(self, appearance, cursor_y):
+        scroll_x, scroll_y = self._view_widget.position
+        highlighted_y = cursor_y - scroll_y
+        appearance[highlighted_y] = change_background(
+            appearance[highlighted_y], termstr.Color.grey_50)
+        return appearance
+
     def appearance(self, dimensions):
         width, height = dimensions
-        screen_x, screen_y = self.cursor_position()
+        cursor_x, cursor_y = self.cursor_position()
         width, height = width - 1, height - 1  # Minus one for the scrollbars
-        scroll_y = (screen_y // height) * height
-        self._view_widget.position = ((screen_x // width) * width, scroll_y)
-        appearance = self._view_widget.appearance(dimensions)
-        appearance[screen_y - scroll_y] = change_background(
-            appearance[screen_y - scroll_y], termstr.Color.grey_50)
-        return appearance
+        self._set_scroll_position(cursor_x, cursor_y, height)
+        return self._highlight_cursor_row(
+            self._view_widget.appearance(dimensions), cursor_y)
+
+    def mouse_scroll(self, dx, dy):
+        scroll_x, scroll_y = self._view_widget.position
+        dy = min(dy, scroll_y)
+        self._view_widget.position = scroll_x, scroll_y - dy
+        self._move_cursor((0, -dy))
 
     def cursor_position(self):
         x, y = self._cursor_position
@@ -745,26 +764,12 @@ class Screen:
     def toggle_fullscreen(self):
         self._is_fullscreen = not self._is_fullscreen
 
-    def _on_mouse_event(self, event):
-        if event[0] not in ["mouse press", "mouse drag"]:
-            return
-        if event[1] == 4:  # Mouse wheel up
-            self.listing_page_up()
-            self._appearance_changed_event.set()
-            return
-        if event[1] == 5:  # Mouse wheel down
-            self.listing_page_down()
-            self._appearance_changed_event.set()
-            return
-        x, y = event[2:4]
+    def _select_entry_at_position(self, x, y, view_width, view_height):
         border_width = 1
-        view_width, view_height = \
-            self._summary._view_widget.portal.last_dimensions
         if x < border_width or y < border_width or x > view_width or \
            y > view_height:
             return
         view_x, view_y = self._summary._view_widget.portal.position
-        spacer = 1
         column_index = x - border_width + view_x
         row_index = y - border_width + view_y
         if row_index >= len(self._summary._column):
@@ -772,18 +777,48 @@ class Screen:
         row = self._summary._column[row_index]
         if column_index < 0 or column_index >= len(row):
             return
-        new_position = column_index, row_index
-        if new_position != self._summary._cursor_position:
-            self._summary._cursor_position = new_position
-            self._appearance_changed_event.set()
+        self._summary._cursor_position = column_index, row_index
+
+    def _is_switching_focus(self, x, y, view_width, view_height):
+        return (self._is_listing_portrait and (x > view_width and
+                self._is_summary_focused or x <= view_width and
+                not self._is_summary_focused) or
+                not self._is_listing_portrait and (y > view_height and
+                self._is_summary_focused or y <= view_height and
+                not self._is_summary_focused))
+
+    def _on_mouse_event(self, event):
+        x, y = event[2:4]
+        if event[0] == "mouse drag":
+            last_x, last_y = self._last_mouse_position
+            dx, dy = x - last_x, y - last_y
+            if self._is_summary_focused:
+                self._summary.mouse_scroll(dx, dy)
+            else:
+                self._move_listing((-dx, -dy))
+        else:  # Mouse press
+            if event[1] == 4:  # Mouse wheel up
+                self.listing_page_up()
+            elif event[1] == 5:  # Mouse wheel down
+                self.listing_page_down()
+            else:
+                view_width, view_height = \
+                    self._summary._view_widget.portal.last_dimensions
+                if self._is_switching_focus(x, y, view_width, view_height):
+                    self.toggle_focus()
+                else:
+                    self._select_entry_at_position(
+                        x, y, view_width, view_height)
+        self._last_mouse_position = x, y
 
     def on_input_event(self, event):
         if self._is_help_visible:
             self._help_widget.on_input_event(
                 event, self._appearance_changed_event)
             return
-        if type(event) == tuple:
+        if type(event) == tuple and event[0] in ["mouse press", "mouse drag"]:
             self._on_mouse_event(event)
+            self._appearance_changed_event.set()
             return
         try:
             action = self._key_map[event]
