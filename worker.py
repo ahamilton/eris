@@ -12,8 +12,7 @@ import tools
 
 class Worker:
 
-    def __init__(self, is_sandboxed, is_already_paused, is_being_tested):
-        self.is_sandboxed = is_sandboxed
+    def __init__(self, is_already_paused, is_being_tested):
         self.is_already_paused = is_already_paused
         self.is_being_tested = is_being_tested
         self.result = None
@@ -22,15 +21,8 @@ class Worker:
 
     @asyncio.coroutine
     def create_process(self):
-        if self.is_sandboxed:
-            sandbox_fs_path = os.path.join(os.path.dirname(__file__),
-                                           "sandbox_fs")
-            cache_path = os.path.join(os.getcwd(), tools.CACHE_PATH)
-            command = [sandbox_fs_path, cache_path, "--", __file__]
-        else:
-            command = [__file__]
         create = asyncio.create_subprocess_exec(
-            *command, stdin=asyncio.subprocess.PIPE,
+            *[__file__], stdin=asyncio.subprocess.PIPE,
             stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
             preexec_fn=os.setsid)
         self.process = yield from create

@@ -223,7 +223,7 @@ class MainTestCase(unittest.TestCase):
             with vigil.chdir(root_path):
                 with contextlib.redirect_stdout(io.StringIO()):
                     vigil.main(root_path, loop, worker_count=2,
-                               is_sandboxed=True, is_being_tested=True)
+                               is_being_tested=True)
                 for file_name in ["summary.pickle", "creation_time", "log",
                                   "foo-metadata", "foo-contents"]:
                     self.assertTrue(os.path.exists(".vigil/" + file_name))

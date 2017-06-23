@@ -51,8 +51,6 @@ Example:
 
 Options:
   -h, --help                       Show this screen and exit.
-  -s on|off, --sandbox=on|off      Use a sandbox to prevent changes to the
-                                   filesystem. The sandbox is on by default.
   -w COUNT, --workers=COUNT        The number of processes working in parallel.
                                    By default it is the number of cpus minus 1.
   -e "COMMAND", --editor="COMMAND" The command used to start the editor, in
@@ -568,11 +566,10 @@ class Screen:
         self._make_widgets()
         self._key_map = make_key_map(Screen._KEY_DATA)
 
-    def make_workers(self, worker_count, is_sandboxed, is_being_tested):
+    def make_workers(self, worker_count, is_being_tested):
         workers = []
         for index in range(worker_count):
-            worker_ = worker.Worker(is_sandboxed, self._is_paused,
-                                    is_being_tested)
+            worker_ = worker.Worker(self._is_paused, is_being_tested)
             workers.append(worker_)
             future = worker_.job_runner(
                 self._summary, self._log, self._summary._jobs_added_event,
@@ -947,8 +944,8 @@ def save_state(pickle_path, summary, screen, log):
     tools.dump_pickle_safe(screen, pickle_path, open=open_compressed)
 
 
-def main(root_path, loop, worker_count=None, is_sandboxed=True,
-         editor_command=None, theme=None, is_being_tested=False):
+def main(root_path, loop, worker_count=None, editor_command=None, theme=None,
+         is_being_tested=False):
     if worker_count is None:
         worker_count = max(multiprocessing.cpu_count() - 1, 1)
     if theme is None:
@@ -974,7 +971,7 @@ def main(root_path, loop, worker_count=None, is_sandboxed=True,
         root_path, loop, on_filesystem_change, is_path_excluded)
     try:
         log.log_message("Starting workers (%s) ..." % worker_count)
-        screen.make_workers(worker_count, is_sandboxed, is_being_tested)
+        screen.make_workers(worker_count, is_being_tested)
 
         def exit_loop():
             log.log_command("Exiting...")
@@ -1034,10 +1031,6 @@ def check_arguments():
     if not os.path.isdir(root_path):
         print("File is not a directory:", root_path)
         sys.exit(1)
-    if arguments["--sandbox"] not in ["on", "off", None]:
-        print("--sandbox argument must be 'on' or 'off'")
-        sys.exit(1)
-    is_sandboxed = arguments["--sandbox"] in ["on", None]
     if arguments["--theme"] is not None:
         themes = list(pygments.styles.get_all_styles())
         if arguments["--theme"] not in themes:
@@ -1045,17 +1038,14 @@ def check_arguments():
             sys.exit(1)
     editor_command = arguments["--editor"] or os.environ.get("EDITOR", None)\
         or os.environ.get("VISUAL", None)
-    return root_path, worker_count, is_sandboxed, editor_command, \
-        arguments["--theme"]
+    return root_path, worker_count, editor_command, arguments["--theme"]
 
 
 if __name__ == "__main__":
-    root_path, worker_count, is_sandboxed, editor_command, theme = \
-        check_arguments()
+    root_path, worker_count, editor_command, theme = check_arguments()
     with terminal.console_title("vigil: " + os.path.basename(root_path)):
         manage_cache(root_path)
         with chdir(root_path):  # FIX: Don't change directory if possible.
             loop = asyncio.get_event_loop()
-            main(root_path, loop, worker_count, is_sandboxed, editor_command,
-                 theme)
+            main(root_path, loop, worker_count, editor_command, theme)
     os._exit(0)

@@ -27,21 +27,15 @@ class WorkerTestCase(unittest.TestCase):
         shutil.rmtree(self.temp_dir)
         os.chdir(self.original_working_dir)
 
-    def _test_worker(self, is_sandboxed):
+    def test_run_job(self):
         loop = asyncio.get_event_loop()
-        worker_ = worker.Worker(is_sandboxed, False, False)
+        worker_ = worker.Worker(False, False)
         loop.run_until_complete(worker_.create_process())
         future = worker_.run_tool("foo", tools.metadata)
         status = loop.run_until_complete(future)
         self.assertEqual(status, tools.Status.normal)
         result_path = os.path.join(tools.CACHE_PATH, "foo-metadata")
         self.assertTrue(os.path.exists(result_path))
-
-    def test_run_job_without_sandbox(self):
-        self._test_worker(False)
-
-    def test_run_job_with_sandbox(self):
-        self._test_worker(True)
 
 
 if __name__ == "__main__":

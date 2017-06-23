@@ -393,14 +393,6 @@ def python_coverage(path):
             "No corresponding test file: " + os.path.normpath(test_path))
 
 
-@deps(deps={"python", "python3"}, gentoo_deps={"python"},
-      url="https://docs.python.org/3/library/profile.html")
-def python_profile(path):
-    stdout, *rest = _do_command([_python_version(path), "-m", "cProfile",
-                                 "--sort=cumulative", path], timeout=TIMEOUT)
-    return Status.normal, fill3.Text(stdout)
-
-
 @deps(deps={"python-pycodestyle", "python3-pycodestyle"},
       fedora_deps={"python2-pycodestyle", "python3-pycodestyle"},
       debian_deps={"pip/pycodestyle", "pip3/pycodestyle"},
@@ -847,9 +839,8 @@ IMAGE_EXTENSIONS = ["png", "jpg", "gif", "bmp", "ppm", "tiff", "tga"]
 TOOLS_FOR_EXTENSIONS = \
     [
         (["py"], [python_syntax, python_unittests, pydoc, mypy,
-                  python_coverage, python_profile, pycodestyle, pyflakes,
-                  pylint, python_gut, python_modulefinder, python_mccabe,
-                  bandit]),
+                  python_coverage, pycodestyle, pyflakes, pylint, python_gut,
+                  python_modulefinder, python_mccabe, bandit]),
         (["pyc"], [disassemble_pyc]),
         (["pl", "pm", "t"], [perl_syntax, perldoc, perltidy]),
         # (["p6", "pm6"], [perl6_syntax, perldoc]),
