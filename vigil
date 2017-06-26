@@ -45,18 +45,20 @@ USAGE = """
 Usage:
   vigil [options] <directory>
   vigil -h | --help
+  vigil --self_test
 
 Example:
   # vigil my_project
 
 Options:
-  -h, --help                       Show this screen and exit.
+  -h, --help                       Show the full help.
   -w COUNT, --workers=COUNT        The number of processes working in parallel.
                                    By default it is the number of cpus minus 1.
   -e "COMMAND", --editor="COMMAND" The command used to start the editor, in
                                    the *edit command. It may contain options.
   -t THEME, --theme=THEME          The pygment theme used for syntax
                                    highlighting. Defaults to "native".
+  --self_test                      Test that vigil is working properly.
 """
 
 
@@ -1014,6 +1016,9 @@ def check_arguments():
     if arguments["--help"]:
         print(cmdline_help)
         sys.exit(0)
+    if arguments["--self_test"]:
+        test_path = os.path.join(os.path.dirname(__file__), "test-all")
+        sys.exit(subprocess.call([test_path]))
     worker_count = None
     try:
         if arguments["--workers"] is not None:

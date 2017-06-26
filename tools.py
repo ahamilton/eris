@@ -303,11 +303,12 @@ def _python_version(path):  # Need a better hueristic
     return "python3"
 
 
-@deps(deps={"python", "python3"}, gentoo_deps={"python"},
+@deps(deps={"python"}, gentoo_deps={"python"},
       url="https://en.wikipedia.org/wiki/Python_syntax_and_semantics")
 def python_syntax(path):
-    python_version = _python_version(path)
-    return _run_command([python_version, "-m", "py_compile", path])
+    status = (Status.ok if _is_python_syntax_correct(path, "python") or
+              _is_python_syntax_correct(path, "python3") else Status.problem)
+    return status, fill3.Text("")
 
 
 def _has_shebang_line(path):
@@ -335,18 +336,14 @@ def python_unittests(path):
 
 @deps(deps={"python", "python3"},
       url="https://docs.python.org/3/library/pydoc.html",
-      executables={"pydoc", "pydoc3"}, missing_in={"gentoo"})
+      missing_in={"gentoo"})
 def pydoc(path):
-    pydoc_exe = "pydoc3" if _python_version(path) == "python3" else "pydoc"
-    status, output = Status.normal, ""
-    try:
-        output = subprocess.check_output([pydoc_exe, path], timeout=TIMEOUT)
-        output = _fix_input(output)
-    except subprocess.CalledProcessError:
+    stdout, stderr, returncode = _do_command(
+        [_python_version(path), "-m", "pydoc", path], timeout=TIMEOUT)
+    status = Status.normal if returncode == 0 else Status.not_applicable
+    if not stdout.startswith("Help on module"):
         status = Status.not_applicable
-    if not output.startswith("Help on module"):
-        status = Status.not_applicable
-    return status, fill3.Text(output)
+    return status, fill3.Text(_fix_input(stdout))
 
 
 @deps(deps={"mypy"}, url="mypy", fedora_deps={"python3-mypy"},
@@ -403,7 +400,8 @@ def pycodestyle(path):
     return _run_command([_python_version(path), "-m", "pycodestyle", path])
 
 
-@deps(deps={"pyflakes"}, arch_deps={"python2-pyflakes", "python-pyflakes"},
+@deps(deps={"python-pyflakes", "python3-pyflakes"},
+      arch_deps={"python2-pyflakes", "python-pyflakes"},
       opensuse_deps={"python2-pyflakes", "python3-pyflakes"}, url="pyflakes",
       missing_in={"gentoo"})
 def pyflakes(path):

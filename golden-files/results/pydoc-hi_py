@@ -4,7 +4,7 @@ NAME
     hi                                                 
                                                        
 FILE                                                   
-    /home/EVERY_USER/code/vigil/golden-files/input/hi.py
+    /CWD/input/hi.py
                                                        
 FUNCTIONS                                              
     hi()                                               
