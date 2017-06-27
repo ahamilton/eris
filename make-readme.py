@@ -23,21 +23,20 @@ Vigil maintains an up-to-date set of reports for every file in a codebase.
 
 ### Installation
 
-To run vigil: (Tested in Ubuntu 17.04 in gnome-terminal, lxterminal and stterm)
+(Tested in Ubuntu 17.04)
 
     # git clone https://github.com/ahamilton/vigil
     # cd vigil
     # ./install-dependencies
-    # ./vigil <directory_path>
+    # pip3 install .
+
+then to run:
+
+    # vigil <directory_path>
 
 and to test its working properly:
 
     # ./test-all
-
-To run on an older ubuntu you can checkout an older version of vigil.
-e.g. After cloning do:
-
-    # git checkout ubuntu-15.10
 
 ### Tools
 
