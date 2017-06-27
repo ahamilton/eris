@@ -34,11 +34,11 @@ import docopt
 import pygments.styles
 import pyinotify
 
-import fill3
-import terminal
-import termstr
-import tools
-import worker
+from vigil import fill3
+from vigil import terminal
+from vigil import termstr
+from vigil import tools
+from vigil import worker
 
 
 USAGE = """
@@ -1046,7 +1046,7 @@ def check_arguments():
     return root_path, worker_count, editor_command, arguments["--theme"]
 
 
-if __name__ == "__main__":
+def entry_point():
     root_path, worker_count, editor_command, theme = check_arguments()
     with terminal.console_title("vigil: " + os.path.basename(root_path)):
         manage_cache(root_path)
@@ -1054,3 +1054,7 @@ if __name__ == "__main__":
             loop = asyncio.get_event_loop()
             main(root_path, loop, worker_count, editor_command, theme)
     os._exit(0)
+
+
+if __name__ == "__main__":
+    entry_point()

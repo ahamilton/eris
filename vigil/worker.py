@@ -7,7 +7,7 @@ import asyncio
 import os
 import signal
 
-import tools
+import vigil.tools as tools
 
 
 class Worker:
@@ -22,7 +22,7 @@ class Worker:
     @asyncio.coroutine
     def create_process(self):
         create = asyncio.create_subprocess_exec(
-            *[__file__], stdin=asyncio.subprocess.PIPE,
+            "vigil-worker", stdin=asyncio.subprocess.PIPE,
             stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
             preexec_fn=os.setsid)
         self.process = yield from create

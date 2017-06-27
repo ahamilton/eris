@@ -15,8 +15,8 @@ import sys
 import urwid
 import urwid.raw_display
 
-import terminal
-import termstr
+import vigil.terminal as terminal
+import vigil.termstr as termstr
 
 
 def appearance_is_valid(appearance):

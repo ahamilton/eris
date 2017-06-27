@@ -13,9 +13,9 @@ import unittest
 
 os.environ["TERM"] = "xterm-256color"
 
-import fill3
-import golden
-import vigil
+import vigil.fill3 as fill3
+import vigil.golden as golden
+import vigil.__main__ as __main__
 
 
 _DIMENSIONS = (100, 60)
@@ -51,10 +51,10 @@ class ScreenWidgetTestCase(unittest.TestCase):
         _touch(foo_path)
         jobs_added_event = asyncio.Event()
         appearance_changed_event = asyncio.Event()
-        summary = vigil.Summary(self.temp_dir, jobs_added_event)
-        log = vigil.Log(appearance_changed_event)
-        self.main_widget = vigil.Screen(summary, log, appearance_changed_event,
-                                        _MockMainLoop())
+        summary = __main__.Summary(self.temp_dir, jobs_added_event)
+        log = __main__.Log(appearance_changed_event)
+        self.main_widget = __main__.Screen(summary, log, appearance_changed_event,
+                                           _MockMainLoop())
 
     def tearDown(self):
         shutil.rmtree(self.temp_dir)
@@ -85,13 +85,13 @@ class ScreenWidgetTestCase(unittest.TestCase):
 class SummaryCursorTest(unittest.TestCase):
 
     def setUp(self):
-        self.original_method = vigil.Summary.sync_with_filesystem
-        vigil.Summary.sync_with_filesystem = lambda foo: None
-        self.summary = vigil.Summary(None, None)
+        self.original_method = __main__.Summary.sync_with_filesystem
+        __main__.Summary.sync_with_filesystem = lambda foo: None
+        self.summary = __main__.Summary(None, None)
         self.summary._column = [[1, 1, 1], [1, 1], [1, 1, 1]]
 
     def tearDown(self):
-        vigil.Summary.sync_with_filesystem = self.original_method
+        __main__.Summary.sync_with_filesystem = self.original_method
 
     def _assert_movements(self, movements):
         for movement, expected_position in movements:
@@ -128,7 +128,7 @@ class SummarySyncWithFilesystem(unittest.TestCase):
         _touch(self.bar_path)
         self.jobs_added_event = asyncio.Event()
         self.appearance_changed_event = asyncio.Event()
-        self.summary = vigil.Summary(self.temp_dir, self.jobs_added_event)
+        self.summary = __main__.Summary(self.temp_dir, self.jobs_added_event)
         self.jobs_added_event.clear()
 
     def tearDown(self):
@@ -190,7 +190,7 @@ class SummarySyncWithFilesystem(unittest.TestCase):
 
 #     def test_log(self):
 #         appearance_changed_event = asyncio.Event()
-#         log = vigil.Log(appearance_changed_event)
+#         log = __main__.Log(appearance_changed_event)
 #         _assert_widget_appearance(log, "golden-files/log-initial", None)
 #         timestamp = "11:11:11"
 #         self.assertFalse(appearance_changed_event.is_set())
@@ -219,11 +219,11 @@ class MainTestCase(unittest.TestCase):
             # tmp_total = _tmp_total()
             foo_path = os.path.join(root_path, "foo")
             open(foo_path, "w").close()
-            vigil.manage_cache(root_path)
-            with vigil.chdir(root_path):
+            __main__.manage_cache(root_path)
+            with __main__.chdir(root_path):
                 with contextlib.redirect_stdout(io.StringIO()):
-                    vigil.main(root_path, loop, worker_count=2,
-                               is_being_tested=True)
+                    __main__.main(root_path, loop, worker_count=2,
+                                  is_being_tested=True)
                 for file_name in ["summary.pickle", "creation_time", "log",
                                   "foo-metadata", "foo-contents"]:
                     self.assertTrue(os.path.exists(".vigil/" + file_name))

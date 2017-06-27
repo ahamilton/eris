@@ -28,10 +28,10 @@ import pygments
 import pygments.lexers
 import pygments.styles
 
-import fill3
-import gut
-import lscolors
-import termstr
+import vigil.fill3 as fill3
+import vigil.gut as gut
+import vigil.lscolors as lscolors
+import vigil.termstr as termstr
 
 
 CACHE_PATH = ".vigil"

@@ -11,7 +11,7 @@ import subprocess
 import tempfile
 import unittest
 
-import lscolors
+import vigil.lscolors as lscolors
 
 
 class TempDirTestCase(unittest.TestCase):

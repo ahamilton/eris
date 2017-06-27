@@ -5,12 +5,12 @@
 
 
 import subprocess
-import tools
+import vigil.tools
 
 
-dist_id = tools.get_distro_id()
+dist_id = vigil.tools.get_distro_id()
 pip_deps, pip3_deps, dist_deps = set(), set(), set()
-for dependency in tools.dependencies(dist_id):
+for dependency in vigil.tools.dependencies(dist_id):
     if "/" in dependency:
         pip_version, pip_dependency = dependency.split("/")
         (pip_deps if pip_version == "pip" else pip3_deps).add(pip_dependency)

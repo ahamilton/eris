@@ -6,7 +6,7 @@
 
 import unittest
 
-import fill3
+import vigil.fill3 as fill3
 
 
 class WidgetTests(unittest.TestCase):

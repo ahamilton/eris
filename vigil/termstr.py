@@ -9,7 +9,7 @@ import weakref
 
 import pygments.formatters.terminal256
 
-import terminal
+import vigil.terminal as terminal
 
 
 def _cache_first_result(user_function):

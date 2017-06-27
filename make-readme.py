@@ -5,7 +5,7 @@
 # Licensed under the Artistic License 2.0.
 
 
-import tools
+import vigil.tools as tools
 
 
 def tool_markup(tool):
