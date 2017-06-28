@@ -11,15 +11,11 @@ Vigil maintains an up-to-date set of reports for every file in a codebase.
     # git clone https://github.com/ahamilton/vigil
     # cd vigil
     # ./install-dependencies
-    # pip3 install .
+    # sudo python3 setup.py install  (pip3 can be used here)
 
 then to run:
 
     # vigil <directory_path>
-
-and to test its working properly:
-
-    # ./test-all
 
 ### Tools
 

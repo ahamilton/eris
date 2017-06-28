@@ -400,8 +400,7 @@ def pycodestyle(path):
     return _run_command([_python_version(path), "-m", "pycodestyle", path])
 
 
-@deps(deps={"python-pyflakes", "python3-pyflakes"},
-      arch_deps={"python2-pyflakes", "python-pyflakes"},
+@deps(deps={"pyflakes"}, arch_deps={"python2-pyflakes", "python-pyflakes"},
       opensuse_deps={"python2-pyflakes", "python3-pyflakes"}, url="pyflakes",
       missing_in={"gentoo"})
 def pyflakes(path):

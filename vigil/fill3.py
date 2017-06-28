@@ -12,8 +12,8 @@ import os
 import signal
 import sys
 
-import urwid
-import urwid.raw_display
+import vigil.urwid
+import vigil.urwid.raw_display
 
 import vigil.terminal as terminal
 import vigil.termstr as termstr
@@ -436,7 +436,7 @@ def patch_screen(widget):
 
 @contextlib.contextmanager
 def _urwid_screen():
-    screen = urwid.raw_display.Screen()
+    screen = vigil.urwid.raw_display.Screen()
     screen.set_mouse_tracking(True)
     screen.start()
     try:

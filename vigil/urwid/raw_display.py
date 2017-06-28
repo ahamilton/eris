@@ -28,7 +28,7 @@ import sys
 import termios
 import tty
 
-from urwid import escape
+from vigil.urwid import escape
 
 
 class Screen:

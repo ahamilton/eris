@@ -156,9 +156,13 @@ for DISTRIBUTION in ubuntu fedora debian archlinux opensuse pixel gentoo; do
     fi
     echo "Installing vigil's dependencies in $DISTRIBUTION..."
     run_in_container $DISTRIBUTION ./install-dependencies
+    echo "Installing vigil in $DISTRIBUTION..."
+    run_in_container $DISTRIBUTION sudo python3 setup.py install
     echo "Testing executables are installed in $DISTRIBUTION..."
-    run_in_container $DISTRIBUTION ./tools_test.py ExecutablesTestCase
-    echo "Successfully installed vigil's dependencies in $DISTRIBUTION."
+    run_in_container $DISTRIBUTION ./tests/tools_test.py ExecutablesTestCase
+    echo "Running vigil in $DISTRIBUTION..."
+    run_in_container $DISTRIBUTION vigil --help
+    echo "Successfully installed vigil in $DISTRIBUTION."
     echo "Removing $DISTRIBUTION container..."
     remove_$DISTRIBUTION
 done
