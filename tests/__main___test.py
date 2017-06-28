@@ -13,8 +13,8 @@ import unittest
 
 os.environ["TERM"] = "xterm-256color"
 
+import golden
 import vigil.fill3 as fill3
-import vigil.golden as golden
 import vigil.__main__ as __main__
 
 
