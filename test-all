@@ -5,10 +5,11 @@
 
 
 FAILURE=0
-CODEBASE_PATH=$(realpath $(dirname $0))
-for test in ${CODEBASE_PATH}/tests/*_test.py; do
+CODEBASE_PATH=$(dirname $0)
+cd ${CODEBASE_PATH}/tests
+for test in *_test.py; do
     echo "Testing $test ..."
-    python3 -m unittest ${test} 2>&1
+    ./${test} 2>&1
     FAILURE=$(($FAILURE | $?))
     echo
 done

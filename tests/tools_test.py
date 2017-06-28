@@ -11,8 +11,8 @@ import unittest.mock
 
 os.environ["TERM"] = "xterm-256color"
 
+import golden
 import vigil.fill3 as fill3
-import vigil.golden as golden
 import vigil.tools as tools
 
 
