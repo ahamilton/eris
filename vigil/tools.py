@@ -400,7 +400,8 @@ def pycodestyle(path):
     return _run_command([_python_version(path), "-m", "pycodestyle", path])
 
 
-@deps(deps={"pyflakes"}, arch_deps={"python2-pyflakes", "python-pyflakes"},
+@deps(deps={"python-pyflakes", "python3-pyflakes"},
+      arch_deps={"python2-pyflakes", "python-pyflakes"},
       opensuse_deps={"python2-pyflakes", "python3-pyflakes"}, url="pyflakes",
       missing_in={"gentoo"})
 def pyflakes(path):
@@ -611,7 +612,7 @@ def html2text(path):
     return _run_command(["html2text", path], Status.normal)
 
 
-@deps(deps={"gcc"}, url="https://gcc.gnu.org/", executables={"gcc"})
+@deps(deps={"gcc", "g++-6"}, url="https://gcc.gnu.org/", executables={"gcc"})
 def cpp_syntax_gcc(path):
     return _run_command(["gcc", "-fsyntax-only", path])
 

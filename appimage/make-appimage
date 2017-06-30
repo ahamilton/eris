@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Copyright (C) 2017 Andrew Hamilton. All rights reserved.
+# Licensed under the Artistic License 2.0.
+
+
+set -e
+
+
+VIGIL_PATH=$(realpath $(dirname $0)/..)
+export VIGIL_PATH
+
+
+function get_patched_recipe {
+    wget -c "https://github.com/AppImage/AppImages/raw/94d39b68d8d7ab56f31fde6f59bc8d2813d13599/recipes/meta/Recipe"
+    cp Recipe Recipe-patched
+    sed -i -e 's|delete_blacklisted|# delete_blacklisted|g' Recipe-patched
+    chmod +x Recipe-patched
+}
+
+
+[ $# -eq 0 ] && WORK_PATH=$(mktemp -d --suffix=-appimage) || WORK_PATH="$1"
+cd "$WORK_PATH"
+$VIGIL_PATH/appimage/make-appimage-yml.py > vigil.yml
+get_patched_recipe
+./Recipe-patched --no-di vigil.yml
+mv out/Vigil* .
+echo
+echo "AppImage path: $(realpath Vigil*)"
