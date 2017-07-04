@@ -863,7 +863,7 @@ def is_tool_in_distribution(tool, distribution):
     try:
         return distribution not in tool.missing_in
     except AttributeError:
-        return tool
+        return False
 
 
 def get_distro_id():
