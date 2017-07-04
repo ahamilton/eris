@@ -14,10 +14,10 @@ for dependency in tools.dependencies("ubuntu"):
     else:
         dist_deps.add(dependency)
 dist_deps.update({"python3-pygments", "python3-pyinotify", "python3-docopt",
-                  "util-linux", "python3-pil", "python3-pip",
-                  "python3-setuptools"})
+                  "util-linux", "python3-pil"})
 dep_list = "\n    - ".join(sorted(dist_deps))
 print("""app: vigil-code-monitor
+union: true
 
 ingredients:
   packages:
@@ -27,7 +27,11 @@ ingredients:
     - deb http://archive.ubuntu.com/ubuntu/ zesty main universe
 
 script:
-  - ./usr/bin/python3 -m pip install $VIGIL_PATH
+  - export APPDIR=$(pwd)
+  - export PYTHONPATH=$APPDIR/usr/share/pyshared
+  - mkdir -p $PYTHONPATH
+  - (cd $VIGIL_PATH; /usr/bin/python3 setup.py install \
+     --prefix=$APPDIR/usr --install-lib=$PYTHONPATH)
   - cp $VIGIL_PATH/appimage/vigil-icon.png .
   - cp -a $VIGIL_PATH/tests .
   - cp $VIGIL_PATH/test-all tests
@@ -36,7 +40,7 @@ script:
   - Type=Application
   - Name=Vigil Code Monitor
   - Comment=Vigil maintains an up-to-date set of reports for every file in a codebase.
-  - Exec=./bin/python3 -m vigil
+  - Exec=vigil
   - Terminal=true
   - Icon=vigil-icon.png
   - Categories=Application;

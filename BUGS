@@ -7,6 +7,7 @@ Current
 - If a job is paused for longer than the timeout period, sometimes it has
   the timed out status when un-paused.
 - Tmp files are being left behind after shutdown.
+- All tools in AppImages aren't working correctly. See ./vigil --self_test
 
 
 Current (tool related)
