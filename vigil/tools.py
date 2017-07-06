@@ -860,10 +860,8 @@ TOOLS_FOR_EXTENSIONS = \
 
 
 def is_tool_in_distribution(tool, distribution):
-    try:
-        return distribution not in tool.missing_in
-    except AttributeError:
-        return False
+    return (not hasattr(tool, "missing_in")
+            or distribution not in tool.missing_in)
 
 
 def get_distro_id():
