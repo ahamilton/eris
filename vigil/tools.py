@@ -708,6 +708,32 @@ def pil_half(path):
     return Status.normal, result
 
 
+def _is_tracked_in_git(path):
+    _, _, returncode = _do_command(
+        ["git", "ls-files", "--error-unmatch", path])
+    return returncode == 0
+
+
+@deps(deps={"git"}, url="git")
+def git_diff(path):  # FIX: Add to tools_test.py
+    if not _is_tracked_in_git(path):
+        return Status.not_applicable, fill3.Text("")
+    stdout, stderr, returncode = _do_command(
+        ["git", "diff", "--exit-code", path])
+    return (Status.normal if returncode == 0 else Status.problem,
+            fill3.Text(stdout))
+
+
+@deps(deps={"git"}, url="git")
+def git_blame(path):  # FIX: Add to tools_test.py
+    stdout, stderr, returncode = _do_command(
+        ["git", "blame", "--show-stats", path])
+    if returncode == 0:
+        return Status.normal, fill3.Text(stdout)
+    else:
+        return Status.not_applicable, fill3.Text("")
+
+
 #############################
 
 
@@ -884,7 +910,7 @@ def _tools_for_extension():
 
 
 def tools_all():
-    tools_ = set(_generic_tools())
+    tools_ = set(_generic_tools()).union({git_diff, git_blame})
     for tool_list in _tools_for_extension().values():
         tools_.update(set(tool_list))
     return tools_
@@ -917,9 +943,10 @@ def splitext(path):
 
 
 def tools_for_path(path):
+    git_tools = [git_diff, git_blame] if os.path.exists(".git") else []
     root, ext = splitext(path)
     extra_tools = [] if ext == "" else _tools_for_extension().get(ext[1:], [])
-    return _generic_tools() + extra_tools
+    return _generic_tools() + git_tools + extra_tools
 
 
 def run_tool_no_error(path, tool):
