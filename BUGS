@@ -8,6 +8,8 @@ Current
   the timed out status when un-paused.
 - Tmp files are being left behind after shutdown.
 - All tools in AppImages aren't working correctly. See ./vigil --self_test
+- When the cursor is at the top of the summary, and it is moved up, there
+  is a glitch in the scrolling.
 
 
 Current (tool related)
