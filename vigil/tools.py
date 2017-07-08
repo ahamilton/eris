@@ -727,7 +727,7 @@ def git_diff(path):  # FIX: Add to tools_test.py
 @deps(deps={"git"}, url="git")
 def git_blame(path):  # FIX: Add to tools_test.py
     stdout, stderr, returncode = _do_command(
-        ["git", "blame", "--show-stats", path])
+        ["git", "blame", "--show-stats", "--date=short", path])
     if returncode == 0:
         return Status.normal, fill3.Text(stdout)
     else:
