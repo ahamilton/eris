@@ -714,7 +714,7 @@ def _is_tracked_in_git(path):
     return returncode == 0
 
 
-@deps(deps={"git"}, url="git")
+@deps(deps={"git"}, url="git", executables={"git"})
 def git_diff(path):  # FIX: Add to tools_test.py
     if not _is_tracked_in_git(path):
         return Status.not_applicable, fill3.Text("")
@@ -724,7 +724,7 @@ def git_diff(path):  # FIX: Add to tools_test.py
             fill3.Text(stdout))
 
 
-@deps(deps={"git"}, url="git")
+@deps(deps={"git"}, url="git", executables={"git"})
 def git_blame(path):  # FIX: Add to tools_test.py
     stdout, stderr, returncode = _do_command(
         ["git", "blame", "--show-stats", "--date=short", path])
