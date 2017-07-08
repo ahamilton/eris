@@ -316,7 +316,7 @@ class Summary:
         scroll_x, scroll_y = new_scroll_x, new_scroll_y = \
                              self._view_widget.position
         if cursor_y < scroll_y:
-            new_scroll_y = max(cursor_y - summary_height, 0)
+            new_scroll_y = max(cursor_y - summary_height + 1, 0)
         if (scroll_y + summary_height - 1) < cursor_y:
             new_scroll_y = cursor_y
         self._view_widget.position = new_scroll_x, new_scroll_y
