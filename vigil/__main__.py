@@ -336,7 +336,7 @@ class Summary:
         return self._highlight_cursor_row(
             self._view_widget.appearance(dimensions), cursor_y)
 
-    def mouse_scroll(self, dx, dy):
+    def scroll(self, dx, dy):
         scroll_x, scroll_y = self._view_widget.position
         dy = min(dy, scroll_y)
         self._view_widget.position = scroll_x, scroll_y - dy
@@ -375,15 +375,11 @@ class Summary:
 
     def cursor_page_up(self):
         view_width, view_height = self._view_widget.portal.last_dimensions
-        x, y = self._cursor_position
-        jump = view_height - 1
-        self._cursor_position = (x, max(y - jump, 0))
+        self.scroll(0, view_height)
 
     def cursor_page_down(self):
         view_width, view_height = self._view_widget.portal.last_dimensions
-        x, y = self._cursor_position
-        jump = view_height - 1
-        self._cursor_position = (x, min(y + jump, len(self._column) - 1))
+        self.scroll(0, -view_height)
 
     def cursor_home(self):
         x, y = self._cursor_position
@@ -796,7 +792,7 @@ class Screen:
             last_x, last_y = self._last_mouse_position
             dx, dy = x - last_x, y - last_y
             if self._is_summary_focused:
-                self._summary.mouse_scroll(dx, dy)
+                self._summary.scroll(dx, dy)
             else:
                 self._move_listing((-dx, -dy))
         else:  # Mouse press

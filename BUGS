@@ -6,8 +6,6 @@ Current
   the timed out status when un-paused.
 - Tmp files are being left behind after shutdown.
 - All tools in AppImages aren't working correctly. See ./vigil --self_test
-- When paging the summary window the cursor line should stay in the same
-  place on the screen.
 - Sometimes git_blame produces an error, depending on characters in its
   input.
 
@@ -252,6 +250,8 @@ Fixed
   is a glitch in the scrolling.
 - When paging the summary window, with the bottom scroll bar showing, the
   cursor line drifts up or down a row.
+- When paging the summary window the cursor line should stay in the same
+  place on the screen.
 
 
 Won't fix
