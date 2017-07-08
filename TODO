@@ -1,14 +1,11 @@
 Todo
-- Publish. pypi and github will do.
-  - docs?, setup.py?, wheel?, __pkginfo__.py?
-  - Maybe also use cxfreeze, py2exe, pyrun or zipapp?  Is zipapp the standard way?
-  - Use cookiecutter?
-  - Need to use conventional version numbers for pypi. See pep0440.
+- Publish on pypi.
 
 
 Todo (tool related)
 - Report on python doctests. (also coverage of)
 - Cache tools._python_version.
+- Colourise git_diff.
 
 
 Done
@@ -166,6 +163,7 @@ Done
 - Can mypy be a tool?
   <- Yes, but wait for it to be included in python, or until it is an ubuntu package.
 - Add bandit tool for python.
+- Created a setup.py file.
 
 A-syntax, B-tests, C-auto docs, D-lint, E-coverage, F-profile, G-tidy, H-import deps
              A B C D E F G H
@@ -424,3 +422,7 @@ Shelved
 - POLA, only put in the sandbox what the tool needs.  e.g. only the file.
   Make a chroot with one file?
   <- Not sure what the tool needs.
+- Publish. pypi and github will do.
+  - wheel?, __pkginfo__.py?
+  - Maybe also use cxfreeze, py2exe, pyrun or zipapp?  Is zipapp the standard way?
+  - Use cookiecutter?
