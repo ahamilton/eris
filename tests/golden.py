@@ -13,7 +13,7 @@ import unittest
 
 def _accept_actual(failed):
     for actual_str, golden_path in failed:
-        with open(golden_path, "w") as golden_file:
+        with open(golden_path, "wb") as golden_file:
             golden_file.write(actual_str)
         print("Wrote golden file: %s" % golden_path)
 
@@ -28,7 +28,7 @@ def _run_meld_gui(failed):
         for actual_str, golden_file in failed:
             name = os.path.basename(golden_file)
             actual_path = os.path.join(actual_dir, name)
-            with open(actual_path, "w") as actual:
+            with open(actual_path, "wb") as actual:
                 actual.write(actual_str)
             os.symlink(os.path.abspath(golden_file),
                        os.path.join(golden_dir, name))
@@ -41,8 +41,9 @@ _FAILED = set()
 
 
 def assertGolden(actual, golden_path):
+    actual = actual.encode("utf-8")
     try:
-        with open(golden_path, "r") as golden_file:
+        with open(golden_path, "rb") as golden_file:
             expected = golden_file.read()
     except FileNotFoundError:
         expected = None
