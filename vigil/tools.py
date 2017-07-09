@@ -102,7 +102,8 @@ def _printable(text):
 
 
 def _fix_input(input_):
-    input_str = input_.decode("utf-8") if isinstance(input_, bytes) else input_
+    input_str = (input_.decode("utf-8", errors="replace")
+                 if isinstance(input_, bytes) else input_)
     return _printable(input_str).expandtabs(tabsize=4)
 
 
