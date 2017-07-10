@@ -40,6 +40,7 @@ function build_ubuntu {
     run_in_container ubuntu.part \
 		     ln -sf /lib/systemd/resolv.conf /etc/resolv.conf
     run_in_container ubuntu.part apt-get update
+    run_in_container ubuntu.part apt-get install --yes python3-pip
     mv ubuntu.part ubuntu
 }
 
@@ -147,7 +148,8 @@ function remove_gentoo {
 [ $# -eq 0 ] && WORK_PATH=$(mktemp -d --suffix=-vigil) || WORK_PATH="$1"
 sudo apt-get install -y systemd-container debootstrap xz-utils wget
 cd $WORK_PATH
-for DISTRIBUTION in ubuntu fedora debian archlinux opensuse pixel gentoo; do
+# FIX: Reenable: fedora debian archlinux opensuse pixel gentoo
+for DISTRIBUTION in ubuntu; do
     if [ -e $DISTRIBUTION ]; then
 	echo "$DISTRIBUTION container already exists."
     else
@@ -157,9 +159,9 @@ for DISTRIBUTION in ubuntu fedora debian archlinux opensuse pixel gentoo; do
     echo "Installing vigil's dependencies in $DISTRIBUTION..."
     run_in_container $DISTRIBUTION ./install-dependencies
     echo "Installing vigil in $DISTRIBUTION..."
-    run_in_container $DISTRIBUTION sudo python3 setup.py install
-    echo "Testing executables are installed in $DISTRIBUTION..."
-    run_in_container $DISTRIBUTION ./tests/tools_test.py ExecutablesTestCase
+    run_in_container $DISTRIBUTION pip3 install .
+    echo "Testing vigil in $DISTRIBUTION..."
+    run_in_container $DISTRIBUTION ./test-all
     echo "Running vigil in $DISTRIBUTION..."
     run_in_container $DISTRIBUTION vigil --help
     echo "Successfully installed vigil in $DISTRIBUTION."
