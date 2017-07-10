@@ -66,7 +66,6 @@ class ToolsTestCase(unittest.TestCase):
                 with chdir(os.path.join(VIGIL_ROOT, "golden-files")):
                     cwd = os.getcwd()
                     text = text.replace(cwd, "/CWD")
-                text = text.replace(os.environ["USER"], "EVERY_USER")
                 golden.assertGolden(text, golden_path)
                 self.assertEqual(status, expected_status)
 
