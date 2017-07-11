@@ -120,17 +120,18 @@ def _do_command(command, timeout=None, **kwargs):
     return _fix_input(stdout), _fix_input(stderr), process.returncode
 
 
-def _run_command(command, status_text=Status.ok):
-    status, output = status_text, ""
+def _run_command(command, success_status=Status.ok,
+                 error_status=Status.problem):
+    status, output = success_status, ""
     try:
         process = subprocess.Popen(command, stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE)
         stdout, stderr = process.communicate()
         output = stdout + stderr
     except subprocess.CalledProcessError:
-        status = Status.problem
+        status = error_status
     if process.returncode != 0:
-        status = Status.problem
+        status = error_status
     return status, fill3.Text(_fix_input(output))
 
 
@@ -471,14 +472,11 @@ def python_tidy(path):  # Deps: found on internet?
     return Status.normal, _syntax_highlight_using_path(stdout, path)
 
 
-@deps(url="https://docs.python.org/3/library/dis.html")
-def disassemble_pyc(path):
-    with open(path, "rb") as file_:
-        bytecode = file_.read()
-    stringio = io.StringIO()
-    dis.dis(bytecode, file=stringio)
-    stringio.seek(0)
-    return Status.normal, fill3.Text(stringio.read())
+@deps(deps={"pip3/xdis"}, executables={"pydisasm"},
+      url="https://pypi.python.org/pypi/xdis")
+def pydisasm(path):
+    return _run_command(["pydisasm", path], Status.normal,
+                        Status.not_applicable)
 
 
 @deps(deps={"python-bandit", "python3-bandit"}, fedora_deps={"bandit"},
@@ -854,7 +852,7 @@ TOOLS_FOR_EXTENSIONS = \
         (["py"], [python_syntax, python_unittests, pydoc, mypy,
                   python_coverage, pycodestyle, pyflakes, pylint, python_gut,
                   python_modulefinder, python_mccabe, bandit]),
-        (["pyc"], [disassemble_pyc]),
+        (["pyc"], [pydisasm]),
         (["pl", "pm", "t"], [perl_syntax, perldoc, perltidy]),
         # (["p6", "pm6"], [perl6_syntax, perldoc]),
         (["pod", "pod6"], [perldoc]),

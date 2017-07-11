@@ -9,7 +9,6 @@ Current
 
 
 Current (tool related)
-- disassemble for python doesn't always work.
 - gut had an error with utf-8. A traceback printed directly on the screen,
   garbling the interface.
 - There is much less code coverage than I expect from vigil.py, tools.py
@@ -252,6 +251,7 @@ Fixed
   place on the screen.
 - Sometimes git_blame produces an error, depending on characters in its
   input.
+- disassemble for python doesn't always work.
 
 
 Won't fix

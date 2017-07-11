@@ -1,0 +1,48 @@
+# pydisasm version 3.5.0                                                                                        
+# Python bytecode 3.4 (3310)                                                                                    
+# Disassembled from Python 3.5.3 (default, Jan 19 2017, 14:11:04)                                               
+# [GCC 6.3.0 20170118]                                                                                          
+# Timestamp in code: 1454637976 (2016-02-05 02:06:16)                                                           
+# Source code size mod 2**32: 28 bytes                                                                          
+# Method Name:       <module>                                                                                   
+# Filename:          ./input/hi3.py                                                                             
+# Argument count:    0                                                                                          
+# Kw-only arguments: 0                                                                                          
+# Number of locals:  0                                                                                          
+# Stack size:        2                                                                                          
+# Flags:             0x00000040 (NOFREE)                                                                        
+# First Line:        3                                                                                          
+# Constants:                                                                                                    
+#    0: <code object hi at 0x7fa4cc9cc300, file "./input/hi3.py", line 3>                                       
+#    1: 'hi'                                                                                                    
+#    2: None                                                                                                    
+# Names:                                                                                                        
+#    0: hi                                                                                                      
+  3:           0 LOAD_CONST                0 (<code object hi at 0x7fa4cc9cc300, file "./input/hi3.py", line 3>)
+               3 LOAD_CONST                1 ('hi')                                                             
+               6 MAKE_FUNCTION             0 (0 positional, 0 name and default, 0 annotations)                  
+               9 STORE_NAME                0 (hi)                                                               
+              12 LOAD_CONST                2 (None)                                                             
+              15 RETURN_VALUE                                                                                   
+                                                                                                                
+                                                                                                                
+# Method Name:       hi                                                                                         
+# Filename:          ./input/hi3.py                                                                             
+# Argument count:    0                                                                                          
+# Kw-only arguments: 0                                                                                          
+# Number of locals:  0                                                                                          
+# Stack size:        2                                                                                          
+# Flags:             0x00000043 (NOFREE | NEWLOCALS | OPTIMIZED)                                                
+# First Line:        3                                                                                          
+# Constants:                                                                                                    
+#    0: None                                                                                                    
+#    1: 'hi'                                                                                                    
+# Names:                                                                                                        
+#    0: print                                                                                                   
+  4:           0 LOAD_GLOBAL               0 (print)                                                            
+               3 LOAD_CONST                1 ('hi')                                                             
+               6 CALL_FUNCTION             1 (1 positional, 0 keyword pair)                                     
+               9 POP_TOP                                                                                        
+              10 LOAD_CONST                0 (None)                                                             
+              13 RETURN_VALUE                                                                                   
+                                                                                                                
