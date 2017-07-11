@@ -148,8 +148,12 @@ def _syntax_highlight(text, lexer, style):
             hex_rgb = hex_rgb[1:]
         return tuple(eval("0x"+hex_rgb[index:index+2]) for index in [0, 2, 4])
 
-    def _char_style_for_token_type(token_type, default_bg_color):
-        token_style = style.style_for_token(token_type)
+    def _char_style_for_token_type(token_type, default_bg_color,
+                                   default_style):
+        try:
+            token_style = style.style_for_token(token_type)
+        except KeyError:
+            return default_style
         fg_color = (termstr.Color.black if token_style["color"] is None
                     else _parse_rgb(token_style["color"]))
         bg_color = (default_bg_color if token_style["bgcolor"] is None
@@ -158,9 +162,10 @@ def _syntax_highlight(text, lexer, style):
                                  token_style["italic"],
                                  token_style["underline"])
     default_bg_color = _parse_rgb(style.background_color)
+    default_style = termstr.CharStyle(bg_color=default_bg_color)
     text = fill3.join(
         "", [termstr.TermStr(text, _char_style_for_token_type(
-            token_type, default_bg_color))
+            token_type, default_bg_color, default_style))
              for token_type, text in pygments.lex(text, lexer)])
     return fill3.Text(text, pad_char=termstr.TermStr(" ").bg_color(
         default_bg_color))
