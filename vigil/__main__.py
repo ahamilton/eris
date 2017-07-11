@@ -713,10 +713,12 @@ class Screen:
         else:
             path = self._summary.get_selection().path
             path_colored = tools.path_colored(path)
+            line_num = (self._summary.get_selection().entry[0].
+                        scroll_position[1] + 1)
             self._log.log_message([in_green("Editing "), path_colored,
-                                   in_green(' with command: "%s"...'
-                                            % self.editor_command)])
-            subprocess.Popen("%s %s" % (self.editor_command, path), shell=True,
+                                   in_green(' at line %s...' % line_num)])
+            subprocess.Popen("%s +%s %s" %
+                             (self.editor_command, line_num, path), shell=True,
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def toggle_status_style(self):
