@@ -472,11 +472,12 @@ def python_tidy(path):  # Deps: found on internet?
     return Status.normal, _syntax_highlight_using_path(stdout, path)
 
 
-@deps(deps={"pip3/xdis"}, executables={"pydisasm"},
-      url="https://pypi.python.org/pypi/xdis")
-def pydisasm(path):
-    return _run_command(["pydisasm", path], Status.normal,
-                        Status.not_applicable)
+# FIX: Reenable when pydisasm is not causing problems
+# @deps(deps={"pip3/xdis"}, executables={"pydisasm"},
+#       url="https://pypi.python.org/pypi/xdis")
+# def pydisasm(path):
+#     return _run_command(["pydisasm", path], Status.normal,
+#                         Status.not_applicable)
 
 
 @deps(deps={"python-bandit", "python3-bandit"}, fedora_deps={"bandit"},
@@ -852,7 +853,7 @@ TOOLS_FOR_EXTENSIONS = \
         (["py"], [python_syntax, python_unittests, pydoc, mypy,
                   python_coverage, pycodestyle, pyflakes, pylint, python_gut,
                   python_modulefinder, python_mccabe, bandit]),
-        (["pyc"], [pydisasm]),
+        # (["pyc"], [pydisasm]),
         (["pl", "pm", "t"], [perl_syntax, perldoc, perltidy]),
         # (["p6", "pm6"], [perl6_syntax, perldoc]),
         (["pod", "pod6"], [perldoc]),
