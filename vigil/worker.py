@@ -18,14 +18,11 @@ class Worker:
         self.result = None
         self.process = None
         self.child_pgid = None
-        self.script_path = (os.path.join(
-            os.environ["APPDIR"], "usr", "bin", "vigil-worker")
-                            if "APPDIR" in os.environ else "vigil-worker")
 
     @asyncio.coroutine
     def create_process(self):
         create = asyncio.create_subprocess_exec(
-            self.script_path, stdin=asyncio.subprocess.PIPE,
+            "vigil-worker", stdin=asyncio.subprocess.PIPE,
             stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
             preexec_fn=os.setsid)
         self.process = yield from create

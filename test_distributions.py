@@ -126,9 +126,9 @@ def build_gentoo():
 
 
 def main():
-    WORK_PATH = (tempfile.mkdtemp(prefix="vigil-") if len(sys.argv) == 1
-                 else sys.argv[1])
-    os.chdir(WORK_PATH)
+    work_path = (tempfile.mkdtemp(prefix="test_distributions-")
+                 if len(sys.argv) == 1 else sys.argv[1])
+    os.chdir(work_path)
     cmd("sudo apt-get install -y systemd-container debootstrap xz-utils wget")
     # FIX: Reenable: fedora debian archlinux opensuse pixel gentoo
     for distribution in ["ubuntu"]:
@@ -151,7 +151,7 @@ def main():
             globals()["remove_" + distribution]()
         except KeyError:
             cmd("sudo rm -rf " + distribution)
-    os.rmdir(WORK_PATH)
+    os.rmdir(work_path)
     print("Finished.")
 
 

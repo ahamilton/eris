@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Vigil
+Comment=
+Exec=vigil
+Terminal=true
+Icon=vigil
+Categories=Application;
