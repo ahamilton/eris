@@ -532,12 +532,6 @@ def c_syntax_gcc(path):
     return _run_command(["gcc", "-fsyntax-only", path])
 
 
-@deps(deps={"clang"}, url="http://clang.llvm.org/", executables={"clang"},
-      missing_in={"gentoo"})
-def c_syntax_clang(path):
-    return _run_command(["clang", "-fsyntax-only", path])
-
-
 @deps(deps={"splint"}, url="splint", executables={"splint"})
 def splint(path):
     stdout, stderr, returncode = _do_command(["splint", "-preproc", path])
@@ -619,12 +613,6 @@ def html2text(path):
 @deps(deps={"gcc", "g++-6"}, url="https://gcc.gnu.org/", executables={"gcc"})
 def cpp_syntax_gcc(path):
     return _run_command(["gcc", "-fsyntax-only", path])
-
-
-@deps(deps={"clang"}, url="http://clang.llvm.org/", executables={"clang"},
-      missing_in={"gentoo"})
-def cpp_syntax_clang(path):
-    return _run_command(["clang", "-fsyntax-only", path])
 
 
 @deps(deps={"bcpp"}, fedora_deps=set(), arch_deps=set(), executables={"bcpp"},
@@ -858,10 +846,9 @@ TOOLS_FOR_EXTENSIONS = \
         # (["p6", "pm6"], [perl6_syntax, perldoc]),
         (["pod", "pod6"], [perldoc]),
         (["java"], [uncrustify]),
-        (["c", "h"], [c_syntax_gcc, c_syntax_clang, splint, uncrustify]),
+        (["c", "h"], [c_syntax_gcc, splint, uncrustify]),
         (["o"], [objdump_headers, objdump_disassemble, readelf]),
-        (["cc", "cpp", "hpp"], [cpp_syntax_gcc, cpp_syntax_clang, bcpp,
-                                uncrustify]),
+        (["cc", "cpp", "hpp"], [cpp_syntax_gcc, bcpp, uncrustify]),
         (["pdf"], [pdf2txt]),
         (["html"], [html_syntax, tidy, html2text]),
         (["php"], [php5_syntax]),
