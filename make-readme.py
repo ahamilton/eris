@@ -42,6 +42,7 @@ then to run:
 
 Extensions | Tools
 ---------- | -----""")
-for extensions, tools_ in tools.TOOLS_FOR_EXTENSIONS:
+all_tools = [(["*"], tools.generic_tools())] + tools.TOOLS_FOR_EXTENSIONS
+for extensions, tools_ in all_tools:
     print("%s | %s" % (" ".join("." + extension for extension in extensions),
                        " • ".join(tool_markup(tool) for tool in tools_)))

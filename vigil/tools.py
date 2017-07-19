@@ -277,7 +277,8 @@ def metadata(path):
 
 
 @deps(deps={"python3-pygments"}, arch_deps={"python-pygments"},
-      opensuse_deps={"python3-Pygments"}, gentoo_deps={"pygments"})
+      opensuse_deps={"python3-Pygments"}, gentoo_deps={"pygments"},
+      url="python3-pygments")
 def contents(path):
     root, ext = splitext(path)
     if ext == "":
@@ -829,7 +830,7 @@ class Result:
         return [status_to_str(self.status)]
 
 
-def _generic_tools():
+def generic_tools():
     return [contents, metadata]
 
 
@@ -885,7 +886,7 @@ def _tools_for_extension():
 
 
 def tools_all():
-    tools_ = set(_generic_tools())
+    tools_ = set(generic_tools())
     tools_.add(git_blame)
     for tool_list in _tools_for_extension().values():
         tools_.update(set(tool_list))
@@ -922,7 +923,7 @@ def tools_for_path(path):
     git_tools = [git_blame] if os.path.exists(".git") else []
     root, ext = splitext(path)
     extra_tools = [] if ext == "" else _tools_for_extension().get(ext[1:], [])
-    return _generic_tools() + git_tools + extra_tools
+    return generic_tools() + git_tools + extra_tools
 
 
 def run_tool_no_error(path, tool):
@@ -972,7 +973,7 @@ def path_colored(path):
 
 @functools.lru_cache(maxsize=100)
 def tool_name_colored(tool, path):
-    char_style = (termstr.CharStyle(is_bold=True) if tool in _generic_tools()
+    char_style = (termstr.CharStyle(is_bold=True) if tool in generic_tools()
                   else _charstyle_of_path(path))
     return termstr.TermStr(tool.__name__, char_style)
 
