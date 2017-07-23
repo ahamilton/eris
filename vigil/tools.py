@@ -6,12 +6,10 @@
 import ast
 import asyncio
 import contextlib
-import dis
 import enum
 import functools
 import gzip
 import hashlib
-import io
 import math
 import os
 import os.path

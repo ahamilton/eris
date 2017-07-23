@@ -38,7 +38,7 @@ def make_sub_container(src_root, dest_root, paths):
 
 
 def filter_paths(paths, excluded):
-    return [path for path in paths if not excluded in path]
+    return [path for path in paths if excluded not in path]
 
 
 def make_ubuntu_base():
@@ -54,9 +54,20 @@ def make_ubuntu_base():
     return base_paths
 
 
+def install_vigil():
+    run_in_container = test_distributions.run_in_container
+    run_in_container("ubuntu", "./install-dependencies")
+    # libunionpreload doesn't trick shebangs?
+    run_in_container("ubuntu", "sed -i -e "
+                     "'s/\/usr\/bin\/python/\/usr\/bin\/env python/g' "
+                     "/usr/bin/pdf2txt")
+    run_in_container("ubuntu", "apt-get install --yes python3-pip")
+    run_in_container("ubuntu", "pip3 install -I .")
+
+
 # FIX: This isn`t making the correct libunionpreload.
 # def make_libunionpreload():
-#     #See https://github.com/AppImage/AppImages/blob/master/recipes/meta/Recipe
+#  #See https://github.com/AppImage/AppImages/blob/master/recipes/meta/Recipe
 #     temp_dir = tempfile.mkdtemp()
 #     cmd("wget -q https://raw.githubusercontent.com/mikix/deb2snap/"
 #         "blob/847668c4a89e2d4a1711fe062a4bae0c7ab81bd0/src/preload.c "
@@ -90,12 +101,7 @@ def main(work_path):
     assert os.getuid() == 0 and os.getgid() == 0, "Need to be root."
     os.chdir(work_path)
     base_paths = make_ubuntu_base()
-    test_distributions.run_in_container("ubuntu", "./install-dependencies")
-    test_distributions.run_in_container(
-        "ubuntu", "sed -i -e 's/\/usr\/bin\/python/\/usr\/bin\/env python/g' "
-        "/usr/bin/pdf2txt")  # libunionpreload doesn't trick shebangs?
-    test_distributions.run_in_container("ubuntu", "apt-get install --yes python3-pip")
-    test_distributions.run_in_container("ubuntu", "pip3 install -I .")
+    install_vigil()
     post_install_paths = relative_paths("ubuntu", all_paths("ubuntu"))
     new_paths = set(post_install_paths) - set(base_paths)
     new_paths = filter_paths(new_paths, "/var/cache/apt/archives")
@@ -107,6 +113,6 @@ def main(work_path):
 
 
 if __name__ == "__main__":
-    work_path = (tempfile.mkdtemp(prefix="make-appimage2-")
+    work_path = (tempfile.mkdtemp(prefix="make-appimage-")
                  if len(sys.argv) == 1 else sys.argv[1])
     main(work_path)
