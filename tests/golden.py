@@ -18,7 +18,7 @@ def _accept_actual(failed):
         print("Wrote golden file: %s" % golden_path)
 
 
-def _run_meld_gui(failed):
+def _show_differences(failed):
     temp_dir = tempfile.mkdtemp()
     try:
         golden_dir = os.path.join(temp_dir, "golden")
@@ -32,7 +32,8 @@ def _run_meld_gui(failed):
                 actual.write(actual_str)
             os.symlink(os.path.abspath(golden_file),
                        os.path.join(golden_dir, name))
-        subprocess.call(["meld", actual_dir, golden_dir])
+        diff_command = ["meld"] if shutil.which("meld") else ["diff", "-r"]
+        subprocess.call(diff_command + [actual_dir, golden_dir])
     finally:
         shutil.rmtree(temp_dir)
 
@@ -76,4 +77,4 @@ def main():
             if options.should_accept_actual:
                 _accept_actual(_FAILED)
             if options.should_diff:
-                _run_meld_gui(_FAILED)
+                _show_differences(_FAILED)
