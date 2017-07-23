@@ -41,17 +41,11 @@ from vigil import tools
 from vigil import worker
 
 
-if "APPDIR" in os.environ:
-    test_usage_line = "  vigil --self_test\n"
-    test_option_line = ("  --self_test                      "
-                        "Test that vigil is working properly.\n")
-else:
-    test_usage_line, test_option_line = "", ""
 USAGE = """
 Usage:
   vigil [options] <directory>
   vigil -h | --help
-%s
+
 Example:
   # vigil my_project
 
@@ -63,7 +57,7 @@ Options:
                                    the *edit command. It may contain options.
   -t THEME, --theme=THEME          The pygment theme used for syntax
                                    highlighting. Defaults to "native".
-%s""" % (test_usage_line, test_option_line)
+"""
 
 
 KEYS_DOC = """Keys:
@@ -1018,10 +1012,6 @@ def check_arguments():
     if arguments["--help"]:
         print(cmdline_help)
         sys.exit(0)
-    if "APPDIR" in os.environ and arguments["--self_test"]:
-        test_dir = os.path.join(os.environ["APPDIR"], "tests")
-        sys.exit(subprocess.call([os.path.join(test_dir, "test-all")],
-                                 cwd=test_dir))
     worker_count = None
     try:
         if arguments["--workers"] is not None:
