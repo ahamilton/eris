@@ -638,11 +638,10 @@ def uncrustify(path):
     return status, _syntax_highlight_using_path(stdout, path)
 
 
-@deps(deps={"php"}, opensuse_deps={"php5"},
-      url="https://en.wikipedia.org/wiki/PHP", executables={"php"},
-      missing_in={"debian"})
-def php5_syntax(path):
-    return _run_command(["php", "--syntax-check", path])
+@deps(deps={"php7.0-cli"}, url="https://en.wikipedia.org/wiki/PHP",
+      executables={"php7.0"}, missing_in={"debian"})
+def php7_syntax(path):
+    return _run_command(["php7.0", "--syntax-check", path])
 
 
 def _pil_pixels(pil_image):
@@ -852,7 +851,7 @@ TOOLS_FOR_EXTENSIONS = \
         (["cc", "cpp", "hpp"], [cpp_syntax_gcc, bcpp, uncrustify]),
         (["pdf"], [pdf2txt]),
         (["html"], [html_syntax, tidy, html2text]),
-        (["php"], [php5_syntax]),
+        (["php"], [php7_syntax]),
         (["zip"], [unzip]),
         (["tar.gz", "tgz"], [tar_gz]),
         (["tar.bz2"], [tar_bz2]),

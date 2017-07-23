@@ -91,6 +91,10 @@ def main(work_path):
     os.chdir(work_path)
     base_paths = make_ubuntu_base()
     test_distributions.run_in_container("ubuntu", "./install-dependencies")
+    test_distributions.run_in_container(
+        "ubuntu", "sed -i -e 's/\/usr\/bin\/python/\/usr\/bin\/env python/g' "
+        "/usr/bin/pdf2txt")  # libunionpreload doesn't trick shebangs?
+    test_distributions.run_in_container("ubuntu", "apt-get install --yes python3-pip")
     test_distributions.run_in_container("ubuntu", "pip3 install -I .")
     post_install_paths = relative_paths("ubuntu", all_paths("ubuntu"))
     new_paths = set(post_install_paths) - set(base_paths)

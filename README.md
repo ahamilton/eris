@@ -35,7 +35,7 @@ Extensions | Tools
 .cc .cpp .hpp | [cpp_syntax_gcc](https://gcc.gnu.org/) • bcpp • [uncrustify](https://github.com/uncrustify/uncrustify)
 .pdf | [pdf2txt](http://www.unixuser.org/~euske/python/pdfminer/)
 .html | [html_syntax](http://www.html-tidy.org/) • [tidy](http://www.html-tidy.org/) • [html2text](http://www.mbayer.de/html2text/)
-.php | [php5_syntax](https://en.wikipedia.org/wiki/PHP)
+.php | [php7_syntax](https://en.wikipedia.org/wiki/PHP)
 .zip | [unzip](http://www.info-zip.org/UnZip.html)
 .tar.gz .tgz | [tar_gz](http://www.gnu.org/software/tar/manual/tar.html)
 .tar.bz2 | [tar_bz2](http://www.gnu.org/software/tar/manual/tar.html)

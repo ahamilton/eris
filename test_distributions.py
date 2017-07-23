@@ -40,12 +40,13 @@ def run_in_container(container, command):
 
 
 def build_ubuntu():
-    cmd("sudo debootstrap --components=main,restricted,universe,multiverse "
-        "zesty ubuntu.part")
+    cmd("sudo debootstrap zesty ubuntu.part")
     run_in_container("ubuntu.part",
 	             "ln -sf /lib/systemd/resolv.conf /etc/resolv.conf")
+    run_in_container("ubuntu.part",
+                     "sed -i -e 's/main/main restricted universe"
+                     " multiverse/g' /etc/apt/sources.list")
     run_in_container("ubuntu.part", "apt-get update")
-    run_in_container("ubuntu.part", "apt-get install --yes python3-pip")
     os.rename("ubuntu.part", "ubuntu")
 
 
@@ -140,6 +141,7 @@ def main():
         print("Installing vigil's dependencies in %s..." % distribution)
         run_in_container(distribution, "./install-dependencies")
         print("Installing vigil in %s..." % distribution)
+        run_in_container(distribution, "apt-get install --yes python3-pip")
         run_in_container(distribution, "pip3 install .")
         print("Testing vigil in %s..." % distribution)
         run_in_container(distribution, "./test-all")
