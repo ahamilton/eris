@@ -81,7 +81,7 @@ def make_app_dir(app_dir, new_paths):
 
 def make_appimage(app_dir):
     cmd("wget --continue https://github.com/AppImage/AppImageKit/releases/"
-        "download/continuous/appimagetool-x86_64.AppImage")
+        "download/9/appimagetool-x86_64.AppImage")
     cmd("chmod +x appimagetool-x86_64.AppImage")
     cmd("./appimagetool-x86_64.AppImage " + app_dir)
 
