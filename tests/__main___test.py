@@ -219,13 +219,12 @@ class MainTestCase(unittest.TestCase):
             # tmp_total = _tmp_total()
             foo_path = os.path.join(root_path, "foo")
             open(foo_path, "w").close()
-            __main__.manage_cache(root_path)
             with __main__.chdir(root_path):
                 with contextlib.redirect_stdout(io.StringIO()):
                     __main__.main(root_path, loop, worker_count=2,
                                   is_being_tested=True)
-                for file_name in ["summary.pickle", "creation_time", "log",
-                                  "foo-metadata", "foo-contents"]:
+                for file_name in ["summary.pickle", "log", "foo-metadata",
+                                  "foo-contents"]:
                     self.assertTrue(os.path.exists(".vigil/" + file_name))
             self.assertEqual(_mount_total(), mount_total)
             # self.assertEqual(_tmp_total(), tmp_total)
