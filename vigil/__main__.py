@@ -406,32 +406,15 @@ class Summary:
                 self._cursor_position = position
                 return
 
-    def refresh(self, log):
-        selection = self.get_selection()
-        if selection.status not in {tools.Status.running, tools.Status.paused,
-                                    tools.Status.pending}:
-            tool_name = tools.tool_name_colored(
-                selection.tool, selection.path)
-            path_colored = tools.path_colored(selection.path)
-            log.log_message([in_green("Refreshing "), tool_name,
-                             in_green(" result of "), path_colored,
-                             in_green("...")])
-            selection.reset()
-            self.closest_placeholder_generator = None
-            self._jobs_added_event.set()
-            self.completed_total -= 1
-
     def refresh_result(self, result):
-        selection = result
-        if selection.status not in {tools.Status.running, tools.Status.paused,
-                                    tools.Status.pending}:
-            selection.reset()
+        if result.status not in {tools.Status.running, tools.Status.paused,
+                                 tools.Status.pending}:
+            result.reset()
             self.closest_placeholder_generator = None
             self._jobs_added_event.set()
             self.completed_total -= 1
 
-    def refresh_tool(self):
-        tool = self.get_selection().tool
+    def refresh_tool(self, tool):
         for row in self._column:
             for result in row:
                 if result.tool == tool:
@@ -757,14 +740,20 @@ class Screen:
         os.kill(os.getpid(), signal.SIGINT)
 
     def refresh(self):
-        self._summary.refresh(self._log)
+        selection = self._summary.get_selection()
+        tool_name = tools.tool_name_colored(selection.tool, selection.path)
+        path_colored = tools.path_colored(selection.path)
+        self._log.log_message([in_green("Refreshing "), tool_name,
+                               in_green(" result of "), path_colored,
+                               in_green("...")])
+        self._summary.refresh_result(selection)
 
     def refresh_tool(self):
         selection = self._summary.get_selection()
         tool_name = tools.tool_name_colored(selection.tool, selection.path)
         self._log.log_message([in_green("Refreshing all results of "),
                                tool_name, in_green("...")])
-        self._summary.refresh_tool()
+        self._summary.refresh_tool(selection.tool)
 
     _DIMMED_BORDER = [termstr.TermStr(part).fg_color(termstr.Color.grey_100)
                       for part in fill3.Border.THIN]
