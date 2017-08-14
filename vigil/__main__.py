@@ -73,6 +73,7 @@ KEYS_DOC = """Keys:
   *p - Pause workers. (toggle)
   *o - Order files by type, or by directory location. (toggle)
   *r - Refresh the currently selected report.
+  *R - Refresh all reports of the current tool.
   *f - Resize the focused pane to the full screen. (toggle)
 """
 
@@ -420,6 +421,22 @@ class Summary:
             self._jobs_added_event.set()
             self.completed_total -= 1
 
+    def refresh_result(self, result):
+        selection = result
+        if selection.status not in {tools.Status.running, tools.Status.paused,
+                                    tools.Status.pending}:
+            selection.reset()
+            self.closest_placeholder_generator = None
+            self._jobs_added_event.set()
+            self.completed_total -= 1
+
+    def refresh_tool(self):
+        tool = self.get_selection().tool
+        for row in self._column:
+            for result in row:
+                if result.tool == tool:
+                    self.refresh_result(result)
+
 
 class Log:
 
@@ -742,6 +759,13 @@ class Screen:
     def refresh(self):
         self._summary.refresh(self._log)
 
+    def refresh_tool(self):
+        selection = self._summary.get_selection()
+        tool_name = tools.tool_name_colored(selection.tool, selection.path)
+        self._log.log_message([in_green("Refreshing all results of "),
+                               tool_name, in_green("...")])
+        self._summary.refresh_tool()
+
     _DIMMED_BORDER = [termstr.TermStr(part).fg_color(termstr.Color.grey_100)
                       for part in fill3.Border.THIN]
 
@@ -886,7 +910,8 @@ class Screen:
         ({"end", "ctrl e"}, cursor_end), ({"n"}, move_to_next_issue),
         ({"N"}, move_to_next_issue_of_tool), ({"e"}, edit_file),
         ({"q"}, quit_), ({"p"}, toggle_pause), ({"r"}, refresh),
-        ({"tab"}, toggle_focus), ({"f"}, toggle_fullscreen)]
+        ({"R"}, refresh_tool), ({"tab"}, toggle_focus),
+        ({"f"}, toggle_fullscreen)]
 
 
 def add_watch_manager_to_mainloop(root_path, mainloop, on_filesystem_change,
