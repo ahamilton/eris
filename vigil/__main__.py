@@ -930,13 +930,7 @@ def load_state(pickle_path, jobs_added_event, appearance_changed_event,
     try:
         with gzip.open(pickle_path, "rb") as file_:
             screen = pickle.load(file_)
-    except (FileNotFoundError, AttributeError):
-        cache_path = os.path.join(root_path, tools.CACHE_PATH)
-        if os.path.exists(cache_path):
-            print("Vigil has been updated, so clearing the cache and"
-                  " recalculating all results...")
-            shutil.rmtree(cache_path, ignore_errors=True)
-        os.mkdir(cache_path)
+    except FileNotFoundError:
         summary = Summary(root_path, jobs_added_event)
         log = Log(appearance_changed_event)
         screen = Screen(summary, log, appearance_changed_event, loop)
@@ -1013,6 +1007,19 @@ def chdir(path):
         os.chdir(old_cwd)
 
 
+def manage_cache(root_path):
+    cache_path = os.path.join(root_path, tools.CACHE_PATH)
+    timestamp_path = os.path.join(cache_path, "creation_time")
+    if os.path.exists(cache_path) and \
+       os.stat(__file__).st_mtime > os.stat(timestamp_path).st_mtime:
+        print("Vigil has been updated, so clearing the cache and"
+              " recalculating all results...")
+        shutil.rmtree(cache_path)
+    if not os.path.exists(cache_path):
+        os.mkdir(cache_path)
+        open(timestamp_path, "w").close()
+
+
 def check_arguments():
     cmdline_help = __doc__ + USAGE.replace("*", "")
     arguments = docopt.docopt(cmdline_help, help=False)
@@ -1049,6 +1056,7 @@ def check_arguments():
 def entry_point():
     root_path, worker_count, editor_command, theme = check_arguments()
     with terminal.console_title("vigil: " + os.path.basename(root_path)):
+        manage_cache(root_path)
         with chdir(root_path):  # FIX: Don't change directory if possible.
             loop = asyncio.get_event_loop()
             main(root_path, loop, worker_count, editor_command, theme)
