@@ -873,19 +873,18 @@ class Screen:
             progress_bar_size)
 
     def appearance(self, dimensions):
-        if self._is_fullscreen and self._is_summary_focused:
-            return self._summary_border.appearance(dimensions)
-        if self._is_help_visible:
-            return self._help_widget.appearance(dimensions)
         self._fix_listing()
-        if self._is_fullscreen:
-            return self._listing.appearance(dimensions)
+        if self._is_help_visible:
+            body = self._help_widget
+        elif self._is_fullscreen:
+            body = (self._summary_border if self._is_summary_focused
+                    else self._listing)
+        else:
+            body = (self._layouts[self._is_log_visible]
+                    [self._is_listing_portrait])
         width, height = max(dimensions[0], 10), max(dimensions[1], 20)
-        status_bar_appearance = self._get_status_bar(width)
-        result = (self._layouts[self._is_log_visible]
-                  [self._is_listing_portrait].appearance(
-                      (width, height-len(status_bar_appearance))) +
-                  status_bar_appearance)
+        result = (body.appearance((width, height-1)) +
+                  self._get_status_bar(width))
         return (result if (width, height) == dimensions
                 else fill3.appearance_resize(result, dimensions))
 
