@@ -8,27 +8,13 @@ set -e
 
 
 DIST_ID=$(cat /etc/os-release | grep "^ID=" | cut -d "=" -f 2)
-if [ $DIST_ID == "fedora" ]; then
-    INSTALL_CMD="dnf -y install"
-    DEPS="python3-inotify python3-pygments python3-docopt python3-pillow"
-elif [ $DIST_ID == "arch" ]; then
-    INSTALL_CMD="pacman -S --noconfirm --needed"
-    DEPS="python-pyinotify python-pygments python-docopt python-pillow"
-elif [ $DIST_ID == "opensuse" ]; then
-    INSTALL_CMD="zypper -n install"
-    DEPS="python3-pyinotify python3-Pygments python3-docopt python3-Pillow"
-elif [ $DIST_ID == "debian" ]; then
-    INSTALL_CMD="apt --yes install"
-    DEPS="python3-pyinotify python3-pygments python3-docopt python3-pillow"
-elif [ $DIST_ID == "gentoo" ]; then
-    INSTALL_CMD="emerge --noreplace"
-    DEPS="pyinotify pygments docopt pillow"
-else
-    INSTALL_CMD="apt --yes install"
-    DEPS="python3-pyinotify python3-pygments python3-docopt python3-pillow"
+if [ $DIST_ID != "ubuntu" ]; then
+    echo "Vigil can only be installed on Ubuntu."
+    exit 1
 fi
 echo "Installing the dependencies of the vigil script..."
-sudo $INSTALL_CMD $DEPS util-linux
+sudo apt --yes install python3-pyinotify python3-pygments python3-docopt \
+     python3-pillow util-linux
 echo
 echo "Installing all the tools vigil may need..."
 ./install-tools
