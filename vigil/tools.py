@@ -274,9 +274,7 @@ def metadata(path):
     return (Status.normal, fill3.Text(fill3.join("", text)))
 
 
-@deps(deps={"python3-pygments"}, arch_deps={"python-pygments"},
-      opensuse_deps={"python3-Pygments"}, gentoo_deps={"pygments"},
-      url="python3-pygments")
+@deps(deps={"python3-pygments"}, url="python3-pygments")
 def contents(path):
     root, ext = splitext(path)
     if ext == "":
@@ -309,7 +307,7 @@ def _python_version(path):  # Need a better hueristic
     return "python3"
 
 
-@deps(deps={"python"}, gentoo_deps={"python"},
+@deps(deps={"python"},
       url="https://en.wikipedia.org/wiki/Python_syntax_and_semantics")
 def python_syntax(path):
     status = (Status.ok if _is_python_syntax_correct(path, "python") or
@@ -327,7 +325,7 @@ def _is_python_test_file(path):
     return path.endswith("_test.py") or path.startswith("test_")
 
 
-@deps(deps={"python", "python3"}, gentoo_deps={"python"},
+@deps(deps={"python", "python3"},
       url="https://docs.python.org/3/library/unittest.html")
 def python_unittests(path):
     if _is_python_test_file(path):
@@ -341,8 +339,7 @@ def python_unittests(path):
 
 
 @deps(deps={"python", "python3"},
-      url="https://docs.python.org/3/library/pydoc.html",
-      missing_in={"gentoo"})
+      url="https://docs.python.org/3/library/pydoc.html")
 def pydoc(path):
     stdout, stderr, returncode = _do_command(
         [_python_version(path), "-m", "pydoc", path], timeout=TIMEOUT)
@@ -352,9 +349,7 @@ def pydoc(path):
     return status, fill3.Text(_fix_input(stdout))
 
 
-@deps(deps={"mypy"}, url="mypy", fedora_deps={"python3-mypy"},
-      debian_deps={"pip3/mypy"}, arch_deps={"pip3/mypy"},
-      opensuse_deps={"pip3/mypy"}, executables={"mypy"}, missing_in={"gentoo"})
+@deps(deps={"mypy"}, url="mypy", executables={"mypy"})
 def mypy(path):
     stdout, stderr, returncode = _do_command(["mypy", path], timeout=TIMEOUT)
     status = Status.ok if returncode == 0 else Status.normal
@@ -368,10 +363,7 @@ def _colorize_coverage_report(text):
                            for line in text.splitlines(keepends=True)])
 
 
-@deps(deps={"python-coverage", "python3-coverage"},
-      arch_deps={"python2-coverage", "python-coverage"},
-      opensuse_deps={"python2-coverage", "python3-coverage"},
-      gentoo_deps={"coverage"}, url="python3-coverage")
+@deps(deps={"python-coverage", "python3-coverage"}, url="python3-coverage")
 def python_coverage(path):
     # FIX: Also use test_*.py files.
     test_path = path[:-(len(".py"))] + "_test.py"
@@ -397,28 +389,17 @@ def python_coverage(path):
 
 
 @deps(deps={"python-pycodestyle", "python3-pycodestyle"},
-      fedora_deps={"python2-pycodestyle", "python3-pycodestyle"},
-      debian_deps={"pip/pycodestyle", "pip3/pycodestyle"},
-      arch_deps={"python-pycodestyle", "python2-pycodestyle"},
-      opensuse_deps={"python2-pycodestyle", "python3-pycodestyle"},
-      gentoo_deps={"pycodestyle"}, url="python-pycodestyle")
+      url="python-pycodestyle")
 def pycodestyle(path):
     return _run_command([_python_version(path), "-m", "pycodestyle", path])
 
 
-@deps(deps={"python-pyflakes", "python3-pyflakes"},
-      arch_deps={"python2-pyflakes", "python-pyflakes"},
-      opensuse_deps={"python2-pyflakes", "python3-pyflakes"}, url="pyflakes",
-      missing_in={"gentoo"})
+@deps(deps={"python-pyflakes", "python3-pyflakes"}, url="pyflakes")
 def pyflakes(path):
     return _run_command([_python_version(path), "-m", "pyflakes", path])
 
 
-@deps(deps={"pylint", "pylint3"}, fedora_deps={"pylint", "python3-pylint"},
-      arch_deps={"python2-pylint", "python-pylint"},
-      opensuse_deps={"python2-pylint", "python3-pylint"},
-      debian_deps={"pip/pylint", "pip3/pylint"}, gentoo_deps={"pylint"},
-      url="pylint3")
+@deps(deps={"pylint", "pylint3"}, url="pylint3")
 def pylint(path):
     return _run_command([_python_version(path), "-m", "pylint",
                          "--errors-only", path])
@@ -432,7 +413,7 @@ def python_gut(path):
     return Status.normal, source_widget
 
 
-@deps(deps={"python", "python3"}, gentoo_deps={"python"},
+@deps(deps={"python", "python3"},
       url="https://docs.python.org/3/library/modulefinder.html")
 def python_modulefinder(path):
     return _run_command([_python_version(path), "-m", "modulefinder", path],
@@ -451,10 +432,7 @@ def _colorize_mccabe(text, python_version):
         for line in text.splitlines(keepends=True)])
 
 
-@deps(deps={"python-mccabe", "python3-mccabe"},
-      arch_deps={"python2-mccabe", "python-mccabe"},
-      opensuse_deps={"python2-mccabe", "python3-mccabe"},
-      gentoo_deps={"mccabe"}, url="python3-mccabe")
+@deps(deps={"python-mccabe", "python3-mccabe"}, url="python3-mccabe")
 def python_mccabe(path):
     python_version = _python_version(path)
     stdout, *rest = _do_command([python_version, "-m", "mccabe", path])
@@ -479,10 +457,7 @@ def python_tidy(path):  # Deps: found on internet?
 #                         Status.not_applicable)
 
 
-@deps(deps={"python-bandit", "python3-bandit"}, fedora_deps={"bandit"},
-      debian_deps={"pip/bandit", "pip3/bandit"}, arch_deps={"bandit"},
-      opensuse_deps={"pip/bandit", "pip3/bandit"}, gentoo_deps={"bandit"},
-      url="python3-bandit")
+@deps(deps={"python-bandit", "python3-bandit"}, url="python3-bandit")
 def bandit(path):
     python_version = _python_version(path)
     stdout, stderr, returncode = _do_command(
@@ -504,18 +479,16 @@ def perl_syntax(path):
     return _run_command([_perl_version(path), "-c", path])
 
 
-@deps(deps={"perl-doc"}, fedora_deps={"perl-Pod-Perldoc"},
-      arch_deps={"perl-pod-perldoc"}, gentoo_deps={"perl-IO"},
-      url="http://perldoc.perl.org/", executables={"perldoc"})
+@deps(deps={"perl-doc"}, url="http://perldoc.perl.org/",
+      executables={"perldoc"})
 def perldoc(path):
     stdout, stderr, returncode = _do_command(["perldoc", "-t", path])
     return ((Status.normal, fill3.Text(stdout)) if returncode == 0
             else (Status.not_applicable, fill3.Text(stderr)))
 
 
-@deps(deps={"perltidy"}, arch_deps={"perl-test-perltidy"},
-      opensuse_deps={"perl-Test-PerlTidy"}, gentoo_deps={"Perl-Tidy"},
-      url="http://perltidy.sourceforge.net/", executables={"perltidy"})
+@deps(deps={"perltidy"}, url="http://perltidy.sourceforge.net/",
+      executables={"perltidy"})
 def perltidy(path):
     stdout, *rest = _do_command(["perltidy", "-st", path])
     return Status.normal, _syntax_highlight_using_path(stdout, path)
@@ -582,14 +555,12 @@ def nm(path):
     return _run_command(["nm", "--demangle", path], Status.normal)
 
 
-@deps(deps={"python-pdfminer"}, arch_deps=set(), url="python-pdfminer",
-      executables={"pdf2txt"}, missing_in={"arch", "fedora", "opensuse",
-                                           "gentoo"})
+@deps(deps={"python-pdfminer"}, url="python-pdfminer", executables={"pdf2txt"})
 def pdf2txt(path):
     return _run_command(["pdf2txt", path], Status.normal)
 
 
-@deps(deps={"tidy"}, url="tidy", executables={"tidy"}, missing_in={"gentoo"})
+@deps(deps={"tidy"}, url="tidy", executables={"tidy"})
 def html_syntax(path):
     # Maybe only show errors
     stdout, stderr, returncode = _do_command(["tidy", path])
@@ -597,14 +568,13 @@ def html_syntax(path):
     return status, fill3.Text(stderr)
 
 
-@deps(deps={"tidy"}, url="tidy", executables={"tidy"}, missing_in={"gentoo"})
+@deps(deps={"tidy"}, url="tidy", executables={"tidy"})
 def tidy(path):
     stdout, *rest = _do_command(["tidy", path])
     return Status.normal, fill3.Text(stdout)
 
 
-@deps(deps={"html2text"}, arch_deps={"python-html2text"},
-      url="html2text", executables={"html2text"}, missing_in={"gentoo"})
+@deps(deps={"html2text"}, url="html2text", executables={"html2text"})
 def html2text(path):
     return _run_command(["html2text", path], Status.normal)
 
@@ -614,16 +584,14 @@ def cpp_syntax_gcc(path):
     return _run_command(["gcc", "-fsyntax-only", path])
 
 
-@deps(deps={"bcpp"}, fedora_deps=set(), arch_deps=set(), executables={"bcpp"},
-      missing_in={"arch", "fedora", "opensuse"})
+@deps(deps={"bcpp"}, executables={"bcpp"})
 def bcpp(path):
     stdout, stderr, returncode = _do_command(["bcpp", "-fi", path])
     status = Status.normal if returncode == 0 else Status.problem
     return status, _syntax_highlight_using_path(stdout, path)
 
 
-@deps(deps={"uncrustify"}, debian_deps=set(), url="uncrustify",
-      executables={"uncrustify"}, missing_in={"debian"})
+@deps(deps={"uncrustify"}, url="uncrustify", executables={"uncrustify"})
 def uncrustify(path):
     with tempfile.TemporaryDirectory() as temp_dir:
         config_path = os.path.join(temp_dir, "uncrustify.cfg")
@@ -637,7 +605,7 @@ def uncrustify(path):
 
 
 @deps(deps={"php7.0-cli"}, url="https://en.wikipedia.org/wiki/PHP",
-      executables={"php7.0"}, missing_in={"debian"})
+      executables={"php7.0"})
 def php7_syntax(path):
     return _run_command(["php7.0", "--syntax-check", path])
 
@@ -658,9 +626,7 @@ def _resize_image(image, new_width):
                         PIL.Image.ANTIALIAS)
 
 
-@deps(deps={"python3-pil"}, fedora_deps={"python3-pillow"},
-      arch_deps={"python-pillow"}, opensuse_deps={"python3-Pillow"},
-      gentoo_deps={"pillow"}, url="python3-pil")
+@deps(deps={"python3-pil"}, url="python3-pil")
 def pil(path):
     with open(path, "rb") as image_file:
         with PIL.Image.open(image_file).convert("RGB") as image:
@@ -677,9 +643,7 @@ def pil(path):
     return Status.normal, fill3.Fixed(result)
 
 
-@deps(deps={"python3-pil"}, fedora_deps={"python3-pillow"},
-      arch_deps={"python-pillow"}, opensuse_deps={"python3-Pillow"},
-      gentoo_deps={"pillow"}, url="python3-pil")
+@deps(deps={"python3-pil"}, url="python3-pil")
 def pil_half(path):
     with open(path, "rb") as image_file:
         with PIL.Image.open(image_file).convert("RGB") as image:
@@ -858,27 +822,12 @@ TOOLS_FOR_EXTENSIONS = \
     ]
 
 
-def is_tool_in_distribution(tool, distribution):
-    return (not hasattr(tool, "missing_in")
-            or distribution not in tool.missing_in)
-
-
-def get_distro_id():
-    with open("/etc/os-release") as os_release_file:
-        for line in os_release_file:
-            if line.startswith("ID="):
-                return line[len("ID="):].strip()
-    raise AssertionError
-
-
 @functools.lru_cache(maxsize=1)
 def _tools_for_extension():
-    distribution = get_distro_id()
     result = {}
     for extensions, tools in TOOLS_FOR_EXTENSIONS:
         for extension in extensions:
-            result[extension] = [tool for tool in tools if
-                                 is_tool_in_distribution(tool, distribution)]
+            result[extension] = tools
     return result
 
 
@@ -890,20 +839,17 @@ def tools_all():
     return tools_
 
 
-def tool_dependencies(tool, distribution="ubuntu"):
+def tool_dependencies(tool):
     try:
-        return getattr(tool, distribution + "_deps")
+        return tool.deps
     except AttributeError:
-        try:
-            return tool.deps
-        except AttributeError:
-            return set()
+        return set()
 
 
-def dependencies(distribution="ubuntu"):
+def dependencies():
     dependencies_all = set()
     for tool in tools_all():
-        dependencies_all.update(tool_dependencies(tool, distribution))
+        dependencies_all.update(tool_dependencies(tool))
     return dependencies_all
 
 
