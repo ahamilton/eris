@@ -19,30 +19,27 @@ class Worker:
         self.process = None
         self.child_pgid = None
 
-    @asyncio.coroutine
-    def create_process(self):
+    async def create_process(self):
         create = asyncio.create_subprocess_exec(
             "vigil-worker", stdin=asyncio.subprocess.PIPE,
             stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
             preexec_fn=os.setsid)
-        self.process = yield from create
-        pid_line = yield from self.process.stdout.readline()
+        self.process = await create
+        pid_line = await self.process.stdout.readline()
         self.child_pgid = int(pid_line.strip())
         os.setpriority(os.PRIO_PGRP, self.child_pgid, 19)
 
-    @asyncio.coroutine
-    def run_tool(self, path, tool):
+    async def run_tool(self, path, tool):
         self.process.stdin.write(("%s\n%s\n" %
                                   (tool.__qualname__, path)).encode("utf-8"))
-        data = yield from self.process.stdout.readline()
+        data = await self.process.stdout.readline()
         return tools.Status(int(data))
 
-    @asyncio.coroutine
-    def job_runner(self, summary, log, jobs_added_event,
+    async def job_runner(self, summary, log, jobs_added_event,
                    appearance_changed_event):
-        yield from self.create_process()
+        await self.create_process()
         while True:
-            yield from jobs_added_event.wait()
+            await jobs_added_event.wait()
             while True:
                 try:
                     self.result = summary.get_closest_placeholder()
@@ -53,7 +50,7 @@ class Worker:
                         if self.is_being_tested:
                             os.kill(os.getpid(), signal.SIGINT)
                     break
-                yield from self.result.run(log, appearance_changed_event, self)
+                await self.result.run(log, appearance_changed_event, self)
                 summary.completed_total += 1
             jobs_added_event.clear()
 

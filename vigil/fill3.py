@@ -445,10 +445,9 @@ def _urwid_screen():
         screen.stop()
 
 
-@asyncio.coroutine
-def _update_screen(screen_widget, appearance_changed_event):
+async def _update_screen(screen_widget, appearance_changed_event):
     while True:
-        yield from appearance_changed_event.wait()
+        await appearance_changed_event.wait()
         appearance_changed_event.clear()
         patch_screen(screen_widget)
 

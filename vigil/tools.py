@@ -760,8 +760,7 @@ class Result:
         self.status = status
         self.entry.appearance_cache = None
 
-    @asyncio.coroutine
-    def run(self, log, appearance_changed_event, runner):
+    async def run(self, log, appearance_changed_event, runner):
         self.is_placeholder = False
         tool_name = tool_name_colored(self.tool, self.path)
         path = path_colored(self.path)
@@ -772,7 +771,7 @@ class Result:
             runner.pause()
         appearance_changed_event.set()
         start_time = time.time()
-        new_status = yield from runner.run_tool(self.path, self.tool)
+        new_status = await runner.run_tool(self.path, self.tool)
         Result.result.fget.evict(self)
         end_time = time.time()
         self.set_status(new_status)
