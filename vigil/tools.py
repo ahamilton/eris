@@ -346,6 +346,7 @@ def pydoc(path):
     status = Status.normal if returncode == 0 else Status.not_applicable
     if not stdout.startswith("Help on module"):
         status = Status.not_applicable
+    stdout = stdout.replace(os.getcwd() + "/", "")
     return status, fill3.Text(_fix_input(stdout))
 
 

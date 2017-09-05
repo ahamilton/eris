@@ -62,11 +62,7 @@ class ToolsTestCase(unittest.TestCase):
             with self.subTest(input_filename=input_filename):
                 status, result = run_tool(tool, input_filename)
                 golden_path = result_path(tool, input_filename)
-                text = widget_to_string(result)
-                with chdir(os.path.join(VIGIL_ROOT, "golden-files")):
-                    cwd = os.getcwd()
-                    text = text.replace(cwd, "/CWD")
-                golden.assertGolden(text, golden_path)
+                golden.assertGolden(widget_to_string(result), golden_path)
                 self.assertEqual(status, expected_status)
 
     def test_metadata(self):
