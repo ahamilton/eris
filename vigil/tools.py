@@ -421,6 +421,13 @@ def python_modulefinder(path):
                         Status.normal)
 
 
+@deps(deps={"python", "python3"},
+      url="https://docs.python.org/3/library/dis.html")
+def dis(path):
+    return _run_command([_python_version(path), "-m", "dis", path],
+                        Status.normal)
+
+
 def _get_mccabe_line_score(line, python_version):
     position, function_name, score = line.split()
     return int(score if python_version == "python3" else score[:-1])
@@ -802,7 +809,7 @@ TOOLS_FOR_EXTENSIONS = \
     [
         (["py"], [python_syntax, python_unittests, pydoc, mypy,
                   python_coverage, pycodestyle, pyflakes, pylint, python_gut,
-                  python_modulefinder, python_mccabe, bandit]),
+                  python_modulefinder, python_mccabe, dis, bandit]),
         # (["pyc"], [pydisasm]),
         (["pl", "pm", "t"], [perl_syntax, perldoc, perltidy]),
         # (["p6", "pm6"], [perl6_syntax, perldoc]),
