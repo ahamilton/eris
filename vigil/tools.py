@@ -809,7 +809,7 @@ TOOLS_FOR_EXTENSIONS = \
     [
         (["py"], [python_syntax, python_unittests, pydoc, mypy,
                   python_coverage, pycodestyle, pyflakes, pylint, python_gut,
-                  python_modulefinder, python_mccabe, dis, bandit]),
+                  python_modulefinder, dis, python_mccabe, bandit]),
         # (["pyc"], [pydisasm]),
         (["pl", "pm", "t"], [perl_syntax, perldoc, perltidy]),
         # (["p6", "pm6"], [perl6_syntax, perldoc]),
