@@ -1,1 +1,1 @@
-input/hi.py:4: error: Parse error before string literal
+input/hi.py:4: error: Missing parentheses in call to 'print'. Did you mean print(int "hi")?

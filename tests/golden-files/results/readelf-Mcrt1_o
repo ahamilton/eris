@@ -38,6 +38,8 @@ There are no section groups in this file.
                                                                                         
 There are no program headers in this file.                                              
                                                                                         
+There is no dynamic section in this file.                                               
+                                                                                        
 There are no relocations in this file.                                                  
                                                                                         
 The decoding of unwind sections for machine type Intel 80386 is not currently supported.

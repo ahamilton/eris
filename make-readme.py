@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.5
+#!/usr/bin/env python3.6
 # -*- coding: utf-8 -*-
 
 # Copyright (C) 2017 Andrew Hamilton. All rights reserved.
@@ -23,7 +23,7 @@ Vigil maintains an up-to-date set of reports for every file in a codebase.
 
 ### Installation
 
-(Tested in Ubuntu 17.04)
+(Tested in Ubuntu 17.10)
 
     # git clone https://github.com/ahamilton/vigil
     # cd vigil

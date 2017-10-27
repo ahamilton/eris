@@ -612,10 +612,10 @@ def uncrustify(path):
     return status, _syntax_highlight_using_path(stdout, path)
 
 
-@deps(deps={"php7.0-cli"}, url="https://en.wikipedia.org/wiki/PHP",
-      executables={"php7.0"})
+@deps(deps={"php7.1-cli"}, url="https://en.wikipedia.org/wiki/PHP",
+      executables={"php7.1"})
 def php7_syntax(path):
-    return _run_command(["php7.0", "--syntax-check", path])
+    return _run_command(["php7.1", "--syntax-check", path])
 
 
 def _pil_pixels(pil_image):
