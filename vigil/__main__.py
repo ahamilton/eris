@@ -570,7 +570,8 @@ class Screen:
             future = worker_.job_runner(
                 self._summary, self._log, self._summary._jobs_added_event,
                 self._appearance_changed_event)
-            worker_.future = asyncio.async(future, loop=self._main_loop)
+            worker_.future = asyncio.ensure_future(future,
+                                                   loop=self._main_loop)
         self.workers = workers
 
     def stop_workers(self):

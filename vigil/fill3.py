@@ -464,7 +464,8 @@ def main(loop, appearance_changed_event, screen_widget, exit_loop=None):
     loop.add_signal_handler(signal.SIGWINCH, appearance_changed_event.set)
     loop.add_signal_handler(signal.SIGINT, exit_loop)
     loop.add_signal_handler(signal.SIGTERM, exit_loop)
-    asyncio.async(_update_screen(screen_widget, appearance_changed_event))
+    asyncio.ensure_future(
+        _update_screen(screen_widget, appearance_changed_event))
     with terminal.hidden_cursor(), terminal.fullscreen(), \
             _urwid_screen() as urwid_screen:
         loop.add_reader(sys.stdin, on_input, urwid_screen, screen_widget)
