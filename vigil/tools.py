@@ -612,6 +612,11 @@ def uncrustify(path):
     return status, _syntax_highlight_using_path(stdout, path)
 
 
+@deps(deps={"cppcheck"}, url="cppcheck", executables={"cppcheck"})
+def cppcheck(path):
+    return _run_command(["cppcheck", path])
+
+
 @deps(deps={"php7.1-cli"}, url="https://en.wikipedia.org/wiki/PHP",
       executables={"php7.1"})
 def php7_syntax(path):
@@ -815,9 +820,9 @@ TOOLS_FOR_EXTENSIONS = \
         # (["p6", "pm6"], [perl6_syntax, perldoc]),
         (["pod", "pod6"], [perldoc]),
         (["java"], [uncrustify]),
-        (["c", "h"], [c_syntax_gcc, splint, uncrustify]),
+        (["c", "h"], [c_syntax_gcc, splint, uncrustify, cppcheck]),
         (["o"], [objdump_headers, objdump_disassemble, readelf]),
-        (["cc", "cpp", "hpp"], [cpp_syntax_gcc, bcpp, uncrustify]),
+        (["cc", "cpp", "hpp"], [cpp_syntax_gcc, bcpp, uncrustify, cppcheck]),
         (["pdf"], [pdf2txt]),
         (["html"], [html_syntax, tidy, html2text]),
         (["php"], [php7_syntax]),
