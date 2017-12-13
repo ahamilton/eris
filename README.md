@@ -41,3 +41,4 @@ Extensions | Tools
 .tar.bz2 | [tar_bz2](http://www.gnu.org/software/tar/manual/tar.html)
 .a .so | [nm](https://linux.die.net/man/1/nm)
 .png .jpg .gif .bmp .ppm .tiff .tga | [pil](http://python-pillow.github.io/) • [pil_half](http://python-pillow.github.io/)
+.bash .sh .dash .ksh | [shellcheck](http://hackage.haskell.org/package/ShellCheck)

@@ -675,6 +675,11 @@ def pil_half(path):
     return Status.normal, result
 
 
+@deps(deps={"shellcheck"}, url="shellcheck", executables={"shellcheck"})
+def shellcheck(path):
+    return _run_command(["shellcheck", path])
+
+
 @deps(deps={"git"}, url="git", executables={"git"})
 def git_blame(path):  # FIX: Add to tools_test.py
     stdout, stderr, returncode = _do_command(
@@ -830,7 +835,8 @@ TOOLS_FOR_EXTENSIONS = \
         (["tar.gz", "tgz"], [tar_gz]),
         (["tar.bz2"], [tar_bz2]),
         (["a", "so"], [nm]),
-        (IMAGE_EXTENSIONS, [pil, pil_half])
+        (IMAGE_EXTENSIONS, [pil, pil_half]),
+        (["bash", "sh", "dash", "ksh"], [shellcheck])
     ]
 
 
