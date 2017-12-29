@@ -166,6 +166,7 @@ Done
 - Created a setup.py file.
 - Add cppcheck tool for C and C++.
 - Add shellcheck tool for shell scripts.
+- Add "git log <path>".
 
 A-syntax, B-tests, C-auto docs, D-lint, E-coverage, F-profile, G-tidy, H-import deps
              A B C D E F G H

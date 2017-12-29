@@ -42,7 +42,8 @@ then to run:
 
 Extensions | Tools
 ---------- | -----""")
-all_tools = ([(["*"], tools.generic_tools() + [tools.git_blame])] +
+all_tools = ([(["*"], tools.generic_tools() +
+               [tools.git_blame, tools.git_log])] +
              tools.TOOLS_FOR_EXTENSIONS)
 for extensions, tools_ in all_tools:
     print("%s | %s" % (" ".join("." + extension for extension in extensions),

@@ -680,10 +680,21 @@ def shellcheck(path):
     return _run_command(["shellcheck", path])
 
 
-@deps(deps={"git"}, url="git", executables={"git"})
+@deps(deps={"git"}, url="https://git-scm.com/docs/git-blame",
+      executables={"git"})
 def git_blame(path):  # FIX: Add to tools_test.py
     stdout, stderr, returncode = _do_command(
         ["git", "blame", "--show-stats", "--date=short", path])
+    if returncode == 0:
+        return Status.normal, fill3.Text(stdout)
+    else:
+        return Status.not_applicable, fill3.Text("")
+
+
+@deps(deps={"git"}, url="https://git-scm.com/docs/git-log",
+      executables={"git"})
+def git_log(path):
+    stdout, stderr, returncode = _do_command(["git", "log", "--stat", path])
     if returncode == 0:
         return Status.normal, fill3.Text(stdout)
     else:
@@ -852,6 +863,7 @@ def _tools_for_extension():
 def tools_all():
     tools_ = set(generic_tools())
     tools_.add(git_blame)
+    tools_.add(git_log)
     for tool_list in _tools_for_extension().values():
         tools_.update(set(tool_list))
     return tools_
@@ -881,7 +893,7 @@ def splitext(path):
 
 
 def tools_for_path(path):
-    git_tools = [git_blame] if os.path.exists(".git") else []
+    git_tools = [git_blame, git_log] if os.path.exists(".git") else []
     root, ext = splitext(path)
     extra_tools = [] if ext == "" else _tools_for_extension().get(ext[1:], [])
     return generic_tools() + git_tools + extra_tools
