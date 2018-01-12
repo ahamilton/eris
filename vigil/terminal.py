@@ -8,20 +8,18 @@ import sys
 
 
 ESC = "\x1b"
-
-
-normal = ESC + "(B\x1b[m"  # sgr0   "[0m" ?
-bold = ESC + "[1m"  # bold
-italic = ESC + "[3m"  # sitm
-standout = ESC + "[7m"  # smso
-underline = ESC + "[4m"  # smul
-enter_fullscreen = ESC + "[?1049h"  # smcup
-exit_fullscreen = ESC + "[?1049l"  # rmcup
-hide_cursor = ESC + "[?25l"  # civis
-normal_cursor = ESC + "[?25l\x1b[?25h"  # cnorm
-clear = ESC + "[H\x1b[2J"  # clear
-save = ESC + "7"  # sc
-restore = ESC + "8"  # rc
+normal = ESC + "(B\x1b[m"
+bold = ESC + "[1m"
+italic = ESC + "[3m"
+standout = ESC + "[7m"
+underline = ESC + "[4m"
+enter_fullscreen = ESC + "[?1049h"
+exit_fullscreen = ESC + "[?1049l"
+hide_cursor = ESC + "[?25l"
+normal_cursor = ESC + "[?25l\x1b[?25h"
+clear = ESC + "[H\x1b[2J"
+save = ESC + "7"
+restore = ESC + "8"
 
 
 def color(color_number, is_foreground):
@@ -32,7 +30,7 @@ def rgb_color(rgb, is_foreground):
     return "\x1b[%s;2;" % ("38" if is_foreground else "48") + "%i;%i;%im" % rgb
 
 
-def move(x, y):  # cup
+def move(x, y):
     return "\x1b[%i;%iH" % (y + 1, x + 1)
 
 
