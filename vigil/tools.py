@@ -617,10 +617,10 @@ def cppcheck(path):
     return _run_command(["cppcheck", path])
 
 
-@deps(deps={"php7.1-cli"}, url="https://en.wikipedia.org/wiki/PHP",
-      executables={"php7.1"})
+@deps(deps={"php7.2-cli"}, url="https://en.wikipedia.org/wiki/PHP",
+      executables={"php7.2"})
 def php7_syntax(path):
-    return _run_command(["php7.1", "--syntax-check", path])
+    return _run_command(["php7.2", "--syntax-check", path])
 
 
 def _pil_pixels(pil_image):
