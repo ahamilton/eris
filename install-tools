@@ -20,8 +20,11 @@ if pip_deps:
 if pip3_deps:
     dist_deps.add("python3-pip")
 if dist_deps:
-    subprocess.check_call(["sudo", "apt-get", "-y", "install"] + list(dist_deps))
+    subprocess.run(["sudo", "apt-get", "-y", "install"] + list(dist_deps),
+                   check=True)
 if pip_deps:
-    subprocess.check_call(["sudo", "pip", "install"] + list(pip_deps))
+    subprocess.run(["sudo", "pip", "install"] + list(pip_deps),
+                   check=True)
 if pip3_deps:
-    subprocess.check_call(["sudo", "pip3", "install"] + list(pip3_deps))
+    subprocess.run(["sudo", "pip3", "install"] + list(pip3_deps),
+                   check=True)

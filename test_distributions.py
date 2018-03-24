@@ -14,7 +14,7 @@ VIGIL_PATH = os.path.realpath(os.path.dirname(__file__))
 
 
 def cmd(command):
-    subprocess.check_call(command, shell=True)
+    subprocess.run(command, shell=True, check=True)
 
 
 def mount_squashfs_iso(iso, squashfs_path, mount_point):

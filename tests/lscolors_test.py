@@ -242,7 +242,7 @@ class ParseLsLineTestCase(unittest.TestCase):
 
 
 def test_against_ls(root_path, environment):
-    process = subprocess.Popen(
+    process = subprocess.run(
         ["ls", "--color=always", "-R", root_path],
         stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=environment)
     stdout, stderr = process.communicate()

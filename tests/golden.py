@@ -33,7 +33,7 @@ def _show_differences(failed):
             os.symlink(os.path.abspath(golden_file),
                        os.path.join(golden_dir, name))
         diff_command = ["meld"] if shutil.which("meld") else ["diff", "-r"]
-        subprocess.call(diff_command + [actual_dir, golden_dir])
+        subprocess.run(diff_command + [actual_dir, golden_dir])
     finally:
         shutil.rmtree(temp_dir)
 
