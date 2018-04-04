@@ -1,0 +1,12 @@
+
+shellcheck:
+  deps: [shellcheck]
+  url: shellcheck
+  executables: [shellcheck]
+  command: shellcheck
+
+cppcheck:
+  deps: [cppcheck]
+  url: cppcheck
+  executables: [cppcheck]
+  command: cppcheck

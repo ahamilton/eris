@@ -25,6 +25,7 @@ import PIL.Image
 import pygments
 import pygments.lexers
 import pygments.styles
+import yaml
 
 import vigil.fill3 as fill3
 import vigil.gut as gut
@@ -612,11 +613,6 @@ def uncrustify(path):
     return status, _syntax_highlight_using_path(stdout, path)
 
 
-@deps(deps={"cppcheck"}, url="cppcheck", executables={"cppcheck"})
-def cppcheck(path):
-    return _run_command(["cppcheck", path])
-
-
 @deps(deps={"php7.2-cli"}, url="https://en.wikipedia.org/wiki/PHP",
       executables={"php7.2"})
 def php7_syntax(path):
@@ -675,11 +671,6 @@ def pil_half(path):
     return Status.normal, result
 
 
-@deps(deps={"shellcheck"}, url="shellcheck", executables={"shellcheck"})
-def shellcheck(path):
-    return _run_command(["shellcheck", path])
-
-
 @deps(deps={"git"}, url="https://git-scm.com/docs/git-blame",
       executables={"git"})
 def git_blame(path):  # FIX: Add to tools_test.py
@@ -700,6 +691,22 @@ def git_log(path):
     else:
         return Status.not_applicable, fill3.Text("")
 
+
+def make_tool_function(tool_yaml):
+    @deps(deps=set(tool_yaml["deps"]), url=tool_yaml["url"],
+          executables=set(tool_yaml["executables"]))
+    def func(path):
+        return _run_command(tool_yaml["command"].split() + [path])
+    return func
+
+
+tools_yaml_path = os.path.join(os.path.dirname(__file__), "tools.yaml")
+with open(tools_yaml_path) as tools_yaml_file:
+    tools_yaml = yaml.load(tools_yaml_file.read())
+for tool_name, tool_yaml in tools_yaml.items():
+    tool_func = make_tool_function(tool_yaml)
+    tool_func.__name__ = tool_name
+    globals()[tool_name] = tool_func
 
 #############################
 
