@@ -583,11 +583,6 @@ def html2text(path):
     return _run_command(["html2text", path], Status.normal)
 
 
-@deps(deps={"gcc", "g++-6"}, url="https://gcc.gnu.org/", executables={"gcc"})
-def cpp_syntax_gcc(path):
-    return _run_command(["gcc", "-fsyntax-only", path])
-
-
 @deps(deps={"bcpp"}, executables={"bcpp"})
 def bcpp(path):
     stdout, stderr, returncode = _do_command(["bcpp", "-fi", path])
@@ -681,11 +676,10 @@ def git_log(path):
         return Status.not_applicable, fill3.Text("")
 
 
-def make_tool_function(tool_yaml):
-    @deps(deps=set(tool_yaml["deps"]), url=tool_yaml["url"],
-          executables=set(tool_yaml["executables"]))
+def make_tool_function(dependencies, url, executables, command):
+    @deps(deps=set(dependencies), url=url, executables=set(executables))
     def func(path):
-        return _run_command(tool_yaml["command"].split() + [path])
+        return _run_command(command.split() + [path])
     return func
 
 
@@ -693,7 +687,7 @@ tools_yaml_path = os.path.join(os.path.dirname(__file__), "tools.yaml")
 with open(tools_yaml_path) as tools_yaml_file:
     tools_yaml = yaml.load(tools_yaml_file.read())
 for tool_name, tool_yaml in tools_yaml.items():
-    tool_func = make_tool_function(tool_yaml)
+    tool_func = make_tool_function(**tool_yaml)
     tool_func.__name__ = tool_name
     globals()[tool_name] = tool_func
 

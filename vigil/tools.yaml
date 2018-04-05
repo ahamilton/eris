@@ -1,24 +1,30 @@
 
 c_syntax_gcc:
-  deps: [gcc g++-6] 
+  dependencies: [gcc, g++-6]
+  url: https://gcc.gnu.org/
+  executables: [gcc]
+  command: gcc -fsyntax-only
+
+cpp_syntax_gcc:
+  dependencies: [gcc, g++-6]
   url: https://gcc.gnu.org/
   executables: [gcc]
   command: gcc -fsyntax-only
 
 php7_syntax:
-  deps: [php7.2-cli] 
+  dependencies: [php7.2-cli]
   url: https://en.wikipedia.org/wiki/PHP
   executables: [php7.2]
   command: php7.2 --syntax-check
 
 shellcheck:
-  deps: [shellcheck]
+  dependencies: [shellcheck]
   url: shellcheck
   executables: [shellcheck]
   command: shellcheck
 
 cppcheck:
-  deps: [cppcheck]
+  dependencies: [cppcheck]
   url: cppcheck
   executables: [cppcheck]
   command: cppcheck
