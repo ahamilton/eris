@@ -508,11 +508,6 @@ def perltidy(path):
 # perl6_syntax.deps={"rakudo"}
 
 
-@deps(deps={"gcc"}, url="https://gcc.gnu.org/", executables={"gcc"})
-def c_syntax_gcc(path):
-    return _run_command(["gcc", "-fsyntax-only", path])
-
-
 @deps(deps={"splint"}, url="splint", executables={"splint"})
 def splint(path):
     stdout, stderr, returncode = _do_command(["splint", "-preproc", path])
@@ -611,12 +606,6 @@ def uncrustify(path):
                 ["uncrustify", "-c", config_path, "-f", path])
     status = Status.normal if returncode == 0 else Status.problem
     return status, _syntax_highlight_using_path(stdout, path)
-
-
-@deps(deps={"php7.2-cli"}, url="https://en.wikipedia.org/wiki/PHP",
-      executables={"php7.2"})
-def php7_syntax(path):
-    return _run_command(["php7.2", "--syntax-check", path])
 
 
 def _pil_pixels(pil_image):
