@@ -119,8 +119,9 @@ def _do_command(command, timeout=None, **kwargs):
     return _fix_input(stdout), _fix_input(stderr), process.returncode
 
 
-def _run_command(command, success_status=Status.ok,
-                 error_status=Status.problem):
+def _run_command(command, success_status=None, error_status=None):
+    success_status = Status.ok if success_status is None else success_status
+    error_status = Status.problem if error_status is None else error_status
     status, output = success_status, ""
     try:
         process = subprocess.run(command, stdout=subprocess.PIPE,
@@ -515,55 +516,6 @@ def splint(path):
     return status, fill3.Text(stdout + stderr)
 
 
-_OBJDUMP_URL = "https://en.wikipedia.org/wiki/Objdump"
-
-
-@deps(deps={"binutils"}, url=_OBJDUMP_URL, executables={"objdump"})
-def objdump_headers(path):
-    return _run_command(["objdump", "--all-headers", path], Status.normal)
-
-
-@deps(deps={"binutils"}, url=_OBJDUMP_URL, executables={"objdump"})
-def objdump_disassemble(path):
-    return _run_command(
-        ["objdump", "--disassemble", "--reloc", "--dynamic-reloc", path],
-        Status.normal)
-
-
-@deps(deps={"binutils"}, url=_OBJDUMP_URL, executables={"readelf"})
-def readelf(path):
-    return _run_command(["readelf", "--all", path], Status.normal)
-
-
-@deps(deps={"unzip"}, url="unzip", executables={"unzip"})
-def unzip(path):
-    return _run_command(["unzip", "-l", path], Status.normal)
-
-
-_TAR_URL = "http://www.gnu.org/software/tar/manual/tar.html"
-
-
-@deps(deps={"tar"}, url=_TAR_URL, executables={"tar"})
-def tar_gz(path):
-    return _run_command(["tar", "ztvf", path], Status.normal)
-
-
-@deps(deps={"tar"}, url=_TAR_URL, executables={"tar"})
-def tar_bz2(path):
-    return _run_command(["tar", "jtvf", path], Status.normal)
-
-
-@deps(deps={"binutils"}, url="https://linux.die.net/man/1/nm",
-      executables={"nm"})
-def nm(path):
-    return _run_command(["nm", "--demangle", path], Status.normal)
-
-
-@deps(deps={"python-pdfminer"}, url="python-pdfminer", executables={"pdf2txt"})
-def pdf2txt(path):
-    return _run_command(["pdf2txt", path], Status.normal)
-
-
 @deps(deps={"tidy"}, url="tidy", executables={"tidy"})
 def html_syntax(path):
     # Maybe only show errors
@@ -576,11 +528,6 @@ def html_syntax(path):
 def tidy(path):
     stdout, *rest = _do_command(["tidy", path])
     return Status.normal, fill3.Text(stdout)
-
-
-@deps(deps={"html2text"}, url="html2text", executables={"html2text"})
-def html2text(path):
-    return _run_command(["html2text", path], Status.normal)
 
 
 @deps(deps={"bcpp"}, executables={"bcpp"})
@@ -676,10 +623,14 @@ def git_log(path):
         return Status.not_applicable, fill3.Text("")
 
 
-def make_tool_function(dependencies, url, executables, command):
+def make_tool_function(dependencies, url, executables, command,
+                       success_status=None, error_status=None):
+    command = command.split()
+    success_status = None if success_status is None else Status[success_status]
+    error_status = None if error_status is None else Status[error_status]
     @deps(deps=set(dependencies), url=url, executables=set(executables))
     def func(path):
-        return _run_command(command.split() + [path])
+        return _run_command(command + [path], success_status, error_status)
     return func
 
 
