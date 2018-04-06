@@ -639,7 +639,7 @@ with open(tools_yaml_path) as tools_yaml_file:
     tools_yaml = yaml.load(tools_yaml_file.read())
 for tool_name, tool_yaml in tools_yaml.items():
     tool_func = make_tool_function(**tool_yaml)
-    tool_func.__name__ = tool_name
+    tool_func.__name__ = tool_func.__qualname__ = tool_name
     globals()[tool_name] = tool_func
 
 #############################

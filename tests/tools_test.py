@@ -46,7 +46,7 @@ def chdir(path):
 
 
 def result_path(tool, input_filename):
-    filename = tool.__qualname__ + "-" + input_filename.replace(".", "_")
+    filename = tool.__name__ + "-" + input_filename.replace(".", "_")
     return os.path.join(VIGIL_ROOT, "golden-files", "results", filename)
 
 
