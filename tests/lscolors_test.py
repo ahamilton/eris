@@ -245,9 +245,8 @@ def test_against_ls(root_path, environment):
     process = subprocess.run(
         ["ls", "--color=always", "-R", root_path],
         stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=environment)
-    stdout, stderr = process.communicate()
     color_codes = lscolors.get_color_codes(environment)
-    for line in stdout.splitlines():
+    for line in process.stdout.splitlines():
         line = line.strip()
         if line == "":
             continue

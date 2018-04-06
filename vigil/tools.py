@@ -109,14 +109,15 @@ def _fix_input(input_):
 def _do_command(command, timeout=None, **kwargs):
     stdout, stderr = "", ""
     with contextlib.suppress(subprocess.CalledProcessError):
-        process = subprocess.run(command, stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE, **kwargs)
         try:
-            stdout, stderr = process.communicate(timeout=timeout)
+            process = subprocess.run(command, stdout=subprocess.PIPE,
+                                     stderr=subprocess.PIPE, timeout=timeout,
+                                     **kwargs)
         except subprocess.TimeoutExpired:
             process.kill()
             raise
-    return _fix_input(stdout), _fix_input(stderr), process.returncode
+    return (_fix_input(process.stdout), _fix_input(process.stderr),
+            process.returncode)
 
 
 def _run_command(command, success_status=None, error_status=None):
@@ -126,8 +127,7 @@ def _run_command(command, success_status=None, error_status=None):
     try:
         process = subprocess.run(command, stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE)
-        stdout, stderr = process.communicate()
-        output = stdout + stderr
+        output = process.stdout + process.stderr
     except subprocess.CalledProcessError:
         status = error_status
     if process.returncode != 0:
