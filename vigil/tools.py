@@ -788,7 +788,8 @@ TOOLS_FOR_EXTENSIONS = \
         (["tar.bz2"], [tar_bz2]),
         (["a", "so"], [nm]),
         (IMAGE_EXTENSIONS, [pil, pil_half]),
-        (["bash", "sh", "dash", "ksh"], [shellcheck])
+        (["bash", "sh", "dash", "ksh"], [shellcheck]),
+        (["go"], [gofmt])
     ]
 
 

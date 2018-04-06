@@ -102,3 +102,10 @@ cppcheck:
   url: cppcheck
   executables: [cppcheck]
   command: cppcheck
+
+gofmt:
+  dependencies: [golang-go]
+  url: golang-go
+  executables: [gofmt]
+  command: gofmt
+  success_status: normal
