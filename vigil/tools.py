@@ -623,6 +623,17 @@ def git_log(path):
         return Status.not_applicable, fill3.Text("")
 
 
+@deps(deps={"golang-golang-x-tools"}, url="golang-golang-x-tools",
+      executables={"godoc"})
+def godoc(path):
+    with tempfile.TemporaryDirectory() as temp_dir:
+        symlink_path = os.path.join(temp_dir, "file.go")
+        os.symlink(os.path.abspath(path), symlink_path)
+        stdout, stderr, returncode = _do_command(["godoc", "."], cwd=temp_dir)
+        os.remove(symlink_path)
+    return Status.normal, fill3.Text(stdout)
+
+
 def make_tool_function(dependencies, url, executables, command,
                        success_status=None, error_status=None):
     command = command.split()
@@ -789,7 +800,7 @@ TOOLS_FOR_EXTENSIONS = \
         (["a", "so"], [nm]),
         (IMAGE_EXTENSIONS, [pil, pil_half]),
         (["bash", "sh", "dash", "ksh"], [shellcheck]),
-        (["go"], [gofmt, go_vet])
+        (["go"], [gofmt, go_vet, godoc])
     ]
 
 
