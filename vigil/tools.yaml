@@ -109,3 +109,10 @@ gofmt:
   executables: [gofmt]
   command: gofmt
   success_status: normal
+
+go_vet:
+  dependencies: [golang-go]
+  url: golang-go
+  executables: [go]
+  command: go vet
+  error_status: normal

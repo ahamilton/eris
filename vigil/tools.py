@@ -789,7 +789,7 @@ TOOLS_FOR_EXTENSIONS = \
         (["a", "so"], [nm]),
         (IMAGE_EXTENSIONS, [pil, pil_half]),
         (["bash", "sh", "dash", "ksh"], [shellcheck]),
-        (["go"], [gofmt])
+        (["go"], [gofmt, go_vet])
     ]
 
 
