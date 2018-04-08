@@ -930,7 +930,7 @@ def load_state(pickle_path, jobs_added_event, appearance_changed_event,
     try:
         with gzip.open(pickle_path, "rb") as file_:
             screen = pickle.load(file_)
-    except FileNotFoundError:
+    except (FileNotFoundError, AttributeError):
         summary = Summary(root_path, jobs_added_event)
         log = Log(appearance_changed_event)
         screen = Screen(summary, log, appearance_changed_event, loop)
