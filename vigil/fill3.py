@@ -72,6 +72,17 @@ def even_widths(column_widgets, width):
     return widths
 
 
+def appearance_as_html(appearance):
+    lines = []
+    all_styles = set()
+    for line in appearance:
+        html, styles = termstr.TermStr(line).as_html()
+        all_styles.update(styles)
+        lines.append(html)
+    return ("\n".join(style.as_html() for style in all_styles) +
+            '\n<pre>' + "<br>".join(lines) + "</pre>")
+
+
 class Row(collections.UserList):
 
     def __init__(self, widgets, widths_func=even_widths):

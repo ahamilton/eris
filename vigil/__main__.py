@@ -117,6 +117,11 @@ class Entry(collections.UserList):
             self.appearance_cache = appearance = new_appearance
         return appearance
 
+    def as_html(self):
+        return ("<td>%s</td><td>%s</td>" %
+                ("".join(result.as_html() for result in self.widget),
+                 self.path))
+
 
 def is_path_excluded(path):
     return any(part.startswith(".") for part in path.split(os.path.sep))
@@ -183,6 +188,17 @@ def get_diff_stats(old_files, new_files):
     same_count = len(new_names) - added_count
     modified_count = same_count - len(old_files.intersection(new_files))
     return added_count, removed_count, modified_count
+
+
+def appearance_as_html(appearance):
+    lines = []
+    all_styles = set()
+    for line in appearance:
+        html, styles = termstr.TermStr(line).as_html()
+        all_styles.update(styles)
+        lines.append(html)
+    return ("\n".join(style.as_html() for style in all_styles) +
+            '\n<pre>' + "<br>".join(lines) + "</pre>")
 
 
 class Summary:
@@ -419,6 +435,11 @@ class Summary:
             for result in row:
                 if result.tool == tool:
                     self.refresh_result(result)
+
+    def as_html(self):
+        return ("<pre><table>%s</table></pre>" %
+                "\n".join("<tr>%s</tr>" % row.as_html()
+                          for row in self._column))
 
 
 class Log:
@@ -773,6 +794,20 @@ class Screen:
     def toggle_fullscreen(self):
         self._is_fullscreen = not self._is_fullscreen
 
+    def to_html(self):
+        with open("tester.html", "w") as tester:
+            tester.write("<html><body>")
+            # tester.write(appearance_as_html(self._listing.appearance((100,300))))
+            # tester.write(appearance_as_html(self.appearance((100,100))))
+            tester.write(appearance_as_html(fill3.Border(self._summary.get_selection().result).appearance_min()))
+            tester.write("</body></html>")
+
+    def summary_to_html(self):
+        with open("tester.html", "w") as tester:
+            tester.write("<html><body>")
+            tester.write(self._summary.as_html())
+            tester.write("</body></html>")
+            
     def _select_entry_at_position(self, x, y, view_width, view_height):
         border_width = 1
         if x < border_width or y < border_width or x > view_width or \
@@ -900,7 +935,8 @@ class Screen:
         ({"N"}, move_to_next_issue_of_tool), ({"e"}, edit_file),
         ({"q"}, quit_), ({"p"}, toggle_pause), ({"r"}, refresh),
         ({"R"}, refresh_tool), ({"tab"}, toggle_focus),
-        ({"f"}, toggle_fullscreen)]
+        ({"f"}, toggle_fullscreen), ({"H"}, to_html),
+        ({"S"}, summary_to_html)]
 
 
 def add_watch_manager_to_mainloop(root_path, mainloop, on_filesystem_change,
