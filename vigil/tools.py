@@ -634,12 +634,13 @@ def godoc(path):
     return Status.normal, fill3.Text(stdout)
 
 
-def make_tool_function(dependencies, url, executables, command,
-                       success_status=None, error_status=None):
+def make_tool_function(dependencies, url, command, success_status=None,
+                       error_status=None):
     command = command.split()
+    executables = set([command[0]])
     success_status = None if success_status is None else Status[success_status]
     error_status = None if error_status is None else Status[error_status]
-    @deps(deps=set(dependencies), url=url, executables=set(executables))
+    @deps(deps=set(dependencies), url=url, executables=executables)
     def func(path):
         return _run_command(command + [path], success_status, error_status)
     return func
