@@ -117,6 +117,18 @@ class Entry(collections.UserList):
             self.appearance_cache = appearance = new_appearance
         return appearance
 
+    def as_html(self):
+        html_parts = []
+        styles = set()
+        for result in self.widget:
+            result_html, result_styles = result.as_html()
+            html_parts.append(result_html)
+            styles.update(result_styles)
+        path = tools.path_colored(self.path)
+        padding = " " * (self.summary._max_width - len(self.widget) + 1)
+        path_html, path_styles = termstr.TermStr(padding + path).as_html()
+        return "".join(html_parts) + path_html, styles.union(path_styles)
+
 
 def is_path_excluded(path):
     return any(part.startswith(".") for part in path.split(os.path.sep))
@@ -419,6 +431,16 @@ class Summary:
             for result in row:
                 if result.tool == tool:
                     self.refresh_result(result)
+
+    def as_html(self):
+        html_parts = []
+        styles = set()
+        for row in self._column:
+            html_row, styles_row = row.as_html()
+            html_parts.append(html_row)
+            styles.update(styles_row)
+        return ("<style>a { text-decoration:none; }</style><pre>" +
+                "<br>".join(html_parts) + "</pre>"), styles
 
 
 class Log:

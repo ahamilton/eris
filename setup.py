@@ -21,4 +21,5 @@ setup(name="vigil",
       package_data={"vigil": ["LS_COLORS.sh", "tools.yaml"]},
       entry_points={"console_scripts":
                     ["vigil=vigil.__main__:entry_point",
-                     "vigil-worker=vigil.worker:main"]})
+                     "vigil-worker=vigil.worker:main",
+                     "vigil-webserver=vigil.webserver:main"]})

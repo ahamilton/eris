@@ -3,13 +3,24 @@
 # Licensed under the Artistic License 2.0.
 
 import collections
+import functools
+import html
 import itertools
 import os
 import weakref
 
 import pygments.formatters.terminal256
 
+import vigil.ColorMap
 import vigil.terminal as terminal
+
+
+xterm_colormap = vigil.ColorMap.XTermColorMap()
+
+
+@functools.lru_cache()
+def xterm_color_to_rgb(color_index):
+    return vigil.ColorMap._rgb(xterm_colormap.colors[color_index])
 
 
 def _cache_first_result(user_function):
@@ -102,6 +113,20 @@ class CharStyle:
         return "".join([terminal.normal, fg_termcode, bg_termcode, bold_code,
                         italic_code, underline_code])
 
+    def as_html(self):
+        bold_code = "font-weight:bold; " if self.is_bold else ""
+        italic_code = "font-style:italic; " if self.is_italic else ""
+        underline_code = ("text-decoration:underline; "
+                          if self.is_underlined else "")
+        fg_color = (self.fg_color if type(self.fg_color) == tuple
+                    else xterm_color_to_rgb(self.fg_color))
+        bg_color = (self.bg_color if type(self.bg_color) == tuple
+                    else xterm_color_to_rgb(self.bg_color))
+        return ("<style>.S%i {font-size:80%%; color:rgb%r; "
+                "background-color:rgb%r; %s%s%s}</style>" %
+                (id(self), fg_color, bg_color, bold_code,
+                 italic_code, underline_code))
+
 
 def _join_lists(lists):
     return list(itertools.chain.from_iterable(lists))
@@ -110,10 +135,9 @@ def _join_lists(lists):
 class TermStr(collections.UserString):
 
     def __init__(self, data, style=CharStyle()):
-        if isinstance(data, self.__class__):
-            self.data = data.data
-            self.style = data.style
-        else:
+        try:
+            self.data, self.style = data.data, data.style
+        except AttributeError:
             self.data = data
             self.style = (style if isinstance(style, tuple)
                           else (style,) * len(data))
@@ -262,3 +286,14 @@ class TermStr(collections.UserString):
             return CharStyle(style.fg_color, bg_color, is_bold=style.is_bold,
                              is_underlined=style.is_underlined)
         return self.transform_style(set_bgcolor)
+
+    def as_html(self):
+        result = []
+        styles = set()
+        for style, str_, position in self._partition_style():
+            styles.add(style)
+            encoded = str(html.escape(str_).encode(
+                "ascii", "xmlcharrefreplace"))[2:-1]
+            encoded = encoded.replace("\\\\", "\\")
+            result.append('<span class="S%i">%s</span>' % (id(style), encoded))
+        return "".join(result), styles

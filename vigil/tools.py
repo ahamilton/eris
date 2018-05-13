@@ -771,6 +771,12 @@ class Result:
     def appearance_min(self):
         return [status_to_str(self.status)]
 
+    def as_html(self):
+        html, styles  = termstr.TermStr(status_to_str(self.status)).as_html()
+        return ('<a title="%s" href="%s/%s">%s</a>' %
+                (self.tool.__name__, self.path, self.tool.__name__, html),
+                styles)
+
 
 def generic_tools():
     return [contents, metadata]
