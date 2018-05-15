@@ -23,15 +23,15 @@ restore = ESC + "8"
 
 
 def color(color_number, is_foreground):
-    return "\x1b[%s;5;%im" % ("38" if is_foreground else "48", color_number)
+    return f"\x1b[{'38' if is_foreground else '48'};5;{color_number:d}m"
 
 
 def rgb_color(rgb, is_foreground):
-    return "\x1b[%s;2;" % ("38" if is_foreground else "48") + "%i;%i;%im" % rgb
+    return f"\x1b[{'38' if is_foreground else '48'};2;" + "%i;%i;%im" % rgb
 
 
 def move(x, y):
-    return "\x1b[%i;%iH" % (y + 1, x + 1)
+    return f"\x1b[{y + 1:d};{x + 1:d}H"
 
 
 @contextlib.contextmanager
@@ -55,7 +55,7 @@ def hidden_cursor():
 @contextlib.contextmanager
 def console_title(title):
     sys.stdout.write(save)
-    sys.stdout.write("\033]0;%s\007" % title)
+    sys.stdout.write(f"\033]0;{title}\007")
     try:
         yield
     finally:

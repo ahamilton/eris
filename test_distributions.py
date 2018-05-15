@@ -18,25 +18,22 @@ def cmd(command):
 
 
 def mount_squashfs_iso(iso, squashfs_path, mount_point):
-    cmd("mkdir iso && sudo mount -o loop %s iso" % iso)
-    cmd("mkdir lower && sudo mount -t squashfs iso/%s lower" % squashfs_path)
-    cmd("mkdir upper work %s && sudo mount -t overlay "
-        "-o lowerdir=lower,upperdir=upper,workdir=work overlay %s" %
-        (mount_point, mount_point))
+    cmd(f"mkdir iso && sudo mount -o loop {iso} iso")
+    cmd(f"mkdir lower && sudo mount -t squashfs iso/{squashfs_path} lower")
+    cmd(f"mkdir upper work {mount_point} && sudo mount -t overlay "
+        f"-o lowerdir=lower,upperdir=upper,workdir=work overlay {mount_point}")
 
 
 def umount_squashfs_iso(mount_point):
-    cmd("sudo umount %s && sudo rm -rf upper work %s" %
-        (mount_point, mount_point))
+    cmd(f"sudo umount {mount_point} && sudo rm -rf upper work {mount_point}")
     cmd("sudo umount lower && rmdir lower")
     cmd("sudo umount iso && rmdir iso")
 
 
 def run_in_container(container, command):
     option = "--directory" if os.path.isdir(container) else "--image"
-    cmd("sudo systemd-nspawn --quiet --chdir=/vigil --overlay=%s:/vigil "
-        '%s=%s /bin/bash --login -c "%s"' %
-        (VIGIL_PATH, option, container, command))
+    cmd(f"sudo systemd-nspawn --quiet --chdir=/vigil --overlay={VIGIL_PATH}:/vigil "
+        f'{option}={container} /bin/bash --login -c "{command}"')
 
 
 def build_ubuntu():
@@ -53,8 +50,8 @@ def build_ubuntu():
 def build_fedora():
     image = "Fedora-Cloud-Base-25-1.3.x86_64.raw"
     cmd("wget --continue https://dl.fedoraproject.org/pub/fedora/linux/"
-        "releases/25/CloudImages/x86_64/images/%s.xz" % image)
-    cmd("unxz %s.xz" % image)
+        f"releases/25/CloudImages/x86_64/images/{image}.xz")
+    cmd(f"unxz {image}.xz")
     os.rename(image, "fedora")
 
 
@@ -134,21 +131,21 @@ def main():
     # FIX: Reenable: fedora debian archlinux opensuse pixel gentoo
     for distribution in ["ubuntu"]:
         if os.path.exists(distribution):
-            print("%s container already exists." % distribution)
+            print(distribution, "container already exists.")
         else:
-            print("Building %s container..." % distribution)
+            print(f"Building {distribution} container...")
             globals()["build_" + distribution]()
-        print("Installing vigil's dependencies in %s..." % distribution)
+        print(f"Installing vigil's dependencies in {distribution}...")
         run_in_container(distribution, "./install-dependencies")
-        print("Installing vigil in %s..." % distribution)
+        print(f"Installing vigil in {distribution}...")
         run_in_container(distribution, "apt-get install --yes python3-pip")
         run_in_container(distribution, "pip3 install .")
-        print("Testing vigil in %s..." % distribution)
+        print(f"Testing vigil in {distribution}...")
         run_in_container(distribution, "./test-all")
-        print("Running vigil in %s..." % distribution)
+        print(f"Running vigil in {distribution}...")
         run_in_container(distribution, "vigil --help")
-        print("Successfully installed vigil in %s." % distribution)
-        print("Removing %s container..." % distribution)
+        print(f"Successfully installed vigil in {distribution}.")
+        print(f"Removing {distribution} container...")
         try:
             globals()["remove_" + distribution]()
         except KeyError:

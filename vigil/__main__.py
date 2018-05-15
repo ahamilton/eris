@@ -179,7 +179,7 @@ def type_sort(path):
 
 def log_filesystem_changed(log, added, removed, modified):
     def part(stat, text, color):
-        return termstr.TermStr("%2s %s." % (stat, text)).fg_color(
+        return termstr.TermStr(f"{stat:2} {text}.").fg_color(
             termstr.Color.grey_100 if stat == 0 else color)
     parts = [part(added, "added", termstr.Color.green),
              part(removed, "removed", termstr.Color.red),
@@ -733,10 +733,10 @@ class Screen:
             line_num = (self._summary.get_selection().entry[0].
                         scroll_position[1] + 1)
             self._log.log_message([in_green("Editing "), path_colored,
-                                   in_green(' at line %s...' % line_num)])
-            subprocess.run("%s +%s %s" %
-                           (self.editor_command, line_num, path), shell=True,
-                           stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                   in_green(f" at line {line_num}...")])
+            subprocess.run(f"{self.editor_command} +{line_num} {path}",
+                           shell=True, stdout=subprocess.PIPE,
+                           stderr=subprocess.PIPE)
 
     def toggle_status_style(self):
         self._summary.toggle_status_style(self._log)
@@ -745,7 +745,7 @@ class Screen:
         self._summary.is_directory_sort = not self._summary.is_directory_sort
         sort_order = ("directory then type" if self._summary.is_directory_sort
                       else "type then directory")
-        self._log.log_command("Ordering files by %s." % sort_order)
+        self._log.log_command(f"Ordering files by {sort_order}.")
         self._summary.sync_with_filesystem(self._log)
 
     def toggle_pause(self):
@@ -881,7 +881,7 @@ class Screen:
         paused_indicator = (termstr.TermStr("paused ").fg_color(
             termstr.Color.yellow) if is_paused else termstr.TermStr("running").
                             fg_color(termstr.Color.light_blue))
-        indicators = " " + paused_indicator + "  order:%s " % ordering_text
+        indicators = " " + paused_indicator + f"  order:{ordering_text} "
         spacing = " " * (width - len(self._STATUS_BAR) - len(indicators))
         bar = (self._STATUS_BAR[:width - len(indicators)] + spacing +
                indicators)[:width]
@@ -1004,7 +1004,7 @@ def main(root_path, loop, worker_count=None, editor_command=None, theme=None,
     watch_manager_fd = add_watch_manager_to_mainloop(
         root_path, loop, on_filesystem_change, is_path_excluded)
     try:
-        log.log_message("Starting workers (%s) ..." % worker_count)
+        log.log_message(f"Starting workers ({worker_count}) ...")
         screen.make_workers(worker_count, is_being_tested)
 
         def exit_loop():
@@ -1068,7 +1068,7 @@ def check_arguments():
     if arguments["--theme"] is not None:
         themes = list(pygments.styles.get_all_styles())
         if arguments["--theme"] not in themes:
-            print("--theme must be one of: %s" % " ".join(themes))
+            print("--theme must be one of:", " ".join(themes))
             sys.exit(1)
     editor_command = arguments["--editor"] or os.environ.get("EDITOR", None)\
         or os.environ.get("VISUAL", None)

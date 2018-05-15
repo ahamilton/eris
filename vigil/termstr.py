@@ -89,8 +89,8 @@ class CharStyle:
             attributes.append("i")
         if self.is_underlined:
             attributes.append("u")
-        return ("<CharStyle: fg:%s bg:%s attr:%s>" %
-                (self.fg_color, self.bg_color, ",".join(attributes)))
+        return (f"<CharStyle: fg:{self.fg_color} bg:{self.bg_color}"
+                f" attr:{','.join(attributes)}>")
 
     def termcode_of_color(self, color, is_foreground):
         if isinstance(color, int):
@@ -122,10 +122,9 @@ class CharStyle:
                     else xterm_color_to_rgb(self.fg_color))
         bg_color = (self.bg_color if type(self.bg_color) == tuple
                     else xterm_color_to_rgb(self.bg_color))
-        return ("<style>.S%i {font-size:80%%; color:rgb%r; "
-                "background-color:rgb%r; %s%s%s}</style>" %
-                (id(self), fg_color, bg_color, bold_code,
-                 italic_code, underline_code))
+        return (f"<style>.S{id(self)} {{font-size:80%%; color:rgb{fg_color!r}; "
+                f"background-color:rgb{bg_color!r}; "
+                f"{bold_code}{italic_code}{underline_code}}}</style>")
 
 
 def _join_lists(lists):
@@ -176,7 +175,7 @@ class TermStr(collections.UserString):
                        [terminal.normal])
 
     def __repr__(self):
-        return "<TermStr: %r>" % self.data
+        return f"<TermStr: {self.data!r}>"
 
     def __add__(self, other):
         if isinstance(other, str):
@@ -295,5 +294,5 @@ class TermStr(collections.UserString):
             encoded = str(html.escape(str_).encode(
                 "ascii", "xmlcharrefreplace"))[2:-1]
             encoded = encoded.replace("\\\\", "\\")
-            result.append('<span class="S%i">%s</span>' % (id(style), encoded))
+            result.append(f'<span class="S{id(style):d}">{encoded}</span>')
         return "".join(result), styles

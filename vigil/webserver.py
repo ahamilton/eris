@@ -23,9 +23,9 @@ Example:
 
 
 def make_page(body_html, title):
-    return ("<html><head><title>%s</title></head><body>"
-            "<style>body { background-color: black; } </style>%s</body></html>"
-            % (title, body_html)).encode("utf-8")
+    return (f"<html><head><title>{title}</title></head><body><style>body "
+            f"{{ background-color: black; }} </style>{body_html}</body></html>"
+           ).encode("utf-8")
 
 
 class Webserver(http.server.BaseHTTPRequestHandler):
@@ -44,7 +44,7 @@ class Webserver(http.server.BaseHTTPRequestHandler):
             result = index[(path, tool)]
             body = fill3.appearance_as_html(
                 fill3.Border(result).appearance_min())
-            page = make_page(body, "%s of %s" % (tool, path))
+            page = make_page(body, f"{tool} of {path}")
         else:
             return
         self.wfile.write(page)

@@ -15,7 +15,7 @@ def _accept_actual(failed):
     for actual_str, golden_path in failed:
         with open(golden_path, "wb") as golden_file:
             golden_file.write(actual_str)
-        print("Wrote golden file: %s" % golden_path)
+        print("Wrote golden file:", golden_path)
 
 
 def _show_differences(failed):
@@ -52,12 +52,12 @@ def assertGolden(actual, golden_path):
         _FAILED.add((actual, golden_path))
         if expected is None:
             raise unittest.TestCase.failureException(
-                'The golden file does not exist: %r\nUse "--diff" or'
-                ' "--accept" to create the golden file.' % golden_path)
+                f'The golden file does not exist: {golden_path!r}\n'
+                'Use "--diff" or "--accept" to create the golden file.')
         else:
             raise unittest.TestCase.failureException(
-                'Output does not match golden file: %r\nUse "--diff" or'
-                ' "--accept" to update the golden file.' % golden_path)
+                f'Output does not match golden file: {golden_path!r}\n'
+                'Use "--diff" or "--accept" to update the golden file.')
 
 
 def main():

@@ -216,7 +216,7 @@ def _pretty_bytes(bytes):
     unit_index = int(math.floor(math.log(bytes, 1024)))
     power = math.pow(1024, unit_index)
     conversion = round(bytes/power, 2)
-    return "%s %s" % (conversion, units[unit_index])
+    return f"{conversion} {units[unit_index]}"
 
 
 def _md5(path):
@@ -228,8 +228,7 @@ def _md5(path):
 def metadata(path):
 
     def detail(value, unit):
-        result = (" (%s)" % value if unit is None else " (%s %s)" %
-                  (value, unit))
+        result = f" ({value})" if unit is None else f" ({value} {unit})"
         return termstr.TermStr(result).fg_color(termstr.Color.grey_100)
     is_symlink = "yes" if os.path.islink(path) else "no"
     stat_result = os.stat(path)
@@ -290,7 +289,7 @@ def _is_python_syntax_correct(path, python_version):
     if python_version == "python":
         stdin, stdout, returncode = _do_command(
             ["python", "-c",
-             "__import__('compiler').parse(open('%s').read())" % path])
+             f"__import__('compiler').parse(open('{path}').read())"])
         return returncode == 0
     else:  # python3
         with open(path) as f:
@@ -761,8 +760,8 @@ class Result:
         self.is_completed = True
         log.log_message(
             ["Finished running ", tool_name, " on ", path, ". ",
-             status_to_str(new_status), " %s secs" %
-             round(end_time - start_time, 2)])
+             status_to_str(new_status),
+             f" {round(end_time - start_time, 2)} secs"])
 
     def reset(self):
         self.is_placeholder = True
@@ -773,9 +772,8 @@ class Result:
 
     def as_html(self):
         html, styles  = termstr.TermStr(status_to_str(self.status)).as_html()
-        return ('<a title="%s" href="%s/%s">%s</a>' %
-                (self.tool.__name__, self.path, self.tool.__name__, html),
-                styles)
+        return (f'<a title="{self.tool.__name__}" '
+                f'href="{self.path}/{self.tool.__name__}">{html}</a>', styles)
 
 
 def generic_tools():
@@ -913,8 +911,7 @@ def tool_name_colored(tool, path):
 
 @functools.lru_cache()
 def get_homepage_of_package(package):
-    line = subprocess.getoutput("dpkg-query --status %s | grep Homepage"
-                                % package)
+    line = subprocess.getoutput(f"dpkg-query --status {package}|grep Homepage")
     return line.split()[1]
 
 

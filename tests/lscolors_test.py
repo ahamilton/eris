@@ -258,7 +258,7 @@ def test_against_ls(root_path, environment):
         if os.path.exists(path):  # Some paths are already gone. e.g. in /proc
             color_code = lscolors.color_code_for_path(path, color_codes)
             if color_code != ls_color_code:
-                print("%s %r %r" % (path, color_code, ls_color_code))
+                print(path, repr(color_code), repr(ls_color_code))
 
 
 RICH_COLOR_CODES = (

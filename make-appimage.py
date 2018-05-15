@@ -82,9 +82,9 @@ def install_vigil():
 def make_app_dir(app_dir, new_paths):
     os.mkdir(app_dir)
     make_sub_container("ubuntu", app_dir, new_paths)
-    cmd("cp -a %s/tests %s" % (VIGIL_PATH, app_dir))
-    cmd("cp -a %s/test-all %s" % (VIGIL_PATH, app_dir))
-    cmd("cp %s/appimage/* %s" % (VIGIL_PATH, app_dir))
+    cmd(f"cp -a {VIGIL_PATH}/tests {app_dir}")
+    cmd(f"cp -a {VIGIL_PATH}/test-all {app_dir}")
+    cmd(f"cp {VIGIL_PATH}/appimage/* {app_dir}")
     # if not os.path.exists("libunionpreload.so"):
     #     make_libunionpreload()
     # cmd("cp libunionpreload.so " + app_dir)

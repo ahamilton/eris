@@ -30,8 +30,7 @@ class Worker:
         os.setpriority(os.PRIO_PGRP, self.child_pgid, 19)
 
     async def run_tool(self, path, tool):
-        self.process.stdin.write(("%s\n%s\n" %
-                                  (tool.__qualname__, path)).encode("utf-8"))
+        self.process.stdin.write(f"{tool.__qualname__}\n{path}\n".encode("utf-8"))
         data = await self.process.stdout.readline()
         return tools.Status(int(data))
 

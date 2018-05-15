@@ -10,8 +10,7 @@ import vigil.tools as tools
 
 def tool_markup(tool):
     url = tools.url_of_tool(tool)
-    return (tool.__name__ if url is None else
-            "[%s](%s)" % (tool.__name__, url))
+    return (tool.__name__ if url is None else f"[{tool.__name__}]({url})")
 
 
 print("""\
