@@ -885,7 +885,8 @@ class Screen:
         spacing = " " * (width - len(self._STATUS_BAR) - len(indicators))
         bar = (self._STATUS_BAR[:width - len(indicators)] + spacing +
                indicators)[:width]
-        return [bar[:progress_bar_size].underline() + bar[progress_bar_size:]]
+        return [bar[:progress_bar_size].bg_color(termstr.Color.grey_100) +
+                bar[progress_bar_size:]]
 
     def _get_status_bar(self, width):
         incomplete = self._summary.result_total - self._summary.completed_total
