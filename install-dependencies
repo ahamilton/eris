@@ -14,7 +14,7 @@ if [ $DIST_ID != "ubuntu" ]; then
 fi
 echo "Installing the dependencies of the vigil script..."
 sudo apt --yes install python3-pyinotify python3-pygments python3-docopt \
-     python3-pillow util-linux python3-yaml
+     python3-pillow util-linux python3-toml
 echo
 echo "Installing all the tools vigil may need..."
 ./install-tools

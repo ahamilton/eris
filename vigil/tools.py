@@ -25,7 +25,7 @@ import PIL.Image
 import pygments
 import pygments.lexers
 import pygments.styles
-import yaml
+import toml
 
 import vigil.fill3 as fill3
 import vigil.gut as gut
@@ -645,11 +645,11 @@ def make_tool_function(dependencies, url, command, success_status=None,
     return func
 
 
-tools_yaml_path = os.path.join(os.path.dirname(__file__), "tools.yaml")
-with open(tools_yaml_path) as tools_yaml_file:
-    tools_yaml = yaml.load(tools_yaml_file.read())
-for tool_name, tool_yaml in tools_yaml.items():
-    tool_func = make_tool_function(**tool_yaml)
+tools_toml_path = os.path.join(os.path.dirname(__file__), "tools.toml")
+with open(tools_toml_path) as tools_toml_file:
+    tools_toml = toml.load(tools_toml_file)
+for tool_name, tool_toml in tools_toml.items():
+    tool_func = make_tool_function(**tool_toml)
     tool_func.__name__ = tool_func.__qualname__ = tool_name
     globals()[tool_name] = tool_func
 

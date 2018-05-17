@@ -1,0 +1,101 @@
+
+
+# Template:
+# []
+#   dependencies = [""]
+#   url = ""
+#   command = ""
+#   success_status = ""
+#   error_status = ""
+
+
+[objdump_headers]
+  dependencies = ["binutils"]
+  url = "https://en.wikipedia.org/wiki/Objdump"
+  command = "objdump --all-headers"
+  success_status = "normal"
+
+[objdump_disassemble]
+  dependencies = ["binutils"]
+  url = "https://en.wikipedia.org/wiki/Objdump"
+  command = "objdump --disassemble --reloc --dynamic-reloc"
+  success_status = "normal"
+
+[readelf]
+  dependencies = ["binutils"]
+  url = "https://en.wikipedia.org/wiki/Objdump"
+  command = "readelf --all"
+  success_status = "normal"
+
+[unzip]
+  dependencies = ["unzip"]
+  url = "unzip"
+  command = "unzip -l"
+  success_status = "normal"
+
+[tar_gz]
+  dependencies = ["tar"]
+  url = "http://www.gnu.org/software/tar/manual/tar.html"
+  command = "tar ztvf"
+  success_status = "normal"
+
+[tar_bz2]
+  dependencies = ["tar"]
+  url = "http://www.gnu.org/software/tar/manual/tar.html"
+  command = "tar jtvf"
+  success_status = "normal"
+
+[nm]
+  dependencies = ["binutils"]
+  url = "https://linux.die.net/man/1/nm"
+  command = "nm --demangle"
+  success_status = "normal"
+
+[pdf2txt]
+  dependencies = ["python-pdfminer"]
+  url = "python-pdfminer"
+  command = "pdf2txt"
+  success_status = "normal"
+
+[html2text]
+  dependencies = ["html2text"]
+  url = "html2text"
+  command = "html2text"
+  success_status = "normal"
+
+[c_syntax_gcc]
+  dependencies = ["gcc", "g++-6"]
+  url = "https://gcc.gnu.org/"
+  command = "gcc -fsyntax-only"
+
+[cpp_syntax_gcc]
+  dependencies = ["gcc", "g++-6"]
+  url = "https://gcc.gnu.org/"
+  command = "gcc -fsyntax-only"
+
+[php7_syntax]
+  dependencies = ["php7.2-cli"]
+  url = "https://en.wikipedia.org/wiki/PHP"
+  command = "php7.2 --syntax-check"
+
+[shellcheck]
+  dependencies = ["shellcheck"]
+  url = "shellcheck"
+  command = "shellcheck"
+
+[cppcheck]
+  dependencies = ["cppcheck"]
+  url = "cppcheck"
+  command = "cppcheck"
+
+[gofmt]
+  dependencies = ["golang-go"]
+  url = "golang-go"
+  command = "gofmt"
+  success_status = "normal"
+
+[go_vet]
+  dependencies = ["golang-go"]
+  url = "golang-go"
+  command = "go vet"
+  error_status = "normal"
