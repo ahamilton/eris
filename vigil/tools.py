@@ -648,6 +648,8 @@ def make_tool_function(dependencies, url, command, success_status=None,
 tools_toml_path = os.path.join(os.path.dirname(__file__), "tools.toml")
 with open(tools_toml_path) as tools_toml_file:
     tools_toml = toml.load(tools_toml_file)
+tools_for_extensions = tools_toml["tools_for_extensions"]
+del tools_toml["tools_for_extensions"]
 for tool_name, tool_toml in tools_toml.items():
     tool_func = make_tool_function(**tool_toml)
     tool_func.__name__ = tool_func.__qualname__ = tool_name
@@ -780,33 +782,10 @@ def generic_tools():
     return [contents, metadata]
 
 
-IMAGE_EXTENSIONS = ["png", "jpg", "gif", "bmp", "ppm", "tiff", "tga"]
-
-
-TOOLS_FOR_EXTENSIONS = \
-    [
-        (["py"], [python_syntax, python_unittests, pydoc, mypy,
-                  python_coverage, pycodestyle, pyflakes, pylint, python_gut,
-                  python_modulefinder, dis, python_mccabe, bandit]),
-        # (["pyc"], [pydisasm]),
-        (["pl", "pm", "t"], [perl_syntax, perldoc, perltidy]),
-        # (["p6", "pm6"], [perl6_syntax, perldoc]),
-        (["pod", "pod6"], [perldoc]),
-        (["java"], [uncrustify]),
-        (["c", "h"], [c_syntax_gcc, splint, uncrustify, cppcheck]),
-        (["o"], [objdump_headers, objdump_disassemble, readelf]),
-        (["cc", "cpp", "hpp"], [cpp_syntax_gcc, bcpp, uncrustify, cppcheck]),
-        (["pdf"], [pdf2txt]),
-        (["html"], [html_syntax, tidy, html2text]),
-        (["php"], [php7_syntax]),
-        (["zip"], [unzip]),
-        (["tar.gz", "tgz"], [tar_gz]),
-        (["tar.bz2"], [tar_bz2]),
-        (["a", "so"], [nm]),
-        (IMAGE_EXTENSIONS, [pil, pil_half]),
-        (["bash", "sh", "dash", "ksh"], [shellcheck]),
-        (["go"], [gofmt, go_vet, godoc])
-    ]
+TOOLS_FOR_EXTENSIONS = []
+for extensions, tool_names in tools_for_extensions:
+    TOOLS_FOR_EXTENSIONS.append(
+        (extensions, [globals()[tool_name] for tool_name in tool_names]))
 
 
 @functools.lru_cache(maxsize=1)

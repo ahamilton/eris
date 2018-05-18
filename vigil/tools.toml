@@ -1,13 +1,35 @@
+tools_for_extensions = [
+   [["py"], ["python_syntax", "python_unittests", "pydoc", "mypy",
+             "python_coverage", "pycodestyle", "pyflakes", "pylint",
+             "python_gut", "python_modulefinder", "dis", "python_mccabe",
+             "bandit"]],
+#    [["pyc"], ["pydisasm"]],
+   [["pl", "pm", "t"], ["perl_syntax", "perldoc", "perltidy"]],
+#    [["p6", "pm6"], ["perl6_syntax", "perldoc"]],
+   [["pod", "pod6"], ["perldoc"]], [["java"], ["uncrustify"]],
+   [["c", "h"], ["c_syntax_gcc", "splint", "uncrustify", "cppcheck"]],
+   [["o"], ["objdump_headers", "objdump_disassemble", "readelf"]],
+   [["cc", "cpp", "hpp"], ["cpp_syntax_gcc", "bcpp", "uncrustify",
+                           "cppcheck"]],
+   [["pdf"], ["pdf2txt"]],
+   [["html"], ["html_syntax", "tidy", "html2text"]],
+   [["php"], ["php7_syntax"]],
+   [["zip"], ["unzip"]],
+   [["tar.gz", "tgz"],["tar_gz"]],
+   [["tar.bz2"], ["tar_bz2"]],
+   [["a", "so"], ["nm"]],
+   [["png", "jpg", "gif", "bmp", "ppm", "tiff", "tga"], ["pil", "pil_half"]],
+   [["bash", "sh", "dash", "ksh"], ["shellcheck"]],
+   [["go"], ["gofmt", "go_vet", "godoc"]]]
 
 
-# Template:
+# Tool template:
 # []
 #   dependencies = [""]
 #   url = ""
 #   command = ""
 #   success_status = ""
 #   error_status = ""
-
 
 [objdump_headers]
   dependencies = ["binutils"]

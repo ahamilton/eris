@@ -218,7 +218,7 @@ class ToolsTestCase(unittest.TestCase):
         self._test_tool(tools.php7_syntax, [("root.php", tools.Status.ok)])
 
     def test_pil(self):
-        for extension in tools.IMAGE_EXTENSIONS:
+        for extension in ["png", "jpg", "gif", "bmp", "ppm", "tiff", "tga"]:
             self._test_tool(tools.pil, [("circle." + extension,
                                          tools.Status.normal)])
 
