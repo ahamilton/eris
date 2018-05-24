@@ -1,5 +1,5 @@
 Current
-- The brightness of the summary's title slightly changes when focused.
+- Timeout statuses aren't appearing. Probably related to subprocess.run.
 - Sometimes a paused worker has the running status (blue), when it should
   have the paused status (yellow).
 - If a job is paused for longer than the timeout period, sometimes it has
@@ -9,6 +9,8 @@ Current
 
 
 Current (tool related)
+- When the bandit executable is missing the result status is not an error.
+  There is possibly the same problem for every executable.
 - gut had an error with utf-8. A traceback printed directly on the screen,
   garbling the interface.
 - There is much less code coverage than I expect from vigil.py, tools.py
@@ -252,6 +254,8 @@ Fixed
 - Sometimes git_blame produces an error, depending on characters in its
   input.
 - disassemble for python doesn't always work.
+- The brightness of the summary's title slightly changes when focused.
+  <- Went away!
 
 
 Won't fix
