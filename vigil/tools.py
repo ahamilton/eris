@@ -107,32 +107,22 @@ def _fix_input(input_):
 
 
 def _do_command(command, timeout=None, **kwargs):
-    stdout, stderr = "", ""
-    with contextlib.suppress(subprocess.CalledProcessError):
-        try:
-            process = subprocess.run(command, stdout=subprocess.PIPE,
-                                     stderr=subprocess.PIPE, timeout=timeout,
-                                     **kwargs)
-        except subprocess.TimeoutExpired:
-            process.kill()
-            raise
-    return (_fix_input(process.stdout), _fix_input(process.stderr),
-            process.returncode)
+    process = subprocess.Popen(command, stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE, **kwargs)
+    try:
+        stdout, stderr = process.communicate(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        process.kill()
+        raise
+    return _fix_input(stdout), _fix_input(stderr), process.returncode
 
 
 def _run_command(command, success_status=None, error_status=None):
     success_status = Status.ok if success_status is None else success_status
     error_status = Status.problem if error_status is None else error_status
-    status, output = success_status, ""
-    try:
-        process = subprocess.run(command, stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE)
-        output = process.stdout + process.stderr
-    except subprocess.CalledProcessError:
-        status = error_status
-    if process.returncode != 0:
-        status = error_status
-    return status, fill3.Text(_fix_input(output))
+    stdout, stderr, returncode = _do_command(command)
+    result_status = success_status if returncode == 0 else error_status
+    return result_status, fill3.Text(stdout + stderr)
 
 
 def deps(**kwargs):
