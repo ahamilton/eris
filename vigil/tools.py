@@ -106,22 +106,18 @@ def _fix_input(input_):
     return _printable(input_str).expandtabs(tabsize=4)
 
 
-def _do_command(command, timeout=None, **kwargs):
-    process = subprocess.Popen(command, stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE, **kwargs)
-    try:
-        stdout, stderr = process.communicate(timeout=timeout)
-    except subprocess.TimeoutExpired:
-        process.kill()
-        raise
-    return _fix_input(stdout), _fix_input(stderr), process.returncode
+def _do_command(command, **kwargs):
+    completed_process = subprocess.run(command, stdout=subprocess.PIPE,
+                                       stderr=subprocess.PIPE, **kwargs)
+    return (_fix_input(completed_process.stdout),
+            _fix_input(completed_process.stderr), completed_process.returncode)
 
 
 def _run_command(command, success_status=None, error_status=None,
                  timeout=None):
     success_status = Status.ok if success_status is None else success_status
     error_status = Status.problem if error_status is None else error_status
-    stdout, stderr, returncode = _do_command(command, timeout)
+    stdout, stderr, returncode = _do_command(command, timeout=timeout)
     result_status = success_status if returncode == 0 else error_status
     return result_status, fill3.Text(stdout + stderr)
 
