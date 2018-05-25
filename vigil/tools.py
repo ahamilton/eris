@@ -117,10 +117,11 @@ def _do_command(command, timeout=None, **kwargs):
     return _fix_input(stdout), _fix_input(stderr), process.returncode
 
 
-def _run_command(command, success_status=None, error_status=None):
+def _run_command(command, success_status=None, error_status=None,
+                 timeout=None):
     success_status = Status.ok if success_status is None else success_status
     error_status = Status.problem if error_status is None else error_status
-    stdout, stderr, returncode = _do_command(command)
+    stdout, stderr, returncode = _do_command(command, timeout)
     result_status = success_status if returncode == 0 else error_status
     return result_status, fill3.Text(stdout + stderr)
 
