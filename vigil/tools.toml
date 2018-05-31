@@ -12,7 +12,7 @@ tools_for_extensions = [
    [["cc", "cpp", "hpp"], ["cpp_syntax_gcc", "bcpp", "uncrustify",
                            "cppcheck"]],
    [["pdf"], ["pdf2txt"]],
-   [["html"], ["html_syntax", "tidy", "html2text"]],
+   [["html"], ["html_syntax", "tidy", "html2text", "pandoc_html"]],
    [["php"], ["php7_syntax"]],
    [["zip"], ["unzip"]],
    [["tar.gz", "tgz"],["tar_gz"]],
@@ -85,6 +85,12 @@ tools_for_extensions = [
   dependencies = ["html2text"]
   url = "html2text"
   command = "html2text"
+  success_status = "normal"
+
+[pandoc_html]
+  dependencies = ["pandoc"]
+  url = "pandoc"
+  command = "pandoc -f html -t plain"
   success_status = "normal"
 
 [c_syntax_gcc]
