@@ -20,7 +20,8 @@ tools_for_extensions = [
    [["a", "so"], ["nm"]],
    [["png", "jpg", "gif", "bmp", "ppm", "tiff", "tga"], ["pil", "pil_half"]],
    [["bash", "sh", "dash", "ksh"], ["shellcheck"]],
-   [["go"], ["gofmt", "go_vet", "godoc"]]]
+   [["go"], ["gofmt", "go_vet", "godoc"]],
+   [["yaml"], ["yamllint"]]]
 
 
 # Tool template:
@@ -121,3 +122,8 @@ tools_for_extensions = [
   url = "golang-go"
   command = "go vet"
   error_status = "normal"
+
+[yamllint]
+  dependencies = ["yamllint"]
+  url = "yamllint"
+  command = "yamllint"
