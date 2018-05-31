@@ -43,4 +43,4 @@ Extensions | Tools
 .png .jpg .gif .bmp .ppm .tiff .tga | [pil](http://python-pillow.github.io/) • [pil_half](http://python-pillow.github.io/)
 .bash .sh .dash .ksh | [shellcheck](http://hackage.haskell.org/package/ShellCheck)
 .go | [gofmt](https://golang.org) • [go_vet](https://golang.org) • [golint](https://github.com/golang/lint) • [godoc](http://golang.org/x/tools)
-.yaml | [yamllint](https://github.com/adrienverge/yamllint)
+.yaml .yml | [yamllint](https://github.com/adrienverge/yamllint)

@@ -21,7 +21,7 @@ tools_for_extensions = [
    [["png", "jpg", "gif", "bmp", "ppm", "tiff", "tga"], ["pil", "pil_half"]],
    [["bash", "sh", "dash", "ksh"], ["shellcheck"]],
    [["go"], ["gofmt", "go_vet", "golint", "godoc"]],
-   [["yaml"], ["yamllint"]]]
+   [["yaml", "yml"], ["yamllint"]]]
 
 
 # Tool template:
