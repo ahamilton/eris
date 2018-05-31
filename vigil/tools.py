@@ -384,7 +384,7 @@ def pycodestyle(path):
 
 
 @deps(deps={"python-pydocstyle", "python3-pydocstyle"},
-      url="python-pydocstyle")
+      url="python3-pydocstyle")
 def pydocstyle(path):
     return _run_command([_python_version(path), "-m", "pydocstyle", path])
 
