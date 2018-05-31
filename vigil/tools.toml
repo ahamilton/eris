@@ -20,7 +20,7 @@ tools_for_extensions = [
    [["a", "so"], ["nm"]],
    [["png", "jpg", "gif", "bmp", "ppm", "tiff", "tga"], ["pil", "pil_half"]],
    [["bash", "sh", "dash", "ksh"], ["shellcheck"]],
-   [["go"], ["gofmt", "go_vet", "godoc"]],
+   [["go"], ["gofmt", "go_vet", "golint", "godoc"]],
    [["yaml"], ["yamllint"]]]
 
 
@@ -121,6 +121,12 @@ tools_for_extensions = [
   dependencies = ["golang-go"]
   url = "golang-go"
   command = "go vet"
+  error_status = "normal"
+
+[golint]
+  dependencies = ["golint"]
+  url = "golint"
+  command = "golint -set_exit_status"
   error_status = "normal"
 
 [yamllint]
