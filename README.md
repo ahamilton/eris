@@ -21,7 +21,7 @@ then to run:
 
     # vigil <directory_path>
 
-### Tools (50 in total)
+### Tools (48 in total)
 
 Extensions | Tools
 ---------- | -----
@@ -34,7 +34,7 @@ Extensions | Tools
 .o | [objdump_headers](https://en.wikipedia.org/wiki/Objdump) • [objdump_disassemble](https://en.wikipedia.org/wiki/Objdump) • [readelf](https://en.wikipedia.org/wiki/Objdump)
 .cc .cpp .hpp | [cpp_syntax_gcc](https://gcc.gnu.org/) • bcpp • [uncrustify](https://github.com/uncrustify/uncrustify) • [cppcheck](http://sourceforge.net/p/cppcheck/wiki/Home/)
 .pdf | [pdf2txt](http://www.unixuser.org/~euske/python/pdfminer/)
-.html | [html_syntax](http://www.html-tidy.org/) • [tidy](http://www.html-tidy.org/) • [html2text](http://www.mbayer.de/html2text/) • [pandoc_html](https://pandoc.org/)
+.html | [html_syntax](http://www.html-tidy.org/) • [tidy](http://www.html-tidy.org/) • [html2text](http://www.mbayer.de/html2text/) • [pandoc](https://pandoc.org/)
 .php | [php7_syntax](https://en.wikipedia.org/wiki/PHP)
 .zip | [unzip](http://www.info-zip.org/UnZip.html)
 .tar.gz .tgz | [tar_gz](http://www.gnu.org/software/tar/manual/tar.html)
@@ -44,5 +44,4 @@ Extensions | Tools
 .bash .sh .dash .ksh | [shellcheck](http://hackage.haskell.org/package/ShellCheck)
 .go | [gofmt](https://golang.org) • [go_vet](https://golang.org) • [golint](https://github.com/golang/lint) • [godoc](http://golang.org/x/tools)
 .yaml .yml | [yamllint](https://github.com/adrienverge/yamllint)
-.md | [pandoc_md](https://pandoc.org/)
-.epub | [pandoc_epub](https://pandoc.org/)
+.md .epub | [pandoc](https://pandoc.org/)

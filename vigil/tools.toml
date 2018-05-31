@@ -12,7 +12,7 @@ tools_for_extensions = [
    [["cc", "cpp", "hpp"], ["cpp_syntax_gcc", "bcpp", "uncrustify",
                            "cppcheck"]],
    [["pdf"], ["pdf2txt"]],
-   [["html"], ["html_syntax", "tidy", "html2text", "pandoc_html"]],
+   [["html"], ["html_syntax", "tidy", "html2text", "pandoc"]],
    [["php"], ["php7_syntax"]],
    [["zip"], ["unzip"]],
    [["tar.gz", "tgz"],["tar_gz"]],
@@ -22,8 +22,7 @@ tools_for_extensions = [
    [["bash", "sh", "dash", "ksh"], ["shellcheck"]],
    [["go"], ["gofmt", "go_vet", "golint", "godoc"]],
    [["yaml", "yml"], ["yamllint"]],
-   [["md"], ["pandoc_md"]],
-   [["epub"], ["pandoc_epub"]]]
+   [["md", "epub"], ["pandoc"]]]
 
 
 # Tool template:
@@ -88,10 +87,10 @@ tools_for_extensions = [
   command = "html2text"
   success_status = "normal"
 
-[pandoc_html]
+[pandoc]
   dependencies = ["pandoc"]
   url = "pandoc"
-  command = "pandoc -f html -t plain"
+  command = "pandoc -t plain"
   success_status = "normal"
 
 [c_syntax_gcc]
@@ -141,15 +140,3 @@ tools_for_extensions = [
   dependencies = ["yamllint"]
   url = "yamllint"
   command = "yamllint"
-
-[pandoc_md]
-  dependencies = ["pandoc"]
-  url = "pandoc"
-  command = "pandoc -f markdown -t plain"
-  success_status = "normal"
-
-[pandoc_epub]
-  dependencies = ["pandoc"]
-  url = "pandoc"
-  command = "pandoc -f epub -t plain"
-  success_status = "normal"
