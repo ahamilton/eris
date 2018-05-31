@@ -44,4 +44,4 @@ Extensions | Tools
 .bash .sh .dash .ksh | [shellcheck](http://hackage.haskell.org/package/ShellCheck)
 .go | [gofmt](https://golang.org) • [go_vet](https://golang.org) • [golint](https://github.com/golang/lint) • [godoc](http://golang.org/x/tools)
 .yaml .yml | [yamllint](https://github.com/adrienverge/yamllint)
-.md .epub | [pandoc](https://pandoc.org/)
+.md .epub .docx .odt .rst | [pandoc](https://pandoc.org/)

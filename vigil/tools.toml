@@ -22,7 +22,7 @@ tools_for_extensions = [
    [["bash", "sh", "dash", "ksh"], ["shellcheck"]],
    [["go"], ["gofmt", "go_vet", "golint", "godoc"]],
    [["yaml", "yml"], ["yamllint"]],
-   [["md", "epub"], ["pandoc"]]]
+   [["md", "epub", "docx", "odt", "rst"], ["pandoc"]]]
 
 
 # Tool template:
