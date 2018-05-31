@@ -16,9 +16,11 @@ def tool_markup(tool):
 all_tools = ([(["*"], tools.generic_tools() +
                [tools.git_blame, tools.git_log])] +
              tools.TOOLS_FOR_EXTENSIONS)
-unique_tools = set()
+tool_set = set()
+extension_set = set()
 for extensions, tools_ in all_tools:
-    unique_tools.update(tools_)
+    tool_set.update(tools_)
+    extension_set.update(extensions)
 print(f"""\
 # Vigil Code Monitor
 
@@ -43,9 +45,9 @@ then to run:
 
     # vigil <directory_path>
 
-### Tools ({len(unique_tools)} in total)
+### Tools
 
-Extensions | Tools
+Extensions ({len(extension_set)}) | Tools ({len(tool_set)})
 ---------- | -----""")
 for extensions, tools_ in all_tools:
     print("%s | %s" % (" ".join("." + extension for extension in extensions),
