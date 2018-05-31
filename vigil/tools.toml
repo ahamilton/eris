@@ -22,7 +22,8 @@ tools_for_extensions = [
    [["bash", "sh", "dash", "ksh"], ["shellcheck"]],
    [["go"], ["gofmt", "go_vet", "golint", "godoc"]],
    [["yaml", "yml"], ["yamllint"]],
-   [["md"], ["pandoc_md"]]]
+   [["md"], ["pandoc_md"]],
+   [["epub"], ["pandoc_epub"]]]
 
 
 # Tool template:
@@ -145,4 +146,10 @@ tools_for_extensions = [
   dependencies = ["pandoc"]
   url = "pandoc"
   command = "pandoc -f markdown -t plain"
+  success_status = "normal"
+
+[pandoc_epub]
+  dependencies = ["pandoc"]
+  url = "pandoc"
+  command = "pandoc -f epub -t plain"
   success_status = "normal"

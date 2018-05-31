@@ -21,7 +21,7 @@ then to run:
 
     # vigil <directory_path>
 
-### Tools (49 in total)
+### Tools (50 in total)
 
 Extensions | Tools
 ---------- | -----
@@ -45,3 +45,4 @@ Extensions | Tools
 .go | [gofmt](https://golang.org) • [go_vet](https://golang.org) • [golint](https://github.com/golang/lint) • [godoc](http://golang.org/x/tools)
 .yaml .yml | [yamllint](https://github.com/adrienverge/yamllint)
 .md | [pandoc_md](https://pandoc.org/)
+.epub | [pandoc_epub](https://pandoc.org/)
