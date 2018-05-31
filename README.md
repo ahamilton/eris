@@ -21,7 +21,7 @@ then to run:
 
     # vigil <directory_path>
 
-### Tools
+### Tools (48 in total)
 
 Extensions | Tools
 ---------- | -----
