@@ -47,7 +47,7 @@ then to run:
 
 ### Tools
 
-Extensions ({len(extension_set)}) | Tools ({len(tool_set)})
+Extensions({len(extension_set)}) | Tools({len(tool_set)})
 ---------- | -----""")
 for extensions, tools_ in all_tools:
     print("%s | %s" % (" ".join("." + extension for extension in extensions),
