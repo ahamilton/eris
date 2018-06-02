@@ -18,7 +18,7 @@ tools_for_extensions = [
    [["pdf"], ["pdf2txt"]],
    [["html"], ["html_syntax", "tidy", "html2text", "pandoc"]],
    [["php"], ["php7_syntax"]],
-   [["zip"], ["unzip"]],
+   [["zip", "jar", "apk"], ["zipinfo"]],
    [["tar.gz", "tgz"],["tar_gz"]],
    [["tar.bz2"], ["tar_bz2"]],
    [["a", "so"], ["nm"]],
@@ -52,10 +52,10 @@ tools_for_extensions = [
   command = "readelf --all"
   success_status = "normal"
 
-[unzip]
+[zipinfo]
   dependencies = ["unzip"]
   url = "unzip"
-  command = "unzip -l"
+  command = "zipinfo"
   success_status = "normal"
 
 [tar_gz]
