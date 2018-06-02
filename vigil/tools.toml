@@ -22,7 +22,12 @@ tools_for_extensions = [
    [["bash", "sh", "dash", "ksh"], ["shellcheck"]],
    [["go"], ["gofmt", "go_vet", "golint", "godoc"]],
    [["yaml", "yml"], ["yamllint"]],
-   [["md", "epub", "docx", "odt", "rst"], ["pandoc"]]]
+   [["md", "epub", "docx", "odt", "rst"], ["pandoc"]],
+   [["mkv", "mka", "mks", "ogg", "ogm", "avi", "wav", "mpeg", "mpg", "vob",
+   "mp4", "mpgv", "mpv", "m1v", "m2v", "mp2", "mp3", "asf", "wma", "wmv",
+   "qt", "mov", "rm", "rmvb", "ra", "ifo", "ac3", "dts", "aac", "flac",
+   "aiff", "aifc", "au", "iff"], ["mediainfo"]],
+   ]
 
 
 # Tool template:
@@ -140,3 +145,9 @@ tools_for_extensions = [
   dependencies = ["yamllint"]
   url = "yamllint"
   command = "yamllint"
+
+[mediainfo]
+  dependencies = ["mediainfo"]
+  url = "mediainfo"
+  command = "mediainfo"
+  success_status = "normal"
