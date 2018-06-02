@@ -31,7 +31,7 @@ tools_for_extensions = [
    [["mkv", "mka", "mks", "ogg", "ogm", "avi", "wav", "mpeg", "mpg", "vob",
      "mp4", "mpgv", "mpv", "m1v", "m2v", "mp2", "mp3", "asf", "wma", "wmv",
      "qt", "mov", "rm", "rmvb", "ra", "ifo", "ac3", "dts", "aac", "flac",
-     "aiff", "aifc", "au", "iff"], ["mediainfo"]],
+     "aiff", "aifc", "au", "iff", "flv"], ["mediainfo"]],
    ]
 
 [objdump_headers]
