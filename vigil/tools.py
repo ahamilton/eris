@@ -558,6 +558,8 @@ def _resize_image(image, new_width):
                         PIL.Image.ANTIALIAS)
 
 
+# This isn't made redundant by pil_half, because pil_half doesn't look correct
+# on some terminals.
 @deps(deps={"python3-pil"}, url="python3-pil")
 def pil(path):
     with open(path, "rb") as image_file:
