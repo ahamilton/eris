@@ -1,3 +1,7 @@
+
+# Copyright (C) 2018 Andrew Hamilton. All rights reserved.
+# Licensed under the Artistic License 2.0.
+
 tools_for_extensions = [
    [["py"], ["python_syntax", "python_unittests", "pydoc", "mypy",
              "python_coverage", "pycodestyle", "pydocstyle", "pyflakes",
@@ -29,15 +33,6 @@ tools_for_extensions = [
      "qt", "mov", "rm", "rmvb", "ra", "ifo", "ac3", "dts", "aac", "flac",
      "aiff", "aifc", "au", "iff"], ["mediainfo"]],
    ]
-
-
-# Tool template:
-# []
-#   dependencies = [""]
-#   url = ""
-#   command = ""
-#   success_status = ""
-#   error_status = ""
 
 [objdump_headers]
   dependencies = ["binutils"]
