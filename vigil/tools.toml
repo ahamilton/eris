@@ -18,15 +18,16 @@ tools_for_extensions = [
    [["tar.gz", "tgz"],["tar_gz"]],
    [["tar.bz2"], ["tar_bz2"]],
    [["a", "so"], ["nm"]],
-   [["png", "jpg", "gif", "bmp", "ppm", "tiff", "tga"], ["pil", "pil_half"]],
+   [["png", "jpg", "gif", "bmp", "ppm", "tiff", "tga"], ["identify", "pil",
+                                                         "pil_half"]],
    [["bash", "sh", "dash", "ksh"], ["shellcheck"]],
    [["go"], ["gofmt", "go_vet", "golint", "godoc"]],
    [["yaml", "yml"], ["yamllint"]],
    [["md", "epub", "docx", "odt", "rst"], ["pandoc"]],
    [["mkv", "mka", "mks", "ogg", "ogm", "avi", "wav", "mpeg", "mpg", "vob",
-   "mp4", "mpgv", "mpv", "m1v", "m2v", "mp2", "mp3", "asf", "wma", "wmv",
-   "qt", "mov", "rm", "rmvb", "ra", "ifo", "ac3", "dts", "aac", "flac",
-   "aiff", "aifc", "au", "iff"], ["mediainfo"]],
+     "mp4", "mpgv", "mpv", "m1v", "m2v", "mp2", "mp3", "asf", "wma", "wmv",
+     "qt", "mov", "rm", "rmvb", "ra", "ifo", "ac3", "dts", "aac", "flac",
+     "aiff", "aifc", "au", "iff"], ["mediainfo"]],
    ]
 
 
@@ -112,6 +113,12 @@ tools_for_extensions = [
   dependencies = ["php7.2-cli"]
   url = "https://en.wikipedia.org/wiki/PHP"
   command = "php7.2 --syntax-check"
+
+[identify]
+  dependencies = ["imagemagick"]
+  url = "http://www.imagemagick.org/script/identify.php"
+  command = "identify -verbose"
+  success_status = "normal"
 
 [shellcheck]
   dependencies = ["shellcheck"]
