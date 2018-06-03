@@ -610,7 +610,8 @@ def git_blame(path):  # FIX: Add to tools_test.py
 @deps(deps={"git"}, url="https://git-scm.com/docs/git-log",
       executables={"git"})
 def git_log(path):
-    stdout, stderr, returncode = _do_command(["git", "log", "--stat", path])
+    stdout, stderr, returncode = _do_command(
+        ["git", "log", "--find-renames", "--follow", "--stat", path])
     if returncode == 0:
         return Status.normal, fill3.Text(stdout)
     else:
