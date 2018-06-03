@@ -21,6 +21,7 @@ tools_for_extensions = [
    [["zip", "jar", "apk"], ["zipinfo"]],
    [["tar.gz", "tgz"],["tar_gz"]],
    [["tar.bz2"], ["tar_bz2"]],
+   [["rar"], ["unrar"]],
    [["a", "so"], ["nm"]],
    [["png", "jpg", "gif", "bmp", "ppm", "tiff", "tga"], ["identify", "pil",
                                                          "pil_half"]],
@@ -82,6 +83,12 @@ tools_for_extensions = [
   dependencies = ["tar"]
   url = "http://www.gnu.org/software/tar/manual/tar.html"
   command = "tar jtvf"
+  success_status = "normal"
+
+[unrar]
+  dependencies = ["unrar"]
+  url = "unrar"
+  command = "unrar l"
   success_status = "normal"
 
 [nm]
