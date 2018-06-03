@@ -23,7 +23,7 @@ then to run:
 
 ### Tools
 
-Extensions(84) | Tools(51)
+Extensions(85) | Tools(52)
 ---------- | -----
 .* | [contents](http://pygments.org/) • metadata • [git_blame](https://git-scm.com/docs/git-blame) • [git_log](https://git-scm.com/docs/git-log)
 .py | [python_syntax](https://en.wikipedia.org/wiki/Python_syntax_and_semantics) • [python_unittests](https://docs.python.org/3/library/unittest.html) • [pydoc](https://docs.python.org/3/library/pydoc.html) • [mypy](http://www.mypy-lang.org/) • [python_coverage](http://nedbatchelder.com/code/coverage/) • [pycodestyle](https://pypi.python.org/pypi/pycodestyle) • [pydocstyle](http://pydocstyle.readthedocs.org/) • [pyflakes](https://launchpad.net/pyflakes) • [pylint](http://www.pylint.org/) • [python_gut](https://github.com/ahamilton/vigil/blob/master/gut.py) • [python_modulefinder](https://docs.python.org/3/library/modulefinder.html) • [dis](https://docs.python.org/3/library/dis.html) • [python_mccabe](https://github.com/flintwork/mccabe) • [bandit](https://wiki.openstack.org/wiki/Security/Projects/Bandit)
@@ -40,6 +40,7 @@ Extensions(84) | Tools(51)
 .tar.gz .tgz | [tar_gz](http://www.gnu.org/software/tar/manual/tar.html)
 .tar.bz2 | [tar_bz2](http://www.gnu.org/software/tar/manual/tar.html)
 .rar | [unrar](http://www.rarlabs.com/)
+.7z | [7z](https://en.wikipedia.org/wiki/7z)
 .a .so | [nm](https://linux.die.net/man/1/nm)
 .png .jpg .gif .bmp .ppm .tiff .tga | [identify](http://www.imagemagick.org/script/identify.php) • [pil](http://python-pillow.github.io/) • [pil_half](http://python-pillow.github.io/)
 .bash .sh .dash .ksh | [shellcheck](http://hackage.haskell.org/package/ShellCheck)

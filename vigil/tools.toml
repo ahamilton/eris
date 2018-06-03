@@ -22,6 +22,7 @@ tools_for_extensions = [
    [["tar.gz", "tgz"],["tar_gz"]],
    [["tar.bz2"], ["tar_bz2"]],
    [["rar"], ["unrar"]],
+   [["7z"], ["7z"]],
    [["a", "so"], ["nm"]],
    [["png", "jpg", "gif", "bmp", "ppm", "tiff", "tga"], ["identify", "pil",
                                                          "pil_half"]],
@@ -90,6 +91,12 @@ tools_for_extensions = [
   dependencies = ["unrar"]
   url = "unrar"
   command = "unrar l"
+  success_status = "normal"
+
+[7z]
+  dependencies = ["7z"]
+  url = "https://en.wikipedia.org/wiki/7z"
+  command = "7z l"
   success_status = "normal"
 
 [nm]
