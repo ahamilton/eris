@@ -549,7 +549,7 @@ def _pil_pixels(pil_image):
             for row_index in range(pil_image.height)]
 
 
-MAX_IMAGE_SIZE = 80
+MAX_IMAGE_SIZE = 200
 
 
 def _resize_image(image, new_width):
