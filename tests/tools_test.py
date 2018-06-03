@@ -182,8 +182,8 @@ class ToolsTestCase(unittest.TestCase):
     def test_readelf(self):
         self._test_tool(tools.readelf, [("Mcrt1.o", tools.Status.normal)])
 
-    def test_unzip(self):
-        self._test_tool(tools.unzip, [("hi.zip", tools.Status.normal)])
+    def test_zipinfo(self):
+        self._test_tool(tools.zipinfo, [("hi.zip", tools.Status.normal)])
 
     def test_tar_gz(self):
         self._test_tool(tools.tar_gz, [("hi.tar.gz", tools.Status.normal),
