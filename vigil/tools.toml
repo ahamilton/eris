@@ -24,6 +24,7 @@ tools_for_extensions = [
    [["rar"], ["unrar"]],
    [["7z"], ["7z"]],
    [["xz"], ["unxz"]],
+   [["deb"], ["dpkg_contents", "dpkg_info"]],
    [["a"], ["ar", "nm"]],
    [["so"], ["nm"]],   
    [["png", "jpg", "gif", "bmp", "ppm", "tiff", "tga"], ["identify", "pil",
@@ -105,6 +106,18 @@ tools_for_extensions = [
   dependencies = ["xz-utils"]
   url = "xz-utils"
   command = "unxz -l"
+  success_status = "normal"
+
+[dpkg_contents]
+  dependencies = ["dpkg"]
+  url = "dpkg"
+  command = "dpkg -c"
+  success_status = "normal"
+
+[dpkg_info]
+  dependencies = ["dpkg"]
+  url = "dpkg"
+  command = "dpkg -I"
   success_status = "normal"
 
 [ar]
