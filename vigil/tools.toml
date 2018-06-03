@@ -18,7 +18,7 @@ tools_for_extensions = [
    [["pdf"], ["pdf2txt"]],
    [["html", "htm"], ["html_syntax", "tidy", "html2text", "pandoc"]],
    [["php"], ["php7_syntax"]],
-   [["zip", "jar", "apk"], ["zipinfo"]],
+   [["zip", "jar", "apk", "egg"], ["zipinfo"]],
    [["tar.gz", "tgz"],["tar_gz"]],
    [["tar.bz2"], ["tar_bz2"]],
    [["rar"], ["unrar"]],
