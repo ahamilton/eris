@@ -596,28 +596,6 @@ def pil_half(path):
     return Status.normal, result
 
 
-@deps(deps={"git"}, url="https://git-scm.com/docs/git-blame",
-      executables={"git"})
-def git_blame(path):  # FIX: Add to tools_test.py
-    stdout, stderr, returncode = _do_command(
-        ["git", "blame", "--show-stats", "--date=short", path])
-    if returncode == 0:
-        return Status.normal, fill3.Text(stdout)
-    else:
-        return Status.not_applicable, fill3.Text("")
-
-
-@deps(deps={"git"}, url="https://git-scm.com/docs/git-log",
-      executables={"git"})
-def git_log(path):
-    stdout, stderr, returncode = _do_command(
-        ["git", "log", "--find-renames", "--follow", "--stat", path])
-    if returncode == 0:
-        return Status.normal, fill3.Text(stdout)
-    else:
-        return Status.not_applicable, fill3.Text("")
-
-
 @deps(deps={"golang-golang-x-tools"}, url="golang-golang-x-tools",
       executables={"godoc"})
 def godoc(path):
