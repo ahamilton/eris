@@ -23,7 +23,7 @@ then to run:
 
 ### Tools
 
-Extensions(86) | Tools(53)
+Extensions(86) | Tools(54)
 ---------- | -----
 .* | [contents](http://pygments.org/) • metadata • [git_blame](https://git-scm.com/docs/git-blame) • [git_log](https://git-scm.com/docs/git-log)
 .py | [python_syntax](https://en.wikipedia.org/wiki/Python_syntax_and_semantics) • [python_unittests](https://docs.python.org/3/library/unittest.html) • [pydoc](https://docs.python.org/3/library/pydoc.html) • [mypy](http://www.mypy-lang.org/) • [python_coverage](http://nedbatchelder.com/code/coverage/) • [pycodestyle](https://pypi.python.org/pypi/pycodestyle) • [pydocstyle](http://pydocstyle.readthedocs.org/) • [pyflakes](https://launchpad.net/pyflakes) • [pylint](http://www.pylint.org/) • [python_gut](https://github.com/ahamilton/vigil/blob/master/gut.py) • [python_modulefinder](https://docs.python.org/3/library/modulefinder.html) • [dis](https://docs.python.org/3/library/dis.html) • [python_mccabe](https://github.com/flintwork/mccabe) • [bandit](https://wiki.openstack.org/wiki/Security/Projects/Bandit)
@@ -42,7 +42,8 @@ Extensions(86) | Tools(53)
 .rar | [unrar](http://www.rarlabs.com/)
 .7z | [7z](https://en.wikipedia.org/wiki/7z)
 .xz | [unxz](http://tukaani.org/xz/)
-.a .so | [nm](https://linux.die.net/man/1/nm)
+.a | [ar](https://en.wikipedia.org/wiki/Ar_(Unix)) • [nm](https://linux.die.net/man/1/nm)
+.so | [nm](https://linux.die.net/man/1/nm)
 .png .jpg .gif .bmp .ppm .tiff .tga | [identify](http://www.imagemagick.org/script/identify.php) • [pil](http://python-pillow.github.io/) • [pil_half](http://python-pillow.github.io/)
 .bash .sh .dash .ksh | [shellcheck](http://hackage.haskell.org/package/ShellCheck)
 .go | [gofmt](https://golang.org) • [go_vet](https://golang.org) • [golint](https://github.com/golang/lint) • [godoc](http://golang.org/x/tools)

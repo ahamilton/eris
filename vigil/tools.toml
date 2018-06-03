@@ -24,7 +24,8 @@ tools_for_extensions = [
    [["rar"], ["unrar"]],
    [["7z"], ["7z"]],
    [["xz"], ["unxz"]],
-   [["a", "so"], ["nm"]],
+   [["a"], ["ar", "nm"]],
+   [["so"], ["nm"]],   
    [["png", "jpg", "gif", "bmp", "ppm", "tiff", "tga"], ["identify", "pil",
                                                          "pil_half"]],
    [["bash", "sh", "dash", "ksh"], ["shellcheck"]],
@@ -104,6 +105,12 @@ tools_for_extensions = [
   dependencies = ["xz-utils"]
   url = "xz-utils"
   command = "unxz -l"
+  success_status = "normal"
+
+[ar]
+  dependencies = ["binutils"]
+  url = "https://en.wikipedia.org/wiki/Ar_(Unix)"
+  command = "ar t"
   success_status = "normal"
 
 [nm]
