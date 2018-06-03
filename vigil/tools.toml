@@ -16,7 +16,7 @@ tools_for_extensions = [
    [["cc", "cpp", "hpp"], ["cpp_syntax_gcc", "bcpp", "uncrustify",
                            "cppcheck"]],
    [["pdf"], ["pdf2txt"]],
-   [["html"], ["html_syntax", "tidy", "html2text", "pandoc"]],
+   [["html", "htm"], ["html_syntax", "tidy", "html2text", "pandoc"]],
    [["php"], ["php7_syntax"]],
    [["zip", "jar", "apk"], ["zipinfo"]],
    [["tar.gz", "tgz"],["tar_gz"]],
