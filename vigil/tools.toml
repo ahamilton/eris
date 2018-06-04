@@ -106,19 +106,19 @@ tools_for_extensions = [
 [unxz]
   dependencies = ["xz-utils"]
   url = "xz-utils"
-  command = "unxz -l"
+  command = "unxz --list"
   success_status = "normal"
 
 [dpkg_contents]
   dependencies = ["dpkg"]
   url = "dpkg"
-  command = "dpkg -c"
+  command = "dpkg --contents"
   success_status = "normal"
 
 [dpkg_info]
   dependencies = ["dpkg"]
   url = "dpkg"
-  command = "dpkg -I"
+  command = "dpkg --info"
   success_status = "normal"
 
 [rpm]
