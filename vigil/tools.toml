@@ -25,6 +25,7 @@ tools_for_extensions = [
    [["7z"], ["7z"]],
    [["xz"], ["unxz"]],
    [["deb"], ["dpkg_contents", "dpkg_info"]],
+   [["rpm"], ["rpm"]],
    [["a"], ["ar", "nm"]],
    [["so"], ["nm"]],   
    [["png", "jpg", "gif", "bmp", "ppm", "tiff", "tga"], ["identify", "pil",
@@ -118,6 +119,12 @@ tools_for_extensions = [
   dependencies = ["dpkg"]
   url = "dpkg"
   command = "dpkg -I"
+  success_status = "normal"
+
+[rpm]
+  dependencies = ["rpm"]
+  url = "rpm"
+  command = "rpm --query --list"
   success_status = "normal"
 
 [ar]
