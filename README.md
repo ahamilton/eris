@@ -23,7 +23,7 @@ then to run:
 
 ### Tools
 
-Extensions(91) | Tools(58)
+Extensions(92) | Tools(60)
 ----------:| -----
 .* | [contents](http://pygments.org/) • metadata • [git_blame](https://git-scm.com/docs/git-blame) • [git_log](https://git-scm.com/docs/git-log)
 .py | [python_syntax](https://en.wikipedia.org/wiki/Python_syntax_and_semantics) • [python_unittests](https://docs.python.org/3/library/unittest.html) • [pydoc](https://docs.python.org/3/library/pydoc.html) • [mypy](http://www.mypy-lang.org/) • [python_coverage](http://nedbatchelder.com/code/coverage/) • [pycodestyle](https://pypi.python.org/pypi/pycodestyle) • [pydocstyle](http://pydocstyle.readthedocs.org/) • [pyflakes](https://launchpad.net/pyflakes) • [pylint](http://www.pylint.org/) • [python_gut](https://github.com/ahamilton/vigil/blob/master/gut.py) • [python_modulefinder](https://docs.python.org/3/library/modulefinder.html) • [dis](https://docs.python.org/3/library/dis.html) • [python_mccabe](https://github.com/flintwork/mccabe) • [bandit](https://wiki.openstack.org/wiki/Security/Projects/Bandit)
@@ -34,6 +34,7 @@ Extensions(91) | Tools(58)
 .o | [objdump_headers](https://en.wikipedia.org/wiki/Objdump) • [objdump_disassemble](https://en.wikipedia.org/wiki/Objdump) • [readelf](https://en.wikipedia.org/wiki/Objdump)
 .cc .cpp .hpp | [cpp_syntax_gcc](https://gcc.gnu.org/) • bcpp • [uncrustify](https://github.com/uncrustify/uncrustify) • [cppcheck](http://sourceforge.net/p/cppcheck/wiki/Home/)
 .rb | [ruby_syntax](http://www.ruby-lang.org/)
+.lua | [lua_syntax](http://www.lua.org) • [lua_check](https://github.com/mpeterv/luacheck)
 .pdf | [pdf2txt](http://www.unixuser.org/~euske/python/pdfminer/)
 .html .htm | [html_syntax](http://www.html-tidy.org/) • [tidy](http://www.html-tidy.org/) • [html2text](http://www.mbayer.de/html2text/) • [pandoc](https://pandoc.org/)
 .php | [php7_syntax](https://en.wikipedia.org/wiki/PHP)

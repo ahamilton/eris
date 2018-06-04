@@ -16,6 +16,7 @@ tools_for_extensions = [
    [["cc", "cpp", "hpp"], ["cpp_syntax_gcc", "bcpp", "uncrustify",
                            "cppcheck"]],
    [["rb"], ["ruby_syntax"]],
+   [["lua"], ["lua_syntax", "lua_check"]],
    [["pdf"], ["pdf2txt"]],
    [["html", "htm"], ["html_syntax", "tidy", "html2text", "pandoc"]],
    [["php"], ["php7_syntax"]],
@@ -193,6 +194,16 @@ tools_for_extensions = [
   dependencies = ["ruby"]
   url = "ruby"
   command = "ruby -c"
+
+[lua_syntax]
+  dependencies = ["lua5.3"]
+  url = "lua5.3"
+  command = "luac -p"
+
+[lua_check]
+  dependencies = ["lua-check"]
+  url = "lua-check"
+  command = "luacheck"
 
 [gofmt]
   dependencies = ["golang-go"]
