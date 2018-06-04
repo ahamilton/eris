@@ -15,6 +15,7 @@ tools_for_extensions = [
    [["o"], ["objdump_headers", "objdump_disassemble", "readelf"]],
    [["cc", "cpp", "hpp"], ["cpp_syntax_gcc", "bcpp", "uncrustify",
                            "cppcheck"]],
+   [["rb"], ["ruby_syntax"]],
    [["pdf"], ["pdf2txt"]],
    [["html", "htm"], ["html_syntax", "tidy", "html2text", "pandoc"]],
    [["php"], ["php7_syntax"]],
@@ -187,6 +188,11 @@ tools_for_extensions = [
   dependencies = ["cppcheck"]
   url = "cppcheck"
   command = "cppcheck"
+
+[ruby_syntax]
+  dependencies = ["ruby"]
+  url = "ruby"
+  command = "ruby -c"
 
 [gofmt]
   dependencies = ["golang-go"]
