@@ -23,7 +23,7 @@ then to run:
 
 ### Tools
 
-Extensions(89) | Tools(57)
+Extensions(90) | Tools(57)
 ---------- | -----
 .* | [contents](http://pygments.org/) • metadata • [git_blame](https://git-scm.com/docs/git-blame) • [git_log](https://git-scm.com/docs/git-log)
 .py | [python_syntax](https://en.wikipedia.org/wiki/Python_syntax_and_semantics) • [python_unittests](https://docs.python.org/3/library/unittest.html) • [pydoc](https://docs.python.org/3/library/pydoc.html) • [mypy](http://www.mypy-lang.org/) • [python_coverage](http://nedbatchelder.com/code/coverage/) • [pycodestyle](https://pypi.python.org/pypi/pycodestyle) • [pydocstyle](http://pydocstyle.readthedocs.org/) • [pyflakes](https://launchpad.net/pyflakes) • [pylint](http://www.pylint.org/) • [python_gut](https://github.com/ahamilton/vigil/blob/master/gut.py) • [python_modulefinder](https://docs.python.org/3/library/modulefinder.html) • [dis](https://docs.python.org/3/library/dis.html) • [python_mccabe](https://github.com/flintwork/mccabe) • [bandit](https://wiki.openstack.org/wiki/Security/Projects/Bandit)
@@ -36,7 +36,7 @@ Extensions(89) | Tools(57)
 .pdf | [pdf2txt](http://www.unixuser.org/~euske/python/pdfminer/)
 .html .htm | [html_syntax](http://www.html-tidy.org/) • [tidy](http://www.html-tidy.org/) • [html2text](http://www.mbayer.de/html2text/) • [pandoc](https://pandoc.org/)
 .php | [php7_syntax](https://en.wikipedia.org/wiki/PHP)
-.zip .jar .apk .egg | [zipinfo](http://www.info-zip.org/UnZip.html)
+.zip .jar .apk .egg .whl | [zipinfo](http://www.info-zip.org/UnZip.html)
 .tar.gz .tgz | [tar_gz](http://www.gnu.org/software/tar/manual/tar.html)
 .tar.bz2 | [tar_bz2](http://www.gnu.org/software/tar/manual/tar.html)
 .rar | [unrar](http://www.rarlabs.com/)
