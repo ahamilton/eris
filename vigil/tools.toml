@@ -100,8 +100,8 @@ tools_for_extensions = [
   success_status = "normal"
 
 [7z]
-  dependencies = ["7z"]
-  url = "https://en.wikipedia.org/wiki/7z"
+  dependencies = ["p7zip"]
+  url = "p7zip"
   command = "7z l"
   success_status = "normal"
 
