@@ -17,6 +17,7 @@ tools_for_extensions = [
                            "cppcheck"]],
    [["rb"], ["ruby_syntax"]],
    [["lua"], ["lua_syntax", "lua_check"]],
+   [["js"], ["js_syntax"]],
    [["pdf"], ["pdf2txt"]],
    [["html", "htm"], ["html_syntax", "tidy", "html2text", "pandoc"]],
    [["php"], ["php7_syntax"]],
@@ -199,6 +200,11 @@ tools_for_extensions = [
   dependencies = ["lua5.3"]
   url = "lua5.3"
   command = "luac -p"
+
+[js_syntax]
+  dependencies = ["nodejs"]
+  url = "nodejs"
+  command = "node --check"
 
 [lua_check]
   dependencies = ["lua-check"]
