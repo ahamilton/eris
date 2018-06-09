@@ -11,12 +11,12 @@ tools_for_extensions = [
    [["pl", "pm", "t"], ["perl_syntax", "perldoc", "perltidy"]],
 #    [["p6", "pm6"], ["perl6_syntax", "perldoc"]],
    [["pod", "pod6"], ["perldoc"]], [["java"], ["uncrustify"]],
-   [["c", "h"], ["c_syntax_gcc", "splint", "uncrustify", "cppcheck"]],
+   [["c", "h"], ["c_syntax_gcc", "splint", "uncrustify", "cppcheck", "clang_format"]],
    [["cc", "cpp", "hpp"], ["cpp_syntax_gcc", "bcpp", "uncrustify",
-                           "cppcheck"]],
+                           "cppcheck", "clang_format"]],
    [["rb"], ["ruby_syntax"]],
    [["lua"], ["lua_syntax", "lua_check"]],
-   [["js"], ["js_syntax"]],
+   [["js"], ["js_syntax", "clang_format"]],
    [["php"], ["php7_syntax"]],
    [["go"], ["gofmt", "go_vet", "golint", "godoc"]],
    [["bash", "sh", "dash", "ksh"], ["shellcheck"]],
@@ -190,6 +190,12 @@ tools_for_extensions = [
   dependencies = ["cppcheck"]
   url = "cppcheck"
   command = "cppcheck"
+
+[clang_format]
+  dependencies = ["clang-format"]
+  url = "https://clang.llvm.org/docs/ClangFormat.html"
+  command = "clang-format-6.0"
+  success_status = "normal"
 
 [ruby_syntax]
   dependencies = ["ruby"]
