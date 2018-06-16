@@ -150,14 +150,29 @@ def fix_paths(root_path, paths):
             for path in paths]
 
 
-def change_background(str_, new_background):
+def blend_color(a_color, b_color, transparency):
+    a_r, a_g, a_b = a_color
+    b_r, b_g, b_b = b_color
+    complement = 1 - transparency
+    return (int(a_r * transparency + b_r * complement),
+            int(a_g * transparency + b_g * complement),
+            int(a_b * transparency + b_b * complement))
 
-    def change_background_style(style):
-        new_bg = (new_background if style.bg_color == termstr.Color.black
-                  else style.bg_color)
-        return termstr.CharStyle(style.fg_color, new_bg, style.is_bold,
-                                 style.is_underlined)
-    return termstr.TermStr(str_).transform_style(change_background_style)
+
+def highlight_str(line, highlight_color, transparency):
+
+    @functools.lru_cache()
+    def blend_style(style):
+        fg_color = (style.fg_color if type(style.fg_color) == tuple
+                    else termstr.xterm_color_to_rgb(style.fg_color))
+        bg_color = (style.bg_color if type(style.bg_color) == tuple
+                    else termstr.xterm_color_to_rgb(style.bg_color))
+        return termstr.CharStyle(
+            blend_color(fg_color, highlight_color, transparency),
+            blend_color(bg_color, highlight_color, transparency),
+            is_bold=style.is_bold, is_italic=style.is_italic,
+            is_underlined=style.is_underlined)
+    return termstr.TermStr(line).transform_style(blend_style)
 
 
 def in_green(str_):
@@ -331,8 +346,8 @@ class Summary:
     def _highlight_cursor_row(self, appearance, cursor_y):
         scroll_x, scroll_y = self._view_widget.position
         highlighted_y = cursor_y - scroll_y
-        appearance[highlighted_y] = change_background(
-            appearance[highlighted_y], termstr.Color.grey_50)
+        appearance[highlighted_y] = highlight_str(
+            appearance[highlighted_y], termstr.Color.white, 0.85)
         return appearance
 
     def appearance(self, dimensions):
