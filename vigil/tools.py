@@ -55,7 +55,7 @@ class Status(enum.IntEnum):
 
 _STATUS_COLORS = {Status.ok: termstr.Color.green,
                   Status.problem: termstr.Color.red,
-                  Status.normal: termstr.Color.grey_150,
+                  Status.normal: termstr.Color.grey_200,
                   Status.not_applicable: termstr.Color.grey_100,
                   Status.running: termstr.Color.blue,
                   Status.paused: termstr.Color.yellow,
