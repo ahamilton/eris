@@ -43,6 +43,8 @@ class Color:
     dark_red = (139, 0, 0)
     lime = (0, 255, 0)
     yellow = (255, 255, 0)
+    dark_yellow = (255, 211, 0)
+    # dark_yellow = (204, 204, 0)
     grey_50 = (50, 50, 50)
     grey_100 = (100, 100, 100)
     grey_150 = (150, 150, 150)

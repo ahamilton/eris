@@ -98,10 +98,8 @@ class Entry(collections.UserList):
         result_selected = self.widget[self.highlighted]
         status_color = tools._STATUS_COLORS.get(
             result_selected.status, None)
-        fg_color = tools.STATUS_CURSOR_COLORS.get(result_selected.status,
-                                                  termstr.Color.white)
         return fill3.Text(termstr.TermStr("+", termstr.CharStyle(
-            fg_color=fg_color, bg_color=status_color)))
+            fg_color=termstr.Color.white, bg_color=status_color)))
 
     def appearance_min(self):
         # 'appearance' local variable exists because appearance_cache can
@@ -894,7 +892,7 @@ class Screen:
                                    progress_bar_size):
         ordering_text = "directory" if is_directory_sort else "type     "
         paused_indicator = (termstr.TermStr("paused ").fg_color(
-            termstr.Color.yellow) if is_paused else termstr.TermStr("running").
+            termstr.Color.dark_yellow) if is_paused else termstr.TermStr("running").
                             fg_color(termstr.Color.light_blue))
         indicators = " " + paused_indicator + f"  order:{ordering_text} "
         spacing = " " * (width - len(self._STATUS_BAR) - len(indicators))
