@@ -161,7 +161,7 @@ def change_background(str_, new_background):
 
 
 def in_green(str_):
-    return termstr.TermStr(str_, termstr.CharStyle(termstr.Color.green))
+    return termstr.TermStr(str_, termstr.CharStyle(termstr.Color.lime))
 
 
 _UP, _DOWN, _LEFT, _RIGHT = (0, -1), (0, 1), (-1, 0), (1, 0)
@@ -446,7 +446,7 @@ class Summary:
 class Log:
 
     _GREY_BOLD_STYLE = termstr.CharStyle(termstr.Color.grey_100, is_bold=True)
-    _GREEN_STYLE = termstr.CharStyle(termstr.Color.green)
+    _GREEN_STYLE = termstr.CharStyle(termstr.Color.lime)
     LOG_PATH = os.path.join(tools.CACHE_PATH, "log")
 
     def __init__(self, appearance_changed_event):
