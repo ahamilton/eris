@@ -54,11 +54,11 @@ class Status(enum.IntEnum):
 
 
 _STATUS_COLORS = {Status.ok: termstr.Color.green,
-                  Status.problem: termstr.Color.dark_red,
+                  Status.problem: termstr.Color.red,
                   Status.normal: termstr.Color.grey_150,
                   Status.not_applicable: termstr.Color.grey_100,
-                  Status.running: termstr.Color.light_blue,
-                  Status.paused: termstr.Color.dark_yellow,
+                  Status.running: termstr.Color.blue,
+                  Status.paused: termstr.Color.yellow,
                   Status.timed_out: termstr.Color.purple}
 STATUS_MEANINGS = [
     (Status.normal, "Normal"), (Status.ok, "Ok"),
@@ -250,7 +250,7 @@ def metadata(path):
         else:
             name, value = line
             name = termstr.TermStr(name + ":").fg_color(
-                termstr.Color.light_blue).ljust(16)
+                termstr.Color.blue).ljust(16)
             text.append(name + fill3.join("", value) + "\n")
     return (Status.normal, fill3.Text(fill3.join("", text)))
 

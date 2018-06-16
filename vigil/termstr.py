@@ -35,20 +35,18 @@ def _cache_first_result(user_function):
 
 class Color:
 
+    # https://en.wikipedia.org/wiki/Natural_Color_System
     black = (0, 0, 0)
     white = (255, 255, 255)
-    red = (255, 0, 0)
-    green = (0, 128, 0)
-    blue = (0, 0, 255)
-    dark_red = (139, 0, 0)
+    red = (196, 2, 51)
+    green = (0, 159, 107)
+    blue = (0, 135, 189)
     lime = (0, 255, 0)
-    yellow = (255, 255, 0)
-    dark_yellow = (255, 211, 0)
-    # dark_yellow = (204, 204, 0)
+    yellow = (255, 211, 0)
     grey_50 = (50, 50, 50)
     grey_100 = (100, 100, 100)
     grey_150 = (150, 150, 150)
-    light_blue = (90, 90, 255)
+    light_blue = (173, 216, 230)
     purple = (200, 0, 200)
     brown = (150, 75, 0)
     orange = (255, 153, 0)

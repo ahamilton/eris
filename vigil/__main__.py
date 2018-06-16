@@ -196,7 +196,7 @@ def log_filesystem_changed(log, added, removed, modified):
             termstr.Color.grey_100 if stat == 0 else color)
     parts = [part(added, "added", termstr.Color.green),
              part(removed, "removed", termstr.Color.red),
-             part(modified, "modified", termstr.Color.light_blue)]
+             part(modified, "modified", termstr.Color.blue)]
     log.log_message("Filesystem changed: " + fill3.join(" ", parts))
 
 
@@ -892,8 +892,8 @@ class Screen:
                                    progress_bar_size):
         ordering_text = "directory" if is_directory_sort else "type     "
         paused_indicator = (termstr.TermStr("paused ").fg_color(
-            termstr.Color.dark_yellow) if is_paused else termstr.TermStr("running").
-                            fg_color(termstr.Color.light_blue))
+            termstr.Color.yellow) if is_paused else termstr.TermStr("running").
+                            fg_color(termstr.Color.blue))
         indicators = " " + paused_indicator + f"  order:{ordering_text} "
         spacing = " " * (width - len(self._STATUS_BAR) - len(indicators))
         bar = (self._STATUS_BAR[:width - len(indicators)] + spacing +
