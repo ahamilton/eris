@@ -591,7 +591,7 @@ class Screen:
         self._main_loop = main_loop
         self._is_summary_focused = True
         self.workers = None
-        self._is_listing_portrait = False
+        self._is_listing_portrait = True
         self._is_log_visible = True
         self._is_help_visible = False
         self._is_paused = False
