@@ -98,8 +98,10 @@ class Entry(collections.UserList):
         result_selected = self.widget[self.highlighted]
         status_color = tools._STATUS_COLORS.get(
             result_selected.status, None)
+        fg_color = (termstr.Color.white if result_selected.status ==
+                    tools.Status.pending else termstr.Color.black)
         return fill3.Text(termstr.TermStr("+", termstr.CharStyle(
-            fg_color=termstr.Color.white, bg_color=status_color)))
+            fg_color=fg_color, bg_color=status_color)))
 
     def appearance_min(self):
         # 'appearance' local variable exists because appearance_cache can
