@@ -3,6 +3,9 @@
 # Licensed under the Artistic License 2.0.
 
 
+"""Terminal codes used to control common terminals."""
+
+
 import contextlib
 import sys
 
@@ -23,19 +26,23 @@ restore = ESC + "8"
 
 
 def color(color_number, is_foreground):
+    """Set the color of text."""
     return f"\x1b[{'38' if is_foreground else '48'};5;{color_number:d}m"
 
 
 def rgb_color(rgb, is_foreground):
+    """Set the color of text using an rgb tuple."""
     return f"\x1b[{'38' if is_foreground else '48'};2;" + "%i;%i;%im" % rgb
 
 
 def move(x, y):
+    """Move the cursor to column x, row y."""
     return f"\x1b[{y + 1:d};{x + 1:d}H"
 
 
 @contextlib.contextmanager
 def fullscreen():
+    """Enter fullscreen mode."""
     sys.stdout.write(enter_fullscreen)
     try:
         yield
@@ -45,6 +52,7 @@ def fullscreen():
 
 @contextlib.contextmanager
 def hidden_cursor():
+    """Hide the cursor."""
     sys.stdout.write(hide_cursor)
     try:
         yield
@@ -53,7 +61,8 @@ def hidden_cursor():
 
 
 @contextlib.contextmanager
-def console_title(title):
+def terminal_title(title):
+    """Set the title of the terminal window."""
     sys.stdout.write(save)
     sys.stdout.write(f"\033]0;{title}\007")
     try:

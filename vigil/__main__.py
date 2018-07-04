@@ -1093,7 +1093,7 @@ def check_arguments():
 
 def entry_point():
     root_path, worker_count, editor_command, theme = check_arguments()
-    with terminal.console_title("vigil: " + os.path.basename(root_path)):
+    with terminal.terminal_title("vigil: " + os.path.basename(root_path)):
         manage_cache(root_path)
         with chdir(root_path):  # FIX: Don't change directory if possible.
             loop = asyncio.get_event_loop()

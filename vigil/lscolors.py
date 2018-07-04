@@ -2,6 +2,13 @@
 # Copyright (C) 2011, 2015-2018 Andrew Hamilton. All rights reserved.
 # Licensed under the Artistic License 2.0.
 
+
+"""Determine a color for a file based on its file type.
+
+This is done in the same way as the ls command.
+"""
+
+
 import os
 import os.path
 import stat
@@ -49,6 +56,7 @@ _DEFAULT_COLOR_CODES = \
 
 
 def get_color_codes(environment):
+    """Get a dictionary of the color of every file type."""
     if "LS_COLORS" in environment:
         try:
             return _parse_ls_colors(environment["LS_COLORS"])
@@ -59,6 +67,7 @@ def get_color_codes(environment):
 
 
 def color_key_for_path(path, color_codes, is_link_target=True):
+    """Get the high level type (key) of a file."""
     # see print_color_indicator in the file 'ls.c' in the coreutils codebase
     if not os.path.lexists(path):
         return MISSING_KEY
@@ -107,6 +116,7 @@ def color_key_for_path(path, color_codes, is_link_target=True):
 
 
 def color_code_for_path(path, color_codes):
+    """Get the color of a file."""
     def get_extension(basename, color_codes):
         parts = basename.split(".")
         if len(parts) == 2:

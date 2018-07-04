@@ -2,6 +2,10 @@
 # Copyright (C) 2015-2018 Andrew Hamilton. All rights reserved.
 # Licensed under the Artistic License 2.0.
 
+
+"""Termstr strings contain characters that have color and style."""
+
+
 import collections
 import functools
 import html
@@ -20,6 +24,7 @@ xterm_colormap = vigil.ColorMap.XTermColorMap()
 
 @functools.lru_cache()
 def xterm_color_to_rgb(color_index):
+    """Return the rgb color of an xterm color."""
     return vigil.ColorMap._rgb(xterm_colormap.colors[color_index])
 
 
@@ -34,6 +39,7 @@ def _cache_first_result(user_function):
 
 
 class Color:
+    """A list of common colors."""
 
     # https://en.wikipedia.org/wiki/Natural_Color_System
     black = (0, 0, 0)
@@ -54,6 +60,10 @@ class Color:
 
 
 class CharStyle:
+    """Characters have a foreground and background color, and styles.
+
+    The styles are bold, italic or underlined.
+    """
 
     _POOL = weakref.WeakValueDictionary()
     _TERMINAL256_FORMATTER = \
@@ -128,8 +138,8 @@ class CharStyle:
                     else xterm_color_to_rgb(self.fg_color))
         bg_color = (self.bg_color if type(self.bg_color) == tuple
                     else xterm_color_to_rgb(self.bg_color))
-        return (f"<style>.S{id(self)} {{font-size:80%%; color:rgb{fg_color!r}; "
-                f"background-color:rgb{bg_color!r}; "
+        return (f"<style>.S{id(self)} {{font-size:80%%; color:rgb{fg_color!r};"
+                f" background-color:rgb{bg_color!r}; "
                 f"{bold_code}{italic_code}{underline_code}}}</style>")
 
 
