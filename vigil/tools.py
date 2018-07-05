@@ -334,7 +334,7 @@ def pydoc(path):
 @deps(deps={"mypy"}, url="mypy", executables={"mypy"})
 def mypy(path):
     stdout, stderr, returncode = _do_command(["mypy", path], timeout=TIMEOUT)
-    status = Status.ok if returncode == 0 else Status.normal
+    status = Status.ok if returncode == 0 else Status.problem
     return status, fill3.Text(stdout)
 
 
@@ -458,7 +458,7 @@ def bandit(path):
     stdout, stderr, returncode = _do_command(
         [python_version, "-m", "bandit.cli.main", "-f", "txt", path],
         timeout=TIMEOUT)
-    status = Status.ok if returncode == 0 else Status.normal
+    status = Status.ok if returncode == 0 else Status.problem
     text_without_timestamp = "".join(stdout.splitlines(keepends=True)[2:])
     return status, fill3.Text(text_without_timestamp)
 

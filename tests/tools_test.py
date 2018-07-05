@@ -104,7 +104,7 @@ class ToolsTestCase(unittest.TestCase):
 
     def test_mypy(self):
         self._test_tool(tools.mypy, [("hi3.py", tools.Status.ok),
-                                     ("hi.py", tools.Status.normal)])
+                                     ("hi.py", tools.Status.problem)])
 
     def test_python_coverage(self):
         self._test_tool(tools.python_coverage, self.HI_NORMAL)

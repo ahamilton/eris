@@ -227,13 +227,11 @@ tools_for_extensions = [
   dependencies = ["golang-go"]
   url = "golang-go"
   command = "go vet"
-  error_status = "normal"
 
 [golint]
   dependencies = ["golint"]
   url = "golint"
   command = "golint -set_exit_status"
-  error_status = "normal"
 
 [yamllint]
   dependencies = ["yamllint"]
