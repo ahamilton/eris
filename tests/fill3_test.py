@@ -7,6 +7,7 @@
 import unittest
 
 import vigil.fill3 as fill3
+import vigil.termstr as termstr
 
 
 class WidgetTests(unittest.TestCase):
@@ -70,30 +71,43 @@ class WidgetTests(unittest.TestCase):
         placeholder.widget = self.TEXT_B
         self.assert_string(placeholder.appearance_min(), "B")
 
+    def assert_string2(self, appearance, expected_string):
+        self.assertEqual(
+            ("\n".join(line.data for line in appearance),
+             "".join("i" if style.fg_color==termstr.Color.black else " "
+                     for line in appearance for style in line.style)),
+            expected_string)
+
     def test_scroll_bar(self):
-        scroll_bar = fill3.ScrollBar(is_horizontal=True, bar_char="#")
+        scroll_bar = fill3.ScrollBar(is_horizontal=True)
         self.assertEqual(scroll_bar.interval, (0, 0))
-        self.assert_string(scroll_bar.appearance((1, 1)), "#")
+        self.assert_string2(scroll_bar.appearance((1, 1)), (" ", "i"))
         scroll_bar.interval = (0, 0.5)
-        self.assert_string(scroll_bar.appearance((2, 1)), "# ")
+        self.assert_string2(scroll_bar.appearance((2, 1)), ("  ", "i "))
         scroll_bar.interval = (0, 0.1)
-        self.assert_string(scroll_bar.appearance((2, 1)), "# ")
+        self.assert_string2(scroll_bar.appearance((2, 1)), ("  ", "i "))
         scroll_bar.interval = (0.25, 0.75)
-        self.assert_string(scroll_bar.appearance((4, 1)), " ## ")
-        scroll_bar = fill3.ScrollBar(is_horizontal=False, bar_char="#")
+        self.assert_string2(scroll_bar.appearance((4, 1)), ("  █ ", " i  "))
+        scroll_bar.interval = (0, 0.75)
+        self.assert_string2(scroll_bar.appearance((2, 1)), (" ▌", "i "))
+
+        scroll_bar = fill3.ScrollBar(is_horizontal=False)
         self.assertEqual(scroll_bar.interval, (0, 0))
-        self.assert_string(scroll_bar.appearance((1, 1)), "#")
+        self.assert_string2(scroll_bar.appearance((1, 1)), ("█", " "))
         scroll_bar.interval = (0, 0.5)
-        self.assert_string(scroll_bar.appearance((1, 2)), "#\n"
-                                                          " ")
+        self.assert_string2(scroll_bar.appearance((1, 2)), ("█\n"
+                                                            "█", " i"))
         scroll_bar.interval = (0, 0.1)
-        self.assert_string(scroll_bar.appearance((1, 2)), "#\n"
-                                                          " ")
+        self.assert_string2(scroll_bar.appearance((1, 2)), ("█\n"
+                                                            "█", " i"))
         scroll_bar.interval = (0.25, 0.75)
-        self.assert_string(scroll_bar.appearance((1, 4)), " \n"
-                                                          "#\n"
-                                                          "#\n"
-                                                          " ")
+        self.assert_string2(scroll_bar.appearance((1, 4)), (" \n"
+                                                            "█\n"
+                                                            "█\n"
+                                                            "█", "   i"))
+        scroll_bar.interval = (0, 0.75)
+        self.assert_string2(scroll_bar.appearance((1, 2)), ("█\n"
+                                                            "▄", " i"))
 
     def test_table_widget(self):
         table = fill3.Table([])

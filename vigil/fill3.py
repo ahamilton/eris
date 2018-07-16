@@ -179,15 +179,30 @@ class Filler:
 
 class ScrollBar:
 
-    _GREY_BACKGROUND_STYLE = termstr.CharStyle(bg_color=termstr.Color.grey_100)
-    _GREY_BLOCK = termstr.TermStr(" ", _GREY_BACKGROUND_STYLE)
+    _HORIZONTAL_CHARS = [" ", "▏", "▎", "▍", "▌", "▋", "▊", "▉"]
+    _VERTICAL_CHARS = ["█", "▇", "▆", "▅", "▄", "▃", "▂", "▁"]
 
-    def __init__(self, is_horizontal, interval=(0, 0), bar_char=_GREY_BLOCK,
-                 background_char=" "):
+    def __init__(self, is_horizontal, interval=(0, 0),
+                 bar_color=termstr.Color.grey_100,
+                 background_color=termstr.Color.black):
         self._is_horizontal = is_horizontal
         self.interval = interval
-        self.bar_char = bar_char
-        self.background_char = background_char
+        self.bar_color = bar_color
+        self.background_color = background_color
+        self.bar_char = termstr.TermStr("█").fg_color(bar_color)
+        self.background_char = termstr.TermStr(" ").bg_color(background_color)
+        self.start_h_chars = [termstr.TermStr(char).fg_color(
+            self.background_color).bg_color(self.bar_color)
+                            for char in self._HORIZONTAL_CHARS]
+        self.end_h_chars = [termstr.TermStr(char).fg_color(
+            self.bar_color).bg_color(self.background_color)
+                            for char in self._HORIZONTAL_CHARS]
+        self.start_v_chars = [termstr.TermStr(char).fg_color(
+            self.bar_color).bg_color(self.background_color)
+                            for char in self._VERTICAL_CHARS]
+        self.end_v_chars = [termstr.TermStr(char).fg_color(
+            self.background_color).bg_color(self.bar_color)
+                            for char in self._VERTICAL_CHARS]
 
     def appearance(self, dimensions):
         width, height = dimensions
@@ -195,13 +210,24 @@ class ScrollBar:
         length = width if self._is_horizontal else height
         assert all(0 <= fraction <= 1 for fraction in self.interval), \
             self.interval
-        start_index, end_index = [int(fraction * length)
-                                  for fraction in self.interval]
-        if start_index == end_index and end_index < length:
-            end_index += 1
+        (start_index, start_remainder), (end_index, end_remainder) = \
+            [divmod(fraction * length * 8, 8) for fraction in self.interval]
+        start_index, end_index = int(start_index), int(end_index)
+        start_remainder, end_remainder = \
+            int(start_remainder), int(end_remainder)
+        if start_index == end_index:
+            end_index, end_remainder = start_index + 1, start_remainder
+        elif end_index == start_index + 1:
+            end_remainder = max(start_remainder, end_remainder)
+        start_chars, end_chars = ((self.start_h_chars, self.end_h_chars)
+                                  if self._is_horizontal
+                                  else (self.start_v_chars, self.end_v_chars))
         bar = (self.background_char * start_index +
-               self.bar_char * (end_index - start_index) +
-               self.background_char * (length - end_index))
+               start_chars[start_remainder] +
+               self.bar_char * (end_index - start_index - 1) +
+               end_chars[end_remainder] +
+               self.background_char * (length - end_index - 1))
+        bar = bar[:length]
         return [bar] if self._is_horizontal else [char for char in bar]
 
 
