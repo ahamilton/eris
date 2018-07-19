@@ -181,27 +181,31 @@ class ScrollBar:
 
     _HORIZONTAL_CHARS = [" ", "▏", "▎", "▍", "▌", "▋", "▊", "▉"]
     _VERTICAL_CHARS = ["█", "▇", "▆", "▅", "▄", "▃", "▂", "▁"]
+    DEFAULT_BAR_COLOR = termstr.Color.grey_100
+    DEFAULT_BACKGROUND_COLOR = termstr.Color.grey_30
 
-    def __init__(self, is_horizontal, interval=(0, 0),
-                 bar_color=termstr.Color.grey_100,
-                 background_color=termstr.Color.black):
+    def __init__(self, is_horizontal, interval=(0, 0), bar_color=None,
+                 background_color=None):
         self._is_horizontal = is_horizontal
         self.interval = interval
-        self.bar_color = bar_color
-        self.background_color = background_color
+        bar_color = (ScrollBar.DEFAULT_BAR_COLOR if bar_color is None
+                     else bar_color)
+        background_color = (ScrollBar.DEFAULT_BACKGROUND_COLOR
+                            if background_color is None
+                            else background_color)
         self.bar_char = termstr.TermStr("█").fg_color(bar_color)
         self.background_char = termstr.TermStr(" ").bg_color(background_color)
         self.start_h_chars = [termstr.TermStr(char).fg_color(
-            self.background_color).bg_color(self.bar_color)
+            background_color).bg_color(bar_color)
                             for char in self._HORIZONTAL_CHARS]
         self.end_h_chars = [termstr.TermStr(char).fg_color(
-            self.bar_color).bg_color(self.background_color)
+            bar_color).bg_color(background_color)
                             for char in self._HORIZONTAL_CHARS]
         self.start_v_chars = [termstr.TermStr(char).fg_color(
-            self.bar_color).bg_color(self.background_color)
+            bar_color).bg_color(background_color)
                             for char in self._VERTICAL_CHARS]
         self.end_v_chars = [termstr.TermStr(char).fg_color(
-            self.background_color).bg_color(self.bar_color)
+            background_color).bg_color(bar_color)
                             for char in self._VERTICAL_CHARS]
 
     def appearance(self, dimensions):

@@ -74,7 +74,8 @@ class WidgetTests(unittest.TestCase):
     def assert_string2(self, appearance, expected_string):
         self.assertEqual(
             ("\n".join(line.data for line in appearance),
-             "".join("i" if style.fg_color==termstr.Color.black else " "
+             "".join("i" if style.fg_color==
+                     fill3.ScrollBar.DEFAULT_BACKGROUND_COLOR else " "
                      for line in appearance for style in line.style)),
             expected_string)
 

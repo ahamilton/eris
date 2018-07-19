@@ -346,8 +346,9 @@ class Summary:
     def _highlight_cursor_row(self, appearance, cursor_y):
         scroll_x, scroll_y = self._view_widget.position
         highlighted_y = cursor_y - scroll_y
-        appearance[highlighted_y] = highlight_str(
-            appearance[highlighted_y], termstr.Color.white, 0.85)
+        appearance[highlighted_y] = (highlight_str(
+            appearance[highlighted_y][:-1], termstr.Color.white, 0.85)
+                                     + appearance[highlighted_y][-1])
         return appearance
 
     def appearance(self, dimensions):
