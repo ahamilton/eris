@@ -179,8 +179,8 @@ class Filler:
 
 class ScrollBar:
 
-    _HORIZONTAL_CHARS = [" ", "▏", "▎", "▍", "▌", "▋", "▊", "▉"]
-    _VERTICAL_CHARS = ["█", "▇", "▆", "▅", "▄", "▃", "▂", "▁"]
+    _PARTIAL_CHARS = (["█", "▇", "▆", "▅", "▄", "▃", "▂", "▁"]
+                      ,[" ", "▏", "▎", "▍", "▌", "▋", "▊", "▉"])
     DEFAULT_BAR_COLOR = termstr.Color.grey_100
     DEFAULT_BACKGROUND_COLOR = termstr.Color.grey_30
 
@@ -188,25 +188,18 @@ class ScrollBar:
                  background_color=None):
         self._is_horizontal = is_horizontal
         self.interval = interval
-        bar_color = (ScrollBar.DEFAULT_BAR_COLOR if bar_color is None
-                     else bar_color)
-        background_color = (ScrollBar.DEFAULT_BACKGROUND_COLOR
-                            if background_color is None
-                            else background_color)
-        self.bar_char = termstr.TermStr("█").fg_color(bar_color)
-        self.background_char = termstr.TermStr(" ").bg_color(background_color)
-        self.start_h_chars = [termstr.TermStr(char).fg_color(
-            background_color).bg_color(bar_color)
-                            for char in self._HORIZONTAL_CHARS]
-        self.end_h_chars = [termstr.TermStr(char).fg_color(
-            bar_color).bg_color(background_color)
-                            for char in self._HORIZONTAL_CHARS]
-        self.start_v_chars = [termstr.TermStr(char).fg_color(
-            bar_color).bg_color(background_color)
-                            for char in self._VERTICAL_CHARS]
-        self.end_v_chars = [termstr.TermStr(char).fg_color(
-            background_color).bg_color(bar_color)
-                            for char in self._VERTICAL_CHARS]
+        bar_color = bar_color or ScrollBar.DEFAULT_BAR_COLOR
+        background_color = (background_color or
+                            ScrollBar.DEFAULT_BACKGROUND_COLOR)
+        self._bar_char = termstr.TermStr("█").fg_color(bar_color)
+        self._background_char = termstr.TermStr(" ").bg_color(background_color)
+        if self._is_horizontal:
+            bar_color, background_color = background_color, bar_color
+        self._partial_chars = [(termstr.TermStr(char).fg_color(
+            bar_color).bg_color(background_color),
+                                termstr.TermStr(char).fg_color(
+            background_color).bg_color(bar_color))
+                for char in self._PARTIAL_CHARS[self._is_horizontal]]
 
     def appearance(self, dimensions):
         width, height = dimensions
@@ -223,14 +216,11 @@ class ScrollBar:
             end_index, end_remainder = start_index + 1, start_remainder
         elif end_index == start_index + 1:
             end_remainder = max(start_remainder, end_remainder)
-        start_chars, end_chars = ((self.start_h_chars, self.end_h_chars)
-                                  if self._is_horizontal
-                                  else (self.start_v_chars, self.end_v_chars))
-        bar = (self.background_char * start_index +
-               start_chars[start_remainder] +
-               self.bar_char * (end_index - start_index - 1) +
-               end_chars[end_remainder] +
-               self.background_char * (length - end_index - 1))
+        bar = (self._background_char * start_index +
+               self._partial_chars[start_remainder][0] +
+               self._bar_char * (end_index - start_index - 1) +
+               self._partial_chars[end_remainder][1] +
+               self._background_char * (length - end_index - 1))
         bar = bar[:length]
         return [bar] if self._is_horizontal else [char for char in bar]
 
