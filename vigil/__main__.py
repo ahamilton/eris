@@ -811,6 +811,14 @@ class Screen:
     def toggle_fullscreen(self):
         self._is_fullscreen = not self._is_fullscreen
 
+    def xdg_open(self):
+        path = self._summary.get_selection().path
+        path_colored = tools.path_colored(path)
+        self._log.log_message([in_green("Opening "), path_colored,
+                               in_green("...")])
+        subprocess.Popen(["xdg-open", path], stdout=subprocess.PIPE,
+                          stderr=subprocess.PIPE)
+
     def _select_entry_at_position(self, x, y, view_width, view_height):
         border_width = 1
         if x < border_width or y < border_width or x > view_width or \
@@ -888,7 +896,7 @@ class Screen:
 
     _STATUS_BAR = highlight_chars(
         " *help *quit *t*a*b:focus *turn *log *edit *next *pause *order"
-        " *refresh *fullscreen", Log._GREEN_STYLE)
+        " *refresh *fullscreen *xdg-open", Log._GREEN_STYLE)
 
     @functools.lru_cache(maxsize=2)
     def _get_status_bar_appearance(self, width, is_directory_sort, is_paused,
@@ -939,7 +947,7 @@ class Screen:
         ({"N"}, move_to_next_issue_of_tool), ({"e"}, edit_file),
         ({"q"}, quit_), ({"p"}, toggle_pause), ({"r"}, refresh),
         ({"R"}, refresh_tool), ({"tab"}, toggle_focus),
-        ({"f"}, toggle_fullscreen)]
+        ({"f"}, toggle_fullscreen), ("x", xdg_open)]
 
 
 def add_watch_manager_to_mainloop(root_path, mainloop, on_filesystem_change,
