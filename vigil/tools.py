@@ -9,7 +9,6 @@ import contextlib
 import enum
 import functools
 import gzip
-import hashlib
 import math
 import os
 import os.path
@@ -199,11 +198,6 @@ def _pretty_bytes(bytes):
     return f"{conversion} {units[unit_index]}"
 
 
-def _md5(path):
-    with open(path, "rb") as file:
-        return hashlib.md5(file.read()).hexdigest()
-
-
 @deps(deps={"file", "coreutils"}, executables={"file", "sha1sum"})
 def metadata(path):
 
@@ -230,7 +224,8 @@ def metadata(path):
     stdout, *rest = _do_command(
         ["file", "--dereference", "--brief", "--uncompress", path])
     file_type = stdout
-    md5sum = _md5(path)
+    stdout, *rest = _do_command(["md5sum", path])
+    md5sum = stdout.split()[0]
     stdout, *rest = _do_command(["sha1sum", path])
     sha1sum = stdout.split()[0]
     permissions_value = [permissions,
