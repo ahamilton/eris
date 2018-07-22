@@ -75,6 +75,7 @@ KEYS_DOC = """Keys:
   *r - Refresh the currently selected report.
   *R - Refresh all reports of the current tool.
   *f - Resize the focused pane to the full screen. (toggle)
+  *x - Open the current file with xdg-open.
 """
 
 
