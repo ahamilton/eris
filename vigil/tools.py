@@ -198,7 +198,7 @@ def _pretty_bytes(bytes):
     return f"{conversion} {units[unit_index]}"
 
 
-@deps(deps={"file", "coreutils"}, executables={"file", "sha1sum"})
+@deps(deps={"file", "coreutils"}, executables={"file", "sha1sum", "md5sum"})
 def metadata(path):
 
     def detail(value, unit):
