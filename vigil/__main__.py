@@ -751,9 +751,9 @@ class Screen:
                         scroll_position[1] + 1)
             self._log.log_message([in_green("Editing "), path_colored,
                                    in_green(f" at line {line_num}...")])
-            subprocess.run(f"{self.editor_command} +{line_num} {path}",
-                           shell=True, stdout=subprocess.PIPE,
-                           stderr=subprocess.PIPE)
+            subprocess.Popen(f"{self.editor_command} +{line_num} {path}",
+                             shell=True, stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE)
 
     def toggle_status_style(self):
         self._summary.toggle_status_style(self._log)
