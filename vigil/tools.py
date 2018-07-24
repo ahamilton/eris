@@ -157,21 +157,6 @@ def _syntax_highlight_using_path(text, path):
     return _syntax_highlight(text, lexer, style)
 
 
-def pygments_(path):
-    with open(path) as file_:
-        try:
-            text = file_.read()
-        except UnicodeDecodeError:
-            return Status.not_applicable, fill3.Text("Not unicode")
-        else:
-            try:
-                source_widget = _syntax_highlight_using_path(_fix_input(text),
-                                                             path)
-            except pygments.util.ClassNotFound:
-                return Status.normal, fill3.Text(text)
-    return Status.normal, source_widget
-
-
 def linguist(path):
     # Dep: ruby?, ruby-dev, libicu-dev, cmake, "gem install github-linguist"
     return _run_command(["linguist", path], Status.normal)
@@ -252,12 +237,17 @@ def metadata(path):
 
 @deps(deps={"python3-pygments"}, url="python3-pygments")
 def contents(path):
-    root, ext = splitext(path)
-    if ext == "":
-        with open(path) as file_:
-            return Status.normal, fill3.Text(_fix_input(file_.read()))
-    else:
-        return pygments_(path)
+    with open(path) as file_:
+        try:
+            text = file_.read()
+        except UnicodeDecodeError:
+            return Status.not_applicable, fill3.Text("Not unicode")
+    text = _fix_input(text)
+    try:
+        text_widget = _syntax_highlight_using_path(text, path)
+    except pygments.util.ClassNotFound:
+        text_widget = fill3.Text(text)
+    return Status.normal, text_widget
 
 
 def _is_python_syntax_correct(path, python_version):

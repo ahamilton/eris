@@ -341,7 +341,7 @@ class Text:
         if len(lines) == 0:
             self.text = []
         elif len(lines) == 1:
-            self.text = [text]
+            self.text = [lines[0]]
         else:
             max_width = max(len(line) for line in lines)
             height = len(lines)
