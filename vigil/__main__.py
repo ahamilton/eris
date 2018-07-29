@@ -183,12 +183,14 @@ def in_green(str_):
 _UP, _DOWN, _LEFT, _RIGHT = (0, -1), (0, 1), (-1, 0), (1, 0)
 
 
-def directory_sort(path):
+def directory_sort(entry):
+    path = entry.path
     return (os.path.dirname(path), tools.splitext(path)[1],
             os.path.basename(path))
 
 
-def type_sort(path):
+def type_sort(entry):
+    path = entry.path
     return (tools.splitext(path)[1], os.path.dirname(path),
             os.path.basename(path))
 
@@ -238,18 +240,24 @@ class Summary:
             self.__cursor_position = new_position
             self.closest_placeholder_generator = None
 
-    def sync_with_filesystem(self, log=None):
-        x, y = self._cursor_position
+    def sort_entries(self):
         try:
-            old_path = self.get_selection().path
+            cursor_path = self.get_selection().path
         except AttributeError:
-            old_path = None
+            cursor_path =  None
+        x, y = self._cursor_position
+        self._column.sort(key=directory_sort if self.is_directory_sort
+                          else type_sort)
+        for index, row in enumerate(self._column):
+            if row.path == cursor_path:
+                self._cursor_position = (x, index)
+                break
+
+    def sync_with_filesystem(self, log=None):
         new_column = fill3.Column([])
         new_cache = {}
         paths = fix_paths(self._root_path, codebase_files(self._root_path))
-        paths.sort(key=directory_sort if self.is_directory_sort else type_sort)
         jobs_added = False
-        new_cursor_position = (0, 0)
         row_index = 0
         result_total, completed_total = 0, 0
         all_results = set()
@@ -259,8 +267,6 @@ class Summary:
                 file_key = (path, os.stat(full_path).st_ctime)
             except FileNotFoundError:
                 continue
-            if path == old_path:
-                new_cursor_position = (x, row_index)
             row = []
             for tool in tools.tools_for_path(path):
                 tool_key = (tool.__name__, tool.__code__.co_code)
@@ -288,16 +294,17 @@ class Summary:
                 set(self._cache.keys()), set(new_cache.keys()))
             if sum(stats) != 0:
                 log_filesystem_changed(log, *stats)
-        self._column, self._cache, self._cursor_position, self.result_total, \
-            self.completed_total, self._max_width, self._max_path_length, \
+        self._column, self._cache, self.result_total, self.completed_total, \
+            self._max_width, self._max_path_length, \
             self.closest_placeholder_generator, self._all_results = (
-                new_column, new_cache, new_cursor_position, result_total,
-                completed_total, max_width, max_path_length, None, all_results)
+                new_column, new_cache, result_total, completed_total,
+                max_width, max_path_length, None, all_results)
         if jobs_added:
             self._jobs_added_event.set()
         for result in deleted_results:
             with contextlib.suppress(FileNotFoundError):
                 os.remove(result.pickle_path)
+        self.sort_entries()
 
     def _placeholder_spiral(self):
         x, y = self.cursor_position()
@@ -763,7 +770,7 @@ class Screen:
         sort_order = ("directory then type" if self._summary.is_directory_sort
                       else "type then directory")
         self._log.log_command(f"Ordering files by {sort_order}.")
-        self._summary.sync_with_filesystem(self._log)
+        self._summary.sort_entries()
 
     def toggle_pause(self):
         self._is_paused = not self._is_paused
