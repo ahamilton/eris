@@ -964,8 +964,7 @@ class Screen:
         ({"f"}, toggle_fullscreen), ("x", xdg_open)]
 
 
-def add_watch_manager_to_mainloop(root_path, mainloop, on_filesystem_change,
-                                  exclude_filter):
+def setup_inotify(root_path, loop, on_filesystem_change, exclude_filter):
     watch_manager = pyinotify.WatchManager()
     event_mask = (pyinotify.IN_CREATE | pyinotify.IN_DELETE |
                   pyinotify.IN_CLOSE_WRITE | pyinotify.IN_ATTRIB |
@@ -973,16 +972,8 @@ def add_watch_manager_to_mainloop(root_path, mainloop, on_filesystem_change,
     watch_manager.add_watch(root_path, event_mask, rec=True, auto_add=True,
                             proc_fun=lambda event: None,
                             exclude_filter=exclude_filter)
-    notifier = pyinotify.Notifier(watch_manager)
-
-    def on_inotify():
-        time.sleep(0.1)  # A little time for more events
-        notifier.read_events()
-        notifier.process_events()
-        on_filesystem_change()
-    watch_manager_fd = watch_manager.get_fd()
-    mainloop.add_reader(watch_manager_fd, on_inotify)
-    return watch_manager_fd
+    return pyinotify.AsyncioNotifier(watch_manager, loop,
+                                     callback=on_filesystem_change)
 
 
 def load_state(pickle_path, jobs_added_event, appearance_changed_event,
@@ -1037,11 +1028,12 @@ def main(root_path, loop, worker_count=None, editor_command=None, theme=None,
     if not is_first_run:
         summary.sync_with_filesystem(log)
 
-    def on_filesystem_change():
+    def on_filesystem_change(notifier):
+        time.sleep(0.1)  # A little time for more events
         summary.sync_with_filesystem(log)
         appearance_changed_event.set()
-    watch_manager_fd = add_watch_manager_to_mainloop(
-        root_path, loop, on_filesystem_change, is_path_excluded)
+    notifier = setup_inotify(root_path, loop, on_filesystem_change,
+                             is_path_excluded)
     try:
         log.log_message(f"Starting workers ({worker_count}) ...")
         screen.make_workers(worker_count, is_being_tested)
@@ -1054,7 +1046,7 @@ def main(root_path, loop, worker_count=None, editor_command=None, theme=None,
         fill3.main(loop, appearance_changed_event, screen, exit_loop=exit_loop)
         log.log_message("Program stopped.")
     finally:
-        loop.remove_reader(watch_manager_fd)
+        notifier.stop()
     save_state(pickle_path, summary, screen, log)
 
 
