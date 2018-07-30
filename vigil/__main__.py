@@ -241,13 +241,17 @@ class Summary:
             self.closest_placeholder_generator = None
 
     def sort_entries(self):
+        self._column.sort(key=directory_sort if self.is_directory_sort
+                          else type_sort)
+
+    @contextlib.contextmanager
+    def keep_selection(self):
         try:
             cursor_path = self.get_selection().path
         except AttributeError:
             cursor_path =  None
         x, y = self._cursor_position
-        self._column.sort(key=directory_sort if self.is_directory_sort
-                          else type_sort)
+        yield
         for index, row in enumerate(self._column):
             if row.path == cursor_path:
                 self._cursor_position = (x, index)
@@ -294,17 +298,18 @@ class Summary:
                 set(self._cache.keys()), set(new_cache.keys()))
             if sum(stats) != 0:
                 log_filesystem_changed(log, *stats)
-        self._column, self._cache, self.result_total, self.completed_total, \
-            self._max_width, self._max_path_length, \
-            self.closest_placeholder_generator, self._all_results = (
-                new_column, new_cache, result_total, completed_total,
-                max_width, max_path_length, None, all_results)
-        if jobs_added:
-            self._jobs_added_event.set()
-        for result in deleted_results:
-            with contextlib.suppress(FileNotFoundError):
-                os.remove(result.pickle_path)
-        self.sort_entries()
+        with self.keep_selection():
+            self._column, self._cache, self.result_total, self.completed_total, \
+                self._max_width, self._max_path_length, \
+                self.closest_placeholder_generator, self._all_results = (
+                    new_column, new_cache, result_total, completed_total,
+                    max_width, max_path_length, None, all_results)
+            if jobs_added:
+                self._jobs_added_event.set()
+            for result in deleted_results:
+                with contextlib.suppress(FileNotFoundError):
+                    os.remove(result.pickle_path)
+            self.sort_entries()
 
     def _placeholder_spiral(self):
         x, y = self.cursor_position()
@@ -770,7 +775,8 @@ class Screen:
         sort_order = ("directory then type" if self._summary.is_directory_sort
                       else "type then directory")
         self._log.log_command(f"Ordering files by {sort_order}.")
-        self._summary.sort_entries()
+        with self._summary.keep_selection():
+            self._summary.sort_entries()
 
     def toggle_pause(self):
         self._is_paused = not self._is_paused
