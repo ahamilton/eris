@@ -243,19 +243,21 @@ class Summary:
     def sort_entries(self):
         self._column.sort(key=directory_sort if self.is_directory_sort
                           else type_sort)
+        self.closest_placeholder_generator = None
 
     @contextlib.contextmanager
     def keep_selection(self):
         try:
             cursor_path = self.get_selection().path
         except AttributeError:
-            cursor_path =  None
+            yield
+            return
         x, y = self._cursor_position
         yield
         for index, row in enumerate(self._column):
             if row.path == cursor_path:
                 self._cursor_position = (x, index)
-                break
+                return
 
     def sync_with_filesystem(self, log=None):
         new_column = fill3.Column([])
