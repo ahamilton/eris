@@ -230,6 +230,12 @@ class Summary:
         self._all_results = set()
         self.sync_with_filesystem()
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state["closest_placeholder_generator"] = None
+        state["_jobs_added_event"] = None
+        return state
+
     @property
     def _cursor_position(self):
         return self.__cursor_position
@@ -486,6 +492,11 @@ class Log:
         self.portal = fill3.Portal(self.widget)
         self._appearance_cache = None
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state["_appearance_changed_event"] = None
+        return state
+
     def log_message(self, message, timestamp=None, char_style=None):
         if isinstance(message, list):
             message = [part[1] if isinstance(part, tuple) else part
@@ -614,6 +625,13 @@ class Screen:
         self._is_fullscreen = False
         self._make_widgets()
         self._key_map = make_key_map(Screen._KEY_DATA)
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state["_appearance_changed_event"] = None
+        state["_main_loop"] = None
+        state["workers"] = None
+        return state
 
     def make_workers(self, worker_count, is_being_tested):
         workers = []
@@ -1000,16 +1018,6 @@ def load_state(pickle_path, jobs_added_event, appearance_changed_event,
     return summary, screen, log, is_first_run
 
 
-def save_state(pickle_path, summary, screen, log):
-    # Cannot pickle generators, locks, sockets or events.
-    (summary.closest_placeholder_generator, summary._lock,
-     summary._jobs_added_event, screen._appearance_changed_event,
-     screen._main_loop, screen.workers,
-     log._appearance_changed_event) = [None] * 7
-    open_compressed = functools.partial(gzip.open, compresslevel=1)
-    tools.dump_pickle_safe(screen, pickle_path, open=open_compressed)
-
-
 def main(root_path, loop, worker_count=None, editor_command=None, theme=None,
          is_being_tested=False):
     if worker_count is None:
@@ -1049,7 +1057,8 @@ def main(root_path, loop, worker_count=None, editor_command=None, theme=None,
         log.log_message("Program stopped.")
     finally:
         notifier.stop()
-    save_state(pickle_path, summary, screen, log)
+    open_compressed = functools.partial(gzip.open, compresslevel=1)
+    tools.dump_pickle_safe(screen, pickle_path, open=open_compressed)
 
 
 @contextlib.contextmanager
