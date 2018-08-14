@@ -12,6 +12,8 @@ import vigil.tools as tools
 
 class Worker:
 
+    unsaved_jobs_total = 0
+
     def __init__(self, is_already_paused, is_being_tested):
         self.is_already_paused = is_already_paused
         self.is_being_tested = is_being_tested
@@ -34,7 +36,7 @@ class Worker:
         data = await self.process.stdout.readline()
         return tools.Status(int(data))
 
-    async def job_runner(self, summary, log, jobs_added_event,
+    async def job_runner(self, screen, summary, log, jobs_added_event,
                    appearance_changed_event):
         await self.create_process()
         while True:
@@ -50,6 +52,10 @@ class Worker:
                             os.kill(os.getpid(), signal.SIGINT)
                     break
                 await self.result.run(log, appearance_changed_event, self)
+                self.unsaved_jobs_total += 1
+                if self.unsaved_jobs_total == 100:
+                    log.log_message("Auto-saving...")
+                    screen.save()
                 summary.completed_total += 1
             jobs_added_event.clear()
 

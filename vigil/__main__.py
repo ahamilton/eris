@@ -638,9 +638,9 @@ class Screen:
         for index in range(worker_count):
             worker_ = worker.Worker(self._is_paused, is_being_tested)
             workers.append(worker_)
-            future = worker_.job_runner(
-                self._summary, self._log, self._summary._jobs_added_event,
-                self._appearance_changed_event)
+            future = worker_.job_runner(self, self._summary, self._log,
+                                        self._summary._jobs_added_event,
+                                        self._appearance_changed_event)
             worker_.future = asyncio.ensure_future(future,
                                                    loop=self._main_loop)
         self.workers = workers
@@ -853,6 +853,12 @@ class Screen:
         subprocess.Popen(["xdg-open", path], stdout=subprocess.PIPE,
                           stderr=subprocess.PIPE)
 
+    def save(self):
+        worker.Worker.unsaved_jobs_total = 0
+        pickle_path = os.path.join(tools.CACHE_PATH, "summary.pickle")
+        open_compressed = functools.partial(gzip.open, compresslevel=1)
+        tools.dump_pickle_safe(self, pickle_path, open=open_compressed)
+
     def _select_entry_at_position(self, x, y, view_width, view_height):
         border_width = 1
         if x < border_width or y < border_width or x > view_width or \
@@ -1057,8 +1063,7 @@ def main(root_path, loop, worker_count=None, editor_command=None, theme=None,
         log.log_message("Program stopped.")
     finally:
         notifier.stop()
-    open_compressed = functools.partial(gzip.open, compresslevel=1)
-    tools.dump_pickle_safe(screen, pickle_path, open=open_compressed)
+    screen.save()
 
 
 @contextlib.contextmanager
