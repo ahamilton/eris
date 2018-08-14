@@ -52,8 +52,8 @@ class Worker:
                             os.kill(os.getpid(), signal.SIGINT)
                     break
                 await self.result.run(log, appearance_changed_event, self)
-                self.unsaved_jobs_total += 1
-                if self.unsaved_jobs_total == 100:
+                Worker.unsaved_jobs_total += 1
+                if Worker.unsaved_jobs_total == 100:
                     log.log_message("Auto-saving...")
                     screen.save()
                 summary.completed_total += 1
