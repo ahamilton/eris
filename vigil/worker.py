@@ -12,6 +12,7 @@ import vigil.tools as tools
 
 class Worker:
 
+    AUTOSAVE_MESSAGE = "Auto-saving..."
     unsaved_jobs_total = 0
 
     def __init__(self, is_already_paused, is_being_tested):
@@ -48,13 +49,15 @@ class Worker:
                     self.result = None
                     if summary.result_total == summary.completed_total:
                         log.log_message("All results are up to date.")
+                        log.log_message(Worker.AUTOSAVE_MESSAGE)
+                        screen.save()
                         if self.is_being_tested:
                             os.kill(os.getpid(), signal.SIGINT)
                     break
                 await self.result.run(log, appearance_changed_event, self)
                 Worker.unsaved_jobs_total += 1
                 if Worker.unsaved_jobs_total == 100:
-                    log.log_message("Auto-saving...")
+                    log.log_message(Worker.AUTOSAVE_MESSAGE)
                     screen.save()
                 summary.completed_total += 1
             jobs_added_event.clear()
