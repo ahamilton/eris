@@ -319,7 +319,7 @@ class Summary:
                     os.remove(result.pickle_path)
             self.sort_entries()
 
-    def _placeholder_spiral(self):
+    async def _placeholder_spiral(self):
         x, y = self.cursor_position()
         result = self._column[y][x]
         if result.is_placeholder:
@@ -334,15 +334,16 @@ class Summary:
                         result = self._column[y][x]
                     except IndexError:
                         continue
+                    await asyncio.sleep(0)
                     if result.is_placeholder:
                         yield result
 
-    def get_closest_placeholder(self):
+    async def get_closest_placeholder(self):
         try:
-            return self.closest_placeholder_generator.send(None)
+            return await self.closest_placeholder_generator.asend(None)
         except AttributeError:
             self.closest_placeholder_generator = self._placeholder_spiral()
-            return self.closest_placeholder_generator.send(None)
+            return await self.closest_placeholder_generator.asend(None)
 
     def appearance_dimensions(self):
         return self._max_path_length + 1 + self._max_width, len(self._column)

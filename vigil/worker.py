@@ -44,8 +44,8 @@ class Worker:
             await jobs_added_event.wait()
             while True:
                 try:
-                    self.result = summary.get_closest_placeholder()
-                except StopIteration:
+                    self.result = await summary.get_closest_placeholder()
+                except StopAsyncIteration:
                     self.result = None
                     if summary.result_total == summary.completed_total:
                         log.log_message("All results are up to date.")
