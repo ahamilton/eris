@@ -47,12 +47,6 @@ class Worker:
                     self.result = await summary.get_closest_placeholder()
                 except StopAsyncIteration:
                     self.result = None
-                    if summary.result_total == summary.completed_total:
-                        log.log_message("All results are up to date.")
-                        log.log_message(Worker.AUTOSAVE_MESSAGE)
-                        screen.save()
-                        if self.is_being_tested:
-                            os.kill(os.getpid(), signal.SIGINT)
                     break
                 await self.result.run(log, appearance_changed_event, self)
                 Worker.unsaved_jobs_total += 1
@@ -60,6 +54,12 @@ class Worker:
                     log.log_message(Worker.AUTOSAVE_MESSAGE)
                     screen.save()
                 summary.completed_total += 1
+                if summary.result_total == summary.completed_total:
+                    log.log_message("All results are up to date.")
+                    log.log_message(Worker.AUTOSAVE_MESSAGE)
+                    screen.save()
+                    if self.is_being_tested:
+                        os.kill(os.getpid(), signal.SIGINT)
             jobs_added_event.clear()
 
     def pause(self):
