@@ -9,6 +9,8 @@ import contextlib
 import enum
 import functools
 import gzip
+import importlib
+import importlib.resources
 import math
 import os
 import os.path
@@ -26,12 +28,15 @@ import pygments.lexers
 import pygments.styles
 import toml
 
+import vigil
 import vigil.fill3 as fill3
 import vigil.gut as gut
 import vigil.lscolors as lscolors
 import vigil.termstr as termstr
 
 
+PYTHON_VERSION = "3.7"
+PYTHON_EXECUTABLE = "python" + PYTHON_VERSION
 CACHE_PATH = ".vigil"
 
 
@@ -235,7 +240,7 @@ def metadata(path):
     return (Status.normal, fill3.Text(fill3.join("", text)))
 
 
-@deps(deps={"python3-pygments"}, url="python3-pygments")
+@deps(deps={"pip3/pygments"}, url="python3-pygments")
 def contents(path):
     with open(path) as file_:
         try:
@@ -267,10 +272,10 @@ def _is_python_syntax_correct(path, python_version):
 
 
 def _python_version(path):  # Need a better hueristic
-    for version in ["python3", "python"]:
+    for version in [PYTHON_EXECUTABLE, "python"]:
         if _is_python_syntax_correct(path, version):
             return version
-    return "python3"
+    return PYTHON_EXECUTABLE
 
 
 @deps(deps={"python"},
@@ -330,7 +335,7 @@ def _colorize_coverage_report(text):
                            for line in text.splitlines(keepends=True)])
 
 
-@deps(deps={"python-coverage", "python3-coverage"}, url="python3-coverage")
+@deps(deps={"pip/coverage", "pip3/coverage"}, url="python3-coverage")
 def python_coverage(path):
     # FIX: Also use test_*.py files.
     test_path = path[:-(len(".py"))] + "_test.py"
@@ -355,24 +360,22 @@ def python_coverage(path):
             "No corresponding test file: " + os.path.normpath(test_path))
 
 
-@deps(deps={"python-pycodestyle", "python3-pycodestyle"},
-      url="python-pycodestyle")
+@deps(deps={"pip/pycodestyle", "pip3/pycodestyle"}, url="python-pycodestyle")
 def pycodestyle(path):
     return _run_command([_python_version(path), "-m", "pycodestyle", path])
 
 
-@deps(deps={"pydocstyle", "python3-pydocstyle"},
-      url="python3-pydocstyle")
+@deps(deps={"pip/pydocstyle", "pip3/pydocstyle"}, url="python3-pydocstyle")
 def pydocstyle(path):
     return _run_command([_python_version(path), "-m", "pydocstyle", path])
 
 
-@deps(deps={"python-pyflakes", "python3-pyflakes"}, url="pyflakes")
+@deps(deps={"pip/pyflakes", "pip3/pyflakes"}, url="pyflakes")
 def pyflakes(path):
     return _run_command([_python_version(path), "-m", "pyflakes", path])
 
 
-@deps(deps={"pylint", "pylint3"}, url="pylint3")
+@deps(deps={"pip/pylint", "pip3/pylint"}, url="pylint3")
 def pylint(path):
     return _run_command([_python_version(path), "-m", "pylint",
                          "--errors-only", path])
@@ -402,7 +405,7 @@ def dis(path):
 
 def _get_mccabe_line_score(line, python_version):
     position, function_name, score = line.split()
-    return int(score if python_version == "python3" else score[:-1])
+    return int(score if python_version == PYTHON_EXECUTABLE else score[:-1])
 
 
 def _colorize_mccabe(text, python_version):
@@ -412,7 +415,7 @@ def _colorize_mccabe(text, python_version):
         for line in text.splitlines(keepends=True)])
 
 
-@deps(deps={"python-mccabe", "python3-mccabe"}, url="python3-mccabe")
+@deps(deps={"pip/mccabe", "pip3/mccabe"}, url="python3-mccabe")
 def python_mccabe(path):
     python_version = _python_version(path)
     stdout, *rest = _do_command([python_version, "-m", "mccabe", path])
@@ -424,11 +427,6 @@ def python_mccabe(path):
     return status, fill3.Text(_colorize_mccabe(stdout, python_version))
 
 
-def python_tidy(path):  # Deps: found on internet?
-    stdout, *rest = _do_command(["python", "python-tidy.py", path])
-    return Status.normal, _syntax_highlight_using_path(stdout, path)
-
-
 # FIX: Reenable when pydisasm is not causing problems
 # @deps(deps={"pip3/xdis"}, executables={"pydisasm"},
 #       url="https://pypi.python.org/pypi/xdis")
@@ -437,7 +435,7 @@ def python_tidy(path):  # Deps: found on internet?
 #                         Status.not_applicable)
 
 
-@deps(deps={"python-bandit", "python3-bandit"}, url="python3-bandit")
+@deps(deps={"pip/bandit", "pip3/bandit"}, url="python3-bandit")
 def bandit(path):
     python_version = _python_version(path)
     stdout, stderr, returncode = _do_command(
@@ -597,8 +595,7 @@ def make_tool_function(dependencies, url, command, success_status=None,
     return func
 
 
-tools_toml_path = os.path.join(os.path.dirname(__file__), "tools.toml")
-with open(tools_toml_path) as tools_toml_file:
+with importlib.resources.open_text(vigil, "tools.toml") as tools_toml_file:
     tools_toml = toml.load(tools_toml_file)
 tools_for_extensions = tools_toml["tools_for_extensions"]
 del tools_toml["tools_for_extensions"]

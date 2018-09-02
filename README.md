@@ -11,7 +11,7 @@ Vigil maintains an up-to-date set of reports for every file in a codebase.
     # git clone https://github.com/ahamilton/vigil
     # cd vigil
     # ./install-dependencies
-    # pip3 install .
+    # python3.7 -m pip install .
 
 To test its working properly:
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python3.7
 # -*- coding: utf-8 -*-
 
 # Copyright (C) 2018 Andrew Hamilton. All rights reserved.
@@ -35,7 +35,7 @@ Vigil maintains an up-to-date set of reports for every file in a codebase.
     # git clone https://github.com/ahamilton/vigil
     # cd vigil
     # ./install-dependencies
-    # pip3 install .
+    # python3.7 -m pip install .
 
 To test its working properly:
 
