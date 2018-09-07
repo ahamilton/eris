@@ -518,13 +518,6 @@ def uncrustify(path):
     return status, _syntax_highlight_using_path(stdout, path)
 
 
-def _pil_pixels(pil_image):
-    data = list(pil_image.getdata())
-    width = pil_image.width
-    return [data[row_index*width:(row_index+1)*width]
-            for row_index in range(pil_image.height)]
-
-
 MAX_IMAGE_SIZE = 200
 
 
@@ -534,33 +527,17 @@ def _resize_image(image, new_width):
                         PIL.Image.ANTIALIAS)
 
 
-# This isn't made redundant by pil_half, because pil_half doesn't look correct
-# on some terminals.
 @deps(deps={"python3-pil"}, url="python3-pil")
 def pil(path):
-    with open(path, "rb") as image_file:
-        with PIL.Image.open(image_file).convert("RGB") as image:
-            if image.width > (MAX_IMAGE_SIZE // 2):
-                image = _resize_image(image, MAX_IMAGE_SIZE // 2)
-            text = " " * 2 * image.width
-            result = []
-            for row in _pil_pixels(image):
-                row_style = []
-                for pixel in row:
-                    style = termstr.CharStyle(bg_color=pixel)
-                    row_style.extend([style, style])
-                result.append(termstr.TermStr(text, tuple(row_style)))
-    return Status.normal, fill3.Fixed(result)
-
-
-@deps(deps={"python3-pil"}, url="python3-pil")
-def pil_half(path):
     with open(path, "rb") as image_file:
         with PIL.Image.open(image_file).convert("RGB") as image:
             if image.width > MAX_IMAGE_SIZE:
                 image = _resize_image(image, MAX_IMAGE_SIZE)
             text = "▀" * image.width
-            rows = _pil_pixels(image)
+            data = list(image.getdata())
+            width = image.width
+            rows = [data[row_index*width:(row_index+1)*width]
+                    for row_index in range(image.height)]
             if image.height % 2 == 1:
                 rows.append([None] * image.width)
             result = fill3.Fixed([
