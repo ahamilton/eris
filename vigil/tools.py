@@ -321,9 +321,10 @@ def pydoc(path):
     return status, fill3.Text(_fix_input(stdout))
 
 
-@deps(deps={"mypy"}, url="mypy", executables={"mypy"})
+@deps(deps={"pip3/mypy"}, url="mypy", executables={"mypy"})
 def mypy(path):
-    stdout, stderr, returncode = _do_command(["mypy", path], timeout=TIMEOUT)
+    stdout, stderr, returncode = _do_command(
+        [PYTHON_EXECUTABLE, "-m", "mypy", path], timeout=TIMEOUT)
     status = Status.ok if returncode == 0 else Status.problem
     return status, fill3.Text(stdout)
 
@@ -527,7 +528,7 @@ def _resize_image(image, new_width):
                         PIL.Image.ANTIALIAS)
 
 
-@deps(deps={"python3-pil"}, url="python3-pil")
+@deps(deps={"pip3/pillow"}, url="python3-pil")
 def pil(path):
     with open(path, "rb") as image_file:
         with PIL.Image.open(image_file).convert("RGB") as image:

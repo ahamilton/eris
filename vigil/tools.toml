@@ -142,7 +142,7 @@ tools_for_extensions = [
   success_status = "normal"
 
 [pdf2txt]
-  dependencies = ["python-pdfminer"]
+  dependencies = ["pip/pdfminer"]
   url = "python-pdfminer"
   command = "pdf2txt"
   success_status = "normal"
@@ -233,9 +233,9 @@ tools_for_extensions = [
   command = "golint -set_exit_status"
 
 [yamllint]
-  dependencies = ["yamllint"]
+  dependencies = ["pip3/yamllint"]
   url = "yamllint"
-  command = "yamllint"
+  command = "python3.7 -m yamllint"
 
 [mediainfo]
   dependencies = ["mediainfo"]
