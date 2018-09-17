@@ -5,7 +5,7 @@
 # Licensed under the Artistic License 2.0.
 
 
-import vigil.tools as tools
+import eris.tools as tools
 
 
 def tool_markup(tool):
@@ -22,18 +22,18 @@ for extensions, tools_ in all_tools:
     tool_set.update(tools_)
     extension_set.update(extensions)
 print(f"""\
-# Vigil Code Monitor
+# Eris Code Monitor
 
 ### Summary
 
-Vigil maintains an up-to-date set of reports for every file in a codebase.
+Eris maintains an up-to-date set of reports for every file in a codebase.
 
 ### Installation
 
 (Tested in Ubuntu 18.04)
 
-    # git clone https://github.com/ahamilton/vigil
-    # cd vigil
+    # git clone https://github.com/ahamilton/eris
+    # cd eris
     # ./install-dependencies
     # python3.7 -m pip install .
 
@@ -43,7 +43,7 @@ To test its working properly:
 
 then to run:
 
-    # vigil <directory_path>
+    # eris <directory_path>
 
 ### Tools
 

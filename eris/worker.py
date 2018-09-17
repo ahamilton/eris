@@ -7,7 +7,7 @@ import asyncio
 import os
 import signal
 
-import vigil.tools as tools
+import eris.tools as tools
 
 
 class Worker:
@@ -24,7 +24,7 @@ class Worker:
 
     async def create_process(self):
         create = asyncio.create_subprocess_exec(
-            "vigil-worker", stdin=asyncio.subprocess.PIPE,
+            "eris-worker", stdin=asyncio.subprocess.PIPE,
             stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
             preexec_fn=os.setsid)
         self.process = await create

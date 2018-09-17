@@ -9,8 +9,8 @@ import unittest
 
 os.environ["TERM"] = "xterm-256color"
 
-from vigil.termstr import TermStr, CharStyle
-import vigil.termstr as termstr
+from eris.termstr import TermStr, CharStyle
+import eris.termstr as termstr
 
 
 class CacheFirstResultTestCase(unittest.TestCase):

@@ -12,7 +12,7 @@ import tempfile
 import test_distributions
 
 
-VIGIL_PATH = os.path.realpath(os.path.dirname(__file__))
+ERIS_PATH = os.path.realpath(os.path.dirname(__file__))
 cmd = test_distributions.cmd
 
 
@@ -54,7 +54,7 @@ def make_ubuntu_base():
     return base_paths
 
 
-def install_vigil():
+def install_eris():
     run_in_container = test_distributions.run_in_container
     run_in_container("ubuntu", "./install-dependencies")
     # libunionpreload doesn't trick shebangs?
@@ -82,9 +82,9 @@ def install_vigil():
 def make_app_dir(app_dir, new_paths):
     os.mkdir(app_dir)
     make_sub_container("ubuntu", app_dir, new_paths)
-    cmd(f"cp -a {VIGIL_PATH}/tests {app_dir}")
-    cmd(f"cp -a {VIGIL_PATH}/test-all {app_dir}")
-    cmd(f"cp {VIGIL_PATH}/appimage/* {app_dir}")
+    cmd(f"cp -a {ERIS_PATH}/tests {app_dir}")
+    cmd(f"cp -a {ERIS_PATH}/test-all {app_dir}")
+    cmd(f"cp {ERIS_PATH}/appimage/* {app_dir}")
     # if not os.path.exists("libunionpreload.so"):
     #     make_libunionpreload()
     # cmd("cp libunionpreload.so " + app_dir)
@@ -101,11 +101,11 @@ def main(work_path):
     assert os.getuid() == 0 and os.getgid() == 0, "Need to be root."
     os.chdir(work_path)
     base_paths = make_ubuntu_base()
-    install_vigil()
+    install_eris()
     post_install_paths = relative_paths("ubuntu", all_paths("ubuntu"))
     new_paths = set(post_install_paths) - set(base_paths)
     new_paths = filter_paths(new_paths, "/var/cache/apt/archives")
-    app_dir = "vigil.AppDir"
+    app_dir = "eris.AppDir"
     if os.path.exists(app_dir):
         cmd("sudo rm -rf " + app_dir)
     make_app_dir(app_dir, new_paths)

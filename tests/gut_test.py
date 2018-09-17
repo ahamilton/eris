@@ -6,7 +6,7 @@
 import textwrap
 import unittest
 
-import vigil.gut as gut
+import eris.gut as gut
 
 
 class GutTestCase(unittest.TestCase):

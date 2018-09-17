@@ -15,17 +15,17 @@ import weakref
 
 import pygments.formatters.terminal256
 
-import vigil.ColorMap
-import vigil.terminal as terminal
+import eris.ColorMap
+import eris.terminal as terminal
 
 
-xterm_colormap = vigil.ColorMap.XTermColorMap()
+xterm_colormap = eris.ColorMap.XTermColorMap()
 
 
 @functools.lru_cache()
 def xterm_color_to_rgb(color_index):
     """Return the rgb color of an xterm color."""
-    return vigil.ColorMap._rgb(xterm_colormap.colors[color_index])
+    return eris.ColorMap._rgb(xterm_colormap.colors[color_index])
 
 
 def _cache_first_result(user_function):

@@ -14,8 +14,8 @@ import unittest
 os.environ["TERM"] = "xterm-256color"
 
 import golden
-import vigil.fill3 as fill3
-import vigil.__main__ as __main__
+import eris.fill3 as fill3
+import eris.__main__ as __main__
 
 
 _DIMENSIONS = (100, 60)
@@ -226,7 +226,7 @@ class MainTestCase(unittest.TestCase):
                                   is_being_tested=True)
                 for file_name in ["summary.pickle", "creation_time", "log",
                                   "foo-metadata", "foo-contents"]:
-                    self.assertTrue(os.path.exists(".vigil/" + file_name))
+                    self.assertTrue(os.path.exists(".eris/" + file_name))
             self.assertEqual(_mount_total(), mount_total)
             # self.assertEqual(_tmp_total(), tmp_total)
         temp_dir = tempfile.mkdtemp()

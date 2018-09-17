@@ -12,12 +12,12 @@ import unittest.mock
 os.environ["TERM"] = "xterm-256color"
 
 import golden
-import vigil.fill3 as fill3
-import vigil.tools as tools
+import eris.fill3 as fill3
+import eris.tools as tools
 
 
 os.environ["TZ"] = "GMT"
-VIGIL_ROOT = os.path.dirname(__file__)
+ERIS_ROOT = os.path.dirname(__file__)
 
 
 class ExecutablesTestCase(unittest.TestCase):
@@ -47,11 +47,11 @@ def chdir(path):
 
 def result_path(tool, input_filename):
     filename = tool.__name__ + "-" + input_filename.replace(".", "_")
-    return os.path.join(VIGIL_ROOT, "golden-files", "results", filename)
+    return os.path.join(ERIS_ROOT, "golden-files", "results", filename)
 
 
 def run_tool(tool, input_filename):
-    with chdir(os.path.join(VIGIL_ROOT, "golden-files")):
+    with chdir(os.path.join(ERIS_ROOT, "golden-files")):
         return tool(os.path.join(".", "input", input_filename))
 
 
@@ -221,9 +221,6 @@ class ToolsTestCase(unittest.TestCase):
         for extension in ["png", "jpg", "gif", "bmp", "ppm", "tiff", "tga"]:
             self._test_tool(tools.pil, [("circle." + extension,
                                          tools.Status.normal)])
-
-    def test_pil_half(self):
-        self._test_tool(tools.pil_half, [("circle.png", tools.Status.normal)])
 
 
 class LruCacheWithEvictionTestCase(unittest.TestCase):

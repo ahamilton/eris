@@ -1,8 +1,8 @@
 [Desktop Entry]
 Type=Application
-Name=Vigil
+Name=Eris
 Comment=
-Exec=vigil
+Exec=eris
 Terminal=true
-Icon=vigil
+Icon=eris
 Categories=Application;

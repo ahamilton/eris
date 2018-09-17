@@ -3,7 +3,6 @@ Todo
 - Make a snap build work.
 - Make a flatpak build work.
 - Check the appimage build.
-- Rename project to Eris.
 
 
 Todo (tool related)
@@ -172,6 +171,7 @@ Done
 - Add shellcheck tool for shell scripts.
 - Add "git log <path>".
 - Change to using python3.7.
+- Rename project to Eris.
 
 A-syntax, B-tests, C-auto docs, D-lint, E-coverage, F-profile, G-tidy, H-import deps
              A B C D E F G H

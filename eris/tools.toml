@@ -234,7 +234,7 @@ tools_for_extensions = [
 
 [yamllint]
   dependencies = ["pip3/yamllint"]
-  url = "yamllint"
+  url = "https://github.com/adrienverge/yamllint"
   command = "python3.7 -m yamllint"
 
 [mediainfo]

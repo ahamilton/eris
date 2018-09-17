@@ -10,7 +10,7 @@ import sys
 import tempfile
 
 
-VIGIL_PATH = os.path.realpath(os.path.dirname(__file__))
+ERIS_PATH = os.path.realpath(os.path.dirname(__file__))
 
 
 def cmd(command):
@@ -32,7 +32,7 @@ def umount_squashfs_iso(mount_point):
 
 def run_in_container(container, command):
     option = "--directory" if os.path.isdir(container) else "--image"
-    cmd(f"sudo systemd-nspawn --quiet --chdir=/vigil --overlay={VIGIL_PATH}:/vigil "
+    cmd(f"sudo systemd-nspawn --quiet --chdir=/eris --overlay={ERIS_PATH}:/eris "
         f'{option}={container} /bin/bash --login -c "{command}"')
 
 
@@ -135,16 +135,16 @@ def main():
         else:
             print(f"Building {distribution} container...")
             globals()["build_" + distribution]()
-        print(f"Installing vigil's dependencies in {distribution}...")
+        print(f"Installing eris's dependencies in {distribution}...")
         run_in_container(distribution, "./install-dependencies")
-        print(f"Installing vigil in {distribution}...")
+        print(f"Installing eris in {distribution}...")
         run_in_container(distribution, "apt-get install --yes python3-pip")
         run_in_container(distribution, "pip3 install .")
-        print(f"Testing vigil in {distribution}...")
+        print(f"Testing eris in {distribution}...")
         run_in_container(distribution, "./test-all")
-        print(f"Running vigil in {distribution}...")
-        run_in_container(distribution, "vigil --help")
-        print(f"Successfully installed vigil in {distribution}.")
+        print(f"Running eris in {distribution}...")
+        run_in_container(distribution, "eris --help")
+        print(f"Successfully installed eris in {distribution}.")
         print(f"Removing {distribution} container...")
         try:
             globals()["remove_" + distribution]()

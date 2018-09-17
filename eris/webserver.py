@@ -10,15 +10,15 @@ import os
 import sys
 import pickle
 
-import vigil.fill3 as fill3
-import vigil.tools as tools
+import eris.fill3 as fill3
+import eris.tools as tools
 
 
 USAGE = """Usage:
-  vigil-webserver <directory>
+  eris-webserver <directory>
 
 Example:
-  vigil-webserver my_project
+  eris-webserver my_project
 """
 
 

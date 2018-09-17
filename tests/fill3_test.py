@@ -6,8 +6,8 @@
 
 import unittest
 
-import vigil.fill3 as fill3
-import vigil.termstr as termstr
+import eris.fill3 as fill3
+import eris.termstr as termstr
 
 
 class WidgetTests(unittest.TestCase):

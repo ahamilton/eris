@@ -4,14 +4,14 @@
 # Copyright (C) 2015-2018 Andrew Hamilton. All rights reserved.
 # Licensed under the Artistic License 2.0.
 
-"""Vigil Code Monitor
+"""Eris Code Monitor
 
-Vigil maintains an up-to-date set of reports for every file in a codebase.
+Eris maintains an up-to-date set of reports for every file in a codebase.
 
 A status indicator summarises the state of each report, and a report is viewed
 by selecting this status indicator with the cursor.
 
-The reports are cached in the codebase's root directory in a ".vigil"
+The reports are cached in the codebase's root directory in a ".eris"
 directory.
 """
 
@@ -34,20 +34,20 @@ import docopt
 import pygments.styles
 import pyinotify
 
-from vigil import fill3
-from vigil import terminal
-from vigil import termstr
-from vigil import tools
-from vigil import worker
+from eris import fill3
+from eris import terminal
+from eris import termstr
+from eris import tools
+from eris import worker
 
 
 USAGE = """
 Usage:
-  vigil [options] <directory>
-  vigil -h | --help
+  eris [options] <directory>
+  eris -h | --help
 
 Example:
-  # vigil my_project
+  # eris my_project
 
 Options:
   -h, --help                       Show the full help.
@@ -1082,7 +1082,7 @@ def manage_cache(root_path):
     timestamp_path = os.path.join(cache_path, "creation_time")
     if os.path.exists(cache_path) and \
        os.stat(__file__).st_mtime > os.stat(timestamp_path).st_mtime:
-        print("Vigil has been updated, so clearing the cache and"
+        print("Eris has been updated, so clearing the cache and"
               " recalculating all results...")
         shutil.rmtree(cache_path)
     if not os.path.exists(cache_path):
@@ -1125,7 +1125,7 @@ def check_arguments():
 
 def entry_point():
     root_path, worker_count, editor_command, theme = check_arguments()
-    with terminal.terminal_title("vigil: " + os.path.basename(root_path)):
+    with terminal.terminal_title("eris: " + os.path.basename(root_path)):
         manage_cache(root_path)
         with chdir(root_path):  # FIX: Don't change directory if possible.
             loop = asyncio.get_event_loop()

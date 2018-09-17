@@ -5,11 +5,11 @@
 
 
 import subprocess
-import vigil.tools
+import eris.tools
 
 
 pip_deps, pip3_deps, dist_deps = set(), set(), set()
-for dependency in vigil.tools.dependencies():
+for dependency in eris.tools.dependencies():
     if "/" in dependency:
         pip_version, pip_dependency = dependency.split("/")
         (pip_deps if pip_version == "pip" else pip3_deps).add(pip_dependency)
@@ -24,5 +24,5 @@ if pip_deps:
     subprocess.run(["python", "-m", "pip", "install"] + list(pip_deps),
                    check=True)
 if pip3_deps:
-    subprocess.run(["python" + vigil.tools.PYTHON_VERSION, "-m", "pip",
+    subprocess.run(["python" + eris.tools.PYTHON_VERSION, "-m", "pip",
                     "install"] + list(pip3_deps), check=True)

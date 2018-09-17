@@ -10,8 +10,8 @@ import shutil
 import tempfile
 import unittest
 
-import vigil.tools as tools
-import vigil.worker as worker
+import eris.tools as tools
+import eris.worker as worker
 
 
 class WorkerTestCase(unittest.TestCase):

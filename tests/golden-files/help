@@ -1,12 +1,12 @@
 (B[m[38;2;255;255;255m[48;2;0;0;0m┌────────────────────────────────────────────── Help ──────────────────────────────────────────────┐
-│Vigil Code Monitor                                                                                │
+│Eris Code Monitor                                                                                 │
 │                                                                                                  │
-│Vigil maintains an up-to-date set of reports for every file in a codebase.                        │
+│Eris maintains an up-to-date set of reports for every file in a codebase.                         │
 │                                                                                                  │
 │A status indicator summarises the state of each report, and a report is viewed                    │
 │by selecting this status indicator with the cursor.                                               │
 │                                                                                                  │
-│The reports are cached in the codebase's root directory in a ".vigil"                             │
+│The reports are cached in the codebase's root directory in a ".eris"                              │
 │directory.                                                                                        │
 │                                                                                                  │
 │Keys:                                                                                             │

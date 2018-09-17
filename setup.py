@@ -10,16 +10,16 @@ except ImportError:
     from distutils.core import setup
 
 
-setup(name="vigil",
+setup(name="eris",
       version="17.06",
-      description=("Vigil maintains an up-to-date set of reports for every"
+      description=("Eris maintains an up-to-date set of reports for every"
                    " file in a codebase."),
-      url="https://github.com/ahamilton/vigil",
+      url="https://github.com/ahamilton/eris",
       author="Andrew Hamilton",
       license="Artistic 2.0",
-      packages=["vigil", "vigil.urwid"],
-      package_data={"vigil": ["LS_COLORS.sh", "tools.toml"]},
+      packages=["eris", "eris.urwid"],
+      package_data={"eris": ["LS_COLORS.sh", "tools.toml"]},
       entry_points={"console_scripts":
-                    ["vigil=vigil.__main__:entry_point",
-                     "vigil-worker=vigil.worker:main",
-                     "vigil-webserver=vigil.webserver:main"]})
+                    ["eris=eris.__main__:entry_point",
+                     "eris-worker=eris.worker:main",
+                     "eris-webserver=eris.webserver:main"]})

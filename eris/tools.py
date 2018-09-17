@@ -28,16 +28,16 @@ import pygments.lexers
 import pygments.styles
 import toml
 
-import vigil
-import vigil.fill3 as fill3
-import vigil.gut as gut
-import vigil.lscolors as lscolors
-import vigil.termstr as termstr
+import eris
+import eris.fill3 as fill3
+import eris.gut as gut
+import eris.lscolors as lscolors
+import eris.termstr as termstr
 
 
 PYTHON_VERSION = "3.7"
 PYTHON_EXECUTABLE = "python" + PYTHON_VERSION
-CACHE_PATH = ".vigil"
+CACHE_PATH = ".eris"
 
 
 if "PYGMENT_STYLE" not in os.environ:
@@ -382,7 +382,7 @@ def pylint(path):
                          "--errors-only", path])
 
 
-@deps(url="https://github.com/ahamilton/vigil/blob/master/gut.py")
+@deps(url="https://github.com/ahamilton/eris/blob/master/gut.py")
 def python_gut(path):
     with open(path) as module_file:
         output = gut.gut_module(module_file.read())
@@ -573,7 +573,7 @@ def make_tool_function(dependencies, url, command, success_status=None,
     return func
 
 
-with importlib.resources.open_text(vigil, "tools.toml") as tools_toml_file:
+with importlib.resources.open_text(eris, "tools.toml") as tools_toml_file:
     tools_toml = toml.load(tools_toml_file)
 tools_for_extensions = tools_toml["tools_for_extensions"]
 del tools_toml["tools_for_extensions"]
@@ -585,7 +585,7 @@ for tool_name, tool_toml in tools_toml.items():
 #############################
 
 
-LOG_PATH = os.path.join(os.getcwd(), "vigil.log")
+LOG_PATH = os.path.join(os.getcwd(), "eris.log")
 
 
 def log_error(message=None):

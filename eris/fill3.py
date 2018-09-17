@@ -12,11 +12,11 @@ import os
 import signal
 import sys
 
-import vigil.urwid
-import vigil.urwid.raw_display
+import eris.urwid
+import eris.urwid.raw_display
 
-import vigil.terminal as terminal
-import vigil.termstr as termstr
+import eris.terminal as terminal
+import eris.termstr as termstr
 
 
 def appearance_is_valid(appearance):
@@ -467,7 +467,7 @@ def patch_screen(widget):
 
 @contextlib.contextmanager
 def _urwid_screen():
-    screen = vigil.urwid.raw_display.Screen()
+    screen = eris.urwid.raw_display.Screen()
     screen.set_mouse_tracking(True)
     screen.start()
     try:
