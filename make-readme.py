@@ -22,7 +22,7 @@ for extensions, tools_ in all_tools:
     tool_set.update(tools_)
     extension_set.update(extensions)
 print(f"""\
-# Eris Code Monitor
+# Eris Codebase Monitor
 
 ### Summary
 
