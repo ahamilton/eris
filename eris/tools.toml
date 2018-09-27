@@ -41,6 +41,7 @@ tools_for_extensions = [
      "qt", "mov", "rm", "rmvb", "ra", "ifo", "ac3", "dts", "aac", "flac",
      "aiff", "aifc", "au", "iff", "flv", "srt", "ssa", "ass", "sami"],
      ["mediainfo"]],
+   [["iso"], ["isoinfo"]],
    ]
 
 [git_blame]
@@ -241,4 +242,10 @@ tools_for_extensions = [
   dependencies = ["mediainfo"]
   url = "mediainfo"
   command = "mediainfo"
+  success_status = "normal"
+
+[isoinfo]
+  dependencies = ["genisoimage"]
+  url = "https://manpages.debian.org/jessie/genisoimage/isoinfo.1.en.html"
+  command = "isoinfo -l -i"
   success_status = "normal"
