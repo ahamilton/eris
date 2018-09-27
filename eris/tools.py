@@ -561,8 +561,10 @@ def godoc(path):
     return Status.normal, fill3.Text(stdout)
 
 
-def make_tool_function(dependencies, url, command, success_status=None,
+def make_tool_function(dependencies, command, url=None, success_status=None,
                        error_status=None):
+    if url is None:
+        url = dependencies[0]
     command = command.split()
     executables = set([command[0]])
     success_status = None if success_status is None else Status[success_status]

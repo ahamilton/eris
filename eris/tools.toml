@@ -78,7 +78,6 @@ tools_for_extensions = [
 
 [zipinfo]
   dependencies = ["unzip"]
-  url = "unzip"
   command = "zipinfo"
   success_status = "normal"
 
@@ -96,37 +95,31 @@ tools_for_extensions = [
 
 [unrar]
   dependencies = ["unrar"]
-  url = "unrar"
   command = "unrar l"
   success_status = "normal"
 
 [7z]
   dependencies = ["p7zip"]
-  url = "p7zip"
   command = "7z l"
   success_status = "normal"
 
 [unxz]
   dependencies = ["xz-utils"]
-  url = "xz-utils"
   command = "unxz --list"
   success_status = "normal"
 
 [dpkg_contents]
   dependencies = ["dpkg"]
-  url = "dpkg"
   command = "dpkg --contents"
   success_status = "normal"
 
 [dpkg_info]
   dependencies = ["dpkg"]
-  url = "dpkg"
   command = "dpkg --info"
   success_status = "normal"
 
 [rpm]
   dependencies = ["rpm"]
-  url = "rpm"
   command = "rpm --query --list"
   success_status = "normal"
 
@@ -150,13 +143,11 @@ tools_for_extensions = [
 
 [html2text]
   dependencies = ["html2text"]
-  url = "html2text"
   command = "html2text"
   success_status = "normal"
 
 [pandoc]
   dependencies = ["pandoc"]
-  url = "pandoc"
   command = "pandoc -t plain"
   success_status = "normal"
 
@@ -183,12 +174,10 @@ tools_for_extensions = [
 
 [shellcheck]
   dependencies = ["shellcheck"]
-  url = "shellcheck"
   command = "shellcheck"
 
 [cppcheck]
   dependencies = ["cppcheck"]
-  url = "cppcheck"
   command = "cppcheck"
 
 [clang_format]
@@ -199,38 +188,31 @@ tools_for_extensions = [
 
 [ruby_syntax]
   dependencies = ["ruby"]
-  url = "ruby"
   command = "ruby -c"
 
 [lua_syntax]
   dependencies = ["lua5.3"]
-  url = "lua5.3"
   command = "luac -p"
 
 [js_syntax]
   dependencies = ["nodejs"]
-  url = "nodejs"
   command = "node --check"
 
 [lua_check]
   dependencies = ["lua-check"]
-  url = "lua-check"
   command = "luacheck"
 
 [gofmt]
   dependencies = ["golang-go"]
-  url = "golang-go"
   command = "gofmt"
   success_status = "normal"
 
 [go_vet]
   dependencies = ["golang-go"]
-  url = "golang-go"
   command = "go vet"
 
 [golint]
   dependencies = ["golint"]
-  url = "golint"
   command = "golint -set_exit_status"
 
 [yamllint]
@@ -240,7 +222,6 @@ tools_for_extensions = [
 
 [mediainfo]
   dependencies = ["mediainfo"]
-  url = "mediainfo"
   command = "mediainfo"
   success_status = "normal"
 
