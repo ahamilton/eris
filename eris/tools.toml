@@ -35,7 +35,7 @@ tools_for_extensions = [
    [["so"], ["nm"]],   
    [["deb"], ["dpkg_contents", "dpkg_info"]],
    [["rpm"], ["rpm"]],
-   [["png", "jpg", "gif", "bmp", "ppm", "tif", "tiff", "tga"], ["identify", "pil"]],
+   [["png", "jpg", "gif", "bmp", "tif", "tiff", "tga"], ["mediainfo", "pil"]],
    [["mkv", "mka", "mks", "ogg", "ogm", "avi", "wav", "mpeg", "mpg", "vob",
      "mp4", "mpgv", "mpv", "m1v", "m2v", "mp2", "mp3", "asf", "wma", "wmv",
      "qt", "mov", "rm", "rmvb", "ra", "ifo", "ac3", "dts", "aac", "flac",

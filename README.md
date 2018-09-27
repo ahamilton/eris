@@ -23,7 +23,7 @@ then to run:
 
 ### Tools
 
-Extensions(94) | Tools(61)
+Extensions(93) | Tools(60)
 ----------:| -----
 .* | [contents](http://pygments.org/) • metadata • [git_blame](https://git-scm.com/docs/git-blame) • [git_log](https://git-scm.com/docs/git-log)
 .py | [python_syntax](https://en.wikipedia.org/wiki/Python_syntax_and_semantics) • [python_unittests](https://docs.python.org/3/library/unittest.html) • [pydoc](https://docs.python.org/3/library/pydoc.html) • [mypy](package) • [python_coverage](http://nedbatchelder.com/code/coverage/) • [pycodestyle](https://pypi.python.org/pypi/pycodestyle) • [pydocstyle](http://pydocstyle.readthedocs.org/) • [pyflakes](https://launchpad.net/pyflakes) • [pylint](http://www.pylint.org/) • [python_gut](https://github.com/ahamilton/eris/blob/master/gut.py) • [python_modulefinder](https://docs.python.org/3/library/modulefinder.html) • [dis](https://docs.python.org/3/library/dis.html) • [python_mccabe](https://github.com/flintwork/mccabe) • [bandit](https://wiki.openstack.org/wiki/Security/Projects/Bandit)
@@ -53,5 +53,5 @@ Extensions(94) | Tools(61)
 .so | [nm](https://linux.die.net/man/1/nm)
 .deb | [dpkg_contents](https://wiki.debian.org/Teams/Dpkg) • [dpkg_info](https://wiki.debian.org/Teams/Dpkg)
 .rpm | [rpm](http://rpm.org/)
-.png .jpg .gif .bmp .ppm .tif .tiff .tga | [identify](http://www.imagemagick.org/script/identify.php) • [pil](http://python-pillow.github.io/)
+.png .jpg .gif .bmp .tif .tiff .tga | [mediainfo](https://mediaarea.net/MediaInfo) • [pil](http://python-pillow.github.io/)
 .mkv .mka .mks .ogg .ogm .avi .wav .mpeg .mpg .vob .mp4 .mpgv .mpv .m1v .m2v .mp2 .mp3 .asf .wma .wmv .qt .mov .rm .rmvb .ra .ifo .ac3 .dts .aac .flac .aiff .aifc .au .iff .flv .srt .ssa .ass .sami | [mediainfo](https://mediaarea.net/MediaInfo)
