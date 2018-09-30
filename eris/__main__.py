@@ -4,7 +4,7 @@
 # Copyright (C) 2015-2018 Andrew Hamilton. All rights reserved.
 # Licensed under the Artistic License 2.0.
 
-"""Eris Code Monitor
+"""Eris Codebase Monitor
 
 Eris maintains an up-to-date set of reports for every file in a codebase.
 
