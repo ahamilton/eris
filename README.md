@@ -6,7 +6,7 @@ Eris maintains an up-to-date set of reports for every file in a codebase.
 
 ### Installation
 
-(Tested in Ubuntu 18.04)
+(Tested in Ubuntu 18.10)
 
     # git clone https://github.com/ahamilton/eris
     # cd eris
@@ -26,7 +26,7 @@ then to run:
 Extensions(94) | Tools(61)
 ----------:| -----
 .* | [contents](http://pygments.org/) • metadata • [git_blame](https://git-scm.com/docs/git-blame) • [git_log](https://git-scm.com/docs/git-log)
-.py | [python_syntax](https://en.wikipedia.org/wiki/Python_syntax_and_semantics) • [python_unittests](https://docs.python.org/3/library/unittest.html) • [pydoc](https://docs.python.org/3/library/pydoc.html) • [mypy](package) • [python_coverage](http://nedbatchelder.com/code/coverage/) • [pycodestyle](https://pypi.python.org/pypi/pycodestyle) • [pydocstyle](http://pydocstyle.readthedocs.org/) • [pyflakes](https://launchpad.net/pyflakes) • [pylint](http://www.pylint.org/) • [python_gut](https://github.com/ahamilton/eris/blob/master/gut.py) • [python_modulefinder](https://docs.python.org/3/library/modulefinder.html) • [dis](https://docs.python.org/3/library/dis.html) • [python_mccabe](https://github.com/flintwork/mccabe) • [bandit](https://wiki.openstack.org/wiki/Security/Projects/Bandit)
+.py | [python_syntax](https://en.wikipedia.org/wiki/Python_syntax_and_semantics) • [python_unittests](https://docs.python.org/3/library/unittest.html) • [pydoc](https://docs.python.org/3/library/pydoc.html) • [mypy](http://mypy-lang.org/) • [python_coverage](https://coverage.readthedocs.io/) • [pycodestyle](http://pycodestyle.pycqa.org/en/latest/) • [pydocstyle](http://pycodestyle.pycqa.org/en/latest/) • [pyflakes](https://pypi.org/project/pyflakes/) • [pylint](https://www.pylint.org/) • [python_gut](https://github.com/ahamilton/eris/blob/master/gut.py) • [python_modulefinder](https://docs.python.org/3/library/modulefinder.html) • [dis](https://docs.python.org/3/library/dis.html) • [python_mccabe](https://pypi.org/project/mccabe/) • [bandit](https://pypi.org/project/bandit/)
 .pl .pm .t | [perl_syntax](https://en.wikipedia.org/wiki/Perl) • [perldoc](http://perldoc.perl.org/) • [perltidy](http://perltidy.sourceforge.net/)
 .pod .pod6 | [perldoc](http://perldoc.perl.org/)
 .java | [uncrustify](https://github.com/uncrustify/uncrustify)
@@ -37,8 +37,8 @@ Extensions(94) | Tools(61)
 .js | [js_syntax](http://nodejs.org/) • [clang_format](https://clang.llvm.org/docs/ClangFormat.html)
 .php | [php7_syntax](https://en.wikipedia.org/wiki/PHP)
 .go | [gofmt](https://golang.org) • [go_vet](https://golang.org) • [golint](https://github.com/golang/lint) • [godoc](http://golang.org/x/tools)
-.bash .sh .dash .ksh | [shellcheck](http://hackage.haskell.org/package/ShellCheck)
-.pdf | [pdf2txt](http://www.unixuser.org/~euske/python/pdfminer/)
+.bash .sh .dash .ksh | [shellcheck](https://www.shellcheck.net/)
+.pdf | [pdf2txt](https://euske.github.io/pdfminer/)
 .html .htm | [html_syntax](http://www.html-tidy.org/) • [tidy](http://www.html-tidy.org/) • [html2text](http://www.mbayer.de/html2text/) • [pandoc](https://pandoc.org/)
 .yaml .yml | [yamllint](https://github.com/adrienverge/yamllint)
 .md .epub .docx .odt .rst | [pandoc](https://pandoc.org/)

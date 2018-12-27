@@ -22,7 +22,6 @@ import tempfile
 import time
 import traceback
 
-import PIL.Image
 import pygments
 import pygments.lexers
 import pygments.styles
@@ -321,7 +320,7 @@ def pydoc(path):
     return status, fill3.Text(_fix_input(stdout))
 
 
-@deps(deps={"pip3/mypy"}, url="mypy", executables={"mypy"})
+@deps(deps={"pip3/mypy"}, url="http://mypy-lang.org/", executables={"mypy"})
 def mypy(path):
     stdout, stderr, returncode = _do_command(
         [PYTHON_EXECUTABLE, "-m", "mypy", path], timeout=TIMEOUT)
@@ -336,7 +335,8 @@ def _colorize_coverage_report(text):
                            for line in text.splitlines(keepends=True)])
 
 
-@deps(deps={"pip/coverage", "pip3/coverage"}, url="python3-coverage")
+@deps(deps={"pip/coverage", "pip3/coverage"},
+      url="https://coverage.readthedocs.io/")
 def python_coverage(path):
     # FIX: Also use test_*.py files.
     test_path = path[:-(len(".py"))] + "_test.py"
@@ -361,22 +361,25 @@ def python_coverage(path):
             "No corresponding test file: " + os.path.normpath(test_path))
 
 
-@deps(deps={"pip/pycodestyle", "pip3/pycodestyle"}, url="python-pycodestyle")
+@deps(deps={"pip/pycodestyle", "pip3/pycodestyle"},
+      url="http://pycodestyle.pycqa.org/en/latest/")
 def pycodestyle(path):
     return _run_command([_python_version(path), "-m", "pycodestyle", path])
 
 
-@deps(deps={"pip/pydocstyle", "pip3/pydocstyle"}, url="python3-pydocstyle")
+@deps(deps={"pip/pydocstyle", "pip3/pydocstyle"},
+      url="http://pycodestyle.pycqa.org/en/latest/")
 def pydocstyle(path):
     return _run_command([_python_version(path), "-m", "pydocstyle", path])
 
 
-@deps(deps={"pip/pyflakes", "pip3/pyflakes"}, url="pyflakes")
+@deps(deps={"pip/pyflakes", "pip3/pyflakes"},
+      url="https://pypi.org/project/pyflakes/")
 def pyflakes(path):
     return _run_command([_python_version(path), "-m", "pyflakes", path])
 
 
-@deps(deps={"pip/pylint", "pip3/pylint"}, url="pylint3")
+@deps(deps={"pip/pylint", "pip3/pylint"}, url="https://www.pylint.org/")
 def pylint(path):
     return _run_command([_python_version(path), "-m", "pylint",
                          "--errors-only", path])
@@ -416,7 +419,8 @@ def _colorize_mccabe(text, python_version):
         for line in text.splitlines(keepends=True)])
 
 
-@deps(deps={"pip/mccabe", "pip3/mccabe"}, url="python3-mccabe")
+@deps(deps={"pip/mccabe", "pip3/mccabe"},
+      url="https://pypi.org/project/mccabe/")
 def python_mccabe(path):
     python_version = _python_version(path)
     stdout, *rest = _do_command([python_version, "-m", "mccabe", path])
@@ -436,7 +440,8 @@ def python_mccabe(path):
 #                         Status.not_applicable)
 
 
-@deps(deps={"pip/bandit", "pip3/bandit"}, url="python3-bandit")
+@deps(deps={"pip/bandit", "pip3/bandit"},
+      url="https://pypi.org/project/bandit/")
 def bandit(path):
     python_version = _python_version(path)
     stdout, stderr, returncode = _do_command(
@@ -523,6 +528,7 @@ MAX_IMAGE_SIZE = 200
 
 
 def _resize_image(image, new_width):
+    import PIL.Image  # Here to avoid 'Segmentation Fault' in install-tools
     scale = new_width / image.width
     return image.resize((int(image.width * scale), int(image.height * scale)),
                         PIL.Image.ANTIALIAS)
@@ -530,6 +536,7 @@ def _resize_image(image, new_width):
 
 @deps(deps={"pip3/pillow"}, url="python3-pil")
 def pil(path):
+    import PIL.Image
     with open(path, "rb") as image_file:
         with PIL.Image.open(image_file).convert("RGB") as image:
             if image.width > MAX_IMAGE_SIZE:

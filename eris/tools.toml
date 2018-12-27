@@ -137,8 +137,8 @@ tools_for_extensions = [
 
 [pdf2txt]
   dependencies = ["pip/pdfminer"]
-  url = "python-pdfminer"
-  command = "pdf2txt"
+  url = "https://euske.github.io/pdfminer/"
+  command = "pdf2txt.py"
   success_status = "normal"
 
 [html2text]
@@ -152,12 +152,12 @@ tools_for_extensions = [
   success_status = "normal"
 
 [c_syntax_gcc]
-  dependencies = ["gcc", "g++-6"]
+  dependencies = ["gcc", "g++"]
   url = "https://gcc.gnu.org/"
   command = "gcc -fsyntax-only"
 
 [cpp_syntax_gcc]
-  dependencies = ["gcc", "g++-6"]
+  dependencies = ["gcc", "g++"]
   url = "https://gcc.gnu.org/"
   command = "gcc -fsyntax-only"
 
@@ -183,7 +183,7 @@ tools_for_extensions = [
 [clang_format]
   dependencies = ["clang-format"]
   url = "https://clang.llvm.org/docs/ClangFormat.html"
-  command = "clang-format-6.0"
+  command = "clang-format"
   success_status = "normal"
 
 [ruby_syntax]

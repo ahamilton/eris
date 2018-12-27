@@ -11,7 +11,7 @@ except ImportError:
 
 
 setup(name="eris",
-      version="17.06",
+      version="18.12",
       description=("Eris maintains an up-to-date set of reports for every"
                    " file in a codebase."),
       url="https://github.com/ahamilton/eris",
