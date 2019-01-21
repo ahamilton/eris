@@ -340,44 +340,12 @@ def python_coverage(path):
             "No corresponding test file: " + os.path.normpath(test_path))
 
 
-@deps(deps={"pip/pycodestyle"}, url="http://pycodestyle.pycqa.org/en/latest/")
-def pycodestyle(path):
-    return _run_command([PYTHON_EXECUTABLE, "-m", "pycodestyle", path])
-
-
-@deps(deps={"pip/pydocstyle"}, url="http://pycodestyle.pycqa.org/en/latest/")
-def pydocstyle(path):
-    return _run_command([PYTHON_EXECUTABLE, "-m", "pydocstyle", path])
-
-
-@deps(deps={"pip/pyflakes"}, url="https://pypi.org/project/pyflakes/")
-def pyflakes(path):
-    return _run_command([PYTHON_EXECUTABLE, "-m", "pyflakes", path])
-
-
-@deps(deps={"pip/pylint"}, url="https://www.pylint.org/")
-def pylint(path):
-    return _run_command([PYTHON_EXECUTABLE, "-m", "pylint", "--errors-only",
-                         path])
-
-
 @deps(url="https://github.com/ahamilton/eris/blob/master/gut.py")
 def python_gut(path):
     with open(path) as module_file:
         output = gut.gut_module(module_file.read())
     source_widget = _syntax_highlight_using_path(_fix_input(output), path)
     return Status.normal, source_widget
-
-
-@deps(url="https://docs.python.org/3/library/modulefinder.html")
-def python_modulefinder(path):
-    return _run_command([PYTHON_EXECUTABLE, "-m", "modulefinder", path],
-                        Status.normal)
-
-
-@deps(url="https://docs.python.org/3/library/dis.html")
-def dis(path):
-    return _run_command([PYTHON_EXECUTABLE, "-m", "dis", path], Status.normal)
 
 
 def _get_mccabe_line_score(line):

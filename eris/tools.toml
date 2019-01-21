@@ -44,6 +44,39 @@ tools_for_extensions = [
    [["iso"], ["isoinfo"]],
    ]
 
+
+[pycodestyle]
+  dependencies = ["pip/pycodestyle"]
+  url = "http://pycodestyle.pycqa.org/en/latest/"
+  command = "python3.7 -m pycodestyle"
+
+[pydocstyle]
+  dependencies = ["pip/pydocstyle"]
+  url = "http://www.pydocstyle.org/en/2.1.1/usage.html"
+  command = "python3.7 -m pydocstyle"
+
+[pyflakes]
+  dependencies = ["pip/pyflakes"]
+  url = "https://pypi.org/project/pyflakes/"
+  command = "python3.7 -m pyflakes"
+
+[pylint]
+  dependencies = ["pip/pylint"]
+  url = "https://www.pylint.org/"
+  command = "python3.7 -m pylint --errors-only"
+
+[python_modulefinder]
+  dependencies = []
+  url = "https://docs.python.org/3/library/modulefinder.html"
+  command = "python3.7 -m modulefinder"
+  success_status = "normal"
+
+[dis]
+  dependencies = []
+  url = "https://docs.python.org/3/library/dis.html"
+  command = "python3.7 -m dis"
+  success_status = "normal"
+
 [git_blame]
   dependencies = ["git"]
   url = "https://git-scm.com/docs/git-blame"
