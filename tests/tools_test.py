@@ -81,7 +81,7 @@ class ToolsTestCase(unittest.TestCase):
     def test_contents(self):
         self._test_tool(tools.contents, [("hi3.py", tools.Status.normal)])
 
-    HI_OK = [("hi3.py", tools.Status.ok), ("hi.py", tools.Status.ok)]
+    HI_OK = [("hi3.py", tools.Status.ok)]
 
     def test_python_syntax(self):
         self._test_tool(tools.python_syntax, self.HI_OK)
@@ -94,8 +94,7 @@ class ToolsTestCase(unittest.TestCase):
     #                      ("hi3_test.py", tools.Status.ok),
     #                      ("test_foo.py", tools.Status.ok)])
 
-    HI_NORMAL = [("hi3.py", tools.Status.normal),
-                 ("hi.py", tools.Status.normal)]
+    HI_NORMAL = [("hi3.py", tools.Status.normal)]
 
     def test_pydoc(self):
         # FIX: This is failing inside AppImages.
@@ -103,8 +102,7 @@ class ToolsTestCase(unittest.TestCase):
             self._test_tool(tools.pydoc, self.HI_NORMAL)
 
     def test_mypy(self):
-        self._test_tool(tools.mypy, [("hi3.py", tools.Status.ok),
-                                     ("hi.py", tools.Status.problem)])
+        self._test_tool(tools.mypy, self.HI_OK)
 
     def test_python_coverage(self):
         self._test_tool(tools.python_coverage, self.HI_NORMAL)
@@ -128,8 +126,7 @@ class ToolsTestCase(unittest.TestCase):
         self._test_tool(tools.python_mccabe, self.HI_OK)
 
     def test_bandit(self):
-        self._test_tool(tools.bandit, [("hi3.py", tools.Status.ok),
-                                       ("hi.py", tools.Status.ok)])
+        self._test_tool(tools.bandit, self.HI_OK)
 
     # FIX: Make the golden-file deterministic
     # def test_pydisasm(self):

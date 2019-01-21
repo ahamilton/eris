@@ -239,7 +239,7 @@ def metadata(path):
     return (Status.normal, fill3.Text(fill3.join("", text)))
 
 
-@deps(deps={"pip3/pygments"}, url="python3-pygments")
+@deps(deps={"pip/pygments"}, url="python3-pygments")
 def contents(path):
     with open(path) as file_:
         try:
@@ -254,35 +254,17 @@ def contents(path):
     return Status.normal, text_widget
 
 
-def _is_python_syntax_correct(path, python_version):
-    if python_version == "python":
-        stdin, stdout, returncode = _do_command(
-            ["python", "-c",
-             f"__import__('compiler').parse(open('{path}').read())"])
-        return returncode == 0
-    else:  # python3
-        with open(path) as f:
-            source = f.read()
-        try:
-            ast.parse(source)
-        except:
-            return False
-        return True
-
-
-def _python_version(path):  # Need a better hueristic
-    for version in [PYTHON_EXECUTABLE, "python"]:
-        if _is_python_syntax_correct(path, version):
-            return version
-    return PYTHON_EXECUTABLE
-
-
-@deps(deps={"python"},
-      url="https://en.wikipedia.org/wiki/Python_syntax_and_semantics")
+@deps(url="https://en.wikipedia.org/wiki/Python_syntax_and_semantics")
 def python_syntax(path):
-    status = (Status.ok if _is_python_syntax_correct(path, "python") or
-              _is_python_syntax_correct(path, "python3") else Status.problem)
-    return status, fill3.Text("")
+    with open(path) as f:
+        source = f.read()
+    try:
+        ast.parse(source)
+    except SyntaxError:
+        is_correct = False
+    else:
+        is_correct = True
+    return (Status.ok if is_correct else Status.problem), fill3.Text("")
 
 
 def _has_shebang_line(path):
@@ -295,12 +277,11 @@ def _is_python_test_file(path):
     return path.endswith("_test.py") or path.startswith("test_")
 
 
-@deps(deps={"python", "python3"},
-      url="https://docs.python.org/3/library/unittest.html")
+@deps(url="https://docs.python.org/3/library/unittest.html")
 def python_unittests(path):
     if _is_python_test_file(path):
         command = ([path] if _has_shebang_line(path)
-                   else [_python_version(path), path])
+                   else [PYTHON_EXECUTABLE, path])
         stdout, stderr, returncode = _do_command(command, timeout=TIMEOUT)
         status = Status.ok if returncode == 0 else Status.problem
         return status, fill3.Text(stdout + "\n" + stderr)
@@ -308,11 +289,10 @@ def python_unittests(path):
         return Status.not_applicable, fill3.Text("No tests.")
 
 
-@deps(deps={"python", "python3"},
-      url="https://docs.python.org/3/library/pydoc.html")
+@deps(url="https://docs.python.org/3/library/pydoc.html")
 def pydoc(path):
     stdout, stderr, returncode = _do_command(
-        [_python_version(path), "-m", "pydoc", path], timeout=TIMEOUT)
+        [PYTHON_EXECUTABLE, "-m", "pydoc", path], timeout=TIMEOUT)
     status = Status.normal if returncode == 0 else Status.not_applicable
     if not stdout.startswith("Help on module"):
         status = Status.not_applicable
@@ -320,7 +300,7 @@ def pydoc(path):
     return status, fill3.Text(_fix_input(stdout))
 
 
-@deps(deps={"pip3/mypy"}, url="http://mypy-lang.org/", executables={"mypy"})
+@deps(deps={"pip/mypy"}, url="http://mypy-lang.org/", executables={"mypy"})
 def mypy(path):
     stdout, stderr, returncode = _do_command(
         [PYTHON_EXECUTABLE, "-m", "mypy", path], timeout=TIMEOUT)
@@ -335,14 +315,13 @@ def _colorize_coverage_report(text):
                            for line in text.splitlines(keepends=True)])
 
 
-@deps(deps={"pip/coverage", "pip3/coverage"},
-      url="https://coverage.readthedocs.io/")
+@deps(deps={"pip/coverage"}, url="https://coverage.readthedocs.io/")
 def python_coverage(path):
     # FIX: Also use test_*.py files.
     test_path = path[:-(len(".py"))] + "_test.py"
     if os.path.exists(test_path):
         with tempfile.TemporaryDirectory() as temp_dir:
-            coverage_cmd = [_python_version(path), "-m", "coverage"]
+            coverage_cmd = [PYTHON_EXECUTABLE, "-m", "coverage"]
             coverage_path = os.path.join(temp_dir, "coverage")
             env = os.environ.copy()
             env["COVERAGE_FILE"] = coverage_path
@@ -361,28 +340,25 @@ def python_coverage(path):
             "No corresponding test file: " + os.path.normpath(test_path))
 
 
-@deps(deps={"pip/pycodestyle", "pip3/pycodestyle"},
-      url="http://pycodestyle.pycqa.org/en/latest/")
+@deps(deps={"pip/pycodestyle"}, url="http://pycodestyle.pycqa.org/en/latest/")
 def pycodestyle(path):
-    return _run_command([_python_version(path), "-m", "pycodestyle", path])
+    return _run_command([PYTHON_EXECUTABLE, "-m", "pycodestyle", path])
 
 
-@deps(deps={"pip/pydocstyle", "pip3/pydocstyle"},
-      url="http://pycodestyle.pycqa.org/en/latest/")
+@deps(deps={"pip/pydocstyle"}, url="http://pycodestyle.pycqa.org/en/latest/")
 def pydocstyle(path):
-    return _run_command([_python_version(path), "-m", "pydocstyle", path])
+    return _run_command([PYTHON_EXECUTABLE, "-m", "pydocstyle", path])
 
 
-@deps(deps={"pip/pyflakes", "pip3/pyflakes"},
-      url="https://pypi.org/project/pyflakes/")
+@deps(deps={"pip/pyflakes"}, url="https://pypi.org/project/pyflakes/")
 def pyflakes(path):
-    return _run_command([_python_version(path), "-m", "pyflakes", path])
+    return _run_command([PYTHON_EXECUTABLE, "-m", "pyflakes", path])
 
 
-@deps(deps={"pip/pylint", "pip3/pylint"}, url="https://www.pylint.org/")
+@deps(deps={"pip/pylint"}, url="https://www.pylint.org/")
 def pylint(path):
-    return _run_command([_python_version(path), "-m", "pylint",
-                         "--errors-only", path])
+    return _run_command([PYTHON_EXECUTABLE, "-m", "pylint", "--errors-only",
+                         path])
 
 
 @deps(url="https://github.com/ahamilton/eris/blob/master/gut.py")
@@ -393,59 +369,52 @@ def python_gut(path):
     return Status.normal, source_widget
 
 
-@deps(deps={"python", "python3"},
-      url="https://docs.python.org/3/library/modulefinder.html")
+@deps(url="https://docs.python.org/3/library/modulefinder.html")
 def python_modulefinder(path):
-    return _run_command([_python_version(path), "-m", "modulefinder", path],
+    return _run_command([PYTHON_EXECUTABLE, "-m", "modulefinder", path],
                         Status.normal)
 
 
-@deps(deps={"python", "python3"},
-      url="https://docs.python.org/3/library/dis.html")
+@deps(url="https://docs.python.org/3/library/dis.html")
 def dis(path):
-    return _run_command([_python_version(path), "-m", "dis", path],
-                        Status.normal)
+    return _run_command([PYTHON_EXECUTABLE, "-m", "dis", path], Status.normal)
 
 
-def _get_mccabe_line_score(line, python_version):
+def _get_mccabe_line_score(line):
     position, function_name, score = line.split()
-    return int(score if python_version == PYTHON_EXECUTABLE else score[:-1])
+    return int(score)
 
 
-def _colorize_mccabe(text, python_version):
+def _colorize_mccabe(text):
     return fill3.join("", [
         termstr.TermStr(line).fg_color(termstr.Color.yellow)
-        if _get_mccabe_line_score(line, python_version) > 10 else line
+        if _get_mccabe_line_score(line) > 10 else line
         for line in text.splitlines(keepends=True)])
 
 
-@deps(deps={"pip/mccabe", "pip3/mccabe"},
-      url="https://pypi.org/project/mccabe/")
+@deps(deps={"pip/mccabe"}, url="https://pypi.org/project/mccabe/")
 def python_mccabe(path):
-    python_version = _python_version(path)
-    stdout, *rest = _do_command([python_version, "-m", "mccabe", path])
+    stdout, *rest = _do_command([PYTHON_EXECUTABLE, "-m", "mccabe", path])
     max_score = 0
     with contextlib.suppress(ValueError):  # When there are no lines
-        max_score = max(_get_mccabe_line_score(line, python_version)
+        max_score = max(_get_mccabe_line_score(line)
                         for line in stdout.splitlines())
     status = Status.problem if max_score > 10 else Status.ok
-    return status, fill3.Text(_colorize_mccabe(stdout, python_version))
+    return status, fill3.Text(_colorize_mccabe(stdout))
 
 
 # FIX: Reenable when pydisasm is not causing problems
-# @deps(deps={"pip3/xdis"}, executables={"pydisasm"},
+# @deps(deps={"pip/xdis"}, executables={"pydisasm"},
 #       url="https://pypi.python.org/pypi/xdis")
 # def pydisasm(path):
 #     return _run_command(["pydisasm", path], Status.normal,
 #                         Status.not_applicable)
 
 
-@deps(deps={"pip/bandit", "pip3/bandit"},
-      url="https://pypi.org/project/bandit/")
+@deps(deps={"pip/bandit"}, url="https://pypi.org/project/bandit/")
 def bandit(path):
-    python_version = _python_version(path)
     stdout, stderr, returncode = _do_command(
-        [python_version, "-m", "bandit.cli.main", "-f", "txt", path],
+        [PYTHON_EXECUTABLE, "-m", "bandit.cli.main", "-f", "txt", path],
         timeout=TIMEOUT)
     status = Status.ok if returncode == 0 else Status.problem
     text_without_timestamp = "".join(stdout.splitlines(keepends=True)[2:])
@@ -534,7 +503,7 @@ def _resize_image(image, new_width):
                         PIL.Image.ANTIALIAS)
 
 
-@deps(deps={"pip3/pillow"}, url="python3-pil")
+@deps(deps={"pip/pillow"}, url="python3-pil")
 def pil(path):
     import PIL.Image
     with open(path, "rb") as image_file:

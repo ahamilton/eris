@@ -8,21 +8,16 @@ import subprocess
 import eris.tools
 
 
-pip_deps, pip3_deps, dist_deps = set(), set(), set()
+pip_deps, dist_deps = set(), set()
 for dependency in eris.tools.dependencies():
     if "/" in dependency:
         pip_version, pip_dependency = dependency.split("/")
-        (pip_deps if pip_version == "pip" else pip3_deps).add(pip_dependency)
+        pip_deps.add(pip_dependency)
     else:
         dist_deps.add(dependency)
-if pip_deps:
-    dist_deps.add("python-pip")
 if dist_deps:
     subprocess.run(["sudo", "apt-get", "-y", "install"] + list(dist_deps),
                    check=True)
 if pip_deps:
-    subprocess.run(["python", "-m", "pip", "install"] + list(pip_deps),
-                   check=True)
-if pip3_deps:
     subprocess.run(["python" + eris.tools.PYTHON_VERSION, "-m", "pip",
-                    "install"] + list(pip3_deps), check=True)
+                    "install"] + list(pip_deps), check=True)

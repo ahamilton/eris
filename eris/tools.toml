@@ -136,8 +136,8 @@ tools_for_extensions = [
   success_status = "normal"
 
 [pdf2txt]
-  dependencies = ["pip/pdfminer"]
-  url = "https://euske.github.io/pdfminer/"
+  dependencies = ["pip/pdfminer.six"]
+  url = "https://github.com/pdfminer/pdfminer.six"
   command = "pdf2txt.py"
   success_status = "normal"
 
@@ -216,7 +216,7 @@ tools_for_extensions = [
   command = "golint -set_exit_status"
 
 [yamllint]
-  dependencies = ["pip3/yamllint"]
+  dependencies = ["pip/yamllint"]
   url = "https://github.com/adrienverge/yamllint"
   command = "python3.7 -m yamllint"
 
