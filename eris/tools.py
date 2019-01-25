@@ -420,13 +420,6 @@ def perltidy(path):
 # perl6_syntax.deps={"rakudo"}
 
 
-@deps(deps={"splint"}, url="splint", executables={"splint"})
-def splint(path):
-    stdout, stderr, returncode = _do_command(["splint", "-preproc", path])
-    status = Status.ok if returncode == 0 else Status.problem
-    return status, fill3.Text(stdout + stderr)
-
-
 @deps(deps={"tidy"}, url="tidy", executables={"tidy"})
 def html_syntax(path):
     # Maybe only show errors

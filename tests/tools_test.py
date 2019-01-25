@@ -164,10 +164,6 @@ class ToolsTestCase(unittest.TestCase):
     def test_c_syntax_gcc(self):
         self._test_tool(tools.c_syntax_gcc, [("hello.c", tools.Status.ok)])
 
-    def test_splint(self):
-        self._test_tool(tools.splint, [("hello.c", tools.Status.ok),
-                                       ("hello.h", tools.Status.ok)])
-
     def test_objdump_headers(self):
         self._test_tool(tools.objdump_headers,
                         [("Mcrt1.o", tools.Status.normal)])

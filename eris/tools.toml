@@ -11,7 +11,7 @@ tools_for_extensions = [
    [["pl", "pm", "t"], ["perl_syntax", "perldoc", "perltidy"]],
 #    [["p6", "pm6"], ["perl6_syntax", "perldoc"]],
    [["pod", "pod6"], ["perldoc"]], [["java"], ["uncrustify"]],
-   [["c", "h"], ["c_syntax_gcc", "splint", "uncrustify", "cppcheck", "clang_format"]],
+   [["c", "h"], ["c_syntax_gcc", "uncrustify", "cppcheck", "clang_format"]],
    [["cc", "cpp", "hpp"], ["cpp_syntax_gcc", "bcpp", "uncrustify",
                            "cppcheck", "clang_format"]],
    [["rb"], ["ruby_syntax"]],
