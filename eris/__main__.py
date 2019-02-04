@@ -264,6 +264,8 @@ class Summary:
             if row.path == cursor_path:
                 self._cursor_position = (x, index)
                 return
+        if y >= len(self._column):
+            self._cursor_position = (x, len(self._column) - 1)
 
     def sync_with_filesystem(self, log=None):
         new_column = fill3.Column([])
