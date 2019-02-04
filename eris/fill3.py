@@ -1,7 +1,7 @@
 
 # -*- coding: utf-8 -*-
 
-# Copyright (C) 2015-2018 Andrew Hamilton. All rights reserved.
+# Copyright (C) 2015-2019 Andrew Hamilton. All rights reserved.
 # Licensed under the Artistic License 2.0.
 
 import asyncio
