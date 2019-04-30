@@ -524,12 +524,9 @@ for tool_name, tool_toml in tools_toml.items():
 #############################
 
 
-LOG_PATH = os.path.join(os.getcwd(), "eris.log")
-
-
 def log_error(message=None):
     message = traceback.format_exc() if message is None else message + "\n"
-    with open(LOG_PATH, "a") as log_file:
+    with open("/tmp/eris.log", "a") as log_file:
         log_file.write(message)
 
 
@@ -578,20 +575,22 @@ def status_to_str(status):
 
 class Result:
 
+    COMPLETED_STATUSES = {
+        Status.ok, Status.problem, Status.normal, Status.error,
+        Status.not_applicable, Status.timed_out}
+
     def __init__(self, path, tool):
         self.path = path
         self.tool = tool
         self.pickle_path = os.path.join(CACHE_PATH, path + "-" + tool.__name__)
         self.scroll_position = (0, 0)
-        self.is_completed = False
-        self.is_placeholder = True
         self.status = Status.pending
 
     @property
     @lru_cache_with_eviction(maxsize=50)
     def result(self):
         unknown_label = fill3.Text("?")
-        if self.is_placeholder:
+        if self.status == Status.pending:
             return unknown_label
         try:
             with gzip.open(self.pickle_path, "rb") as pickle_file:
@@ -609,8 +608,11 @@ class Result:
         self.status = status
         self.entry.appearance_cache = None
 
+    @property
+    def is_completed(self):
+        return self.status in Result.COMPLETED_STATUSES
+
     async def run(self, log, appearance_changed_event, runner):
-        self.is_placeholder = False
         tool_name = tool_name_colored(self.tool, self.path)
         path = path_colored(self.path)
         log.log_message(["Running ", tool_name, " on ", path, "..."])
@@ -625,14 +627,12 @@ class Result:
         end_time = time.time()
         self.set_status(new_status)
         appearance_changed_event.set()
-        self.is_completed = True
         log.log_message(
             ["Finished running ", tool_name, " on ", path, ". ",
              status_to_str(new_status),
              f" {round(end_time - start_time, 2)} secs"])
 
     def reset(self):
-        self.is_placeholder = True
         self.set_status(Status.pending)
 
     def appearance_min(self):

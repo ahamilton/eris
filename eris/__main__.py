@@ -467,8 +467,7 @@ class Summary:
                 return
 
     def refresh_result(self, result):
-        if result.status not in {tools.Status.running, tools.Status.paused,
-                                 tools.Status.pending}:
+        if result.is_completed:
             result.reset()
             self.closest_placeholder_generator = None
             self._jobs_added_event.set()
@@ -478,6 +477,13 @@ class Summary:
         for row in self._column:
             for result in row:
                 if result.tool == tool:
+                    self.refresh_result(result)
+
+    def clear_running(self):
+        for row in self._column:
+            for result in row:
+                if result.status in [tools.Status.running,
+                                     tools.Status.paused]:
                     self.refresh_result(result)
 
     def as_html(self):
@@ -1030,6 +1036,7 @@ def load_state(pickle_path, jobs_added_event, appearance_changed_event,
         summary = screen._summary
         summary._jobs_added_event = jobs_added_event
         summary._root_path = root_path
+        summary.clear_running()
         log = screen._log
         log._appearance_changed_event = appearance_changed_event
     return summary, screen, log, is_first_run
