@@ -321,30 +321,38 @@ class Summary:
                     os.remove(result.pickle_path)
             self.sort_entries()
 
-    async def _placeholder_spiral(self):
+    def _sweep_up(self, x, y):
+        yield from reversed(self._column[y][:x])
+        while True:
+            y = (y - 1) % len(self._column)
+            yield from reversed(self._column[y])
+
+    def _sweep_down(self, x, y):
+        yield from self._column[y][x:]
+        while True:
+            y = (y + 1) % len(self._column)
+            yield from self._column[y]
+
+    def _sweep_combined(self, x, y):
+        for up_result, down_result in zip(self._sweep_up(x, y),
+                                          self._sweep_down(x, y)):
+            yield up_result
+            yield down_result
+
+    async def _placeholder_sweep(self):
         x, y = self.cursor_position()
-        result = self._column[y][x]
-        if result.is_placeholder:
-            yield result
-        for lap in range(max(len(self._column), self._max_width)):
-            y -= 1
-            for dx, dy in [(1, 1), (-1, 1), (-1, -1), (1, -1)]:
-                for move in range(lap + 1):
-                    x += dx
-                    y += dy
-                    try:
-                        result = self._column[y][x]
-                    except IndexError:
-                        continue
-                    await asyncio.sleep(0)
-                    if result.is_placeholder:
-                        yield result
+        for index, result in enumerate(self._sweep_combined(x, y)):
+            if index > self.result_total:
+                break
+            await asyncio.sleep(0)
+            if result.status == tools.Status.pending:
+                yield result
 
     async def get_closest_placeholder(self):
         try:
             return await self.closest_placeholder_generator.asend(None)
         except AttributeError:
-            self.closest_placeholder_generator = self._placeholder_spiral()
+            self.closest_placeholder_generator = self._placeholder_sweep()
             return await self.closest_placeholder_generator.asend(None)
 
     def appearance_dimensions(self):
