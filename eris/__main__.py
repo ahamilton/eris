@@ -336,8 +336,8 @@ class Summary:
     def _sweep_combined(self, x, y):
         for up_result, down_result in zip(self._sweep_up(x, y),
                                           self._sweep_down(x, y)):
-            yield up_result
             yield down_result
+            yield up_result
 
     async def _placeholder_sweep(self):
         x, y = self.cursor_position()
