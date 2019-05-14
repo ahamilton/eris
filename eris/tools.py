@@ -269,7 +269,7 @@ def python_syntax(path):
 
 def _has_shebang_line(path):
     with open(path, "rb") as file_:
-        return file_.read(2) == "#!"
+        return file_.read(2) == b"#!"
 
 
 def _is_python_test_file(path):
