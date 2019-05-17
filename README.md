@@ -23,20 +23,19 @@ then to run:
 
 ### Tools
 
-Extensions(94) | Tools(60)
+Extensions(93) | Tools(56)
 ----------:| -----
 .* | [contents](http://pygments.org/) • metadata • [git_blame](https://git-scm.com/docs/git-blame) • [git_log](https://git-scm.com/docs/git-log)
 .py | [python_syntax](https://en.wikipedia.org/wiki/Python_syntax_and_semantics) • [python_unittests](https://docs.python.org/3/library/unittest.html) • [pydoc](https://docs.python.org/3/library/pydoc.html) • [mypy](http://mypy-lang.org/) • [python_coverage](https://coverage.readthedocs.io/) • [pycodestyle](http://pycodestyle.pycqa.org/en/latest/) • [pydocstyle](http://www.pydocstyle.org/en/2.1.1/usage.html) • [pyflakes](https://pypi.org/project/pyflakes/) • [pylint](https://www.pylint.org/) • [python_gut](https://github.com/ahamilton/eris/blob/master/gut.py) • [python_modulefinder](https://docs.python.org/3/library/modulefinder.html) • [dis](https://docs.python.org/3/library/dis.html) • [python_mccabe](https://pypi.org/project/mccabe/) • [bandit](https://pypi.org/project/bandit/)
 .pl .pm .t | [perl_syntax](https://en.wikipedia.org/wiki/Perl) • [perldoc](http://perldoc.perl.org/) • [perltidy](http://perltidy.sourceforge.net/)
 .pod .pod6 | [perldoc](http://perldoc.perl.org/)
-.java | [uncrustify](https://github.com/uncrustify/uncrustify)
-.c .h | [c_syntax_gcc](https://gcc.gnu.org/) • [uncrustify](https://github.com/uncrustify/uncrustify) • [cppcheck](http://sourceforge.net/p/cppcheck/wiki/Home/) • [clang_format](https://clang.llvm.org/docs/ClangFormat.html)
-.cc .cpp .hpp | [cpp_syntax_gcc](https://gcc.gnu.org/) • bcpp • [uncrustify](https://github.com/uncrustify/uncrustify) • [cppcheck](http://sourceforge.net/p/cppcheck/wiki/Home/) • [clang_format](https://clang.llvm.org/docs/ClangFormat.html)
+.c .h | [c_syntax_gcc](https://gcc.gnu.org/) • [cppcheck](http://sourceforge.net/p/cppcheck/wiki/Home/)
+.cc .cpp .hpp | [cpp_syntax_gcc](https://gcc.gnu.org/) • [cppcheck](http://sourceforge.net/p/cppcheck/wiki/Home/)
 .rb | [ruby_syntax](http://www.ruby-lang.org/)
 .lua | [lua_syntax](http://www.lua.org) • [lua_check](https://github.com/mpeterv/luacheck)
-.js | [js_syntax](http://nodejs.org/) • [clang_format](https://clang.llvm.org/docs/ClangFormat.html)
+.js | [js_syntax](http://nodejs.org/)
 .php | [php7_syntax](https://en.wikipedia.org/wiki/PHP)
-.go | [gofmt](https://golang.org) • [go_vet](https://golang.org) • [golint](https://github.com/golang/lint) • [godoc](http://golang.org/x/tools)
+.go | [go_vet](https://golang.org) • [golint](https://github.com/golang/lint) • [godoc](http://golang.org/x/tools)
 .bash .sh .dash .ksh | [shellcheck](https://www.shellcheck.net/)
 .pdf | [pdf2txt](https://github.com/pdfminer/pdfminer.six)
 .html .htm | [html_syntax](http://www.html-tidy.org/) • [tidy](http://www.html-tidy.org/) • [html2text](http://www.mbayer.de/html2text/) • [pandoc](https://pandoc.org/)

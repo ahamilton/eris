@@ -434,26 +434,6 @@ def tidy(path):
     return Status.normal, fill3.Text(stdout)
 
 
-@deps(deps={"bcpp"}, executables={"bcpp"})
-def bcpp(path):
-    stdout, stderr, returncode = _do_command(["bcpp", "-fi", path])
-    status = Status.normal if returncode == 0 else Status.problem
-    return status, _syntax_highlight_using_path(stdout, path)
-
-
-@deps(deps={"uncrustify"}, url="uncrustify", executables={"uncrustify"})
-def uncrustify(path):
-    with tempfile.TemporaryDirectory() as temp_dir:
-        config_path = os.path.join(temp_dir, "uncrustify.cfg")
-        stdout, stderr, returncode = _do_command(
-            ["uncrustify", "--detect", "-f", path, "-o", config_path])
-        if returncode == 0:
-            stdout, stderr, returncode = _do_command(
-                ["uncrustify", "-c", config_path, "-f", path])
-    status = Status.normal if returncode == 0 else Status.problem
-    return status, _syntax_highlight_using_path(stdout, path)
-
-
 MAX_IMAGE_SIZE = 200
 
 

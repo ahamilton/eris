@@ -10,15 +10,14 @@ tools_for_extensions = [
 #    [["pyc"], ["pydisasm"]],
    [["pl", "pm", "t"], ["perl_syntax", "perldoc", "perltidy"]],
 #    [["p6", "pm6"], ["perl6_syntax", "perldoc"]],
-   [["pod", "pod6"], ["perldoc"]], [["java"], ["uncrustify"]],
-   [["c", "h"], ["c_syntax_gcc", "uncrustify", "cppcheck", "clang_format"]],
-   [["cc", "cpp", "hpp"], ["cpp_syntax_gcc", "bcpp", "uncrustify",
-                           "cppcheck", "clang_format"]],
+   [["pod", "pod6"], ["perldoc"]],
+   [["c", "h"], ["c_syntax_gcc", "cppcheck"]],
+   [["cc", "cpp", "hpp"], ["cpp_syntax_gcc", "cppcheck"]],
    [["rb"], ["ruby_syntax"]],
    [["lua"], ["lua_syntax", "lua_check"]],
-   [["js"], ["js_syntax", "clang_format"]],
+   [["js"], ["js_syntax"]],
    [["php"], ["php7_syntax"]],
-   [["go"], ["gofmt", "go_vet", "golint", "godoc"]],
+   [["go"], ["go_vet", "golint", "godoc"]],
    [["bash", "sh", "dash", "ksh"], ["shellcheck"]],
    [["pdf"], ["pdf2txt"]],
    [["html", "htm"], ["html_syntax", "tidy", "html2text", "pandoc"]],
@@ -213,12 +212,6 @@ tools_for_extensions = [
   dependencies = ["cppcheck"]
   command = "cppcheck"
 
-[clang_format]
-  dependencies = ["clang-format"]
-  url = "https://clang.llvm.org/docs/ClangFormat.html"
-  command = "clang-format"
-  success_status = "normal"
-
 [ruby_syntax]
   dependencies = ["ruby"]
   command = "ruby -c"
@@ -234,11 +227,6 @@ tools_for_extensions = [
 [lua_check]
   dependencies = ["lua-check"]
   command = "luacheck"
-
-[gofmt]
-  dependencies = ["golang-go"]
-  command = "gofmt"
-  success_status = "normal"
 
 [go_vet]
   dependencies = ["golang-go"]

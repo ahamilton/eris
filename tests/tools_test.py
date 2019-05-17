@@ -154,13 +154,6 @@ class ToolsTestCase(unittest.TestCase):
     #     self._test_tool(tools.perl6_syntax,
     #                     [("perl6.p6", tools.Status.problem)])
 
-    def test_uncrustify(self):
-        self._test_tool(tools.uncrustify,
-                        [("closure-util.java", tools.Status.problem),
-                         ("hello.c", tools.Status.normal),
-                         ("hello.h", tools.Status.normal),
-                         ("hello.cpp", tools.Status.normal)])
-
     def test_c_syntax_gcc(self):
         self._test_tool(tools.c_syntax_gcc, [("hello.c", tools.Status.ok)])
 
@@ -203,9 +196,6 @@ class ToolsTestCase(unittest.TestCase):
 
     def test_cpp_syntax_gcc(self):
         self._test_tool(tools.cpp_syntax_gcc, [("hello.cpp", tools.Status.ok)])
-
-    def test_bcpp(self):
-        self._test_tool(tools.bcpp, [("hello.cpp", tools.Status.normal)])
 
     def test_php7_syntax(self):
         self._test_tool(tools.php7_syntax, [("root.php", tools.Status.ok)])
