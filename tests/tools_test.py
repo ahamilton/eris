@@ -147,8 +147,8 @@ class ToolsTestCase(unittest.TestCase):
                             [("perl.pl", tools.Status.not_applicable),
                              ("contents.pod", tools.Status.normal)])
 
-    def test_perltidy(self):
-        self._test_tool(tools.perltidy, [("perl.pl", tools.Status.normal)])
+    # def test_perltidy(self):
+    #     self._test_tool(tools.perltidy, [("perl.pl", tools.Status.normal)])
 
     # def test_perl6_syntax(self):
     #     self._test_tool(tools.perl6_syntax,
