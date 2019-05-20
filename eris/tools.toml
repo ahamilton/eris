@@ -8,7 +8,7 @@ tools_for_extensions = [
 	     "pylint", "python_gut", "python_modulefinder", "dis",
 	     "python_mccabe", "bandit"]],
 #    [["pyc"], ["pydisasm"]],
-   [["pl", "pm", "t"], ["perl_syntax", "perldoc", "perltidy"]],
+   [["pl", "pm", "t"], ["perl_syntax", "perldoc"]],
 #    [["p6", "pm6"], ["perl6_syntax", "perldoc"]],
    [["pod", "pod6"], ["perldoc"]],
    [["c", "h"], ["c_syntax_gcc", "cppcheck"]],
