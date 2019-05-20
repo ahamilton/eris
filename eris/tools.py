@@ -303,7 +303,8 @@ def pydoc(path):
 @deps(deps={"pip/mypy"}, url="http://mypy-lang.org/", executables={"mypy"})
 def mypy(path):
     stdout, stderr, returncode = _do_command(
-        [PYTHON_EXECUTABLE, "-m", "mypy", path], timeout=TIMEOUT)
+        [PYTHON_EXECUTABLE, "-m", "mypy", "--ignore-missing-imports", path],
+        timeout=TIMEOUT)
     status = Status.ok if returncode == 0 else Status.problem
     return status, fill3.Text(stdout)
 

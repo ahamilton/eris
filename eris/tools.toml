@@ -52,7 +52,7 @@ tools_for_extensions = [
 [pydocstyle]
   dependencies = ["pip/pydocstyle"]
   url = "http://www.pydocstyle.org/en/2.1.1/usage.html"
-  command = "python3.7 -m pydocstyle"
+  command = "python3.7 -m pydocstyle --ignore=D1"
 
 [pyflakes]
   dependencies = ["pip/pyflakes"]
@@ -168,7 +168,7 @@ tools_for_extensions = [
   success_status = "normal"
 
 [pdf2txt]
-  dependencies = ["pip/pdfminer.six"]
+  dependencies = ["pip/pdfminer.six", "pip/chardet"]
   url = "https://github.com/pdfminer/pdfminer.six"
   command = "pdf2txt.py"
   success_status = "normal"
@@ -196,7 +196,7 @@ tools_for_extensions = [
 [php7_syntax]
   dependencies = ["php7.2-cli"]
   url = "https://en.wikipedia.org/wiki/PHP"
-  command = "php7.2 --syntax-check"
+  command = "php --syntax-check"
 
 [identify]
   dependencies = ["imagemagick"]
@@ -213,7 +213,7 @@ tools_for_extensions = [
   command = "cppcheck"
 
 [ruby_syntax]
-  dependencies = ["ruby"]
+  dependencies = ["ruby2.5"]
   command = "ruby -c"
 
 [lua_syntax]
@@ -229,11 +229,11 @@ tools_for_extensions = [
   command = "luacheck"
 
 [go_vet]
-  dependencies = ["golang-go"]
+  dependencies = ["golang-go", "go/github.com/golang/go/src/cmd/vet"]
   command = "go vet"
 
 [golint]
-  dependencies = ["golint"]
+  dependencies = ["golint", "go/github.com/golang/lint/golint"]
   command = "golint -set_exit_status"
 
 [yamllint]
