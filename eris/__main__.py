@@ -21,6 +21,7 @@ import collections
 import contextlib
 import functools
 import gzip
+import math
 import multiprocessing
 import os
 import pickle
@@ -955,9 +956,18 @@ class Screen:
         " *help *quit *t*a*b:focus *turn *log *edit *next *pause *order"
         " *refresh *fullscreen *xdg-open", Log._GREEN_STYLE)
 
+    @functools.lru_cache()
+    def _get_partial_bar_chars(self, bar_transparency):
+        bar_color = blend_color(termstr.Color.black, termstr.Color.white,
+                                bar_transparency)
+        return [termstr.TermStr(char).fg_color(bar_color).
+                bg_color(termstr.Color.black)
+                for char in fill3.ScrollBar._PARTIAL_CHARS[1]]
+
     @functools.lru_cache(maxsize=2)
     def _get_status_bar_appearance(self, width, is_directory_sort, is_paused,
                                    progress_bar_size):
+        bar_transparency = 0.7
         ordering_text = "directory" if is_directory_sort else "type     "
         paused_indicator = (termstr.TermStr("paused ").fg_color(
             termstr.Color.yellow) if is_paused else termstr.TermStr("running").
@@ -966,12 +976,22 @@ class Screen:
         spacing = " " * (width - len(self._STATUS_BAR) - len(indicators))
         bar = (self._STATUS_BAR[:width - len(indicators)] + spacing +
                indicators)[:width]
-        return [highlight_str(bar[:progress_bar_size], termstr.Color.white, 0.7) +
-                bar[progress_bar_size:]]
+        fraction, whole = math.modf(progress_bar_size)
+        whole = int(whole)
+        if whole < len(bar) and bar[whole].data == " ":
+            left_part = bar[:whole]
+            right_part = (self._get_partial_bar_chars(bar_transparency)
+                          [int(fraction * 8)] + bar[whole+1:])
+        else:
+            progress_bar_size = round(progress_bar_size)
+            left_part = bar[:progress_bar_size]
+            right_part = bar[progress_bar_size:]
+        return [highlight_str(left_part, termstr.Color.white, bar_transparency)
+                + right_part]
 
     def _get_status_bar(self, width):
         incomplete = self._summary.result_total - self._summary.completed_total
-        progress_bar_size = max(0, width * incomplete //
+        progress_bar_size = max(0, width * incomplete /
                                 self._summary.result_total)
         return self._get_status_bar_appearance(
             width, self._summary.is_directory_sort, self._is_paused,
