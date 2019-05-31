@@ -429,12 +429,6 @@ def html_syntax(path):
     return status, fill3.Text(stderr)
 
 
-@deps(deps={"tidy"}, url="tidy", executables={"tidy"})
-def tidy(path):
-    stdout, *rest = _do_command(["tidy", path])
-    return Status.normal, fill3.Text(stdout)
-
-
 MAX_IMAGE_SIZE = 200
 
 

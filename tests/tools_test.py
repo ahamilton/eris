@@ -188,9 +188,6 @@ class ToolsTestCase(unittest.TestCase):
     def test_html_syntax(self):
         self._test_tool(tools.html_syntax, [("hi.html", tools.Status.problem)])
 
-    def test_tidy(self):
-        self._test_tool(tools.tidy, [("hi.html", tools.Status.normal)])
-
     def test_html2text(self):
         self._test_tool(tools.html2text, [("hi.html", tools.Status.normal)])
 

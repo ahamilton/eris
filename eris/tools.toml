@@ -20,7 +20,7 @@ tools_for_extensions = [
    [["go"], ["go_vet", "golint", "godoc"]],
    [["bash", "sh", "dash", "ksh"], ["shellcheck"]],
    [["pdf"], ["pdf2txt"]],
-   [["html", "htm"], ["html_syntax", "tidy", "html2text", "pandoc"]],
+   [["html", "htm"], ["html_syntax", "html2text", "pandoc"]],
    [["yaml", "yml"], ["yamllint"]],
    [["md", "epub", "docx", "odt", "rst"], ["pandoc"]],
    [["zip", "jar", "apk", "egg", "whl"], ["zipinfo"]],
