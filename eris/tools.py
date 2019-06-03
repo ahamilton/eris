@@ -187,7 +187,7 @@ def _pretty_bytes(bytes):
     return f"{conversion} {units[unit_index]}"
 
 
-@deps(deps={"file", "coreutils"}, executables={"file", "sha1sum", "md5sum"})
+@deps(deps={"file", "coreutils"}, executables={"file"})
 def metadata(path):
 
     def detail(value, unit):
@@ -213,10 +213,6 @@ def metadata(path):
     stdout, *rest = _do_command(
         ["file", "--dereference", "--brief", "--uncompress", path])
     file_type = stdout
-    stdout, *rest = _do_command(["md5sum", path])
-    md5sum = stdout.split()[0]
-    stdout, *rest = _do_command(["sha1sum", path])
-    sha1sum = stdout.split()[0]
     permissions_value = [permissions,
                          detail(_permissions_in_octal(permissions), None)]
     text = []
@@ -226,7 +222,6 @@ def metadata(path):
             ("access time", access), None,
             ("owner", owner), ("group", group), None,
             ("hardlinks", hardlinks), ("symlink", is_symlink), None,
-            ("md5", md5sum), ("sha1", sha1sum), None,
             ("mime type", mime_type.strip()),
             ("file type", file_type.strip())]:
         if line is None:
