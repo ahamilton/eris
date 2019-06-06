@@ -229,11 +229,13 @@ tools_for_extensions = [
   command = "luacheck"
 
 [go_vet]
-  dependencies = ["golang-go", "go/github.com/golang/go/src/cmd/vet"]
-  command = "go vet"
+  dependencies = ["go/github.com/golang/go/src/cmd/vet"]
+  url = "https://github.com/golang/go"
+  command = "vet"
 
 [golint]
-  dependencies = ["golint", "go/github.com/golang/lint/golint"]
+  dependencies = ["go/github.com/golang/lint/golint"]
+  url = "https://github.com/golang/lint"
   command = "golint -set_exit_status"
 
 [yamllint]

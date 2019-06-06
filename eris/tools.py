@@ -457,8 +457,8 @@ def pil(path):
     return Status.normal, result
 
 
-@deps(deps={"golang-golang-x-tools"}, url="golang-golang-x-tools",
-      executables={"godoc"})
+@deps(deps={"go/github.com/golang/go/src/cmd/godoc" },
+      url="https://github.com/golang/go", executables={"godoc"})
 def godoc(path):
     with tempfile.TemporaryDirectory() as temp_dir:
         symlink_path = os.path.join(temp_dir, "file.go")

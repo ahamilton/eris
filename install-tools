@@ -8,11 +8,12 @@ import subprocess
 import eris.tools
 
 
-pip_deps, dist_deps = set(), set()
+pip_deps, go_deps, dist_deps = set(), set(), set()
+dep_types = {"pip": pip_deps, "go": go_deps}
 for dependency in eris.tools.dependencies():
     if "/" in dependency:
-        pip_version, pip_dependency = dependency.split("/")
-        pip_deps.add(pip_dependency)
+        dep_type, dep = dependency.split("/", maxsplit=1)
+        dep_types[dep_type].add(dep)
     else:
         dist_deps.add(dependency)
 if dist_deps:
@@ -21,3 +22,7 @@ if dist_deps:
 if pip_deps:
     subprocess.run(["python" + eris.tools.PYTHON_VERSION, "-m", "pip",
                     "install"] + list(pip_deps), check=True)
+if go_deps:
+    subprocess.run(["sudo", "apt-get", "-y", "install", "golang-go"],
+                   check=True)
+    subprocess.run(["go", "get", "-u"] + list(go_deps), check=True)
