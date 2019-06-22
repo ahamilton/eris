@@ -8,7 +8,7 @@ FAILURE=0
 CODEBASE_PATH=$(dirname $0)
 cd ${CODEBASE_PATH}/tests
 for test in *_test.py; do
-    echo "Testing $test ..."
+    echo "Testing $test …"
     ./${test} 2>&1
     FAILURE=$(($FAILURE | $?))
     echo

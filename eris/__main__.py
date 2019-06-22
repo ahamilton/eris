@@ -800,7 +800,7 @@ class Screen:
             line_num = (self._summary.get_selection().entry[0].
                         scroll_position[1] + 1)
             self._log.log_message([in_green("Editing "), path_colored,
-                                   in_green(f" at line {line_num}...")])
+                                   in_green(f" at line {line_num}…")])
             subprocess.Popen(f"{self.editor_command} +{line_num} {path}",
                              shell=True, stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE)
@@ -819,7 +819,7 @@ class Screen:
     def toggle_pause(self):
         self._is_paused = not self._is_paused
         self._log.log_command("Paused workers." if self._is_paused else
-                              "Running workers...")
+                              "Running workers…")
         if self._is_paused:
             for worker_ in self.workers:
                 worker_.pause()
@@ -836,14 +836,14 @@ class Screen:
         path_colored = tools.path_colored(selection.path)
         self._log.log_message([in_green("Refreshing "), tool_name,
                                in_green(" result of "), path_colored,
-                               in_green("...")])
+                               in_green("…")])
         self._summary.refresh_result(selection)
 
     def refresh_tool(self):
         selection = self._summary.get_selection()
         tool_name = tools.tool_name_colored(selection.tool, selection.path)
         self._log.log_message([in_green("Refreshing all results of "),
-                               tool_name, in_green("...")])
+                               tool_name, in_green("…")])
         self._summary.refresh_tool(selection.tool)
 
     _DIMMED_BORDER = [termstr.TermStr(part).fg_color(termstr.Color.grey_100)
@@ -867,7 +867,7 @@ class Screen:
         path = self._summary.get_selection().path
         path_colored = tools.path_colored(path)
         self._log.log_message([in_green("Opening "), path_colored,
-                               in_green("...")])
+                               in_green("…")])
         subprocess.Popen(["xdg-open", path], stdout=subprocess.PIPE,
                           stderr=subprocess.PIPE)
 
@@ -1089,11 +1089,11 @@ def main(root_path, loop, worker_count=None, editor_command=None, theme=None,
     notifier = setup_inotify(root_path, loop, on_filesystem_change,
                              is_path_excluded)
     try:
-        log.log_message(f"Starting workers ({worker_count}) ...")
+        log.log_message(f"Starting workers ({worker_count}) …")
         screen.make_workers(worker_count, is_being_tested)
 
         def exit_loop():
-            log.log_command("Exiting...")
+            log.log_command("Exiting…")
             time.sleep(0.05)
             screen.stop_workers()
             loop.stop()
@@ -1120,7 +1120,7 @@ def manage_cache(root_path):
     if os.path.exists(cache_path) and \
        os.stat(__file__).st_mtime > os.stat(timestamp_path).st_mtime:
         print("Eris has been updated, so clearing the cache and"
-              " recalculating all results...")
+              " recalculating all results…")
         shutil.rmtree(cache_path)
     if not os.path.exists(cache_path):
         os.mkdir(cache_path)

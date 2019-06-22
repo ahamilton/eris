@@ -67,7 +67,7 @@ def make_summary_page(project_name, summary):
 def run(server_class=http.server.HTTPServer, handler_class=Webserver, port=80):
     server_address = ("", port)
     httpd = server_class(server_address, handler_class)
-    print("Starting httpd...")
+    print("Starting httpd…")
     httpd.serve_forever()
 
 

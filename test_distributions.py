@@ -133,19 +133,19 @@ def main():
         if os.path.exists(distribution):
             print(distribution, "container already exists.")
         else:
-            print(f"Building {distribution} container...")
+            print(f"Building {distribution} container…")
             globals()["build_" + distribution]()
-        print(f"Installing eris's dependencies in {distribution}...")
+        print(f"Installing eris's dependencies in {distribution}…")
         run_in_container(distribution, "./install-dependencies")
-        print(f"Installing eris in {distribution}...")
+        print(f"Installing eris in {distribution}…")
         run_in_container(distribution, "apt-get install --yes python3-pip")
         run_in_container(distribution, "pip3 install .")
-        print(f"Testing eris in {distribution}...")
+        print(f"Testing eris in {distribution}…")
         run_in_container(distribution, "./test-all")
-        print(f"Running eris in {distribution}...")
+        print(f"Running eris in {distribution}…")
         run_in_container(distribution, "eris --help")
         print(f"Successfully installed eris in {distribution}.")
-        print(f"Removing {distribution} container...")
+        print(f"Removing {distribution} container…")
         try:
             globals()["remove_" + distribution]()
         except KeyError:

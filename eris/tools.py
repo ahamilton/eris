@@ -585,7 +585,7 @@ class Result:
     async def run(self, log, appearance_changed_event, runner):
         tool_name = tool_name_colored(self.tool, self.path)
         path = path_colored(self.path)
-        log.log_message(["Running ", tool_name, " on ", path, "..."])
+        log.log_message(["Running ", tool_name, " on ", path, "…"])
         self.set_status(Status.running)
         if runner.is_already_paused:
             runner.is_already_paused = False

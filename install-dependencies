@@ -12,9 +12,9 @@ if [ $DIST_ID != "ubuntu" ]; then
     echo "Eris can only be installed on Ubuntu."
     exit 1
 fi
-echo "Installing the dependencies of the eris script..."
+echo "Installing the dependencies of the eris script…"
 sudo apt --yes install python3.7 util-linux
 python3.7 -m pip install pyinotify pygments docopt pillow toml
 echo
-echo "Installing all the tools eris may need..."
+echo "Installing all the tools eris may need…"
 ./install-tools

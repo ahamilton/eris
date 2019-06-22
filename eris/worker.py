@@ -12,7 +12,7 @@ import eris.tools as tools
 
 class Worker:
 
-    AUTOSAVE_MESSAGE = "Auto-saving..."
+    AUTOSAVE_MESSAGE = "Auto-saving…"
     unsaved_jobs_total = 0
 
     def __init__(self, is_already_paused, is_being_tested):
