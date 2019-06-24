@@ -8,8 +8,8 @@ import subprocess
 import eris.tools
 
 
-pip_deps, go_deps, dist_deps = set(), set(), set()
-dep_types = {"pip": pip_deps, "go": go_deps}
+pip_deps, go_deps, luarocks_deps, dist_deps = set(), set(), set(), set()
+dep_types = {"pip": pip_deps, "go": go_deps, "luarocks": luarocks_deps}
 for dependency in eris.tools.dependencies():
     if "/" in dependency:
         dep_type, dep = dependency.split("/", maxsplit=1)
@@ -26,3 +26,9 @@ if go_deps:
     subprocess.run(["sudo", "apt-get", "-y", "install", "golang-go"],
                    check=True)
     subprocess.run(["go", "get", "-u"] + list(go_deps), check=True)
+
+if luarocks_deps:
+    subprocess.run(["sudo", "apt-get", "-y", "install", "luarocks"],
+                   check=True)
+    subprocess.run(["sudo", "luarocks", "install"] + list(luarocks_deps),
+                   check=True)

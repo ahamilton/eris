@@ -225,7 +225,7 @@ tools_for_extensions = [
   command = "node --check"
 
 [lua_check]
-  dependencies = ["lua-check"]
+  dependencies = ["luarocks/luacheck"]
   command = "luacheck"
 
 [go_vet]
