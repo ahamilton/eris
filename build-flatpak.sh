@@ -28,5 +28,5 @@ rm -rf "$STATE_DIR/build"
 flatpak-builder "$BUILD_DIR" "$MANIFEST_PATH" --force-clean \
 		--state-dir="$STATE_DIR"
 flatpak build "$BUILD_DIR" test-all
-flatpak build "$BUILD_DIR" eris
+flatpak build "$BUILD_DIR" eris --help
 echo "Build successfull: $BUILD_DIR"
