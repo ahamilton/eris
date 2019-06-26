@@ -19,6 +19,7 @@ tools_for_extensions = [
    [["php"], ["php7_syntax"]],
    [["go"], ["go_vet", "golint", "godoc"]],
    [["bash", "sh", "dash", "ksh"], ["shellcheck"]],
+   [["wasm"], ["wasm-validate", "wasm-objdump"]],
    [["pdf"], ["pdf2txt"]],
    [["html", "htm"], ["html_syntax", "html2text", "pandoc"]],
    [["yaml", "yml"], ["yamllint"]],
@@ -237,6 +238,15 @@ tools_for_extensions = [
   dependencies = ["go/github.com/golang/lint/golint"]
   url = "https://github.com/golang/lint"
   command = "golint -set_exit_status"
+
+[wasm-validate]
+  dependencies = ["git/github.com/WebAssembly/wabt"]
+  command = "wasm-validate"
+
+[wasm-objdump]
+  dependencies = ["git/github.com/WebAssembly/wabt"]
+  command = "wasm-objdump --disassemble"
+  success_status = "normal"
 
 [yamllint]
   dependencies = ["pip/yamllint"]

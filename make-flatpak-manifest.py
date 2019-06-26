@@ -272,6 +272,13 @@ patches = {
               "build-commands": [
                   "make -f makefile",
                   "install -DT bin/7za /app/bin/7z"]},
+
+    "wabt": {"buildsystem": "simple",
+             "build-commands": [
+                 "mkdir build && cd build && "
+                 "cmake -DCMAKE_INSTALL_PREFIX=/app ..",
+                 "cd build && make -j4 install"]
+             },
     
     "rpm": {"config-opts": ["--without-lua"]},
 
