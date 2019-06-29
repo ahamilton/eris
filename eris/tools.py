@@ -434,6 +434,22 @@ def _resize_image(image, new_width):
                         PIL.Image.ANTIALIAS)
 
 
+def _image_to_text(image):
+    text = "▀" * image.width
+    data = list(image.getdata())
+    width = image.width
+    rows = [data[row_index*width:(row_index+1)*width]
+            for row_index in range(image.height)]
+    if image.height % 2 == 1:
+        rows.append([None] * image.width)
+    return fill3.Fixed([
+        termstr.TermStr(text, tuple(termstr.CharStyle(
+            fg_color=top_pixel, bg_color=bottom_pixel)
+            for top_pixel, bottom_pixel in zip(rows[index],
+                                               rows[index+1])))
+        for index in range(0, image.height, 2)])
+
+
 @deps(deps={"pip/pillow"}, url="python3-pil")
 def pil(path):
     import PIL.Image
@@ -441,20 +457,16 @@ def pil(path):
         with PIL.Image.open(image_file).convert("RGB") as image:
             if image.width > MAX_IMAGE_SIZE:
                 image = _resize_image(image, MAX_IMAGE_SIZE)
-            text = "▀" * image.width
-            data = list(image.getdata())
-            width = image.width
-            rows = [data[row_index*width:(row_index+1)*width]
-                    for row_index in range(image.height)]
-            if image.height % 2 == 1:
-                rows.append([None] * image.width)
-            result = fill3.Fixed([
-                termstr.TermStr(text, tuple(termstr.CharStyle(
-                    fg_color=top_pixel, bg_color=bottom_pixel)
-                    for top_pixel, bottom_pixel in zip(rows[index],
-                                                       rows[index+1])))
-                for index in range(0, image.height, 2)])
-    return Status.normal, result
+            return Status.normal, _image_to_text(image)
+
+
+@deps(deps={"pip/svglib"}, url="https://github.com/deeplook/svglib")
+def svglib(path):
+    import svglib.svglib
+    import reportlab.graphics.renderPM
+    drawing = svglib.svglib.svg2rlg(path)
+    image = reportlab.graphics.renderPM.drawToPIL(drawing)
+    return Status.normal, _image_to_text(image)
 
 
 @deps(deps={"go/github.com/golang/go/src/cmd/godoc" },

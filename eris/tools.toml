@@ -36,6 +36,7 @@ tools_for_extensions = [
    [["deb"], ["dpkg_contents", "dpkg_info"]],
    [["rpm"], ["rpm"]],
    [["png", "jpg", "gif", "bmp", "tif", "tiff", "tga"], ["mediainfo", "pil"]],
+   [["svg", "svgz"], ["svglib"]],
    [["mkv", "mka", "mks", "ogg", "ogm", "avi", "wav", "mpeg", "mpg", "vob",
      "mp4", "mpgv", "mpv", "m1v", "m2v", "mp2", "mp3", "asf", "wma", "wmv",
      "qt", "mov", "rm", "rmvb", "ra", "ifo", "ac3", "dts", "aac", "flac",
@@ -227,6 +228,7 @@ tools_for_extensions = [
 
 [lua_check]
   dependencies = ["luarocks/luacheck"]
+  url = "https://github.com/mpeterv/luacheck"
   command = "luacheck"
 
 [go_vet]
@@ -241,10 +243,12 @@ tools_for_extensions = [
 
 [wasm-validate]
   dependencies = ["git/github.com/WebAssembly/wabt"]
+  url = "https://github.com/WebAssembly/wabt"
   command = "wasm-validate"
 
 [wasm-objdump]
   dependencies = ["git/github.com/WebAssembly/wabt"]
+  url = "https://github.com/WebAssembly/wabt"
   command = "wasm-objdump --disassemble"
   success_status = "normal"
 
