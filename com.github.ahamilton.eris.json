@@ -60,6 +60,21 @@
       ]
     },
     {
+      "name": "wabt",
+      "sources": [
+        {
+          "type": "git",
+          "url": "https://github.com/WebAssembly/wabt",
+          "commit": "a81f36c0d5aeda465b593dae7e0adc4ddb660149"
+        }
+      ],
+      "buildsystem": "simple",
+      "build-commands": [
+        "mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/app ..",
+        "cd build && make -j4 install"
+      ]
+    },
+    {
       "name": "godoc",
       "buildsystem": "simple",
       "build-options": {
@@ -2336,7 +2351,7 @@
         {
           "type": "git",
           "url": "https://github.com/ahamilton/eris",
-          "commit": "36027a90f26f86758dcbe864b556a9fff6ecf767"
+          "commit": "ce843e89f33903bdf2f0361f6d17f1b419d60737"
         }
       ]
     }
