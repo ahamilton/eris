@@ -358,20 +358,23 @@ def lua_modules(dep):
                        "sources": sources}]
 
 
+def get_latest_commit():
+    return subprocess.check_output(['git', 'rev-parse', 'HEAD'],
+                                   text=True).strip()
+
+
 def eris_modules():
     eris_url = "https://github.com/ahamilton/eris"
     modules = []
     for dep in ["docopt", "pyinotify", "pygments", "pillow", "toml"]:
         modules.extend(python_modules(dep))
-    current_commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'],
-                                             text=True).strip()
     modules.append({"name": "eris",
                     "buildsystem": "simple",
                     "build-commands": [
                         "python3.7 -m pip install --no-index --prefix=/app .",
                         "cp -a tests test-all /app/bin"],
                     "sources": [{"type": "git", "url": eris_url,
-                                 "commit": current_commit}]})
+                                 "commit": get_latest_commit()}]})
     return modules
 
 
@@ -446,6 +449,8 @@ for dep in sorted(deps - DEPS_IN_RUNTIME) + ["eris"]:
     print()
     all_modules.extend(modules)
     save_manifest(make_manifest(modules, dep), manifest_path)
+eris_module = all_modules[-1]
+eris_module["sources"][0]["commit"] = get_latest_commit()
 manifest = make_combined_manifest(all_modules)
 manifest_path = "com.github.ahamilton.eris.json"
 print()
