@@ -1022,7 +1022,7 @@ class Screen:
         ({"home", "ctrl a"}, cursor_home),
         ({"end", "ctrl e"}, cursor_end), ({"n"}, move_to_next_issue),
         ({"N"}, move_to_next_issue_of_tool), ({"e"}, edit_file),
-        ({"q"}, quit_), ({"p"}, toggle_pause), ({"r"}, refresh),
+        ({"q"}, quit_), ({"p", " "}, toggle_pause), ({"r"}, refresh),
         ({"R"}, refresh_tool), ({"tab"}, toggle_focus),
         ({"f"}, toggle_fullscreen), ("x", xdg_open)]
 
