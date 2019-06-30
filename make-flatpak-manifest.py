@@ -116,25 +116,25 @@ def python_modules(package):
     return [{"name": python_version + "-" + package,
              "buildsystem": "simple",
              "build-commands": [
-                 python_version + ' -m pip install --no-index'
-                 ' --find-links="file://${PWD}" --prefix=/app ' + package
+                 python_version + " -m pip install --no-index"
+                 " --find-links="file://${PWD}" --prefix=/app " + package
              ],
              "sources": [{"type": "file", "url": url, "sha256": sha256}
                          for url, sha256 in sorted(sources)]}]
 
 
 def go_repo_source(repo_path):
-    current_commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'],
+    current_commit = subprocess.check_output(["git", "rev-parse", "HEAD"],
                                              cwd=repo_path, text=True).strip()
-    remote_url = subprocess.check_output(['git', 'remote', 'get-url', 'origin'],
+    remote_url = subprocess.check_output(["git", "remote", "get-url", "origin"],
                                          cwd=repo_path, text=True).strip()
-    dest_path = repo_path[repo_path.rfind('src/'):]
-    return {'type': 'git', 'url': remote_url, 'commit': current_commit,
-            'dest': dest_path}
+    dest_path = repo_path[repo_path.rfind("src/"):]
+    return {"type": "git", "url": remote_url, "commit": current_commit,
+            "dest": dest_path}
 
 
 def go_repo_paths(build_dir):
-    src_dir = build_dir / 'src'
+    src_dir = build_dir / "src"
     go_repo_paths = []
     domains = src_dir.iterdir()
     for domain in domains:
@@ -359,7 +359,7 @@ def lua_modules(dep):
 
 
 def get_latest_commit():
-    return subprocess.check_output(['git', 'rev-parse', 'HEAD'],
+    return subprocess.check_output(["git", "rev-parse", "HEAD"],
                                    text=True).strip()
 
 
