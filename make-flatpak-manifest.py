@@ -117,7 +117,7 @@ def python_modules(package):
              "buildsystem": "simple",
              "build-commands": [
                  python_version + " -m pip install --no-index"
-                 " --find-links="file://${PWD}" --prefix=/app " + package
+                 ' --find-links="file://${PWD}" --prefix=/app ' + package
              ],
              "sources": [{"type": "file", "url": url, "sha256": sha256}
                          for url, sha256 in sorted(sources)]}]
