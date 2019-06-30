@@ -2190,6 +2190,55 @@
       ]
     },
     {
+      "name": "python3.7-svglib",
+      "buildsystem": "simple",
+      "build-commands": [
+        "python3.7 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app svglib"
+      ],
+      "sources": [
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/12/e2/91fcd4cd32545beec6e11628d64d3e20f11b5a95dd1ccf3216fd69f176b7/cssselect2-0.2.1-py2.py3-none-any.whl",
+          "sha256": "267eebc7378ade2e8be710cd0179606ad9c95ecc673138fccfcfba42c5ce153d"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/4e/62/8986cd48ba80196f2efa3670b3672736a989d629a9e4de07b1f84fa5d747/svglib-0.9.1.tar.gz",
+          "sha256": "7daa695db7d54c2359014c6ebb98a995c527339488272c65175d67a5252a690b"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/94/2c/4e501f9c351343c8ba10d70b5a7ca97cdab2690af043a6e52ada65b85b6b/tinycss2-1.0.2-py3-none-any.whl",
+          "sha256": "9fdacc0e22d344ddd2ca053837c133900fe820ae1222f63b79617490a498507a"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/a9/28/43138488a942809fe920ba7edd844c19b5c1dbd59aebcfb8112fdf5cc2e0/reportlab-3.5.23-cp37-cp37m-manylinux1_x86_64.whl",
+          "sha256": "a30b42d6c5ffe1ce7c677328a47386f861c3bb9057bf4de5eb0f97fe17e9b3ba"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/c1/e6/ce127fa0ac17775bc7887c432ffe945c49ae141f01b477b7cd5e63b16bb5/Pillow-6.0.0-cp37-cp37m-manylinux1_x86_64.whl",
+          "sha256": "367385fc797b2c31564c427430c7a8630db1a00bd040555dfc1d5c52e39fcd72"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/ec/51/f45cea425fd5cb0b0380f5b0f048ebc1da5b417e48d304838c02d6288a1e/setuptools-41.0.1-py2.py3-none-any.whl",
+          "sha256": "c7769ce668c7a333d84e17fe8b524b1c45e7ee9f7908ad0a73e1eda7e6a5aebf"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/ef/7a/a42b825b27eaa0deedec913e797dd3e4bef51f21d5f0027a87562342fd25/lxml-4.3.4-cp37-cp37m-manylinux1_x86_64.whl",
+          "sha256": "b773715609649a1a180025213f67ffdeb5a4878c784293ada300ee95a1f3257b"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/f4/24/2a3e3df732393fed8b3ebf2ec078f05546de641fe1b667ee316ec1dcf3b7/webencodings-0.5.1-py2.py3-none-any.whl",
+          "sha256": "a0af1213f3c2226497a97e2b3aa01a7e4bee4f403f95be16fc9acd2947514a78"
+        }
+      ]
+    },
+    {
       "name": "python3.7-yamllint",
       "buildsystem": "simple",
       "build-commands": [
@@ -2351,7 +2400,7 @@
         {
           "type": "git",
           "url": "https://github.com/ahamilton/eris",
-          "commit": "ce843e89f33903bdf2f0361f6d17f1b419d60737"
+          "commit": "a2bea77cd29e5d20bbc774beabbb7ee33feeeae4"
         }
       ]
     }
