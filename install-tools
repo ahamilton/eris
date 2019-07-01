@@ -8,8 +8,10 @@ import subprocess
 import eris.tools
 
 
-pip_deps, go_deps, luarocks_deps, dist_deps = set(), set(), set(), set()
-dep_types = {"pip": pip_deps, "go": go_deps, "luarocks": luarocks_deps}
+pip_deps, go_deps, luarocks_deps, dist_deps, git_deps = set(), set(), set(), \
+    set(), set()
+dep_types = {"pip": pip_deps, "go": go_deps, "luarocks": luarocks_deps,
+             "git": git_deps}
 for dependency in eris.tools.dependencies():
     if "/" in dependency:
         dep_type, dep = dependency.split("/", maxsplit=1)
