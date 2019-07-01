@@ -8,7 +8,6 @@ import json
 import os
 import subprocess
 import sys
-import tempfile
 
 
 USAGE = """Make a flatpak build of eris.
@@ -36,11 +35,10 @@ def patch_manifest(manifest_path, patched_manifest_path):
 
 
 manifest_path, build_dir, state_dir = sys.argv[1:4]
-with tempfile.TemporaryDirectory() as temp_dir:
-    patched_manifest_path = os.path.join(temp_dir, "manifest.json")
-    patch_manifest(manifest_path, patched_manifest_path)
-    subprocess.run(["flatpak-builder", build_dir, patched_manifest_path,
-                    "--force-clean", "--state-dir", state_dir], check=True)
+patched_manifest_path = "manifests-cache/patched-manifest.json"
+patch_manifest(manifest_path, patched_manifest_path)
+subprocess.run(["flatpak-builder", build_dir, patched_manifest_path,
+                "--force-clean", "--disable-download", "--state-dir", state_dir], check=True)
 subprocess.run(["flatpak", "build", build_dir, "test-all"], check=True)
 subprocess.run(["flatpak", "build", build_dir, "eris", "--help"], check=True)
 print("Build successful:", build_dir)
