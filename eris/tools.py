@@ -416,6 +416,18 @@ def perltidy(path):
 # perl6_syntax.deps={"rakudo"}
 
 
+@deps(deps={"git"}, url="https://git-scm.com/docs/git-log",
+      executables={"git"})
+def git_log(path):
+    process = subprocess.run(["git", "log", "--find-renames", "--follow",
+                              "--stat", "--color", path], text=True,
+                             capture_output=True)
+    status = (Status.normal if process.returncode == 0
+              else Status.not_applicable)
+    return status, fill3.Fixed(termstr.TermStr.from_term(
+        process.stdout + process.stderr). splitlines())
+
+
 @deps(deps={"tidy"}, url="tidy", executables={"tidy"})
 def html_syntax(path):
     # Maybe only show errors

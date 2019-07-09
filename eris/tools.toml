@@ -85,13 +85,6 @@ tools_for_extensions = [
   success_status = "normal"
   error_status = "not_applicable"
 
-[git_log]
-  dependencies = ["git"]
-  url = "https://git-scm.com/docs/git-log"
-  command = "git log --find-renames --follow --stat"
-  success_status = "normal"
-  error_status = "not_applicable"
-
 [objdump_headers]
   dependencies = ["binutils"]
   url = "https://en.wikipedia.org/wiki/Objdump"

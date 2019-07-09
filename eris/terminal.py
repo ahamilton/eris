@@ -11,33 +11,33 @@ import sys
 
 
 ESC = "\x1b"
-normal = ESC + "(B\x1b[m"
-bold = ESC + "[1m"
-italic = ESC + "[3m"
-standout = ESC + "[7m"
-underline = ESC + "[4m"
+normal = "[m"
+bold = "[1m"
+italic = "[3m"
+standout = "[7m"
+underline = "[4m"
 enter_fullscreen = ESC + "[?1049h"
 exit_fullscreen = ESC + "[?1049l"
 hide_cursor = ESC + "[?25l"
-normal_cursor = ESC + "[?25l\x1b[?25h"
-clear = ESC + "[H\x1b[2J"
+normal_cursor = ESC + "[?25l" + ESC + "[?25h"
+clear = ESC + "[H" + ESC + "[2J"
 save = ESC + "7"
 restore = ESC + "8"
 
 
 def color(color_number, is_foreground):
     """Set the color of text."""
-    return f"\x1b[{'38' if is_foreground else '48'};5;{color_number:d}m"
+    return f"[{'38' if is_foreground else '48'};5;{color_number:d}m"
 
 
 def rgb_color(rgb, is_foreground):
     """Set the color of text using an rgb tuple."""
-    return f"\x1b[{'38' if is_foreground else '48'};2;" + "%i;%i;%im" % rgb
+    return f"[{'38' if is_foreground else '48'};2;" + "%i;%i;%im" % rgb
 
 
 def move(x, y):
     """Move the cursor to column x, row y."""
-    return f"\x1b[{y + 1:d};{x + 1:d}H"
+    return ESC + f"[{y + 1:d};{x + 1:d}H"
 
 
 @contextlib.contextmanager

@@ -122,13 +122,13 @@ class CharStyle:
 
     @_cache_first_result
     def code_for_term(self):
-        fg_termcode = self.termcode_of_color(self.fg_color, True)
-        bg_termcode = self.termcode_of_color(self.bg_color, False)
-        bold_code = terminal.bold if self.is_bold else ""
-        italic_code = terminal.italic if self.is_italic else ""
-        underline_code = terminal.underline if self.is_underlined else ""
-        return "".join([terminal.normal, fg_termcode, bg_termcode, bold_code,
-                        italic_code, underline_code])
+        fg_termcode = terminal.ESC + self.termcode_of_color(self.fg_color, True)
+        bg_termcode = terminal.ESC + self.termcode_of_color(self.bg_color, False)
+        bold_code = (terminal.ESC + terminal.bold) if self.is_bold else ""
+        italic_code = (terminal.ESC + terminal.italic) if self.is_italic else ""
+        underline_code = (terminal.ESC + terminal.underline) if self.is_underlined else ""
+        return "".join([terminal.ESC, terminal.normal, fg_termcode, bg_termcode,
+                        bold_code, italic_code, underline_code])
 
     def as_html(self):
         bold_code = "font-weight:bold; " if self.is_bold else ""
@@ -157,6 +157,45 @@ class TermStr(collections.UserString):
             self.data = data
             self.style = (style if isinstance(style, tuple)
                           else (style,) * len(data))
+
+    @classmethod
+    def from_term(cls, data):
+        parts = data.split(terminal.ESC)
+        fg_color, bg_color = None, None
+        is_bold, is_italic, is_underlined = False, False, False
+        result_parts = []
+        for part in parts:
+            try:
+                end_index = part.index("m")
+            except ValueError:
+                end_index = 0
+            if part[:2] == "[m":  # Normal
+                is_bold, is_italic, is_underlined = False, False, False
+                fg_color, bg_color = None, None
+            elif part[:3] == terminal.bold:
+                is_bold = True
+            elif part[:3] == terminal.italic:
+                is_italic = True
+            elif part[:3] == terminal.underline:
+                is_underlined = True
+            elif end_index == 3 and part.startswith("[3"):  # 8 foreground color
+                fg_color = int(part[2])
+            elif end_index == 3 and part.startswith("[4"):  # 8 background color
+                bg_color = int(part[2])
+            elif part[:6] == "[38;5;":  # simple foreground color
+                fg_color = int(part[6:end_index])
+            elif part[:6] == "[48;5;":  # simple background color
+                bg_color = int(part[6:end_index])
+            elif part[:6] == "[38;2;":  # rgb foreground color
+                fg_color = tuple(int(component)
+                                 for component in part[6:end_index].split(";"))
+            elif part[:6] == "[48;2;":  # rgb background color
+                bg_color = tuple(int(component)
+                                 for component in part[6:end_index].split(";"))
+            result_parts.append(cls(part[end_index+1:],
+                                    CharStyle(fg_color, bg_color, is_bold,
+                                              is_italic, is_underlined)))
+        return cls("").join(result_parts)
 
     def __eq__(self, other):
         return (self is other or
@@ -189,7 +228,7 @@ class TermStr(collections.UserString):
         return "".join(_join_lists(
             [style.code_for_term(), str_]
             for style, str_, position in self._partition_style()) +
-                       [terminal.normal])
+                       [terminal.ESC + terminal.normal])
 
     def __repr__(self):
         return f"<TermStr: {self.data!r}>"
@@ -282,24 +321,35 @@ class TermStr(collections.UserString):
     def bold(self):
         def make_bold(style):
             return CharStyle(style.fg_color, style.bg_color, is_bold=True,
+                             is_italic=style.is_italic,
                              is_underlined=style.is_underlined)
         return self.transform_style(make_bold)
 
     def underline(self):
         def make_underlined(style):
             return CharStyle(style.fg_color, style.bg_color,
-                             is_bold=style.is_bold, is_underlined=True)
+                             is_bold=style.is_bold, is_italic=style.is_italic,
+                             is_underlined=True)
         return self.transform_style(make_underlined)
+
+    def italic(self):
+        def make_italic(style):
+            return CharStyle(style.fg_color, style.bg_color,
+                             is_bold=style.is_bold, is_italic=True,
+                             is_underlined=style.is_underlined)
+        return self.transform_style(make_italic)
 
     def fg_color(self, fg_color):
         def set_fgcolor(style):
             return CharStyle(fg_color, style.bg_color, is_bold=style.is_bold,
+                             is_italic=style.is_italic,
                              is_underlined=style.is_underlined)
         return self.transform_style(set_fgcolor)
 
     def bg_color(self, bg_color):
         def set_bgcolor(style):
             return CharStyle(style.fg_color, bg_color, is_bold=style.is_bold,
+                             is_italic=style.is_italic,
                              is_underlined=style.is_underlined)
         return self.transform_style(set_bgcolor)
 

@@ -9,6 +9,7 @@ import unittest
 
 os.environ["TERM"] = "xterm-256color"
 
+import eris.terminal
 from eris.termstr import TermStr, CharStyle
 import eris.termstr as termstr
 
@@ -55,7 +56,7 @@ class CharStyleTests(unittest.TestCase):
 
     def test_code_for_term(self):
         self.assertEqual(self.style.code_for_term(),
-                         "\x1b(B\x1b[m\x1b[38;2;255;255;255m\x1b[48;2;0;0;0m")
+                         "\x1b[m\x1b[38;2;255;255;255m\x1b[48;2;0;0;0m")
 
 
 class TermStrTests(unittest.TestCase):
@@ -121,6 +122,28 @@ class TermStrTests(unittest.TestCase):
         self.assertEqual(foo_bold.ljust(5), foo_bold + TermStr("  "))
         self.assertEqual(foo_bold.rjust(0), foo_bold)
         self.assertEqual(foo_bold.rjust(5), TermStr("  ") + foo_bold)
+
+    def test_from_term(self):
+        def test_round_trip(term_str):
+            self.assertEqual(TermStr.from_term(str(term_str)), term_str)
+
+        test_round_trip(TermStr("foo"))
+        test_round_trip(TermStr("foo").bold())
+        test_round_trip(TermStr("foo").underline())
+        test_round_trip(TermStr("foo").italic())
+        test_round_trip(termstr.TermStr("foo").fg_color(termstr.Color.red))
+        test_round_trip(termstr.TermStr("foo").fg_color(termstr.Color.red).\
+                        bg_color(termstr.Color.green))
+        test_round_trip(termstr.TermStr("foo").fg_color(1))
+        test_round_trip(termstr.TermStr("foo").bg_color(10))
+        self.assertEqual(TermStr.from_term(eris.terminal.ESC + "[33mfoo"),
+                         termstr.TermStr("foo").fg_color(3))
+        self.assertEqual(TermStr.from_term(eris.terminal.ESC + "[45mfoo"),
+                         termstr.TermStr("foo").bg_color(5))
+        self.assertEqual(TermStr.from_term(eris.terminal.ESC + "[45mfoo" +
+                                           eris.terminal.ESC + "[mbar"),
+                         termstr.TermStr("foo").bg_color(5) +
+                         termstr.TermStr("bar"))
 
 
 if __name__ == "__main__":
