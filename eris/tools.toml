@@ -9,7 +9,7 @@ tools_for_extensions = [
 	     "python_mccabe", "bandit"]],
 #    [["pyc"], ["pydisasm"]],
    [["pl", "pm", "t"], ["perl_syntax", "perldoc"]],
-#    [["p6", "pm6"], ["perl6_syntax", "perldoc"]],
+   [["p6", "pm6"], ["perl6_syntax"]],
    [["pod", "pod6"], ["perldoc"]],
    [["c", "h"], ["c_syntax_gcc", "cppcheck"]],
    [["cc", "cpp", "hpp"], ["cpp_syntax_gcc", "cppcheck"]],
@@ -76,6 +76,11 @@ tools_for_extensions = [
   dependencies = ["perl"]
   url = "https://en.wikipedia.org/wiki/Perl"
   command = "perl -c"
+
+[perl6_syntax]
+  dependencies = ["rakudo"]
+  url = "https://rakudo.org/"
+  command = "perl6 -c"
 
 [dis]
   dependencies = []

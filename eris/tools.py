@@ -399,11 +399,6 @@ def perltidy(path):
     return Status.normal, _syntax_highlight_using_path(stdout, path)
 
 
-# def perl6_syntax(path):
-#     return _run_command(["perl6", "-c", path])
-# perl6_syntax.deps={"rakudo"}
-
-
 @deps(deps={"git"}, url="https://git-scm.com/docs/git-log",
       executables={"git"})
 def git_log(path):

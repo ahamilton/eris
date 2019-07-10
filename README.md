@@ -23,11 +23,12 @@ then to run:
 
 ### Tools
 
-Extensions(96) | Tools(57)
+Extensions(98) | Tools(58)
 ----------:| -----
 .* | [contents](http://pygments.org/) • metadata • [git_blame](https://git-scm.com/docs/git-blame) • [git_log](https://git-scm.com/docs/git-log)
 .py | [python_syntax](https://en.wikipedia.org/wiki/Python_syntax_and_semantics) • [python_unittests](https://docs.python.org/3/library/unittest.html) • [pydoc](https://docs.python.org/3/library/pydoc.html) • [mypy](http://mypy-lang.org/) • [python_coverage](https://coverage.readthedocs.io/) • [pycodestyle](http://pycodestyle.pycqa.org/en/latest/) • [pydocstyle](http://www.pydocstyle.org/en/2.1.1/usage.html) • [pyflakes](https://pypi.org/project/pyflakes/) • [pylint](https://www.pylint.org/) • [python_gut](https://github.com/ahamilton/eris/blob/master/gut.py) • [python_modulefinder](https://docs.python.org/3/library/modulefinder.html) • [dis](https://docs.python.org/3/library/dis.html) • [python_mccabe](https://pypi.org/project/mccabe/) • [bandit](https://pypi.org/project/bandit/)
 .pl .pm .t | [perl_syntax](https://en.wikipedia.org/wiki/Perl) • [perldoc](http://perldoc.perl.org/)
+.p6 .pm6 | [perl6_syntax](https://rakudo.org/)
 .pod .pod6 | [perldoc](http://perldoc.perl.org/)
 .c .h | [c_syntax_gcc](https://gcc.gnu.org/) • [cppcheck](http://sourceforge.net/p/cppcheck/wiki/Home/)
 .cc .cpp .hpp | [cpp_syntax_gcc](https://gcc.gnu.org/) • [cppcheck](http://sourceforge.net/p/cppcheck/wiki/Home/)

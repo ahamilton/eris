@@ -268,6 +268,23 @@ patches = {
                  "sha256": "059b3cb69970d8c8c5964caced0335b4a"
                            "f34ac990c8e61f7e3f90cd1c2d11e49"}]},
 
+    "rakudo": {"buildsystem": "simple",
+               "build-commands": [
+                   "cd MoarVM; perl Configure.pl --prefix=/app",
+                   "cd MoarVM; make -j4",
+                   "cd MoarVM; make install",
+                   "cd nqp; perl Configure.pl --prefix=/app",
+                   "cd nqp; make -j4",
+                   "cd nqp; make install",
+                   "perl Configure.pl --prefix=/app",
+                   "make -j4",
+                   "make install",
+               ],
+               "sources": [{
+                   "type": "archive",
+                   "url": "https://rakudostar.com/files/star/rakudo-star-2019.03.tar.gz",
+                   "sha256": "640a69de3a2b4f6c49e75a01040e8770de3650ea1d5bb61057e3dfa3c79cc008"}]},
+
     "p7zip": {"buildsystem": "simple",
               "build-commands": [
                   "make -f makefile",
