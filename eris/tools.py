@@ -97,14 +97,13 @@ def _printable(text):
 
 
 def _fix_input(input_):
-    input_str = (input_.decode("utf-8", errors="replace")
-                 if isinstance(input_, bytes) else input_)
-    return _printable(input_str).expandtabs(tabsize=4)
+    return _printable(input_).expandtabs(tabsize=4)
 
 
 def _do_command(command, **kwargs):
     completed_process = subprocess.run(command, stdout=subprocess.PIPE,
-                                       stderr=subprocess.PIPE, **kwargs)
+                                       stderr=subprocess.PIPE, text=True,
+                                       **kwargs)
     return (_fix_input(completed_process.stdout),
             _fix_input(completed_process.stderr), completed_process.returncode)
 
