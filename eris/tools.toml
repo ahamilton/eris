@@ -72,6 +72,11 @@ tools_for_extensions = [
   command = "python3.7 -m modulefinder"
   success_status = "normal"
 
+[perl_syntax]
+  dependencies = ["perl"]
+  url = "https://en.wikipedia.org/wiki/Perl"
+  command = "perl -c"
+
 [dis]
   dependencies = []
   url = "https://docs.python.org/3/library/dis.html"

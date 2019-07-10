@@ -384,17 +384,6 @@ def bandit(path):
     return status, fill3.Text(text_without_timestamp)
 
 
-def _perl_version(path):
-    # stdout, stderr, returncode = _do_command(["perl", "-c", path])
-    # return "perl6" if "Perl v6.0.0 required" in stderr else "perl"
-    return "perl"
-
-
-@deps(deps={"perl"}, url="https://en.wikipedia.org/wiki/Perl")
-def perl_syntax(path):
-    return _run_command([_perl_version(path), "-c", path])
-
-
 @deps(deps={"perl-doc"}, url="http://perldoc.perl.org/",
       executables={"perldoc"})
 def perldoc(path):
