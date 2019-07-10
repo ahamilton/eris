@@ -23,7 +23,9 @@ ERIS_ROOT = os.path.dirname(__file__)
 class ExecutablesTestCase(unittest.TestCase):
 
     def test_executables_exist_in_path(self):
-        for tool in tools.tools_all():
+        # Tools not in ubuntu:
+        exceptions = {tools.wasm_validate, tools.wasm_objdump}
+        for tool in tools.tools_all() - exceptions:
             if hasattr(tool, "executables"):
                 for executable in tool.executables:
                     with self.subTest(executable=executable, tool=tool):
