@@ -38,7 +38,8 @@ manifest_path, build_dir, state_dir = sys.argv[1:4]
 patched_manifest_path = "manifests-cache/patched-manifest.json"
 patch_manifest(manifest_path, patched_manifest_path)
 subprocess.run(["flatpak-builder", build_dir, patched_manifest_path,
-                "--force-clean", "--state-dir", state_dir], check=True)
+                "--force-clean", "--state-dir", state_dir, "--disable-updates"],
+               check=True)
 subprocess.run(["flatpak", "build", build_dir, "test-all"], check=True)
 subprocess.run(["flatpak", "build", build_dir, "eris", "--help"], check=True)
 print("Build successful:", build_dir)
