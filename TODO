@@ -1,14 +1,11 @@
 Todo
 - Publish on pypi.
 - Make a snap build work.
-- Make a flatpak build work.
 - Check the appimage build.
 
 
 Todo (tool related)
 - Report on python doctests. (also coverage of)
-- Cache tools._python_version.
-- Colourise git_diff.
 
 
 Done
@@ -276,6 +273,7 @@ Ideas
   editor? pygment syntax theme? Compress the cache? Ignore which paths? Log to disk?
   The cache path?
 - Have a command-line option to create workers that run remotely.
+- Make a flatpak build work.
 
 
 Shelved
@@ -434,3 +432,7 @@ Shelved
   - wheel?, __pkginfo__.py?
   - Maybe also use cxfreeze, py2exe, pyrun or zipapp?  Is zipapp the standard way?
   - Use cookiecutter?
+- Colourise git_diff.
+  - Not necessary since git_diff was removed.
+- Cache tools._python_version.
+  - Not supporting python2 anymore.
