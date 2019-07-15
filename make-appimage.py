@@ -68,6 +68,12 @@ def make_app_dir(app_dir, new_paths):
     cmd(f"cp {ERIS_PATH}/appimage/* {app_dir}")
 
 
+def cleanup_app_dir(app_dir):
+    cmd(f"rm -rf {app_dir}/usr/share/go*")
+    cmd(f"rm -rf {app_dir}/usr/lib/go*")
+    cmd(f"rm -rf {app_dir}/root")
+
+
 def make_appimage(app_dir):
     cmd("wget --continue https://github.com/AppImage/AppImageKit/releases/"
         "download/12/appimagetool-x86_64.AppImage")
@@ -87,6 +93,7 @@ def main(work_path):
     if os.path.exists(app_dir):
         cmd("sudo rm -rf " + app_dir)
     make_app_dir(app_dir, new_paths)
+    cleanup_app_dir(app_dir)
     make_appimage(app_dir)
 
 
