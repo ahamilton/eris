@@ -37,7 +37,7 @@ def run_in_container(container, command):
 
 
 def build_ubuntu():
-    cmd("sudo debootstrap zesty ubuntu.part")
+    cmd("sudo debootstrap cosmic ubuntu.part")
     run_in_container("ubuntu.part",
                      "ln -sf /lib/systemd/resolv.conf /etc/resolv.conf")
     run_in_container("ubuntu.part",

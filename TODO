@@ -1,7 +1,6 @@
 Todo
 - Publish on pypi.
 - Make a snap build work.
-- Check the appimage build.
 
 
 Todo (tool related)
@@ -169,6 +168,8 @@ Done
 - Add "git log <path>".
 - Change to using python3.7.
 - Rename project to Eris.
+- Make a flatpak build work.
+- Check the appimage build.
 
 A-syntax, B-tests, C-auto docs, D-lint, E-coverage, F-profile, G-tidy, H-import deps
              A B C D E F G H
@@ -273,7 +274,6 @@ Ideas
   editor? pygment syntax theme? Compress the cache? Ignore which paths? Log to disk?
   The cache path?
 - Have a command-line option to create workers that run remotely.
-- Make a flatpak build work.
 
 
 Shelved

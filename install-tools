@@ -27,10 +27,10 @@ if pip_deps:
 if go_deps:
     subprocess.run(["sudo", "apt-get", "-y", "install", "golang-go"],
                    check=True)
-    subprocess.run(["go", "get", "-u"] + list(go_deps), check=True)
+    subprocess.run(["go", "get"] + list(go_deps), check=True)
 
 if luarocks_deps:
-    subprocess.run(["sudo", "apt-get", "-y", "install", "luarocks"],
-                   check=True)
+    subprocess.run(["sudo", "apt-get", "-y", "install", "luarocks",
+                    "liblua5.3-dev"], check=True)
     subprocess.run(["sudo", "luarocks", "install"] + list(luarocks_deps),
                    check=True)

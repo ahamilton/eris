@@ -57,26 +57,7 @@ def make_ubuntu_base():
 def install_eris():
     run_in_container = test_distributions.run_in_container
     run_in_container("ubuntu", "./install-dependencies")
-    # libunionpreload doesn't trick shebangs?
-    run_in_container("ubuntu", "sed -i -e "
-                     "'s/\/usr\/bin\/python/\/usr\/bin\/env python/g' "
-                     "/usr/bin/pdf2txt")
-    run_in_container("ubuntu", "apt-get install --yes python3-pip")
     run_in_container("ubuntu", "pip3 install -I .")
-
-
-# FIX: This isn`t making the correct libunionpreload.
-# def make_libunionpreload():
-#  #See https://github.com/AppImage/AppImages/blob/master/recipes/meta/Recipe
-#     temp_dir = tempfile.mkdtemp()
-#     cmd("wget -q https://raw.githubusercontent.com/mikix/deb2snap/"
-#         "blob/847668c4a89e2d4a1711fe062a4bae0c7ab81bd0/src/preload.c "
-#         "-O - | sed -e 's|SNAPPY|UNION|g' | sed -e 's|SNAPP|UNION|g' | "
-#         "sed -e 's|SNAP|UNION|g' | sed -e 's|snappy|union|g' "
-#         "> %s/libunionpreload.c" % temp_dir)
-#     cmd("gcc -shared -fPIC %s/libunionpreload.c -o libunionpreload.so "
-#         '-ldl -DUNION_LIBNAME="libunionpreload.so"' % temp_dir)
-#     cmd("strip libunionpreload.so")
 
 
 def make_app_dir(app_dir, new_paths):
@@ -85,16 +66,13 @@ def make_app_dir(app_dir, new_paths):
     cmd(f"cp -a {ERIS_PATH}/tests {app_dir}")
     cmd(f"cp -a {ERIS_PATH}/test-all {app_dir}")
     cmd(f"cp {ERIS_PATH}/appimage/* {app_dir}")
-    # if not os.path.exists("libunionpreload.so"):
-    #     make_libunionpreload()
-    # cmd("cp libunionpreload.so " + app_dir)
 
 
 def make_appimage(app_dir):
     cmd("wget --continue https://github.com/AppImage/AppImageKit/releases/"
-        "download/9/appimagetool-x86_64.AppImage")
+        "download/12/appimagetool-x86_64.AppImage")
     cmd("chmod +x appimagetool-x86_64.AppImage")
-    cmd("./appimagetool-x86_64.AppImage " + app_dir)
+    cmd("ARCH=x86_64 ./appimagetool-x86_64.AppImage --comp xz " + app_dir)
 
 
 def main(work_path):
