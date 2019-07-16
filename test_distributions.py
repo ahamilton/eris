@@ -37,13 +37,10 @@ def run_in_container(container, command):
 
 
 def build_ubuntu():
-    cmd("sudo debootstrap cosmic ubuntu.part")
+    cmd("sudo debootstrap --components=main,restricted,universe,multiverse "
+        "cosmic ubuntu.part")
     run_in_container("ubuntu.part",
                      "ln -sf /lib/systemd/resolv.conf /etc/resolv.conf")
-    run_in_container("ubuntu.part",
-                     "sed -i -e 's/main/main restricted universe"
-                     " multiverse/g' /etc/apt/sources.list")
-    run_in_container("ubuntu.part", "apt-get update")
     os.rename("ubuntu.part", "ubuntu")
 
 
@@ -58,7 +55,6 @@ def build_fedora():
 def build_debian():
     cmd("sudo debootstrap --components=main,contrib,non-free "
         "--include=sudo jessie debian.part")
-    run_in_container("debian.part", "apt-get update")
     os.rename("debian.part", "debian")
 
 
