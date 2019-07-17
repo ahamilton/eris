@@ -88,13 +88,6 @@ tools_for_extensions = [
   command = "python3.7 -m dis"
   success_status = "normal"
 
-[git_blame]
-  dependencies = ["git"]
-  url = "https://git-scm.com/docs/git-blame"
-  command = "git blame --show-stats --date=short"
-  success_status = "normal"
-  error_status = "not_applicable"
-
 [objdump_headers]
   dependencies = ["binutils"]
   url = "https://en.wikipedia.org/wiki/Objdump"

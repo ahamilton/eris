@@ -399,6 +399,18 @@ def perltidy(path):
     return Status.normal, _syntax_highlight_using_path(stdout, path)
 
 
+@deps(deps={"git"}, url="https://git-scm.com/docs/git-blame",
+      executables={"git"})
+def git_blame(path):
+    process = subprocess.run([
+        "git", "blame", "--show-stats", "--date=short", "--color-lines",
+        "--color-by-age", path], text=True, capture_output=True)
+    status = (Status.normal if process.returncode == 0
+              else Status.not_applicable)
+    return status, fill3.Fixed(termstr.TermStr.from_term(
+        process.stdout + process.stderr). splitlines())
+
+
 @deps(deps={"git"}, url="https://git-scm.com/docs/git-log",
       executables={"git"})
 def git_log(path):
