@@ -696,6 +696,8 @@ def run_tool_no_error(path, tool):
         status, result = tool(path)
     except subprocess.TimeoutExpired:
         status, result = Status.timed_out, fill3.Text("Timed out")
+    except UnicodeDecodeError:
+        status, result = Status.not_applicable, fill3.Text("Result not in UTF-8")
     except:
         status, result = Status.error, _syntax_highlight(
             traceback.format_exc(), pygments.lexers.PythonTracebackLexer(),
