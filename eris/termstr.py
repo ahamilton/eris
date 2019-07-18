@@ -160,6 +160,7 @@ class TermStr(collections.UserString):
 
     @classmethod
     def from_term(cls, data):
+        data = data.expandtabs(tabsize=4)
         parts = data.split(terminal.ESC)
         fg_color, bg_color = None, None
         is_bold, is_italic, is_underlined = False, False, False
