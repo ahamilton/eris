@@ -1,5 +1,5 @@
-                                              
-./input/Mcrt1.o:     file format elf32-i386   
-                                              
+
+./input/Mcrt1.o:     file format elf32-i386
+
 objdump: ./input/Mcrt1.o: not a dynamic object
-objdump: ./input/Mcrt1.o: invalid operation   
+objdump: ./input/Mcrt1.o: invalid operation

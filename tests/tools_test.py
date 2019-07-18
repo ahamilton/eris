@@ -64,7 +64,7 @@ class ToolsTestCase(unittest.TestCase):
             with self.subTest(input_filename=input_filename):
                 status, result = run_tool(tool, input_filename)
                 golden_path = result_path(tool, input_filename)
-                golden.assertGolden(widget_to_string(result), golden_path)
+                golden.assertGolden(str(result), golden_path)
                 self.assertEqual(status, expected_status)
 
     def test_metadata(self):

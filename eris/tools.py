@@ -114,7 +114,7 @@ def _run_command(command, success_status=None, error_status=None,
     error_status = Status.problem if error_status is None else error_status
     stdout, stderr, returncode = _do_command(command, timeout=timeout)
     result_status = success_status if returncode == 0 else error_status
-    return result_status, fill3.Text(stdout + stderr)
+    return result_status, (stdout + stderr)
 
 
 def deps(**kwargs):
@@ -150,8 +150,9 @@ def _syntax_highlight(text, lexer, style):
         "", [termstr.TermStr(text, _char_style_for_token_type(
             token_type, default_bg_color, default_style))
              for token_type, text in pygments.lex(text, lexer)])
-    return fill3.Text(text, pad_char=termstr.TermStr(" ").bg_color(
+    text_widget = fill3.Text(text, pad_char=termstr.TermStr(" ").bg_color(
         default_bg_color))
+    return fill3.join("\n", text_widget.text)
 
 
 def _syntax_highlight_using_path(text, path):
@@ -230,7 +231,7 @@ def metadata(path):
             name = termstr.TermStr(name + ":").fg_color(
                 termstr.Color.blue).ljust(16)
             text.append(name + fill3.join("", value) + "\n")
-    return (Status.normal, fill3.Text(fill3.join("", text)))
+    return (Status.normal, fill3.join("", text))
 
 
 @deps(deps={"pip/pygments"}, url="python3-pygments")
@@ -239,13 +240,13 @@ def contents(path):
         try:
             text = file_.read()
         except UnicodeDecodeError:
-            return Status.not_applicable, fill3.Text("Not unicode")
+            return Status.not_applicable, "Not unicode"
     text = _fix_input(text)
     try:
-        text_widget = _syntax_highlight_using_path(text, path)
+        text = _syntax_highlight_using_path(text, path)
     except pygments.util.ClassNotFound:
-        text_widget = fill3.Text(text)
-    return Status.normal, text_widget
+        pass
+    return Status.normal, text
 
 
 @deps(url="https://en.wikipedia.org/wiki/Python_syntax_and_semantics")
@@ -258,7 +259,7 @@ def python_syntax(path):
         is_correct = False
     else:
         is_correct = True
-    return (Status.ok if is_correct else Status.problem), fill3.Text("")
+    return (Status.ok if is_correct else Status.problem), ""
 
 
 def _has_shebang_line(path):
@@ -278,9 +279,9 @@ def python_unittests(path):
                    else [PYTHON_EXECUTABLE, path])
         stdout, stderr, returncode = _do_command(command, timeout=TIMEOUT)
         status = Status.ok if returncode == 0 else Status.problem
-        return status, fill3.Text(stdout + "\n" + stderr)
+        return status, (stdout + "\n" + stderr)
     else:
-        return Status.not_applicable, fill3.Text("No tests.")
+        return Status.not_applicable, "No tests."
 
 
 @deps(url="https://docs.python.org/3/library/pydoc.html")
@@ -291,7 +292,7 @@ def pydoc(path):
     if not stdout.startswith("Help on module"):
         status = Status.not_applicable
     stdout = stdout.replace(os.getcwd() + "/", "")
-    return status, fill3.Text(_fix_input(stdout))
+    return status, _fix_input(stdout)
 
 
 @deps(deps={"pip/mypy"}, url="http://mypy-lang.org/", executables={"mypy"})
@@ -300,7 +301,7 @@ def mypy(path):
         [PYTHON_EXECUTABLE, "-m", "mypy", "--ignore-missing-imports", path],
         timeout=TIMEOUT)
     status = Status.ok if returncode == 0 else Status.problem
-    return status, fill3.Text(stdout)
+    return status, stdout
 
 
 def _colorize_coverage_report(text):
@@ -329,10 +330,10 @@ def python_coverage(path):
             flat_path = path.replace("/", "_")
             with open(os.path.join(temp_dir, flat_path + ",cover"), "r") as f:
                 stdout = f.read()
-        return Status.normal, fill3.Text(_colorize_coverage_report(stdout))
+        return Status.normal, _colorize_coverage_report(stdout)
     else:
-        return Status.not_applicable, fill3.Text(
-            "No corresponding test file: " + os.path.normpath(test_path))
+        return Status.not_applicable, ("No corresponding test file: "
+                                       + os.path.normpath(test_path))
 
 
 @deps(url="https://github.com/ahamilton/eris/blob/master/gut.py")
@@ -363,7 +364,7 @@ def python_mccabe(path):
         max_score = max(_get_mccabe_line_score(line)
                         for line in stdout.splitlines())
     status = Status.problem if max_score > 10 else Status.ok
-    return status, fill3.Text(_colorize_mccabe(stdout))
+    return status, _colorize_mccabe(stdout)
 
 
 # FIX: Reenable when pydisasm is not causing problems
@@ -381,15 +382,15 @@ def bandit(path):
         timeout=TIMEOUT)
     status = Status.ok if returncode == 0 else Status.problem
     text_without_timestamp = "".join(stdout.splitlines(keepends=True)[2:])
-    return status, fill3.Text(text_without_timestamp)
+    return status, text_without_timestamp
 
 
 @deps(deps={"perl-doc"}, url="http://perldoc.perl.org/",
       executables={"perldoc"})
 def perldoc(path):
     stdout, stderr, returncode = _do_command(["perldoc", "-t", path])
-    return ((Status.normal, fill3.Text(stdout)) if returncode == 0
-            else (Status.not_applicable, fill3.Text(stderr)))
+    return ((Status.normal, stdout) if returncode == 0
+            else (Status.not_applicable, stderr))
 
 
 @deps(deps={"perltidy"}, url="http://perltidy.sourceforge.net/",
@@ -407,8 +408,7 @@ def git_blame(path):
         "--color-by-age", path], text=True, capture_output=True)
     status = (Status.normal if process.returncode == 0
               else Status.not_applicable)
-    return status, fill3.Text(termstr.TermStr.from_term(
-        process.stdout + process.stderr))
+    return status, termstr.TermStr.from_term(process.stdout + process.stderr)
 
 
 @deps(deps={"git"}, url="https://git-scm.com/docs/git-log",
@@ -419,8 +419,7 @@ def git_log(path):
                              capture_output=True)
     status = (Status.normal if process.returncode == 0
               else Status.not_applicable)
-    return status, fill3.Text(termstr.TermStr.from_term(
-        process.stdout + process.stderr))
+    return status, termstr.TermStr.from_term(process.stdout + process.stderr)
 
 
 @deps(deps={"tidy"}, url="tidy", executables={"tidy"})
@@ -428,7 +427,7 @@ def html_syntax(path):
     # Maybe only show errors
     stdout, stderr, returncode = _do_command(["tidy", path])
     status = Status.ok if returncode == 0 else Status.problem
-    return status, fill3.Text(stderr)
+    return status, stderr
 
 
 MAX_IMAGE_SIZE = 200
@@ -449,7 +448,7 @@ def _image_to_text(image):
             for row_index in range(image.height)]
     if image.height % 2 == 1:
         rows.append([None] * image.width)
-    return fill3.Fixed([
+    return fill3.join("\n", [
         termstr.TermStr(text, tuple(termstr.CharStyle(
             fg_color=top_pixel, bg_color=bottom_pixel)
             for top_pixel, bottom_pixel in zip(rows[index],
@@ -484,7 +483,7 @@ def godoc(path):
         os.symlink(os.path.abspath(path), symlink_path)
         stdout, stderr, returncode = _do_command(["godoc", "."], cwd=temp_dir)
         os.remove(symlink_path)
-    return Status.normal, fill3.Text(stdout)
+    return Status.normal, stdout
 
 
 def make_tool_function(dependencies, command, url=None, success_status=None,
@@ -695,9 +694,9 @@ def run_tool_no_error(path, tool):
     try:
         status, result = tool(path)
     except subprocess.TimeoutExpired:
-        status, result = Status.timed_out, fill3.Text("Timed out")
+        status, result = Status.timed_out, "Timed out"
     except UnicodeDecodeError:
-        status, result = Status.not_applicable, fill3.Text("Result not in UTF-8")
+        status, result = Status.not_applicable, "Result not in UTF-8"
     except:
         status, result = Status.error, _syntax_highlight(
             traceback.format_exc(), pygments.lexers.PythonTracebackLexer(),
