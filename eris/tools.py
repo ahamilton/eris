@@ -407,8 +407,8 @@ def git_blame(path):
         "--color-by-age", path], text=True, capture_output=True)
     status = (Status.normal if process.returncode == 0
               else Status.not_applicable)
-    return status, fill3.Fixed(termstr.TermStr.from_term(
-        process.stdout + process.stderr). splitlines())
+    return status, fill3.Text(termstr.TermStr.from_term(
+        process.stdout + process.stderr))
 
 
 @deps(deps={"git"}, url="https://git-scm.com/docs/git-log",
@@ -419,8 +419,8 @@ def git_log(path):
                              capture_output=True)
     status = (Status.normal if process.returncode == 0
               else Status.not_applicable)
-    return status, fill3.Fixed(termstr.TermStr.from_term(
-        process.stdout + process.stderr). splitlines())
+    return status, fill3.Text(termstr.TermStr.from_term(
+        process.stdout + process.stderr))
 
 
 @deps(deps={"tidy"}, url="tidy", executables={"tidy"})
