@@ -109,10 +109,18 @@ def _do_command(command, **kwargs):
 
 
 def _run_command(command, success_status=None, error_status=None,
-                 timeout=None):
+                 has_color=False, timeout=None):
     success_status = Status.ok if success_status is None else success_status
     error_status = Status.problem if error_status is None else error_status
-    stdout, stderr, returncode = _do_command(command, timeout=timeout)
+    if has_color:
+        process = subprocess.run(command, stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE, text=True,
+                                 timeout=timeout)
+        stdout, stderr, returncode = (termstr.TermStr.from_term(process.stdout),
+                                      termstr.TermStr.from_term(process.stderr),
+                                      process.returncode)
+    else:
+        stdout, stderr, returncode = _do_command(command, timeout=timeout)
     result_status = success_status if returncode == 0 else error_status
     return result_status, (stdout + stderr)
 
@@ -400,28 +408,6 @@ def perltidy(path):
     return Status.normal, _syntax_highlight_using_path(stdout, path)
 
 
-@deps(deps={"git"}, url="https://git-scm.com/docs/git-blame",
-      executables={"git"})
-def git_blame(path):
-    process = subprocess.run([
-        "git", "blame", "--show-stats", "--date=short", "--color-lines",
-        "--color-by-age", path], text=True, capture_output=True)
-    status = (Status.normal if process.returncode == 0
-              else Status.not_applicable)
-    return status, termstr.TermStr.from_term(process.stdout + process.stderr)
-
-
-@deps(deps={"git"}, url="https://git-scm.com/docs/git-log",
-      executables={"git"})
-def git_log(path):
-    process = subprocess.run(["git", "log", "--find-renames", "--follow",
-                              "--stat", "--color", path], text=True,
-                             capture_output=True)
-    status = (Status.normal if process.returncode == 0
-              else Status.not_applicable)
-    return status, termstr.TermStr.from_term(process.stdout + process.stderr)
-
-
 @deps(deps={"tidy"}, url="tidy", executables={"tidy"})
 def html_syntax(path):
     # Maybe only show errors
@@ -487,7 +473,7 @@ def godoc(path):
 
 
 def make_tool_function(dependencies, command, url=None, success_status=None,
-                       error_status=None):
+                       error_status=None, has_color=False):
     if url is None:
         url = dependencies[0]
     command = command.split()
@@ -496,7 +482,8 @@ def make_tool_function(dependencies, command, url=None, success_status=None,
     error_status = None if error_status is None else Status[error_status]
     @deps(deps=set(dependencies), url=url, executables=executables)
     def func(path):
-        return _run_command(command + [path], success_status, error_status)
+        return _run_command(command + [path], success_status, error_status,
+                            has_color)
     return func
 
 

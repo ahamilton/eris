@@ -1,6 +1,7 @@
 Todo
 - Publish on pypi.
 - Make a snap build work.
+- Colourise more tools: luacheck, gcc, perl6, shellcheck, elinks?
 
 
 Todo (tool related)

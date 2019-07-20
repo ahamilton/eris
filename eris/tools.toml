@@ -82,6 +82,22 @@ tools_for_extensions = [
   url = "https://rakudo.org/"
   command = "perl6 -c"
 
+[git_blame]
+  dependencies = ["git"]
+  url = "https://git-scm.com/docs/git-blame"
+  command = "git blame --show-stats --date=short --color-lines --color-by-age"
+  success_status = "normal"
+  error_status = "not_applicable"
+  has_color = true
+
+[git_log]
+  dependencies = ["git"]
+  url = "https://git-scm.com/docs/git-log"
+  command = "git log --find-renames --follow --stat --color"
+  success_status = "normal"
+  error_status = "not_applicable"
+  has_color = true
+
 [dis]
   dependencies = []
   url = "https://docs.python.org/3/library/dis.html"
