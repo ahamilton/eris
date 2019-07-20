@@ -244,6 +244,7 @@ tools_for_extensions = [
   dependencies = ["luarocks/luacheck"]
   url = "https://github.com/mpeterv/luacheck"
   command = "luacheck"
+  has_color = true
 
 [go_vet]
   dependencies = ["go/github.com/golang/go/src/cmd/vet"]
