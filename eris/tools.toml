@@ -81,6 +81,7 @@ tools_for_extensions = [
   dependencies = ["rakudo"]
   url = "https://rakudo.org/"
   command = "perl6 -c"
+  has_color = true
 
 [git_blame]
   dependencies = ["git"]

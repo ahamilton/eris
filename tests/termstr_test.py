@@ -136,6 +136,7 @@ class TermStrTests(unittest.TestCase):
                         bg_color(termstr.Color.green))
         test_round_trip(termstr.TermStr("foo").fg_color(1))
         test_round_trip(termstr.TermStr("foo").bg_color(10))
+        self.assertEqual(TermStr.from_term("foo"), termstr.TermStr("foo"))
         self.assertEqual(TermStr.from_term(eris.terminal.ESC + "[33mfoo"),
                          termstr.TermStr("foo").fg_color(3))
         self.assertEqual(TermStr.from_term(eris.terminal.ESC + "[45mfoo"),

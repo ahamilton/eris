@@ -164,8 +164,8 @@ class TermStr(collections.UserString):
         parts = data.split(terminal.ESC)
         fg_color, bg_color = None, None
         is_bold, is_italic, is_underlined = False, False, False
-        result_parts = []
-        for part in parts:
+        result_parts = [parts[0]]
+        for part in parts[1:]:
             try:
                 end_index = part.index("m")
             except ValueError:
