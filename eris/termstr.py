@@ -170,7 +170,7 @@ class TermStr(collections.UserString):
                 end_index = part.index("m")
             except ValueError:
                 end_index = 0
-            if part[:2] == "[m":  # Normal
+            if part[:2] == terminal.normal or part[:3] == "[0m":  # Normal
                 is_bold, is_italic, is_underlined = False, False, False
                 fg_color, bg_color = None, None
             elif part[:3] == terminal.bold:

@@ -144,6 +144,10 @@ class TermStrTests(unittest.TestCase):
                                            eris.terminal.ESC + "[mbar"),
                          termstr.TermStr("foo").bg_color(5) +
                          termstr.TermStr("bar"))
+        self.assertEqual(TermStr.from_term(eris.terminal.ESC + "[45mfoo" +
+                                           eris.terminal.ESC + "[0mbar"),
+                         termstr.TermStr("foo").bg_color(5) +
+                         termstr.TermStr("bar"))
 
 
 if __name__ == "__main__":

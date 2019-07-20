@@ -220,7 +220,8 @@ tools_for_extensions = [
 
 [shellcheck]
   dependencies = ["shellcheck"]
-  command = "shellcheck"
+  command = "shellcheck --color=always"
+  has_color = true
 
 [cppcheck]
   dependencies = ["cppcheck"]

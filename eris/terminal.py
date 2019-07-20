@@ -11,7 +11,7 @@ import sys
 
 
 ESC = "\x1b"
-normal = "[m"
+normal = "[m"  # or "[0m"
 bold = "[1m"
 italic = "[3m"
 standout = "[7m"
