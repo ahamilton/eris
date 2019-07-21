@@ -170,7 +170,10 @@ class TermStr(collections.UserString):
                 end_index = part.index("K")
                 codes = []
             else:
-                end_index = part.index("m")
+                try:
+                    end_index = part.index("m")
+                except ValueError:
+                    continue
                 codes = part[1:end_index].split(";")
             previous_code = None
             for index, code in enumerate(codes):

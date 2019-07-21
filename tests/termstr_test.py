@@ -159,6 +159,9 @@ class TermStrTests(unittest.TestCase):
                          termstr.TermStr("foo").fg_color(13))
         self.assertEqual(TermStr.from_term(eris.terminal.ESC + "[105mfoo"),
                          termstr.TermStr("foo").bg_color(13))
+        self.assertEqual(TermStr.from_term(eris.terminal.ESC + "(B" +
+                                           eris.terminal.ESC + "[mfoo"),
+                         termstr.TermStr("foo"))
 
 
 if __name__ == "__main__":
