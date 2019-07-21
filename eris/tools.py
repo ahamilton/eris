@@ -4,7 +4,6 @@
 # Licensed under the Artistic License 2.0.
 
 import ast
-import asyncio
 import contextlib
 import enum
 import functools
@@ -116,9 +115,9 @@ def _run_command(command, success_status=None, error_status=None,
         process = subprocess.run(command, stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE, text=True,
                                  timeout=timeout)
-        stdout, stderr, returncode = (termstr.TermStr.from_term(process.stdout),
-                                      termstr.TermStr.from_term(process.stderr),
-                                      process.returncode)
+        stdout, stderr, returncode = (
+            termstr.TermStr.from_term(process.stdout),
+            termstr.TermStr.from_term(process.stderr), process.returncode)
     else:
         stdout, stderr, returncode = _do_command(command, timeout=timeout)
     result_status = success_status if returncode == 0 else error_status
@@ -461,7 +460,7 @@ def svglib(path):
     return Status.normal, _image_to_text(image)
 
 
-@deps(deps={"go/github.com/golang/go/src/cmd/godoc" },
+@deps(deps={"go/github.com/golang/go/src/cmd/godoc"},
       url="https://github.com/golang/go", executables={"godoc"})
 def godoc(path):
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -614,7 +613,7 @@ class Result:
         return [status_to_str(self.status)]
 
     def as_html(self):
-        html, styles  = termstr.TermStr(status_to_str(self.status)).as_html()
+        html, styles = termstr.TermStr(status_to_str(self.status)).as_html()
         return (f'<a title="{self.tool.__name__}" '
                 f'href="{self.path}/{self.tool.__name__}">{html}</a>', styles)
 
@@ -679,16 +678,15 @@ def tools_for_path(path):
 
 def run_tool_no_error(path, tool):
     try:
-        status, result = tool(path)
+        return tool(path)
     except subprocess.TimeoutExpired:
-        status, result = Status.timed_out, "Timed out"
+        return Status.timed_out, "Timed out"
     except UnicodeDecodeError:
-        status, result = Status.not_applicable, "Result not in UTF-8"
-    except:
-        status, result = Status.error, _syntax_highlight(
+        return Status.not_applicable, "Result not in UTF-8"
+    except Exception:
+        return Status.error, _syntax_highlight(
             traceback.format_exc(), pygments.lexers.PythonTracebackLexer(),
             pygments.styles.get_style_by_name(os.environ["PYGMENT_STYLE"]))
-    return status, result
 
 
 def _convert_lscolor_code_to_charstyle(lscolor_code):
