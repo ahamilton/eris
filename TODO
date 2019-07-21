@@ -1,7 +1,6 @@
 Todo
 - Publish on pypi.
 - Make a snap build work.
-- Colourise more tools: luacheck, gcc, perl6, shellcheck, elinks?
 
 
 Todo (tool related)
@@ -171,6 +170,7 @@ Done
 - Rename project to Eris.
 - Make a flatpak build work.
 - Check the appimage build.
+- Colourise more tools: luacheck, gcc, perl6, shellcheck, elinks?
 
 A-syntax, B-tests, C-auto docs, D-lint, E-coverage, F-profile, G-tidy, H-import deps
              A B C D E F G H
