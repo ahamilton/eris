@@ -1,6 +1,8 @@
 Todo
 - Publish on pypi.
 - Make a snap build work.
+- Support 'reverse' and 'faint' escape codes,
+  used by pylint and yamllint.
 
 
 Todo (tool related)

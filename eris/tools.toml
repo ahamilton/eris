@@ -285,7 +285,8 @@ tools_for_extensions = [
 [yamllint]
   dependencies = ["pip/yamllint"]
   url = "https://github.com/adrienverge/yamllint"
-  command = "python3.7 -m yamllint"
+  command = "python3.7 -m yamllint -f colored"
+  has_color = true
 
 [mediainfo]
   dependencies = ["mediainfo"]
