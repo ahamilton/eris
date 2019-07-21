@@ -3,7 +3,6 @@
 # Copyright (C) 2015-2019 Andrew Hamilton. All rights reserved.
 # Licensed under the Artistic License 2.0.
 
-import ast
 import contextlib
 import enum
 import functools
@@ -254,19 +253,6 @@ def contents(path):
     except pygments.util.ClassNotFound:
         pass
     return Status.normal, text
-
-
-@deps(url="https://en.wikipedia.org/wiki/Python_syntax_and_semantics")
-def python_syntax(path):
-    with open(path) as f:
-        source = f.read()
-    try:
-        ast.parse(source)
-    except SyntaxError:
-        is_correct = False
-    else:
-        is_correct = True
-    return (Status.ok if is_correct else Status.problem), ""
 
 
 def _has_shebang_line(path):

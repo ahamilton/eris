@@ -46,6 +46,11 @@ tools_for_extensions = [
    ]
 
 
+[python_syntax]
+  dependencies = []
+  url = "https://en.wikipedia.org/wiki/Python_syntax_and_semantics"
+  command = "python3.7 -m py_compile"
+
 [pycodestyle]
   dependencies = ["pip/pycodestyle"]
   url = "http://pycodestyle.pycqa.org/en/latest/"
