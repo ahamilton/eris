@@ -166,33 +166,38 @@ class TermStr(collections.UserString):
         is_bold, is_italic, is_underlined = False, False, False
         result_parts = [parts[0]]
         for part in parts[1:]:
-            try:
-                end_index = part.index("m")
-            except ValueError:
-                end_index = 0
-            if part[:2] == terminal.normal or part[:3] == "[0m":  # Normal
-                is_bold, is_italic, is_underlined = False, False, False
-                fg_color, bg_color = None, None
-            elif part[:3] == terminal.bold:
-                is_bold = True
-            elif part[:3] == terminal.italic:
-                is_italic = True
-            elif part[:3] == terminal.underline:
-                is_underlined = True
-            elif end_index == 3 and part.startswith("[3"):  # 8 foreground color
-                fg_color = int(part[2])
-            elif end_index == 3 and part.startswith("[4"):  # 8 background color
-                bg_color = int(part[2])
-            elif part[:6] == "[38;5;":  # simple foreground color
-                fg_color = int(part[6:end_index])
-            elif part[:6] == "[48;5;":  # simple background color
-                bg_color = int(part[6:end_index])
-            elif part[:6] == "[38;2;":  # rgb foreground color
-                fg_color = tuple(int(component)
-                                 for component in part[6:end_index].split(";"))
-            elif part[:6] == "[48;2;":  # rgb background color
-                bg_color = tuple(int(component)
-                                 for component in part[6:end_index].split(";"))
+            end_index = part.index("m")
+            codes = part[1:end_index].split(";")
+            previous_code = None
+            for index, code in enumerate(codes):
+                if code in ["", "0"]:  # Normal
+                    is_bold, is_italic, is_underlined = False, False, False
+                    fg_color, bg_color = None, None
+                elif code == "1":  # bold
+                    is_bold = True
+                elif code == "3":  # italic
+                    is_italic = True
+                elif code == "4":  # underline
+                    is_underlined = True
+                elif len(code) == 2 and code.startswith("3"):  # 8 fg color
+                    fg_color = int(code[1])
+                elif len(code) == 2 and code.startswith("4"):  # 8 bg color
+                    bg_color = int(code[1])
+                elif code == "5" and previous_code == "38":  # simple fg color
+                    fg_color = int(codes[index+1])
+                    codes[index+1:index+2] = []
+                elif code == "5" and previous_code == "48":  # simple bg color
+                    bg_color = int(codes[index+1])
+                    codes[index+1:index+2] = []
+                elif code == "2" and previous_code == "38":  # rgb fg color
+                    fg_color = tuple(int(component)
+                                     for component in codes[index+1:index+4])
+                    codes[index+1:index+4] = []
+                elif code == "2" and previous_code == "48":  # rgb bg color
+                    bg_color = tuple(int(component)
+                                     for component in codes[index+1:index+4])
+                    codes[index+1:index+4] = []
+                previous_code = code
             result_parts.append(cls(part[end_index+1:],
                                     CharStyle(fg_color, bg_color, is_bold,
                                               is_italic, is_underlined)))

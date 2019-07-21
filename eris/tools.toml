@@ -64,7 +64,8 @@ tools_for_extensions = [
 [pylint]
   dependencies = ["pip/pylint"]
   url = "https://www.pylint.org/"
-  command = "python3.7 -m pylint --errors-only"
+  command = "python3.7 -m pylint -f colorized --errors-only"
+  has_color = true
 
 [python_modulefinder]
   dependencies = []
