@@ -166,18 +166,22 @@ class TermStr(collections.UserString):
         is_bold, is_italic, is_underlined = False, False, False
         result_parts = [parts[0]]
         for part in parts[1:]:
-            end_index = part.index("m")
-            codes = part[1:end_index].split(";")
+            if part.startswith("[K"):
+                end_index = part.index("K")
+                codes = []
+            else:
+                end_index = part.index("m")
+                codes = part[1:end_index].split(";")
             previous_code = None
             for index, code in enumerate(codes):
                 if code in ["", "0"]:  # Normal
                     is_bold, is_italic, is_underlined = False, False, False
                     fg_color, bg_color = None, None
-                elif code == "1":  # bold
+                elif code in ["01", "1"]:  # bold
                     is_bold = True
-                elif code == "3":  # italic
+                elif code in ["03", "3"]:  # italic
                     is_italic = True
-                elif code == "4":  # underline
+                elif code in ["04", "4"]:  # underline
                     is_underlined = True
                 elif len(code) == 2 and code.startswith("3"):  # 8 fg color
                     fg_color = int(code[1])

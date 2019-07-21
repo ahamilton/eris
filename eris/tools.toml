@@ -202,12 +202,14 @@ tools_for_extensions = [
 [c_syntax_gcc]
   dependencies = ["gcc", "g++"]
   url = "https://gcc.gnu.org/"
-  command = "gcc -fsyntax-only"
+  command = "gcc -fsyntax-only -fdiagnostics-color=always"
+  has_color = true
 
 [cpp_syntax_gcc]
   dependencies = ["gcc", "g++"]
   url = "https://gcc.gnu.org/"
-  command = "gcc -fsyntax-only"
+  command = "gcc -fsyntax-only -fdiagnostics-color=always"
+  has_color = true
 
 [php7_syntax]
   dependencies = ["php7.2-cli"]
