@@ -382,16 +382,6 @@ def python_mccabe(path):
 #                         Status.not_applicable)
 
 
-@deps(deps={"pip/bandit"}, url="https://pypi.org/project/bandit/")
-def bandit(path):
-    stdout, stderr, returncode = _do_command(
-        [PYTHON_EXECUTABLE, "-m", "bandit.cli.main", "-f", "txt", path],
-        timeout=TIMEOUT)
-    status = Status.ok if returncode == 0 else Status.problem
-    text_without_timestamp = "".join(stdout.splitlines(keepends=True)[2:])
-    return status, text_without_timestamp
-
-
 @deps(deps={"perl-doc"}, url="http://perldoc.perl.org/",
       executables={"perldoc"})
 def perldoc(path):
@@ -472,7 +462,7 @@ def godoc(path):
 
 
 def make_tool_function(dependencies, command, url=None, success_status=None,
-                       error_status=None, has_color=False):
+                       error_status=None, has_color=False, timeout=None):
     if url is None:
         url = dependencies[0]
     command = command.split()
@@ -482,7 +472,7 @@ def make_tool_function(dependencies, command, url=None, success_status=None,
     @deps(deps=set(dependencies), url=url, executables=executables)
     def func(path):
         return _run_command(command + [path], success_status, error_status,
-                            has_color)
+                            has_color, timeout)
     return func
 
 

@@ -127,9 +127,6 @@ class ToolsTestCase(unittest.TestCase):
     def test_python_mccable(self):
         self._test_tool(tools.python_mccabe, self.HI_OK)
 
-    def test_bandit(self):
-        self._test_tool(tools.bandit, self.HI_OK)
-
     # FIX: Make the golden-file deterministic
     # def test_pydisasm(self):
     #     self._test_tool(tools.pydisasm,

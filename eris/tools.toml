@@ -73,6 +73,13 @@ tools_for_extensions = [
   command = "python3.7 -m modulefinder"
   success_status = "normal"
 
+[bandit]
+  dependencies = ["pip/bandit"]
+  url = "https://pypi.org/project/bandit/"
+  command = "python3.7 -m bandit.cli.main -f screen"
+  has_color = true
+  timeout = 60
+
 [perl_syntax]
   dependencies = ["perl"]
   url = "https://en.wikipedia.org/wiki/Perl"

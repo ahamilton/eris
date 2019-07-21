@@ -183,10 +183,14 @@ class TermStr(collections.UserString):
                     is_italic = True
                 elif code in ["04", "4"]:  # underline
                     is_underlined = True
-                elif len(code) == 2 and code.startswith("3"):  # 8 fg color
+                elif len(code) == 2 and code.startswith("3"):  # dim fg color
                     fg_color = int(code[1])
-                elif len(code) == 2 and code.startswith("4"):  # 8 bg color
+                elif len(code) == 2 and code.startswith("4"):  # dim bg color
                     bg_color = int(code[1])
+                elif len(code) == 2 and code.startswith("9"):  # high fg color
+                    fg_color = int(code[1]) + 8
+                elif len(code) == 3 and code.startswith("10"):  # high bg color
+                    bg_color = int(code[2]) + 8
                 elif code == "5" and previous_code == "38":  # simple fg color
                     fg_color = int(codes[index+1])
                     codes[index+1:index+2] = []
