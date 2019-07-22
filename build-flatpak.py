@@ -20,11 +20,6 @@ The script should only be run from the root of the local eris repository.
 """
 
 
-if len(sys.argv) != 4:
-    print(USAGE)
-    sys.exit(1)
-
-
 def patch_manifest(manifest_path, patched_manifest_path):
     with open(manifest_path) as manifest_file:
         manifest = json.load(manifest_file)
@@ -34,12 +29,21 @@ def patch_manifest(manifest_path, patched_manifest_path):
         json.dump(manifest, patched_manifest_file, indent=2)
 
 
-manifest_path, build_dir, state_dir = sys.argv[1:4]
-patched_manifest_path = "manifests-cache/patched-manifest.json"
-patch_manifest(manifest_path, patched_manifest_path)
-subprocess.run(["flatpak-builder", build_dir, patched_manifest_path,
-                "--force-clean", "--state-dir", state_dir, "--disable-updates"],
-               check=True)
-subprocess.run(["flatpak", "build", build_dir, "test-all"], check=True)
-subprocess.run(["flatpak", "build", build_dir, "eris", "--help"], check=True)
-print("Build successful:", build_dir)
+def main(argv):
+    if len(argv) != 4:
+        print(USAGE)
+        sys.exit(1)
+    manifest_path, build_dir, state_dir = argv[1:4]
+    patched_manifest_path = "manifests-cache/patched-manifest.json"
+    patch_manifest(manifest_path, patched_manifest_path)
+    subprocess.run(["flatpak-builder", build_dir, patched_manifest_path,
+                    "--force-clean", "--state-dir", state_dir,
+                    "--disable-updates"], check=True)
+    subprocess.run(["flatpak", "build", build_dir, "test-all"], check=True)
+    subprocess.run(["flatpak", "build", build_dir, "eris", "--help"],
+                   check=True)
+    print("Build successful:", build_dir)
+
+
+if __name__ == "__main__":
+    main(sys.argv)

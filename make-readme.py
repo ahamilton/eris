@@ -13,15 +13,16 @@ def tool_markup(tool):
     return (tool.__name__ if url is None else f"[{tool.__name__}]({url})")
 
 
-all_tools = ([(["*"], tools.generic_tools() +
-               [tools.git_blame, tools.git_log])] +
-             tools.TOOLS_FOR_EXTENSIONS)
-tool_set = set()
-extension_set = set()
-for extensions, tools_ in all_tools:
-    tool_set.update(tools_)
-    extension_set.update(extensions)
-print(f"""\
+def main():
+    all_tools = ([(["*"], tools.generic_tools() +
+                   [tools.git_blame, tools.git_log])] +
+                 tools.TOOLS_FOR_EXTENSIONS)
+    tool_set = set()
+    extension_set = set()
+    for extensions, tools_ in all_tools:
+        tool_set.update(tools_)
+        extension_set.update(extensions)
+    print(f"""\
 # Eris Codebase Monitor
 
 ### Summary
@@ -49,6 +50,10 @@ then to run:
 
 Extensions({len(extension_set)-1}) | Tools({len(tool_set)})
 ----------:| -----""")
-for extensions, tools_ in all_tools:
-    print("%s | %s" % (" ".join("." + extension for extension in extensions),
-                       " • ".join(tool_markup(tool) for tool in tools_)))
+    for extensions, tools_ in all_tools:
+        print("%s | %s" % (" ".join("." + extension for extension in extensions),
+                           " • ".join(tool_markup(tool) for tool in tools_)))
+
+
+if __name__ == "__main__":
+    main()

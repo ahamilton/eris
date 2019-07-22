@@ -441,35 +441,39 @@ def make_combined_manifest(all_modules):
 SUBSTITUTIONS = {"shellcheck": "haskell/ShellCheck",
                  "pandoc": "haskell/pandoc"}
 
-
-manifests_dir = os.path.join(os.getcwd(), "manifests-cache")
-os.makedirs(manifests_dir, exist_ok=True)
-deps = {SUBSTITUTIONS.get(dep, dep) for dep in eris.tools.dependencies()}
-all_modules = []
-for dep in sorted(deps - DEPS_IN_RUNTIME) + ["eris"]:
-    build_func, package = get_build_func(dep)
-    dep_name = os.path.basename(package)
-    manifest_path = os.path.join(manifests_dir, dep_name+".json")
-    print(f"Making manifest for {dep} …".ljust(70), end="", flush=True)
-    if os.path.exists(manifest_path):
-        print(" (cached)")
-        with open(manifest_path) as json_file:
-            modules = json.load(json_file)["modules"]
+def main():
+    manifests_dir = os.path.join(os.getcwd(), "manifests-cache")
+    os.makedirs(manifests_dir, exist_ok=True)
+    deps = {SUBSTITUTIONS.get(dep, dep) for dep in eris.tools.dependencies()}
+    all_modules = []
+    for dep in sorted(deps - DEPS_IN_RUNTIME) + ["eris"]:
+        build_func, package = get_build_func(dep)
+        dep_name = os.path.basename(package)
+        manifest_path = os.path.join(manifests_dir, dep_name+".json")
+        print(f"Making manifest for {dep} …".ljust(70), end="", flush=True)
+        if os.path.exists(manifest_path):
+            print(" (cached)")
+            with open(manifest_path) as json_file:
+                modules = json.load(json_file)["modules"]
+            all_modules.extend(modules)
+            continue
+        elif dep == "eris":
+            modules = eris_modules()
+        elif dep == "nodejs":
+            modules = nodejs_modules()
+        else:
+            modules = build_func(package)
+        print()
         all_modules.extend(modules)
-        continue
-    elif dep == "eris":
-        modules = eris_modules()
-    elif dep == "nodejs":
-        modules = nodejs_modules()
-    else:
-        modules = build_func(package)
+        save_manifest(make_manifest(modules, dep), manifest_path)
+    eris_module = all_modules[-1]
+    eris_module["sources"][0]["commit"] = get_latest_commit()
+    manifest = make_combined_manifest(all_modules)
+    manifest_path = "com.github.ahamilton.eris.json"
     print()
-    all_modules.extend(modules)
-    save_manifest(make_manifest(modules, dep), manifest_path)
-eris_module = all_modules[-1]
-eris_module["sources"][0]["commit"] = get_latest_commit()
-manifest = make_combined_manifest(all_modules)
-manifest_path = "com.github.ahamilton.eris.json"
-print()
-print(f"Saving manifest file: ./{manifest_path}")
-save_manifest(manifest, manifest_path)
+    print(f"Saving manifest file: ./{manifest_path}")
+    save_manifest(manifest, manifest_path)
+
+
+if __name__ == "__main__":
+    main()
