@@ -21,7 +21,7 @@ tools_for_extensions = [
    [["bash", "sh", "dash", "ksh"], ["shellcheck"]],
    [["wasm"], ["wasm_validate", "wasm_objdump"]],
    [["pdf"], ["pdf2txt"]],
-   [["html", "htm"], ["html_syntax", "html2text", "pandoc"]],
+   [["html", "htm"], ["html_syntax", "html2text", "pandoc", "elinks"]],
    [["yaml", "yml"], ["yamllint"]],
    [["md", "epub", "docx", "odt", "rst"], ["pandoc"]],
    [["zip", "jar", "apk", "egg", "whl"], ["zipinfo"]],
@@ -210,6 +210,12 @@ tools_for_extensions = [
   dependencies = ["pandoc"]
   command = "pandoc -t plain"
   success_status = "normal"
+
+[elinks]
+  dependencies = ["elinks"]
+  command = "elinks -dump-color-mode 1 -dump"
+  success_status = "normal"
+  has_color = true
 
 [c_syntax_gcc]
   dependencies = ["gcc", "g++"]

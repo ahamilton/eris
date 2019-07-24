@@ -23,7 +23,7 @@ then to run:
 
 ### Tools
 
-Extensions(98) | Tools(58)
+Extensions(98) | Tools(59)
 ----------:| -----
 .* | [contents](http://pygments.org/) • metadata • [git_blame](https://git-scm.com/docs/git-blame) • [git_log](https://git-scm.com/docs/git-log)
 .py | [python_syntax](https://en.wikipedia.org/wiki/Python_syntax_and_semantics) • [python_unittests](https://docs.python.org/3/library/unittest.html) • [pydoc](https://docs.python.org/3/library/pydoc.html) • [mypy](http://mypy-lang.org/) • [python_coverage](https://coverage.readthedocs.io/) • [pycodestyle](http://pycodestyle.pycqa.org/en/latest/) • [pydocstyle](http://www.pydocstyle.org/en/2.1.1/usage.html) • [pyflakes](https://pypi.org/project/pyflakes/) • [pylint](https://www.pylint.org/) • [python_gut](https://github.com/ahamilton/eris/blob/master/gut.py) • [python_modulefinder](https://docs.python.org/3/library/modulefinder.html) • [dis](https://docs.python.org/3/library/dis.html) • [python_mccabe](https://pypi.org/project/mccabe/) • [bandit](https://pypi.org/project/bandit/)
@@ -40,7 +40,7 @@ Extensions(98) | Tools(58)
 .bash .sh .dash .ksh | [shellcheck](https://www.shellcheck.net/)
 .wasm | [wasm_validate](https://github.com/WebAssembly/wabt) • [wasm_objdump](https://github.com/WebAssembly/wabt)
 .pdf | [pdf2txt](https://github.com/pdfminer/pdfminer.six)
-.html .htm | [html_syntax](http://www.html-tidy.org/) • [html2text](http://www.mbayer.de/html2text/) • [pandoc](https://pandoc.org/)
+.html .htm | [html_syntax](http://www.html-tidy.org/) • [html2text](http://www.mbayer.de/html2text/) • [pandoc](https://pandoc.org/) • [elinks](http://elinks.cz/)
 .yaml .yml | [yamllint](https://github.com/adrienverge/yamllint)
 .md .epub .docx .odt .rst | [pandoc](https://pandoc.org/)
 .zip .jar .apk .egg .whl | [zipinfo](http://www.info-zip.org/UnZip.html)
