@@ -78,13 +78,15 @@ def make_haskell_module(package, deps):
             revision_path = dep.rsplit("-", maxsplit=1)[0] + ".cabal"
             sources.append({"type": "file", "url": last_url, "sha256": sha256,
                             "dest": dep, "dest-filename": revision_path})
-        commands.extend([
-            f"cd {dep}; ghc -threaded --make Setup",
-            f"cd {dep}; ./Setup configure --disable-optimization --prefix=/app",
-            f"cd {dep}; ./Setup build",
-            f"cd {dep}; ./Setup install"])
+        commands.append(f"./install-package {dep}")
     for dep in reversed(deps):
         commands.append(f"cd {dep}; ./Setup unregister")
+    sources.append({
+        "type": "script",
+        "commands": ["set -x", "cd $1", "ghc -threaded --make Setup",
+                     "./Setup configure --disable-optimization --prefix=/app",
+                     "./Setup build", "./Setup install"],
+        "dest-filename": "install-package"})
     return {"name": f"haskell-{package}", "buildsystem": "simple",
             "build-commands": commands, "builddir": True, "sources": sources,
             "cleanup": ["/lib/x86_64-linux-ghc-*"]}
