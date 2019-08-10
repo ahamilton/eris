@@ -44,6 +44,16 @@
       ]
     },
     {
+      "name": "elinks",
+      "sources": [
+        {
+          "type": "archive",
+          "url": "http://archive.ubuntu.com/ubuntu/pool/universe/e/elinks/elinks_0.13~20190125.orig.tar.xz",
+          "sha256": "18d7f5bc46664d8cc131f2c57545d2668277515eb6ccc677d3580e1fcd18efa9"
+        }
+      ]
+    },
+    {
       "name": "cdrkit",
       "sources": [
         {
@@ -65,7 +75,7 @@
         {
           "type": "git",
           "url": "https://github.com/WebAssembly/wabt",
-          "commit": "a81f36c0d5aeda465b593dae7e0adc4ddb660149"
+          "commit": "8e2da7b6b5d5b1c6cc4177bff5ed170d6bdfd33d"
         }
       ],
       "buildsystem": "simple",
@@ -129,7 +139,7 @@
         {
           "type": "git",
           "url": "https://go.googlesource.com/tools",
-          "commit": "6e04913cbbac05c5c0c9d8f237717e292f700e76",
+          "commit": "b346f7fd45de50e7e5dd5d24a7a009c3c8d8ec61",
           "dest": "src/golang.org/x/tools"
         },
         {
@@ -178,119 +188,63 @@
       "name": "haskell-ShellCheck",
       "buildsystem": "simple",
       "build-commands": [
-        "cd StateVar-1.2; ghc -threaded --make Setup",
-        "cd StateVar-1.2; ./Setup configure --disable-optimization --prefix=/app",
-        "cd StateVar-1.2; ./Setup build",
-        "cd StateVar-1.2; ./Setup install",
-        "cd base-compat-0.10.5; ghc -threaded --make Setup",
-        "cd base-compat-0.10.5; ./Setup configure --disable-optimization --prefix=/app",
-        "cd base-compat-0.10.5; ./Setup build",
-        "cd base-compat-0.10.5; ./Setup install",
-        "cd dlist-0.8.0.6; ghc -threaded --make Setup",
-        "cd dlist-0.8.0.6; ./Setup configure --disable-optimization --prefix=/app",
-        "cd dlist-0.8.0.6; ./Setup build",
-        "cd dlist-0.8.0.6; ./Setup install",
-        "cd hashable-1.2.7.0; ghc -threaded --make Setup",
-        "cd hashable-1.2.7.0; ./Setup configure --disable-optimization --prefix=/app",
-        "cd hashable-1.2.7.0; ./Setup build",
-        "cd hashable-1.2.7.0; ./Setup install",
-        "cd integer-logarithms-1.0.3; ghc -threaded --make Setup",
-        "cd integer-logarithms-1.0.3; ./Setup configure --disable-optimization --prefix=/app",
-        "cd integer-logarithms-1.0.3; ./Setup build",
-        "cd integer-logarithms-1.0.3; ./Setup install",
-        "cd primitive-0.6.4.0; ghc -threaded --make Setup",
-        "cd primitive-0.6.4.0; ./Setup configure --disable-optimization --prefix=/app",
-        "cd primitive-0.6.4.0; ./Setup build",
-        "cd primitive-0.6.4.0; ./Setup install",
-        "cd random-1.1; ghc -threaded --make Setup",
-        "cd random-1.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd random-1.1; ./Setup build",
-        "cd random-1.1; ./Setup install",
-        "cd regex-base-0.93.2; ghc -threaded --make Setup",
-        "cd regex-base-0.93.2; ./Setup configure --disable-optimization --prefix=/app",
-        "cd regex-base-0.93.2; ./Setup build",
-        "cd regex-base-0.93.2; ./Setup install",
-        "cd tagged-0.8.6; ghc -threaded --make Setup",
-        "cd tagged-0.8.6; ./Setup configure --disable-optimization --prefix=/app",
-        "cd tagged-0.8.6; ./Setup build",
-        "cd tagged-0.8.6; ./Setup install",
-        "cd th-abstraction-0.3.1.0; ghc -threaded --make Setup",
-        "cd th-abstraction-0.3.1.0; ./Setup configure --disable-optimization --prefix=/app",
-        "cd th-abstraction-0.3.1.0; ./Setup build",
-        "cd th-abstraction-0.3.1.0; ./Setup install",
-        "cd time-locale-compat-0.1.1.5; ghc -threaded --make Setup",
-        "cd time-locale-compat-0.1.1.5; ./Setup configure --disable-optimization --prefix=/app",
-        "cd time-locale-compat-0.1.1.5; ./Setup build",
-        "cd time-locale-compat-0.1.1.5; ./Setup install",
-        "cd contravariant-1.5.2; ghc -threaded --make Setup",
-        "cd contravariant-1.5.2; ./Setup configure --disable-optimization --prefix=/app",
-        "cd contravariant-1.5.2; ./Setup build",
-        "cd contravariant-1.5.2; ./Setup install",
-        "cd unordered-containers-0.2.10.0; ghc -threaded --make Setup",
-        "cd unordered-containers-0.2.10.0; ./Setup configure --disable-optimization --prefix=/app",
-        "cd unordered-containers-0.2.10.0; ./Setup build",
-        "cd unordered-containers-0.2.10.0; ./Setup install",
-        "cd vector-0.12.0.3; ghc -threaded --make Setup",
-        "cd vector-0.12.0.3; ./Setup configure --disable-optimization --prefix=/app",
-        "cd vector-0.12.0.3; ./Setup build",
-        "cd vector-0.12.0.3; ./Setup install",
-        "cd scientific-0.3.6.2; ghc -threaded --make Setup",
-        "cd scientific-0.3.6.2; ./Setup configure --disable-optimization --prefix=/app",
-        "cd scientific-0.3.6.2; ./Setup build",
-        "cd scientific-0.3.6.2; ./Setup install",
-        "cd uuid-types-1.0.3; ghc -threaded --make Setup",
-        "cd uuid-types-1.0.3; ./Setup configure --disable-optimization --prefix=/app",
-        "cd uuid-types-1.0.3; ./Setup build",
-        "cd uuid-types-1.0.3; ./Setup install",
-        "cd splitmix-0.0.2; ghc -threaded --make Setup",
-        "cd splitmix-0.0.2; ./Setup configure --disable-optimization --prefix=/app",
-        "cd splitmix-0.0.2; ./Setup build",
-        "cd splitmix-0.0.2; ./Setup install",
-        "cd regex-tdfa-1.2.3.2; ghc -threaded --make Setup",
-        "cd regex-tdfa-1.2.3.2; ./Setup configure --disable-optimization --prefix=/app",
-        "cd regex-tdfa-1.2.3.2; ./Setup build",
-        "cd regex-tdfa-1.2.3.2; ./Setup install",
-        "cd attoparsec-0.13.2.2; ghc -threaded --make Setup",
-        "cd attoparsec-0.13.2.2; ./Setup configure --disable-optimization --prefix=/app",
-        "cd attoparsec-0.13.2.2; ./Setup build",
-        "cd attoparsec-0.13.2.2; ./Setup install",
-        "cd QuickCheck-2.13.1; ghc -threaded --make Setup",
-        "cd QuickCheck-2.13.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd QuickCheck-2.13.1; ./Setup build",
-        "cd QuickCheck-2.13.1; ./Setup install",
-        "cd aeson-1.4.3.0; ghc -threaded --make Setup",
-        "cd aeson-1.4.3.0; ./Setup configure --disable-optimization --prefix=/app",
-        "cd aeson-1.4.3.0; ./Setup build",
-        "cd aeson-1.4.3.0; ./Setup install",
-        "cd ShellCheck-0.6.0; ghc -threaded --make Setup",
-        "cd ShellCheck-0.6.0; ./Setup configure --disable-optimization --prefix=/app",
-        "cd ShellCheck-0.6.0; ./Setup build",
-        "cd ShellCheck-0.6.0; ./Setup install",
-        "cd ShellCheck-0.6.0; ./Setup unregister",
-        "cd aeson-1.4.3.0; ./Setup unregister",
-        "cd QuickCheck-2.13.1; ./Setup unregister",
+        "./install-package Diff-0.3.4",
+        "./install-package StateVar-1.2",
+        "./install-package base-compat-0.10.5",
+        "./install-package base-orphans-0.8.1",
+        "./install-package dlist-0.8.0.7",
+        "./install-package hashable-1.3.0.0",
+        "./install-package integer-logarithms-1.0.3",
+        "./install-package primitive-0.7.0.0",
+        "./install-package random-1.1",
+        "./install-package regex-base-0.93.2",
+        "./install-package tagged-0.8.6",
+        "./install-package th-abstraction-0.3.1.0",
+        "./install-package contravariant-1.5.2",
+        "./install-package time-compat-1.9.2.2",
+        "./install-package unordered-containers-0.2.10.0",
+        "./install-package vector-0.12.0.3",
+        "./install-package scientific-0.3.6.2",
+        "./install-package uuid-types-1.0.3",
+        "./install-package splitmix-0.0.3",
+        "./install-package regex-tdfa-1.2.3.2",
+        "./install-package attoparsec-0.13.2.2",
+        "./install-package QuickCheck-2.13.2",
+        "./install-package aeson-1.4.4.0",
+        "./install-package ShellCheck-0.7.0",
+        "cd ShellCheck-0.7.0; ./Setup unregister",
+        "cd aeson-1.4.4.0; ./Setup unregister",
+        "cd QuickCheck-2.13.2; ./Setup unregister",
         "cd attoparsec-0.13.2.2; ./Setup unregister",
         "cd regex-tdfa-1.2.3.2; ./Setup unregister",
-        "cd splitmix-0.0.2; ./Setup unregister",
+        "cd splitmix-0.0.3; ./Setup unregister",
         "cd uuid-types-1.0.3; ./Setup unregister",
         "cd scientific-0.3.6.2; ./Setup unregister",
         "cd vector-0.12.0.3; ./Setup unregister",
         "cd unordered-containers-0.2.10.0; ./Setup unregister",
+        "cd time-compat-1.9.2.2; ./Setup unregister",
         "cd contravariant-1.5.2; ./Setup unregister",
-        "cd time-locale-compat-0.1.1.5; ./Setup unregister",
         "cd th-abstraction-0.3.1.0; ./Setup unregister",
         "cd tagged-0.8.6; ./Setup unregister",
         "cd regex-base-0.93.2; ./Setup unregister",
         "cd random-1.1; ./Setup unregister",
-        "cd primitive-0.6.4.0; ./Setup unregister",
+        "cd primitive-0.7.0.0; ./Setup unregister",
         "cd integer-logarithms-1.0.3; ./Setup unregister",
-        "cd hashable-1.2.7.0; ./Setup unregister",
-        "cd dlist-0.8.0.6; ./Setup unregister",
+        "cd hashable-1.3.0.0; ./Setup unregister",
+        "cd dlist-0.8.0.7; ./Setup unregister",
+        "cd base-orphans-0.8.1; ./Setup unregister",
         "cd base-compat-0.10.5; ./Setup unregister",
-        "cd StateVar-1.2; ./Setup unregister"
+        "cd StateVar-1.2; ./Setup unregister",
+        "cd Diff-0.3.4; ./Setup unregister"
       ],
       "builddir": true,
       "sources": [
+        {
+          "type": "archive",
+          "url": "http://hackage.haskell.org/package/Diff-0.3.4/Diff-0.3.4.tar.gz",
+          "sha256": "77b7daec5a79ade779706748f11b4d9b8f805e57a68e7406c3b5a1dee16e0c2f",
+          "dest": "Diff-0.3.4"
+        },
         {
           "type": "archive",
           "url": "http://hackage.haskell.org/package/StateVar-1.2/StateVar-1.2.tar.gz",
@@ -305,29 +259,21 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/dlist-0.8.0.6/dlist-0.8.0.6.tar.gz",
-          "sha256": "780b4ac91d6e88e77ebf1629568bddd45959b8e0cd295b17c7d55d835c03c73f",
-          "dest": "dlist-0.8.0.6"
-        },
-        {
-          "type": "file",
-          "url": "http://hackage.haskell.org/package/dlist-0.8.0.6/revision/1.cabal",
-          "sha256": "4e17a354ae6aede083e63abc55eeda463774ba6baf8d64de2f0fe6261f3a7938",
-          "dest": "dlist-0.8.0.6",
-          "dest-filename": "dlist.cabal"
+          "url": "http://hackage.haskell.org/package/base-orphans-0.8.1/base-orphans-0.8.1.tar.gz",
+          "sha256": "442bd63aed102e753b2fed15df8ae19f35ee07af26590da63837c523b64a99db",
+          "dest": "base-orphans-0.8.1"
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/hashable-1.2.7.0/hashable-1.2.7.0.tar.gz",
-          "sha256": "ecb5efc0586023f5a0dc861100621c1dbb4cbb2f0516829a16ebac39f0432abf",
-          "dest": "hashable-1.2.7.0"
+          "url": "http://hackage.haskell.org/package/dlist-0.8.0.7/dlist-0.8.0.7.tar.gz",
+          "sha256": "a3c06a200f9756329b09d415e7733b7204dda76ce07783e6457d0ab9ffbcba2c",
+          "dest": "dlist-0.8.0.7"
         },
         {
-          "type": "file",
-          "url": "http://hackage.haskell.org/package/hashable-1.2.7.0/revision/1.cabal",
-          "sha256": "03b6836ca9cd3ad0e5a2f3cce989b001dd0e05f306a873db3196037adb30e0a4",
-          "dest": "hashable-1.2.7.0",
-          "dest-filename": "hashable.cabal"
+          "type": "archive",
+          "url": "http://hackage.haskell.org/package/hashable-1.3.0.0/hashable-1.3.0.0.tar.gz",
+          "sha256": "822e5413fbccca6ae884d3aba4066422c8b5d58d23d18b9ecb5c03273bb19ab4",
+          "dest": "hashable-1.3.0.0"
         },
         {
           "type": "archive",
@@ -336,17 +282,17 @@
           "dest": "integer-logarithms-1.0.3"
         },
         {
-          "type": "archive",
-          "url": "http://hackage.haskell.org/package/primitive-0.6.4.0/primitive-0.6.4.0.tar.gz",
-          "sha256": "4cbeaf7924dd79221f327ea101a29bf35c4976dc3319df157ff46ea68e6a0c64",
-          "dest": "primitive-0.6.4.0"
+          "type": "file",
+          "url": "http://hackage.haskell.org/package/integer-logarithms-1.0.3/revision/1.cabal",
+          "sha256": "280ade63c067aaff7259049b033aa7c51e9e993cdaa6e6c601560a92e530dffc",
+          "dest": "integer-logarithms-1.0.3",
+          "dest-filename": "integer-logarithms.cabal"
         },
         {
-          "type": "file",
-          "url": "http://hackage.haskell.org/package/primitive-0.6.4.0/revision/1.cabal",
-          "sha256": "5b6a2c3cc70a35aabd4565fcb9bb1dd78fe2814a36e62428a9a1aae8c32441a1",
-          "dest": "primitive-0.6.4.0",
-          "dest-filename": "primitive.cabal"
+          "type": "archive",
+          "url": "http://hackage.haskell.org/package/primitive-0.7.0.0/primitive-0.7.0.0.tar.gz",
+          "sha256": "786a44fea328caf704b762ebc887e9e8476c4378fdf3a06c94e86ef1878d1576",
+          "dest": "primitive-0.7.0.0"
         },
         {
           "type": "archive",
@@ -366,6 +312,13 @@
           "url": "http://hackage.haskell.org/package/regex-base-0.93.2/regex-base-0.93.2.tar.gz",
           "sha256": "20dc5713a16f3d5e2e6d056b4beb9cfdc4368cd09fd56f47414c847705243278",
           "dest": "regex-base-0.93.2"
+        },
+        {
+          "type": "file",
+          "url": "http://hackage.haskell.org/package/regex-base-0.93.2/revision/1.cabal",
+          "sha256": "da123f4c8e91c0e8a4177a9236c707f6ff43cb61d93fda91ddd0c4f3fd815fc6",
+          "dest": "regex-base-0.93.2",
+          "dest-filename": "regex-base.cabal"
         },
         {
           "type": "archive",
@@ -388,15 +341,22 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/time-locale-compat-0.1.1.5/time-locale-compat-0.1.1.5.tar.gz",
-          "sha256": "07ff1566de7d851423a843b2de385442319348c621d4f779b3d365ce91ac502c",
-          "dest": "time-locale-compat-0.1.1.5"
-        },
-        {
-          "type": "archive",
           "url": "http://hackage.haskell.org/package/contravariant-1.5.2/contravariant-1.5.2.tar.gz",
           "sha256": "c4262c24e3dcc2ba8ca221ed52a6390818a715301e4f13135d8d732e0c7dc60c",
           "dest": "contravariant-1.5.2"
+        },
+        {
+          "type": "archive",
+          "url": "http://hackage.haskell.org/package/time-compat-1.9.2.2/time-compat-1.9.2.2.tar.gz",
+          "sha256": "a268613385d359274edf48fb2dad4af29874f58486b2d5625e3b95a371066a17",
+          "dest": "time-compat-1.9.2.2"
+        },
+        {
+          "type": "file",
+          "url": "http://hackage.haskell.org/package/time-compat-1.9.2.2/revision/1.cabal",
+          "sha256": "9998dc1b77b5067572ab708e94750f1061152f342e92ad1aba38aae63581174d",
+          "dest": "time-compat-1.9.2.2",
+          "dest-filename": "time-compat.cabal"
         },
         {
           "type": "archive",
@@ -445,9 +405,9 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/splitmix-0.0.2/splitmix-0.0.2.tar.gz",
-          "sha256": "e6abb71ab9c1daeb35262523f23adf7d5d70dfbf097ec40caf91b35866a43bf9",
-          "dest": "splitmix-0.0.2"
+          "url": "http://hackage.haskell.org/package/splitmix-0.0.3/splitmix-0.0.3.tar.gz",
+          "sha256": "fce462557f490c6c3d264ca70ef98a2c644ba341a71e6ee9f87ee7f3e7ab0acc",
+          "dest": "splitmix-0.0.3"
         },
         {
           "type": "archive",
@@ -470,28 +430,37 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/QuickCheck-2.13.1/QuickCheck-2.13.1.tar.gz",
-          "sha256": "a6463a96e7af7d6d5614dc919adca6e740b92a66334a55333ffbe44cac89d9c6",
-          "dest": "QuickCheck-2.13.1"
-        },
-        {
-          "type": "file",
-          "url": "http://hackage.haskell.org/package/QuickCheck-2.13.1/revision/2.cabal",
-          "sha256": "b6c85c6a7ffb800f52aad50dc28d224a968d1a28b3fc5f41ccb91c7b9c252d18",
-          "dest": "QuickCheck-2.13.1",
-          "dest-filename": "QuickCheck.cabal"
+          "url": "http://hackage.haskell.org/package/QuickCheck-2.13.2/QuickCheck-2.13.2.tar.gz",
+          "sha256": "7b560baa5853de777702dc23a6f2126ae4adbfdab163295bc56323a706914610",
+          "dest": "QuickCheck-2.13.2"
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/aeson-1.4.3.0/aeson-1.4.3.0.tar.gz",
-          "sha256": "6564ac0fb429cd4bcafc706fa4b905dab94f57f765ebd96a65c9ba4b9e520c19",
-          "dest": "aeson-1.4.3.0"
+          "url": "http://hackage.haskell.org/package/aeson-1.4.4.0/aeson-1.4.4.0.tar.gz",
+          "sha256": "17c67cdaca651e18f310b21b2b12bac6bcec5188c3ac0e4b64cc60c94d7e4d2e",
+          "dest": "aeson-1.4.4.0"
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/ShellCheck-0.6.0/ShellCheck-0.6.0.tar.gz",
-          "sha256": "f6e79fb34d076504176761cc8b7c3f996f8d31bed23250fb1570e32283cd7df6",
-          "dest": "ShellCheck-0.6.0"
+          "url": "http://hackage.haskell.org/package/ShellCheck-0.7.0/ShellCheck-0.7.0.tar.gz",
+          "sha256": "3af93f97750fe896b5e9c5247b84f1a99e34293992bb0e9001b0cc725949a8ef",
+          "dest": "ShellCheck-0.7.0"
+        },
+        {
+          "type": "script",
+          "commands": [
+            "set -x",
+            "cd $1",
+            "if [ ! -e Setup.hs ] && [ ! -e Setup.lhs ]; then",
+            "  echo 'import Distribution.Simple' > Setup.hs",
+            "  echo 'main = defaultMain' >> Setup.hs",
+            "fi",
+            "ghc -threaded --make Setup",
+            "./Setup configure --disable-optimization --prefix=/app",
+            "./Setup build",
+            "./Setup install"
+          ],
+          "dest-filename": "install-package"
         }
       ],
       "cleanup": [
@@ -502,425 +471,143 @@
       "name": "haskell-pandoc",
       "buildsystem": "simple",
       "build-commands": [
-        "cd HsYAML-0.1.2.0; ghc -threaded --make Setup",
-        "cd HsYAML-0.1.2.0; ./Setup configure --disable-optimization --prefix=/app",
-        "cd HsYAML-0.1.2.0; ./Setup build",
-        "cd HsYAML-0.1.2.0; ./Setup install",
-        "cd SHA-1.6.4.4; ghc -threaded --make Setup",
-        "cd SHA-1.6.4.4; ./Setup configure --disable-optimization --prefix=/app",
-        "cd SHA-1.6.4.4; ./Setup build",
-        "cd SHA-1.6.4.4; ./Setup install",
-        "cd base-compat-0.10.5; ghc -threaded --make Setup",
-        "cd base-compat-0.10.5; ./Setup configure --disable-optimization --prefix=/app",
-        "cd base-compat-0.10.5; ./Setup build",
-        "cd base-compat-0.10.5; ./Setup install",
-        "cd base64-bytestring-1.0.0.2; ghc -threaded --make Setup",
-        "cd base64-bytestring-1.0.0.2; ./Setup configure --disable-optimization --prefix=/app",
-        "cd base64-bytestring-1.0.0.2; ./Setup build",
-        "cd base64-bytestring-1.0.0.2; ./Setup install",
-        "cd basement-0.0.10; ghc -threaded --make Setup",
-        "cd basement-0.0.10; ./Setup configure --disable-optimization --prefix=/app",
-        "cd basement-0.0.10; ./Setup build",
-        "cd basement-0.0.10; ./Setup install",
-        "cd bitarray-0.0.1.1; ghc -threaded --make Setup",
-        "cd bitarray-0.0.1.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd bitarray-0.0.1.1; ./Setup build",
-        "cd bitarray-0.0.1.1; ./Setup install",
-        "cd blaze-builder-0.4.1.0; ghc -threaded --make Setup",
-        "cd blaze-builder-0.4.1.0; ./Setup configure --disable-optimization --prefix=/app",
-        "cd blaze-builder-0.4.1.0; ./Setup build",
-        "cd blaze-builder-0.4.1.0; ./Setup install",
-        "cd cereal-0.5.8.1; ghc -threaded --make Setup",
-        "cd cereal-0.5.8.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd cereal-0.5.8.1; ./Setup build",
-        "cd cereal-0.5.8.1; ./Setup install",
-        "cd cmark-gfm-0.2.0; ghc -threaded --make Setup",
-        "cd cmark-gfm-0.2.0; ./Setup configure --disable-optimization --prefix=/app",
-        "cd cmark-gfm-0.2.0; ./Setup build",
-        "cd cmark-gfm-0.2.0; ./Setup install",
-        "cd cmdargs-0.10.20; ghc -threaded --make Setup",
-        "cd cmdargs-0.10.20; ./Setup configure --disable-optimization --prefix=/app",
-        "cd cmdargs-0.10.20; ./Setup build",
-        "cd cmdargs-0.10.20; ./Setup install",
-        "cd colour-2.3.5; ghc -threaded --make Setup",
-        "cd colour-2.3.5; ./Setup configure --disable-optimization --prefix=/app",
-        "cd colour-2.3.5; ./Setup build",
-        "cd colour-2.3.5; ./Setup install",
-        "cd data-default-class-0.1.2.0; ghc -threaded --make Setup",
-        "cd data-default-class-0.1.2.0; ./Setup configure --disable-optimization --prefix=/app",
-        "cd data-default-class-0.1.2.0; ./Setup build",
-        "cd data-default-class-0.1.2.0; ./Setup install",
-        "cd digest-0.0.1.2; ghc -threaded --make Setup",
-        "cd digest-0.0.1.2; ./Setup configure --disable-optimization --prefix=/app",
-        "cd digest-0.0.1.2; ./Setup build",
-        "cd digest-0.0.1.2; ./Setup install",
-        "cd dlist-0.8.0.6; ghc -threaded --make Setup",
-        "cd dlist-0.8.0.6; ./Setup configure --disable-optimization --prefix=/app",
-        "cd dlist-0.8.0.6; ./Setup build",
-        "cd dlist-0.8.0.6; ./Setup install",
-        "cd fail-4.9.0.0; ghc -threaded --make Setup",
-        "cd fail-4.9.0.0; ./Setup configure --disable-optimization --prefix=/app",
-        "cd fail-4.9.0.0; ./Setup build",
-        "cd fail-4.9.0.0; ./Setup install",
-        "cd haddock-library-1.7.0; ghc -threaded --make Setup",
-        "cd haddock-library-1.7.0; ./Setup configure --disable-optimization --prefix=/app",
-        "cd haddock-library-1.7.0; ./Setup build",
-        "cd haddock-library-1.7.0; ./Setup install",
-        "cd hashable-1.3.0.0; ghc -threaded --make Setup",
-        "cd hashable-1.3.0.0; ./Setup configure --disable-optimization --prefix=/app",
-        "cd hashable-1.3.0.0; ./Setup build",
-        "cd hashable-1.3.0.0; ./Setup install",
-        "cd hourglass-0.2.12; ghc -threaded --make Setup",
-        "cd hourglass-0.2.12; ./Setup configure --disable-optimization --prefix=/app",
-        "cd hourglass-0.2.12; ./Setup build",
-        "cd hourglass-0.2.12; ./Setup install",
-        "cd hxt-charproperties-9.2.0.1; ghc -threaded --make Setup",
-        "cd hxt-charproperties-9.2.0.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd hxt-charproperties-9.2.0.1; ./Setup build",
-        "cd hxt-charproperties-9.2.0.1; ./Setup install",
-        "cd integer-logarithms-1.0.3; ghc -threaded --make Setup",
-        "cd integer-logarithms-1.0.3; ./Setup configure --disable-optimization --prefix=/app",
-        "cd integer-logarithms-1.0.3; ./Setup build",
-        "cd integer-logarithms-1.0.3; ./Setup install",
-        "cd mime-types-0.1.0.9; ghc -threaded --make Setup",
-        "cd mime-types-0.1.0.9; ./Setup configure --disable-optimization --prefix=/app",
-        "cd mime-types-0.1.0.9; ./Setup build",
-        "cd mime-types-0.1.0.9; ./Setup install",
-        "cd network-3.1.0.1; ghc -threaded --make Setup",
-        "cd network-3.1.0.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd network-3.1.0.1; ./Setup build",
-        "cd network-3.1.0.1; ./Setup install",
-        "cd network-uri-2.6.1.0; ghc -threaded --make Setup",
-        "cd network-uri-2.6.1.0; ./Setup configure --disable-optimization --prefix=/app",
-        "cd network-uri-2.6.1.0; ./Setup build",
-        "cd network-uri-2.6.1.0; ./Setup install",
-        "cd old-locale-1.0.0.7; ghc -threaded --make Setup",
-        "cd old-locale-1.0.0.7; ./Setup configure --disable-optimization --prefix=/app",
-        "cd old-locale-1.0.0.7; ./Setup build",
-        "cd old-locale-1.0.0.7; ./Setup install",
-        "cd primitive-0.7.0.0; ghc -threaded --make Setup",
-        "cd primitive-0.7.0.0; ./Setup configure --disable-optimization --prefix=/app",
-        "cd primitive-0.7.0.0; ./Setup build",
-        "cd primitive-0.7.0.0; ./Setup install",
-        "cd random-1.1; ghc -threaded --make Setup",
-        "cd random-1.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd random-1.1; ./Setup build",
-        "cd random-1.1; ./Setup install",
-        "cd regex-base-0.93.2; ghc -threaded --make Setup",
-        "cd regex-base-0.93.2; ./Setup configure --disable-optimization --prefix=/app",
-        "cd regex-base-0.93.2; ./Setup build",
-        "cd regex-base-0.93.2; ./Setup install",
-        "cd safe-0.3.17; ghc -threaded --make Setup",
-        "cd safe-0.3.17; ./Setup configure --disable-optimization --prefix=/app",
-        "cd safe-0.3.17; ./Setup build",
-        "cd safe-0.3.17; ./Setup install",
-        "cd split-0.2.3.3; ghc -threaded --make Setup",
-        "cd split-0.2.3.3; ./Setup configure --disable-optimization --prefix=/app",
-        "cd split-0.2.3.3; ./Setup build",
-        "cd split-0.2.3.3; ./Setup install",
-        "cd syb-0.7.1; ghc -threaded --make Setup",
-        "cd syb-0.7.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd syb-0.7.1; ./Setup build",
-        "cd syb-0.7.1; ./Setup install",
-        "cd tagged-0.8.6; ghc -threaded --make Setup",
-        "cd tagged-0.8.6; ./Setup configure --disable-optimization --prefix=/app",
-        "cd tagged-0.8.6; ./Setup build",
-        "cd tagged-0.8.6; ./Setup install",
-        "cd tagsoup-0.14.8; ghc -threaded --make Setup",
-        "cd tagsoup-0.14.8; ./Setup configure --disable-optimization --prefix=/app",
-        "cd tagsoup-0.14.8; ./Setup build",
-        "cd tagsoup-0.14.8; ./Setup install",
-        "cd th-abstraction-0.2.11.0; ghc -threaded --make Setup",
-        "cd th-abstraction-0.2.11.0; ./Setup configure --disable-optimization --prefix=/app",
-        "cd th-abstraction-0.2.11.0; ./Setup build",
-        "cd th-abstraction-0.2.11.0; ./Setup install",
-        "cd time-locale-compat-0.1.1.5; ghc -threaded --make Setup",
-        "cd time-locale-compat-0.1.1.5; ./Setup configure --disable-optimization --prefix=/app",
-        "cd time-locale-compat-0.1.1.5; ./Setup build",
-        "cd time-locale-compat-0.1.1.5; ./Setup install",
-        "cd transformers-compat-0.6.5; ghc -threaded --make Setup",
-        "cd transformers-compat-0.6.5; ./Setup configure --disable-optimization --prefix=/app",
-        "cd transformers-compat-0.6.5; ./Setup build",
-        "cd transformers-compat-0.6.5; ./Setup install",
-        "cd utf8-string-1.0.1.1; ghc -threaded --make Setup",
-        "cd utf8-string-1.0.1.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd utf8-string-1.0.1.1; ./Setup build",
-        "cd utf8-string-1.0.1.1; ./Setup install",
-        "cd xml-1.3.14; ghc -threaded --make Setup",
-        "cd xml-1.3.14; ./Setup configure --disable-optimization --prefix=/app",
-        "cd xml-1.3.14; ./Setup build",
-        "cd xml-1.3.14; ./Setup install",
-        "cd zlib-0.6.2; ghc -threaded --make Setup",
-        "cd zlib-0.6.2; ./Setup configure --disable-optimization --prefix=/app",
-        "cd zlib-0.6.2; ./Setup build",
-        "cd zlib-0.6.2; ./Setup install",
-        "cd memory-0.14.18; ghc -threaded --make Setup",
-        "cd memory-0.14.18; ./Setup configure --disable-optimization --prefix=/app",
-        "cd memory-0.14.18; ./Setup build",
-        "cd memory-0.14.18; ./Setup install",
-        "cd unicode-transforms-0.3.6; ghc -threaded --make Setup",
-        "cd unicode-transforms-0.3.6; ./Setup configure --disable-optimization --prefix=/app",
-        "cd unicode-transforms-0.3.6; ./Setup build",
-        "cd unicode-transforms-0.3.6; ./Setup install",
-        "cd blaze-markup-0.8.2.2; ghc -threaded --make Setup",
-        "cd blaze-markup-0.8.2.2; ./Setup configure --disable-optimization --prefix=/app",
-        "cd blaze-markup-0.8.2.2; ./Setup build",
-        "cd blaze-markup-0.8.2.2; ./Setup install",
-        "cd ansi-terminal-0.9.1; ghc -threaded --make Setup",
-        "cd ansi-terminal-0.9.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd ansi-terminal-0.9.1; ./Setup build",
-        "cd ansi-terminal-0.9.1; ./Setup install",
-        "cd data-default-instances-containers-0.0.1; ghc -threaded --make Setup",
-        "cd data-default-instances-containers-0.0.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd data-default-instances-containers-0.0.1; ./Setup build",
-        "cd data-default-instances-containers-0.0.1; ./Setup install",
-        "cd cookie-0.4.4; ghc -threaded --make Setup",
-        "cd cookie-0.4.4; ./Setup configure --disable-optimization --prefix=/app",
-        "cd cookie-0.4.4; ./Setup build",
-        "cd cookie-0.4.4; ./Setup install",
-        "cd data-default-instances-dlist-0.0.1; ghc -threaded --make Setup",
-        "cd data-default-instances-dlist-0.0.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd data-default-instances-dlist-0.0.1; ./Setup build",
-        "cd data-default-instances-dlist-0.0.1; ./Setup install",
-        "cd unordered-containers-0.2.10.0; ghc -threaded --make Setup",
-        "cd unordered-containers-0.2.10.0; ./Setup configure --disable-optimization --prefix=/app",
-        "cd unordered-containers-0.2.10.0; ./Setup build",
-        "cd unordered-containers-0.2.10.0; ./Setup install",
-        "cd case-insensitive-1.2.1.0; ghc -threaded --make Setup",
-        "cd case-insensitive-1.2.1.0; ./Setup configure --disable-optimization --prefix=/app",
-        "cd case-insensitive-1.2.1.0; ./Setup build",
-        "cd case-insensitive-1.2.1.0; ./Setup install",
-        "cd async-2.2.2; ghc -threaded --make Setup",
-        "cd async-2.2.2; ./Setup configure --disable-optimization --prefix=/app",
-        "cd async-2.2.2; ./Setup build",
-        "cd async-2.2.2; ./Setup install",
-        "cd hxt-unicode-9.0.2.4; ghc -threaded --make Setup",
-        "cd hxt-unicode-9.0.2.4; ./Setup configure --disable-optimization --prefix=/app",
-        "cd hxt-unicode-9.0.2.4; ./Setup build",
-        "cd hxt-unicode-9.0.2.4; ./Setup install",
-        "cd hxt-regex-xmlschema-9.2.0.3; ghc -threaded --make Setup",
-        "cd hxt-regex-xmlschema-9.2.0.3; ./Setup configure --disable-optimization --prefix=/app",
-        "cd hxt-regex-xmlschema-9.2.0.3; ./Setup build",
-        "cd hxt-regex-xmlschema-9.2.0.3; ./Setup install",
-        "cd socks-0.6.0; ghc -threaded --make Setup",
-        "cd socks-0.6.0; ./Setup configure --disable-optimization --prefix=/app",
-        "cd socks-0.6.0; ./Setup build",
-        "cd socks-0.6.0; ./Setup install",
-        "cd HTTP-4000.3.14; ghc -threaded --make Setup",
-        "cd HTTP-4000.3.14; ./Setup configure --disable-optimization --prefix=/app",
-        "cd HTTP-4000.3.14; ./Setup build",
-        "cd HTTP-4000.3.14; ./Setup install",
-        "cd data-default-instances-old-locale-0.0.1; ghc -threaded --make Setup",
-        "cd data-default-instances-old-locale-0.0.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd data-default-instances-old-locale-0.0.1; ./Setup build",
-        "cd data-default-instances-old-locale-0.0.1; ./Setup install",
-        "cd vector-0.12.0.3; ghc -threaded --make Setup",
-        "cd vector-0.12.0.3; ./Setup configure --disable-optimization --prefix=/app",
-        "cd vector-0.12.0.3; ./Setup build",
-        "cd vector-0.12.0.3; ./Setup install",
-        "cd scientific-0.3.6.2; ghc -threaded --make Setup",
-        "cd scientific-0.3.6.2; ./Setup configure --disable-optimization --prefix=/app",
-        "cd scientific-0.3.6.2; ./Setup build",
-        "cd scientific-0.3.6.2; ./Setup install",
-        "cd uuid-types-1.0.3; ghc -threaded --make Setup",
-        "cd uuid-types-1.0.3; ./Setup configure --disable-optimization --prefix=/app",
-        "cd uuid-types-1.0.3; ./Setup build",
-        "cd uuid-types-1.0.3; ./Setup install",
-        "cd splitmix-0.0.2; ghc -threaded --make Setup",
-        "cd splitmix-0.0.2; ./Setup configure --disable-optimization --prefix=/app",
-        "cd splitmix-0.0.2; ./Setup build",
-        "cd splitmix-0.0.2; ./Setup install",
-        "cd regex-pcre-builtin-0.94.4.8.8.35; ghc -threaded --make Setup",
-        "cd regex-pcre-builtin-0.94.4.8.8.35; ./Setup configure --disable-optimization --prefix=/app",
-        "cd regex-pcre-builtin-0.94.4.8.8.35; ./Setup build",
-        "cd regex-pcre-builtin-0.94.4.8.8.35; ./Setup install",
-        "cd exceptions-0.10.2; ghc -threaded --make Setup",
-        "cd exceptions-0.10.2; ./Setup configure --disable-optimization --prefix=/app",
-        "cd exceptions-0.10.2; ./Setup build",
-        "cd exceptions-0.10.2; ./Setup install",
-        "cd Glob-0.10.0; ghc -threaded --make Setup",
-        "cd Glob-0.10.0; ./Setup configure --disable-optimization --prefix=/app",
-        "cd Glob-0.10.0; ./Setup build",
-        "cd Glob-0.10.0; ./Setup install",
-        "cd zip-archive-0.4.1; ghc -threaded --make Setup",
-        "cd zip-archive-0.4.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd zip-archive-0.4.1; ./Setup build",
-        "cd zip-archive-0.4.1; ./Setup install",
-        "cd pem-0.2.4; ghc -threaded --make Setup",
-        "cd pem-0.2.4; ./Setup configure --disable-optimization --prefix=/app",
-        "cd pem-0.2.4; ./Setup build",
-        "cd pem-0.2.4; ./Setup install",
-        "cd cryptonite-0.26; ghc -threaded --make Setup",
-        "cd cryptonite-0.26; ./Setup configure --disable-optimization --prefix=/app",
-        "cd cryptonite-0.26; ./Setup build",
-        "cd cryptonite-0.26; ./Setup install",
-        "cd asn1-types-0.3.2; ghc -threaded --make Setup",
-        "cd asn1-types-0.3.2; ./Setup configure --disable-optimization --prefix=/app",
-        "cd asn1-types-0.3.2; ./Setup build",
-        "cd asn1-types-0.3.2; ./Setup install",
-        "cd blaze-html-0.9.1.1; ghc -threaded --make Setup",
-        "cd blaze-html-0.9.1.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd blaze-html-0.9.1.1; ./Setup build",
-        "cd blaze-html-0.9.1.1; ./Setup install",
-        "cd http-types-0.12.3; ghc -threaded --make Setup",
-        "cd http-types-0.12.3; ./Setup configure --disable-optimization --prefix=/app",
-        "cd http-types-0.12.3; ./Setup build",
-        "cd http-types-0.12.3; ./Setup install",
-        "cd streaming-commons-0.2.1.1; ghc -threaded --make Setup",
-        "cd streaming-commons-0.2.1.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd streaming-commons-0.2.1.1; ./Setup build",
-        "cd streaming-commons-0.2.1.1; ./Setup install",
-        "cd hxt-9.3.1.16; ghc -threaded --make Setup",
-        "cd hxt-9.3.1.16; ./Setup configure --disable-optimization --prefix=/app",
-        "cd hxt-9.3.1.16; ./Setup build",
-        "cd hxt-9.3.1.16; ./Setup install",
-        "cd data-default-0.7.1.1; ghc -threaded --make Setup",
-        "cd data-default-0.7.1.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd data-default-0.7.1.1; ./Setup build",
-        "cd data-default-0.7.1.1; ./Setup install",
-        "cd JuicyPixels-3.3.3.1; ghc -threaded --make Setup",
-        "cd JuicyPixels-3.3.3.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd JuicyPixels-3.3.3.1; ./Setup build",
-        "cd JuicyPixels-3.3.3.1; ./Setup install",
-        "cd attoparsec-0.13.2.2; ghc -threaded --make Setup",
-        "cd attoparsec-0.13.2.2; ./Setup configure --disable-optimization --prefix=/app",
-        "cd attoparsec-0.13.2.2; ./Setup build",
-        "cd attoparsec-0.13.2.2; ./Setup install",
-        "cd QuickCheck-2.13.1; ghc -threaded --make Setup",
-        "cd QuickCheck-2.13.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd QuickCheck-2.13.1; ./Setup build",
-        "cd QuickCheck-2.13.1; ./Setup install",
-        "cd temporary-1.3; ghc -threaded --make Setup",
-        "cd temporary-1.3; ./Setup configure --disable-optimization --prefix=/app",
-        "cd temporary-1.3; ./Setup build",
-        "cd temporary-1.3; ./Setup install",
-        "cd hslua-1.0.3.1; ghc -threaded --make Setup",
-        "cd hslua-1.0.3.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd hslua-1.0.3.1; ./Setup build",
-        "cd hslua-1.0.3.1; ./Setup install",
-        "cd asn1-encoding-0.9.5; ghc -threaded --make Setup",
-        "cd asn1-encoding-0.9.5; ./Setup configure --disable-optimization --prefix=/app",
-        "cd asn1-encoding-0.9.5; ./Setup build",
-        "cd asn1-encoding-0.9.5; ./Setup install",
-        "cd http-client-0.6.4; ghc -threaded --make Setup",
-        "cd http-client-0.6.4; ./Setup configure --disable-optimization --prefix=/app",
-        "cd http-client-0.6.4; ./Setup build",
-        "cd http-client-0.6.4; ./Setup install",
-        "cd aeson-1.4.0.0; ghc -threaded --make Setup",
-        "cd aeson-1.4.0.0; ./Setup configure --disable-optimization --prefix=/app",
-        "cd aeson-1.4.0.0; ./Setup build",
-        "cd aeson-1.4.0.0; ./Setup install",
-        "cd hslua-module-text-0.2.1; ghc -threaded --make Setup",
-        "cd hslua-module-text-0.2.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd hslua-module-text-0.2.1; ./Setup build",
-        "cd hslua-module-text-0.2.1; ./Setup install",
-        "cd hslua-module-system-0.2.1; ghc -threaded --make Setup",
-        "cd hslua-module-system-0.2.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd hslua-module-system-0.2.1; ./Setup build",
-        "cd hslua-module-system-0.2.1; ./Setup install",
-        "cd asn1-parse-0.9.4; ghc -threaded --make Setup",
-        "cd asn1-parse-0.9.4; ./Setup configure --disable-optimization --prefix=/app",
-        "cd asn1-parse-0.9.4; ./Setup build",
-        "cd asn1-parse-0.9.4; ./Setup install",
-        "cd skylighting-core-0.8.1.1; ghc -threaded --make Setup",
-        "cd skylighting-core-0.8.1.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd skylighting-core-0.8.1.1; ./Setup build",
-        "cd skylighting-core-0.8.1.1; ./Setup install",
-        "cd pandoc-types-1.17.5.4; ghc -threaded --make Setup",
-        "cd pandoc-types-1.17.5.4; ./Setup configure --disable-optimization --prefix=/app",
-        "cd pandoc-types-1.17.5.4; ./Setup build",
-        "cd pandoc-types-1.17.5.4; ./Setup install",
-        "cd ipynb-0.1; ghc -threaded --make Setup",
-        "cd ipynb-0.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd ipynb-0.1; ./Setup build",
-        "cd ipynb-0.1; ./Setup install",
-        "cd doctemplates-0.2.2.1; ghc -threaded --make Setup",
-        "cd doctemplates-0.2.2.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd doctemplates-0.2.2.1; ./Setup build",
-        "cd doctemplates-0.2.2.1; ./Setup install",
-        "cd aeson-pretty-0.8.7; ghc -threaded --make Setup",
-        "cd aeson-pretty-0.8.7; ./Setup configure --disable-optimization --prefix=/app",
-        "cd aeson-pretty-0.8.7; ./Setup build",
-        "cd aeson-pretty-0.8.7; ./Setup install",
-        "cd x509-1.7.5; ghc -threaded --make Setup",
-        "cd x509-1.7.5; ./Setup configure --disable-optimization --prefix=/app",
-        "cd x509-1.7.5; ./Setup build",
-        "cd x509-1.7.5; ./Setup install",
-        "cd skylighting-0.8.1.1; ghc -threaded --make Setup",
-        "cd skylighting-0.8.1.1; ./Setup configure --disable-optimization --prefix=/app",
-        "cd skylighting-0.8.1.1; ./Setup build",
-        "cd skylighting-0.8.1.1; ./Setup install",
-        "cd texmath-0.11.2.2; ghc -threaded --make Setup",
-        "cd texmath-0.11.2.2; ./Setup configure --disable-optimization --prefix=/app",
-        "cd texmath-0.11.2.2; ./Setup build",
-        "cd texmath-0.11.2.2; ./Setup install",
-        "cd x509-store-1.6.7; ghc -threaded --make Setup",
-        "cd x509-store-1.6.7; ./Setup configure --disable-optimization --prefix=/app",
-        "cd x509-store-1.6.7; ./Setup build",
-        "cd x509-store-1.6.7; ./Setup install",
-        "cd x509-validation-1.6.11; ghc -threaded --make Setup",
-        "cd x509-validation-1.6.11; ./Setup configure --disable-optimization --prefix=/app",
-        "cd x509-validation-1.6.11; ./Setup build",
-        "cd x509-validation-1.6.11; ./Setup install",
-        "cd x509-system-1.6.6; ghc -threaded --make Setup",
-        "cd x509-system-1.6.6; ./Setup configure --disable-optimization --prefix=/app",
-        "cd x509-system-1.6.6; ./Setup build",
-        "cd x509-system-1.6.6; ./Setup install",
-        "cd tls-1.5.0; ghc -threaded --make Setup",
-        "cd tls-1.5.0; ./Setup configure --disable-optimization --prefix=/app",
-        "cd tls-1.5.0; ./Setup build",
-        "cd tls-1.5.0; ./Setup install",
-        "cd connection-0.3.0; ghc -threaded --make Setup",
-        "cd connection-0.3.0; ./Setup configure --disable-optimization --prefix=/app",
-        "cd connection-0.3.0; ./Setup build",
-        "cd connection-0.3.0; ./Setup install",
-        "cd http-client-tls-0.3.5.3; ghc -threaded --make Setup",
-        "cd http-client-tls-0.3.5.3; ./Setup configure --disable-optimization --prefix=/app",
-        "cd http-client-tls-0.3.5.3; ./Setup build",
-        "cd http-client-tls-0.3.5.3; ./Setup install",
-        "cd pandoc-2.7.3; ghc -threaded --make Setup",
-        "cd pandoc-2.7.3; ./Setup configure --disable-optimization --prefix=/app",
-        "cd pandoc-2.7.3; ./Setup build",
-        "cd pandoc-2.7.3; ./Setup install",
+        "./install-package HsYAML-0.1.2.0",
+        "./install-package SHA-1.6.4.4",
+        "./install-package StateVar-1.2",
+        "./install-package base-compat-0.10.5",
+        "./install-package base-orphans-0.8.1",
+        "./install-package base64-bytestring-1.0.0.2",
+        "./install-package basement-0.0.11",
+        "./install-package bitarray-0.0.1.1",
+        "./install-package blaze-builder-0.4.1.0",
+        "./install-package cereal-0.5.8.1",
+        "./install-package cmark-gfm-0.2.0",
+        "./install-package cmdargs-0.10.20",
+        "./install-package colour-2.3.5",
+        "./install-package data-default-class-0.1.2.0",
+        "./install-package digest-0.0.1.2",
+        "./install-package dlist-0.8.0.7",
+        "./install-package fail-4.9.0.0",
+        "./install-package haddock-library-1.7.0",
+        "./install-package hashable-1.3.0.0",
+        "./install-package hourglass-0.2.12",
+        "./install-package hxt-charproperties-9.4.0.0",
+        "./install-package integer-logarithms-1.0.3",
+        "./install-package mime-types-0.1.0.9",
+        "./install-package network-3.1.0.1",
+        "./install-package network-uri-2.6.1.0",
+        "./install-package old-locale-1.0.0.7",
+        "./install-package primitive-0.7.0.0",
+        "./install-package random-1.1",
+        "./install-package regex-base-0.93.2",
+        "./install-package safe-0.3.17",
+        "./install-package split-0.2.3.3",
+        "./install-package syb-0.7.1",
+        "./install-package tagged-0.8.6",
+        "./install-package tagsoup-0.14.8",
+        "./install-package th-abstraction-0.3.1.0",
+        "./install-package transformers-compat-0.6.5",
+        "./install-package utf8-string-1.0.1.1",
+        "./install-package xml-1.3.14",
+        "./install-package zlib-0.6.2",
+        "./install-package contravariant-1.5.2",
+        "./install-package time-compat-1.9.2.2",
+        "./install-package memory-0.14.18",
+        "./install-package unicode-transforms-0.3.6",
+        "./install-package blaze-markup-0.8.2.2",
+        "./install-package ansi-terminal-0.9.1",
+        "./install-package data-default-instances-containers-0.0.1",
+        "./install-package cookie-0.4.4",
+        "./install-package data-default-instances-dlist-0.0.1",
+        "./install-package unordered-containers-0.2.10.0",
+        "./install-package case-insensitive-1.2.1.0",
+        "./install-package async-2.2.2",
+        "./install-package hxt-unicode-9.0.2.4",
+        "./install-package hxt-regex-xmlschema-9.2.0.3",
+        "./install-package socks-0.6.0",
+        "./install-package HTTP-4000.3.14",
+        "./install-package data-default-instances-old-locale-0.0.1",
+        "./install-package vector-0.12.0.3",
+        "./install-package scientific-0.3.6.2",
+        "./install-package uuid-types-1.0.3",
+        "./install-package splitmix-0.0.3",
+        "./install-package regex-pcre-builtin-0.94.4.8.8.35",
+        "./install-package exceptions-0.10.2",
+        "./install-package Glob-0.10.0",
+        "./install-package zip-archive-0.4.1",
+        "./install-package pem-0.2.4",
+        "./install-package cryptonite-0.26",
+        "./install-package asn1-types-0.3.3",
+        "./install-package blaze-html-0.9.1.1",
+        "./install-package http-types-0.12.3",
+        "./install-package streaming-commons-0.2.1.1",
+        "./install-package hxt-9.3.1.18",
+        "./install-package data-default-0.7.1.1",
+        "./install-package JuicyPixels-3.3.3.1",
+        "./install-package attoparsec-0.13.2.2",
+        "./install-package QuickCheck-2.13.2",
+        "./install-package temporary-1.3",
+        "./install-package hslua-1.0.3.1",
+        "./install-package asn1-encoding-0.9.5",
+        "./install-package http-client-0.6.4",
+        "./install-package aeson-1.4.4.0",
+        "./install-package hslua-module-text-0.2.1",
+        "./install-package hslua-module-system-0.2.1",
+        "./install-package asn1-parse-0.9.4",
+        "./install-package skylighting-core-0.8.2",
+        "./install-package pandoc-types-1.17.5.4",
+        "./install-package ipynb-0.1",
+        "./install-package doctemplates-0.2.2.1",
+        "./install-package aeson-pretty-0.8.7",
+        "./install-package x509-1.7.5",
+        "./install-package skylighting-0.8.2",
+        "./install-package texmath-0.11.2.2",
+        "./install-package x509-store-1.6.7",
+        "./install-package x509-validation-1.6.11",
+        "./install-package x509-system-1.6.6",
+        "./install-package tls-1.5.1",
+        "./install-package connection-0.3.0",
+        "./install-package http-client-tls-0.3.5.3",
+        "./install-package pandoc-2.7.3",
         "cd pandoc-2.7.3; ./Setup unregister",
         "cd http-client-tls-0.3.5.3; ./Setup unregister",
         "cd connection-0.3.0; ./Setup unregister",
-        "cd tls-1.5.0; ./Setup unregister",
+        "cd tls-1.5.1; ./Setup unregister",
         "cd x509-system-1.6.6; ./Setup unregister",
         "cd x509-validation-1.6.11; ./Setup unregister",
         "cd x509-store-1.6.7; ./Setup unregister",
         "cd texmath-0.11.2.2; ./Setup unregister",
-        "cd skylighting-0.8.1.1; ./Setup unregister",
+        "cd skylighting-0.8.2; ./Setup unregister",
         "cd x509-1.7.5; ./Setup unregister",
         "cd aeson-pretty-0.8.7; ./Setup unregister",
         "cd doctemplates-0.2.2.1; ./Setup unregister",
         "cd ipynb-0.1; ./Setup unregister",
         "cd pandoc-types-1.17.5.4; ./Setup unregister",
-        "cd skylighting-core-0.8.1.1; ./Setup unregister",
+        "cd skylighting-core-0.8.2; ./Setup unregister",
         "cd asn1-parse-0.9.4; ./Setup unregister",
         "cd hslua-module-system-0.2.1; ./Setup unregister",
         "cd hslua-module-text-0.2.1; ./Setup unregister",
-        "cd aeson-1.4.0.0; ./Setup unregister",
+        "cd aeson-1.4.4.0; ./Setup unregister",
         "cd http-client-0.6.4; ./Setup unregister",
         "cd asn1-encoding-0.9.5; ./Setup unregister",
         "cd hslua-1.0.3.1; ./Setup unregister",
         "cd temporary-1.3; ./Setup unregister",
-        "cd QuickCheck-2.13.1; ./Setup unregister",
+        "cd QuickCheck-2.13.2; ./Setup unregister",
         "cd attoparsec-0.13.2.2; ./Setup unregister",
         "cd JuicyPixels-3.3.3.1; ./Setup unregister",
         "cd data-default-0.7.1.1; ./Setup unregister",
-        "cd hxt-9.3.1.16; ./Setup unregister",
+        "cd hxt-9.3.1.18; ./Setup unregister",
         "cd streaming-commons-0.2.1.1; ./Setup unregister",
         "cd http-types-0.12.3; ./Setup unregister",
         "cd blaze-html-0.9.1.1; ./Setup unregister",
-        "cd asn1-types-0.3.2; ./Setup unregister",
+        "cd asn1-types-0.3.3; ./Setup unregister",
         "cd cryptonite-0.26; ./Setup unregister",
         "cd pem-0.2.4; ./Setup unregister",
         "cd zip-archive-0.4.1; ./Setup unregister",
         "cd Glob-0.10.0; ./Setup unregister",
         "cd exceptions-0.10.2; ./Setup unregister",
         "cd regex-pcre-builtin-0.94.4.8.8.35; ./Setup unregister",
-        "cd splitmix-0.0.2; ./Setup unregister",
+        "cd splitmix-0.0.3; ./Setup unregister",
         "cd uuid-types-1.0.3; ./Setup unregister",
         "cd scientific-0.3.6.2; ./Setup unregister",
         "cd vector-0.12.0.3; ./Setup unregister",
@@ -939,12 +626,13 @@
         "cd blaze-markup-0.8.2.2; ./Setup unregister",
         "cd unicode-transforms-0.3.6; ./Setup unregister",
         "cd memory-0.14.18; ./Setup unregister",
+        "cd time-compat-1.9.2.2; ./Setup unregister",
+        "cd contravariant-1.5.2; ./Setup unregister",
         "cd zlib-0.6.2; ./Setup unregister",
         "cd xml-1.3.14; ./Setup unregister",
         "cd utf8-string-1.0.1.1; ./Setup unregister",
         "cd transformers-compat-0.6.5; ./Setup unregister",
-        "cd time-locale-compat-0.1.1.5; ./Setup unregister",
-        "cd th-abstraction-0.2.11.0; ./Setup unregister",
+        "cd th-abstraction-0.3.1.0; ./Setup unregister",
         "cd tagsoup-0.14.8; ./Setup unregister",
         "cd tagged-0.8.6; ./Setup unregister",
         "cd syb-0.7.1; ./Setup unregister",
@@ -958,12 +646,12 @@
         "cd network-3.1.0.1; ./Setup unregister",
         "cd mime-types-0.1.0.9; ./Setup unregister",
         "cd integer-logarithms-1.0.3; ./Setup unregister",
-        "cd hxt-charproperties-9.2.0.1; ./Setup unregister",
+        "cd hxt-charproperties-9.4.0.0; ./Setup unregister",
         "cd hourglass-0.2.12; ./Setup unregister",
         "cd hashable-1.3.0.0; ./Setup unregister",
         "cd haddock-library-1.7.0; ./Setup unregister",
         "cd fail-4.9.0.0; ./Setup unregister",
-        "cd dlist-0.8.0.6; ./Setup unregister",
+        "cd dlist-0.8.0.7; ./Setup unregister",
         "cd digest-0.0.1.2; ./Setup unregister",
         "cd data-default-class-0.1.2.0; ./Setup unregister",
         "cd colour-2.3.5; ./Setup unregister",
@@ -972,9 +660,11 @@
         "cd cereal-0.5.8.1; ./Setup unregister",
         "cd blaze-builder-0.4.1.0; ./Setup unregister",
         "cd bitarray-0.0.1.1; ./Setup unregister",
-        "cd basement-0.0.10; ./Setup unregister",
+        "cd basement-0.0.11; ./Setup unregister",
         "cd base64-bytestring-1.0.0.2; ./Setup unregister",
+        "cd base-orphans-0.8.1; ./Setup unregister",
         "cd base-compat-0.10.5; ./Setup unregister",
+        "cd StateVar-1.2; ./Setup unregister",
         "cd SHA-1.6.4.4; ./Setup unregister",
         "cd HsYAML-0.1.2.0; ./Setup unregister"
       ],
@@ -994,9 +684,21 @@
         },
         {
           "type": "archive",
+          "url": "http://hackage.haskell.org/package/StateVar-1.2/StateVar-1.2.tar.gz",
+          "sha256": "afc036021fcd38f15fcc4af392a3e57017d5ddcc926e99391dbfc8c4e6375f8b",
+          "dest": "StateVar-1.2"
+        },
+        {
+          "type": "archive",
           "url": "http://hackage.haskell.org/package/base-compat-0.10.5/base-compat-0.10.5.tar.gz",
           "sha256": "990aea21568956d44ab018c5dbfbaea014b9a0d5295d29ca7550149419a6fb41",
           "dest": "base-compat-0.10.5"
+        },
+        {
+          "type": "archive",
+          "url": "http://hackage.haskell.org/package/base-orphans-0.8.1/base-orphans-0.8.1.tar.gz",
+          "sha256": "442bd63aed102e753b2fed15df8ae19f35ee07af26590da63837c523b64a99db",
+          "dest": "base-orphans-0.8.1"
         },
         {
           "type": "archive",
@@ -1006,16 +708,9 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/basement-0.0.10/basement-0.0.10.tar.gz",
-          "sha256": "e3471b037187da02814fa710c4d59a804c5446a3617122aca63f32d4f8c4f505",
-          "dest": "basement-0.0.10"
-        },
-        {
-          "type": "file",
-          "url": "http://hackage.haskell.org/package/basement-0.0.10/revision/1.cabal",
-          "sha256": "11b1a13d16c81a7a9706fadfc52ecad60523abd745efd27206e6f43f12d8bcd8",
-          "dest": "basement-0.0.10",
-          "dest-filename": "basement.cabal"
+          "url": "http://hackage.haskell.org/package/basement-0.0.11/basement-0.0.11.tar.gz",
+          "sha256": "67582b3475a5547925399f719df21f8bbbd0ca4d4db27795c22a474f8ee6346b",
+          "dest": "basement-0.0.11"
         },
         {
           "type": "archive",
@@ -1074,16 +769,9 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/dlist-0.8.0.6/dlist-0.8.0.6.tar.gz",
-          "sha256": "780b4ac91d6e88e77ebf1629568bddd45959b8e0cd295b17c7d55d835c03c73f",
-          "dest": "dlist-0.8.0.6"
-        },
-        {
-          "type": "file",
-          "url": "http://hackage.haskell.org/package/dlist-0.8.0.6/revision/1.cabal",
-          "sha256": "4e17a354ae6aede083e63abc55eeda463774ba6baf8d64de2f0fe6261f3a7938",
-          "dest": "dlist-0.8.0.6",
-          "dest-filename": "dlist.cabal"
+          "url": "http://hackage.haskell.org/package/dlist-0.8.0.7/dlist-0.8.0.7.tar.gz",
+          "sha256": "a3c06a200f9756329b09d415e7733b7204dda76ce07783e6457d0ab9ffbcba2c",
+          "dest": "dlist-0.8.0.7"
         },
         {
           "type": "archive",
@@ -1111,15 +799,22 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/hxt-charproperties-9.2.0.1/hxt-charproperties-9.2.0.1.tar.gz",
-          "sha256": "e46614d6bf0390b2a6a1aeeb0771e6d366944da40fb21c12c2f8a94d1f47b4d6",
-          "dest": "hxt-charproperties-9.2.0.1"
+          "url": "http://hackage.haskell.org/package/hxt-charproperties-9.4.0.0/hxt-charproperties-9.4.0.0.tar.gz",
+          "sha256": "f50ea1d5528025400507f9b181596f7b277e645a1e33ebbc659be22b244468ae",
+          "dest": "hxt-charproperties-9.4.0.0"
         },
         {
           "type": "archive",
           "url": "http://hackage.haskell.org/package/integer-logarithms-1.0.3/integer-logarithms-1.0.3.tar.gz",
           "sha256": "5ae262018698af35bb74916fad170d96d3eb44669c72ed36db9a19a3392cec16",
           "dest": "integer-logarithms-1.0.3"
+        },
+        {
+          "type": "file",
+          "url": "http://hackage.haskell.org/package/integer-logarithms-1.0.3/revision/1.cabal",
+          "sha256": "280ade63c067aaff7259049b033aa7c51e9e993cdaa6e6c601560a92e530dffc",
+          "dest": "integer-logarithms-1.0.3",
+          "dest-filename": "integer-logarithms.cabal"
         },
         {
           "type": "archive",
@@ -1185,6 +880,13 @@
           "dest": "regex-base-0.93.2"
         },
         {
+          "type": "file",
+          "url": "http://hackage.haskell.org/package/regex-base-0.93.2/revision/1.cabal",
+          "sha256": "da123f4c8e91c0e8a4177a9236c707f6ff43cb61d93fda91ddd0c4f3fd815fc6",
+          "dest": "regex-base-0.93.2",
+          "dest-filename": "regex-base.cabal"
+        },
+        {
           "type": "archive",
           "url": "http://hackage.haskell.org/package/safe-0.3.17/safe-0.3.17.tar.gz",
           "sha256": "79c5c41e7151906969133ea21af9f7e8d25c18315886e23d0bdf6faa8b537e5c",
@@ -1230,15 +932,9 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/th-abstraction-0.2.11.0/th-abstraction-0.2.11.0.tar.gz",
-          "sha256": "51884bcc31d825b93e6788f5731bd7234478dd4ada379816a88228ccc8e0800c",
-          "dest": "th-abstraction-0.2.11.0"
-        },
-        {
-          "type": "archive",
-          "url": "http://hackage.haskell.org/package/time-locale-compat-0.1.1.5/time-locale-compat-0.1.1.5.tar.gz",
-          "sha256": "07ff1566de7d851423a843b2de385442319348c621d4f779b3d365ce91ac502c",
-          "dest": "time-locale-compat-0.1.1.5"
+          "url": "http://hackage.haskell.org/package/th-abstraction-0.3.1.0/th-abstraction-0.3.1.0.tar.gz",
+          "sha256": "4b9e1bcc6ec3d897fb09c3d7fa2f37f0672d5370e0e3e49809886da81fe001b9",
+          "dest": "th-abstraction-0.3.1.0"
         },
         {
           "type": "archive",
@@ -1277,6 +973,25 @@
           "url": "http://hackage.haskell.org/package/zlib-0.6.2/zlib-0.6.2.tar.gz",
           "sha256": "0dcc7d925769bdbeb323f83b66884101084167501f11d74d21eb9bc515707fed",
           "dest": "zlib-0.6.2"
+        },
+        {
+          "type": "archive",
+          "url": "http://hackage.haskell.org/package/contravariant-1.5.2/contravariant-1.5.2.tar.gz",
+          "sha256": "c4262c24e3dcc2ba8ca221ed52a6390818a715301e4f13135d8d732e0c7dc60c",
+          "dest": "contravariant-1.5.2"
+        },
+        {
+          "type": "archive",
+          "url": "http://hackage.haskell.org/package/time-compat-1.9.2.2/time-compat-1.9.2.2.tar.gz",
+          "sha256": "a268613385d359274edf48fb2dad4af29874f58486b2d5625e3b95a371066a17",
+          "dest": "time-compat-1.9.2.2"
+        },
+        {
+          "type": "file",
+          "url": "http://hackage.haskell.org/package/time-compat-1.9.2.2/revision/1.cabal",
+          "sha256": "9998dc1b77b5067572ab708e94750f1061152f342e92ad1aba38aae63581174d",
+          "dest": "time-compat-1.9.2.2",
+          "dest-filename": "time-compat.cabal"
         },
         {
           "type": "archive",
@@ -1430,9 +1145,9 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/splitmix-0.0.2/splitmix-0.0.2.tar.gz",
-          "sha256": "e6abb71ab9c1daeb35262523f23adf7d5d70dfbf097ec40caf91b35866a43bf9",
-          "dest": "splitmix-0.0.2"
+          "url": "http://hackage.haskell.org/package/splitmix-0.0.3/splitmix-0.0.3.tar.gz",
+          "sha256": "fce462557f490c6c3d264ca70ef98a2c644ba341a71e6ee9f87ee7f3e7ab0acc",
+          "dest": "splitmix-0.0.3"
         },
         {
           "type": "archive",
@@ -1486,9 +1201,9 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/asn1-types-0.3.2/asn1-types-0.3.2.tar.gz",
-          "sha256": "0c571fff4a10559c6a630d4851ba3cdf1d558185ce3dcfca1136f9883d647217",
-          "dest": "asn1-types-0.3.2"
+          "url": "http://hackage.haskell.org/package/asn1-types-0.3.3/asn1-types-0.3.3.tar.gz",
+          "sha256": "57ebc2371bdb607294b5ca18f44ced121ab528ee304905db1524cb441b535498",
+          "dest": "asn1-types-0.3.3"
         },
         {
           "type": "archive",
@@ -1510,9 +1225,9 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/hxt-9.3.1.16/hxt-9.3.1.16.tar.gz",
-          "sha256": "0d55e35cc718891d0987b7c8e6c43499efa727c68bc92e88e8b99461dff403e3",
-          "dest": "hxt-9.3.1.16"
+          "url": "http://hackage.haskell.org/package/hxt-9.3.1.18/hxt-9.3.1.18.tar.gz",
+          "sha256": "721809d89bbcaf29b2bbe3b9cdbb54e6d6a30afe7509186061898f7e8b996620",
+          "dest": "hxt-9.3.1.18"
         },
         {
           "type": "archive",
@@ -1541,16 +1256,9 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/QuickCheck-2.13.1/QuickCheck-2.13.1.tar.gz",
-          "sha256": "a6463a96e7af7d6d5614dc919adca6e740b92a66334a55333ffbe44cac89d9c6",
-          "dest": "QuickCheck-2.13.1"
-        },
-        {
-          "type": "file",
-          "url": "http://hackage.haskell.org/package/QuickCheck-2.13.1/revision/2.cabal",
-          "sha256": "b6c85c6a7ffb800f52aad50dc28d224a968d1a28b3fc5f41ccb91c7b9c252d18",
-          "dest": "QuickCheck-2.13.1",
-          "dest-filename": "QuickCheck.cabal"
+          "url": "http://hackage.haskell.org/package/QuickCheck-2.13.2/QuickCheck-2.13.2.tar.gz",
+          "sha256": "7b560baa5853de777702dc23a6f2126ae4adbfdab163295bc56323a706914610",
+          "dest": "QuickCheck-2.13.2"
         },
         {
           "type": "archive",
@@ -1578,9 +1286,9 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/aeson-1.4.0.0/aeson-1.4.0.0.tar.gz",
-          "sha256": "916a208dbb2d46f4dda2d7162a9960e42b7b70526be4af06cd34cba526865710",
-          "dest": "aeson-1.4.0.0"
+          "url": "http://hackage.haskell.org/package/aeson-1.4.4.0/aeson-1.4.4.0.tar.gz",
+          "sha256": "17c67cdaca651e18f310b21b2b12bac6bcec5188c3ac0e4b64cc60c94d7e4d2e",
+          "dest": "aeson-1.4.4.0"
         },
         {
           "type": "archive",
@@ -1602,9 +1310,9 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/skylighting-core-0.8.1.1/skylighting-core-0.8.1.1.tar.gz",
-          "sha256": "750a965fe24fb0429cdfd4e91ebcf97bda82602dbd85fac48fac7c6fa94c93ce",
-          "dest": "skylighting-core-0.8.1.1"
+          "url": "http://hackage.haskell.org/package/skylighting-core-0.8.2/skylighting-core-0.8.2.tar.gz",
+          "sha256": "407f91df647cca1e0928281f38f192719c70be4d7d05e121d8bc9f0c4e08a1d9",
+          "dest": "skylighting-core-0.8.2"
         },
         {
           "type": "archive",
@@ -1652,9 +1360,9 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/skylighting-0.8.1.1/skylighting-0.8.1.1.tar.gz",
-          "sha256": "1cf1025ae5b841e7e85520e222484d2b4fa055a7b45e4c477febeb51c09a3f60",
-          "dest": "skylighting-0.8.1.1"
+          "url": "http://hackage.haskell.org/package/skylighting-0.8.2/skylighting-0.8.2.tar.gz",
+          "sha256": "9f25d3bd1d274891a69b74d1237d57cd76bfe62385405ab4428c76e048830129",
+          "dest": "skylighting-0.8.2"
         },
         {
           "type": "archive",
@@ -1689,9 +1397,9 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/tls-1.5.0/tls-1.5.0.tar.gz",
-          "sha256": "6c81e18b0f452d897db773ad3ced22c45b62673f0306992f128922db2a9a0d12",
-          "dest": "tls-1.5.0"
+          "url": "http://hackage.haskell.org/package/tls-1.5.1/tls-1.5.1.tar.gz",
+          "sha256": "d18ff12e8db63d3b9e041106383915a4b50a47f29c8cdba48810dd4812c145bb",
+          "dest": "tls-1.5.1"
         },
         {
           "type": "archive",
@@ -1724,6 +1432,22 @@
           "url": "http://hackage.haskell.org/package/pandoc-2.7.3/pandoc-2.7.3.tar.gz",
           "sha256": "a877203379ec5179716d6999f76352229d7f40f5bec70dbfa48c140848cef236",
           "dest": "pandoc-2.7.3"
+        },
+        {
+          "type": "script",
+          "commands": [
+            "set -x",
+            "cd $1",
+            "if [ ! -e Setup.hs ] && [ ! -e Setup.lhs ]; then",
+            "  echo 'import Distribution.Simple' > Setup.hs",
+            "  echo 'main = defaultMain' >> Setup.hs",
+            "fi",
+            "ghc -threaded --make Setup",
+            "./Setup configure --disable-optimization --prefix=/app",
+            "./Setup build",
+            "./Setup install"
+          ],
+          "dest-filename": "install-package"
         }
       ],
       "cleanup": [
@@ -1786,7 +1510,7 @@
         {
           "type": "git",
           "url": "https://github.com/luarocks/luarocks",
-          "commit": "3e12f3df50e4f6f0035f13b255d380fbf207a7c1"
+          "commit": "1d3bb56b309ce0463249852f901147157f34adfa"
         }
       ],
       "cleanup": [
@@ -1925,8 +1649,18 @@
       "sources": [
         {
           "type": "file",
+          "url": "https://files.pythonhosted.org/packages/3c/d3/aecfe42163233de6071248ea7565e97ba1c51e345a9e1dcc128dd1e46c1e/GitPython-2.1.13-py2.py3-none-any.whl",
+          "sha256": "df752b6b6f06f11213e91c4925aea7eaf9e37e88fb71c8a7a1aa0a5c10852120"
+        },
+        {
+          "type": "file",
           "url": "https://files.pythonhosted.org/packages/55/d2/866d45e3a121ee15a1dc013824d58072fd5c7799c9c34d01378eb262ca8f/smmap2-2.0.5-py2.py3-none-any.whl",
           "sha256": "0555a7bf4df71d1ef4218e4807bbf9b201f910174e6e08af2e138d4e517b4dde"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/5a/50/ff2f2c8f1f0ca1569f678eeb608c0f973b835985410985594fbee96be820/bandit-1.6.2-py2.py3-none-any.whl",
+          "sha256": "336620e220cf2d3115877685e264477ff9d9abaeb0afe3dc7264f55fa17a3952"
         },
         {
           "type": "file",
@@ -1935,23 +1669,8 @@
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/7a/db/6e2fcd67cb1c7c98f54f7f19e925f8d9b23cffb84dab45528a759215fca5/pbr-5.3.1-py2.py3-none-any.whl",
-          "sha256": "94bdc84da376b3dd5061aa0c3b6faffe943ee2e56fa4ff9bd63e1643932f34fc"
-        },
-        {
-          "type": "file",
-          "url": "https://files.pythonhosted.org/packages/a3/65/837fefac7475963d1eccf4aa684c23b95aa6c1d033a2c5965ccb11e22623/PyYAML-5.1.1.tar.gz",
-          "sha256": "b4bb4d3f5e232425e25dda21c070ce05168a786ac9eda43768ab7f3ac2770955"
-        },
-        {
-          "type": "file",
           "url": "https://files.pythonhosted.org/packages/c6/dc/6ee92bccfe3c0448786b30b693e6060d62ec8c4a3ec9a287bac1c1a8d8c9/stevedore-1.30.1-py2.py3-none-any.whl",
           "sha256": "7d1ce610a87d26f53c087da61f06f9b7f7e552efad2a7f6d2322632b5f932ea2"
-        },
-        {
-          "type": "file",
-          "url": "https://files.pythonhosted.org/packages/cb/94/03a0e486bf5bc34efdd57cf9bd95390605e6ea188689251e8aba6268a70a/bandit-1.6.1-py2.py3-none-any.whl",
-          "sha256": "f89adaff792d1f9b72859784c5f7964c6b5a5f32ca0ca458c9643e02d4fdceac"
         },
         {
           "type": "file",
@@ -1960,8 +1679,13 @@
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/fe/e5/fafe827507644c32d6dc553a1c435cdf882e0c28918a5bab29f7fbebfb70/GitPython-2.1.11-py2.py3-none-any.whl",
-          "sha256": "563221e5a44369c6b79172f455584c9ebbb122a13368cc82cb4b5addff788f82"
+          "url": "https://files.pythonhosted.org/packages/e3/e8/b3212641ee2718d556df0f23f78de8303f068fe29cdaa7a91018849582fe/PyYAML-5.1.2.tar.gz",
+          "sha256": "01adf0b6c6f61bd11af6e10ca52b7d4057dd0be0343eb9283c878cf3af56aee4"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/f9/d8/bd657bfa0e89eb71ad5e977ed99a9bb2b44e5db68d9190970637c26501bb/pbr-5.4.2-py2.py3-none-any.whl",
+          "sha256": "56e52299170b9492513c64be44736d27a512fa7e606f21942160b68ce510b4bc"
         }
       ]
     },
@@ -1988,8 +1712,8 @@
       "sources": [
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/b4/6a/8e2918c56682739cf177a7358929fed427d3982cc649e859b7a2d5c7daea/coverage-4.5.3-cp37-cp37m-manylinux1_x86_64.whl",
-          "sha256": "6b8033d47fe22506856fe450470ccb1d8ba1ffb8463494a15cfc96392a288c09"
+          "url": "https://files.pythonhosted.org/packages/82/8f/a2a687fa00059360858023c5cb74e94b8afaf318726e9a256934066a9d90/coverage-4.5.4-cp37-cp37m-manylinux1_x86_64.whl",
+          "sha256": "eca2b7343524e7ba246cab8ff00cab47a2d6d54ada3b02772e908a45675722e2"
         }
       ]
     },
@@ -2016,13 +1740,18 @@
       "sources": [
         {
           "type": "file",
+          "url": "https://files.pythonhosted.org/packages/27/aa/bd1442cfb0224da1b671ab334d3b0a4302e4161ea916e28904ff9618d471/typing_extensions-3.7.4-py3-none-any.whl",
+          "sha256": "d8179012ec2c620d3791ca6fe2bf7979d979acdbef1fca0bc56b37411db682ed"
+        },
+        {
+          "type": "file",
           "url": "https://files.pythonhosted.org/packages/4d/72/8d54e2b296631b9b14961d583e56e90d9d7fba8a240d5ce7f1113cc5e887/mypy_extensions-0.4.1-py2.py3-none-any.whl",
           "sha256": "b16cabe759f55e3409a7d231ebd2841378fb0c27a5d1994719e340e4f429ac3e"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/a2/fe/51fe3b6dea417f723265eb574205685b9b8a4a6a09f5c197911fd1ddb8ed/mypy-0.710-cp37-cp37m-manylinux1_x86_64.whl",
-          "sha256": "207d37116a4a06143f50a2d83d537cf43e7cd648e6969b6176da9e2881ec1c22"
+          "url": "https://files.pythonhosted.org/packages/73/4f/ed4fbcee5899b1cefe39ebb191a8fdc0c5a03b68930d3f929449b7d2101a/mypy-0.720-cp37-cp37m-manylinux1_x86_64.whl",
+          "sha256": "15e43d3b1546813669bd1a6ec7e6a11d2888db938e0607f7b5eef6b976671339"
         },
         {
           "type": "file",
@@ -2069,8 +1798,8 @@
       "sources": [
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/c1/e6/ce127fa0ac17775bc7887c432ffe945c49ae141f01b477b7cd5e63b16bb5/Pillow-6.0.0-cp37-cp37m-manylinux1_x86_64.whl",
-          "sha256": "367385fc797b2c31564c427430c7a8630db1a00bd040555dfc1d5c52e39fcd72"
+          "url": "https://files.pythonhosted.org/packages/a4/da/2bd281c875686230eabc13d20ab590ea617563b0e746abfb0698c4d5b645/Pillow-6.1.0-cp37-cp37m-manylinux1_x86_64.whl",
+          "sha256": "b50bc1780681b127e28f0075dfb81d6135c3a293e0c1d0211133c75e2179b6c0"
         }
       ]
     },
@@ -2097,18 +1826,13 @@
       "sources": [
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/6e/3f/9207e1af3fb23c71a2a17a5d82d4c68f4dd6b3429b58514c74b95f6e0784/pydocstyle-3.0.0-py3-none-any.whl",
-          "sha256": "ed79d4ec5e92655eccc21eb0c6cf512e69512b4a97d215ace46d17e4990f2039"
+          "url": "https://files.pythonhosted.org/packages/a0/5e/d9ead2d57d39b3e1c1868ce84212319e5543a19c4185dce7e42a9dd968b0/snowballstemmer-1.9.0.tar.gz",
+          "sha256": "9f3b9ffe0809d174f7047e121431acf99c89a7040f0ca84f94ba53a498e6d0c9"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/73/fb/00a976f728d0d1fecfe898238ce23f502a721c0ac0ecfedb80e0d88c64e9/six-1.12.0-py2.py3-none-any.whl",
-          "sha256": "3350809f0555b11f552448330d0b52d5f24c91a322ea4a15ef22629740f3761c"
-        },
-        {
-          "type": "file",
-          "url": "https://files.pythonhosted.org/packages/d4/6c/8a935e2c7b54a37714656d753e4187ee0631988184ed50c0cf6476858566/snowballstemmer-1.2.1-py2.py3-none-any.whl",
-          "sha256": "9f3bcd3c401c3e862ec0ebe6d2c069ebc012ce142cce209c098ccb5b09136e89"
+          "url": "https://files.pythonhosted.org/packages/eb/9a/8b5285c888e09a4f257e184b067c87b4423fed387bffa4b6514f72439b62/pydocstyle-4.0.0-py3-none-any.whl",
+          "sha256": "58c421dd605eec0bce65df8b8e5371bb7ae421582cdf0ba8d9435ac5b0ffc36a"
         }
       ]
     },
@@ -2149,11 +1873,6 @@
       "sources": [
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/1c/d9/bf5848b376e441ff358a14b954476423eeeb8c9b78c10074b7f53ce2918d/isort-4.3.20-py2.py3-none-any.whl",
-          "sha256": "f57abacd059dc3bd666258d1efb0377510a89777fda3e3274e3c01f7c03ae22d"
-        },
-        {
-          "type": "file",
           "url": "https://files.pythonhosted.org/packages/23/84/323c2415280bc4fc880ac5050dddfb3c8062c2552b34c2e512eb4aa68f79/wrapt-1.11.2.tar.gz",
           "sha256": "565a021fd19419476b9362b05eeaa094178de64f8361e44468f9e9d7843901e1"
         },
@@ -2184,6 +1903,11 @@
         },
         {
           "type": "file",
+          "url": "https://files.pythonhosted.org/packages/e5/b0/c121fd1fa3419ea9bfd55c7f9c4fedfec5143208d8c7ad3ce3db6c623c21/isort-4.3.21-py2.py3-none-any.whl",
+          "sha256": "6e811fcb295968434526407adb8796944f1988c5b65e8139058f2014cbe100fd"
+        },
+        {
+          "type": "file",
           "url": "https://files.pythonhosted.org/packages/fb/56/dd4e168a0009da85c78c6cfe91f5b2df2c7bbed60f3ba778c4a71289e6fb/typed_ast-1.4.0-cp37-cp37m-manylinux1_x86_64.whl",
           "sha256": "d7c45933b1bdfaf9f36c579671fec15d25b06c8398f113dab64c18ed1adda01d"
         }
@@ -2203,13 +1927,13 @@
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/4e/62/8986cd48ba80196f2efa3670b3672736a989d629a9e4de07b1f84fa5d747/svglib-0.9.1.tar.gz",
-          "sha256": "7daa695db7d54c2359014c6ebb98a995c527339488272c65175d67a5252a690b"
+          "url": "https://files.pythonhosted.org/packages/94/2c/4e501f9c351343c8ba10d70b5a7ca97cdab2690af043a6e52ada65b85b6b/tinycss2-1.0.2-py3-none-any.whl",
+          "sha256": "9fdacc0e22d344ddd2ca053837c133900fe820ae1222f63b79617490a498507a"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/94/2c/4e501f9c351343c8ba10d70b5a7ca97cdab2690af043a6e52ada65b85b6b/tinycss2-1.0.2-py3-none-any.whl",
-          "sha256": "9fdacc0e22d344ddd2ca053837c133900fe820ae1222f63b79617490a498507a"
+          "url": "https://files.pythonhosted.org/packages/a4/da/2bd281c875686230eabc13d20ab590ea617563b0e746abfb0698c4d5b645/Pillow-6.1.0-cp37-cp37m-manylinux1_x86_64.whl",
+          "sha256": "b50bc1780681b127e28f0075dfb81d6135c3a293e0c1d0211133c75e2179b6c0"
         },
         {
           "type": "file",
@@ -2218,8 +1942,8 @@
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/c1/e6/ce127fa0ac17775bc7887c432ffe945c49ae141f01b477b7cd5e63b16bb5/Pillow-6.0.0-cp37-cp37m-manylinux1_x86_64.whl",
-          "sha256": "367385fc797b2c31564c427430c7a8630db1a00bd040555dfc1d5c52e39fcd72"
+          "url": "https://files.pythonhosted.org/packages/ea/fe/7c05fe6d203aba828d1b90d48d5257a456fefae7cf331c9d067a589ef4ee/svglib-0.9.2.tar.gz",
+          "sha256": "8dae55c991617b85a418f52b605221cd83c1698663c2fce792c9754559b11d07"
         },
         {
           "type": "file",
@@ -2228,8 +1952,8 @@
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/ef/7a/a42b825b27eaa0deedec913e797dd3e4bef51f21d5f0027a87562342fd25/lxml-4.3.4-cp37-cp37m-manylinux1_x86_64.whl",
-          "sha256": "b773715609649a1a180025213f67ffdeb5a4878c784293ada300ee95a1f3257b"
+          "url": "https://files.pythonhosted.org/packages/f0/34/bd9aaf095af93648bf9e2738b1105460e2687c2202f24b8046cf9bca6895/lxml-4.4.0-cp37-cp37m-manylinux1_x86_64.whl",
+          "sha256": "d5a61e9c2322b45f259909a02b76bc98c4641214e22a37191d00c151aa9cdb9a"
         },
         {
           "type": "file",
@@ -2252,13 +1976,13 @@
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/a3/65/837fefac7475963d1eccf4aa684c23b95aa6c1d033a2c5965ccb11e22623/PyYAML-5.1.1.tar.gz",
-          "sha256": "b4bb4d3f5e232425e25dda21c070ce05168a786ac9eda43768ab7f3ac2770955"
+          "url": "https://files.pythonhosted.org/packages/a7/9b/f43134908f31b420f983726e348ac30f884c300e006f244ab095c29b942a/yamllint-1.16.0-py2.py3-none-any.whl",
+          "sha256": "f97cd763fe7b588444a94cc44fd3764b832a613b5250baa2bfe8b84c91e4c330"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/a7/9b/f43134908f31b420f983726e348ac30f884c300e006f244ab095c29b942a/yamllint-1.16.0-py2.py3-none-any.whl",
-          "sha256": "f97cd763fe7b588444a94cc44fd3764b832a613b5250baa2bfe8b84c91e4c330"
+          "url": "https://files.pythonhosted.org/packages/e3/e8/b3212641ee2718d556df0f23f78de8303f068fe29cdaa7a91018849582fe/PyYAML-5.1.2.tar.gz",
+          "sha256": "01adf0b6c6f61bd11af6e10ca52b7d4057dd0be0343eb9283c878cf3af56aee4"
         }
       ]
     },
@@ -2422,7 +2146,7 @@
         {
           "type": "git",
           "url": "https://github.com/ahamilton/eris",
-          "commit": "16b95a237660a3d47119b18caf89460ce3a77376"
+          "commit": "bf3fd5c63b4eaceba30598509e4e282946979e70"
         }
       ]
     }

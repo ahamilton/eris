@@ -83,7 +83,11 @@ def make_haskell_module(package, deps):
         commands.append(f"cd {dep}; ./Setup unregister")
     sources.append({
         "type": "script",
-        "commands": ["set -x", "cd $1", "ghc -threaded --make Setup",
+        "commands": ["set -x", "cd $1",
+                     "if [ ! -e Setup.hs ] && [ ! -e Setup.lhs ]; then",
+                     "  echo 'import Distribution.Simple' > Setup.hs",
+                     "  echo 'main = defaultMain' >> Setup.hs", "fi",
+                     "ghc -threaded --make Setup",
                      "./Setup configure --disable-optimization --prefix=/app",
                      "./Setup build", "./Setup install"],
         "dest-filename": "install-package"})
