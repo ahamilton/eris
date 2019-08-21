@@ -318,8 +318,7 @@ class Summary:
             if jobs_added:
                 self._jobs_added_event.set()
             for result in deleted_results:
-                with contextlib.suppress(FileNotFoundError):
-                    os.remove(result.pickle_path)
+                result.delete()
             self.sort_entries()
 
     def _sweep_up(self, x, y):
@@ -470,6 +469,7 @@ class Summary:
     def refresh_result(self, result):
         if result.is_completed:
             result.reset()
+            result.delete()
             self.closest_placeholder_generator = None
             self._jobs_added_event.set()
             self.completed_total -= 1

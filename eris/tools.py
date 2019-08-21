@@ -14,6 +14,7 @@ import os
 import os.path
 import pickle
 import pwd
+import shutil
 import stat
 import subprocess
 import tempfile
@@ -587,6 +588,15 @@ class Result:
 
     def appearance_min(self):
         return [status_to_str(self.status)]
+
+    def get_pages_dir(self):
+        return self.pickle_path + ".pages"
+
+    def delete(self):
+        with contextlib.suppress(FileNotFoundError):
+            os.remove(self.pickle_path)
+        with contextlib.suppress(FileNotFoundError):
+            shutil.rmtree(self.get_pages_dir())
 
     def as_html(self):
         html, styles = termstr.TermStr(status_to_str(self.status)).as_html()

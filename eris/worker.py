@@ -9,6 +9,7 @@ import signal
 
 import eris.fill3 as fill3
 import eris.tools as tools
+import eris.paged_list
 
 
 class Worker:
@@ -80,6 +81,15 @@ class Worker:
             os.killpg(self.child_pgid, signal.SIGKILL)
 
 
+def make_result_widget(text, result):
+    appearance = fill3.str_to_appearance(text)
+    page_size = 500
+    if len(appearance) > page_size:
+        appearance = eris.paged_list.PagedList(
+            appearance, result.get_pages_dir(), page_size, cache_size=2)
+    return fill3.Fixed(appearance)
+
+
 def main():
     print(os.getpgid(os.getpid()), flush=True)
     try:
@@ -88,7 +98,7 @@ def main():
             tool = getattr(tools, tool_name)
             result = tools.Result(path, tool)
             status, text = tools.run_tool_no_error(path, tool)
-            result.result = fill3.Text(text)
+            result.result = make_result_widget(text, result)
             print(status.value, flush=True)
     except:
         tools.log_error()

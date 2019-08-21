@@ -334,18 +334,19 @@ class View:
         return result
 
 
+def str_to_appearance(text, pad_char=" "):
+    lines = text.splitlines()
+    if len(lines) == 0:
+        return []
+    max_width = max(len(line) for line in lines)
+    height = len(lines)
+    return appearance_resize(lines, (max_width, height), pad_char)
+
+
 class Text:
 
     def __init__(self, text, pad_char=" "):
-        lines = text.splitlines()
-        if len(lines) == 0:
-            self.text = []
-        elif len(lines) == 1:
-            self.text = [lines[0]]
-        else:
-            max_width = max(len(line) for line in lines)
-            height = len(lines)
-            self.text = appearance_resize(lines, (max_width, height), pad_char)
+        self.text = str_to_appearance(text, pad_char)
 
     def appearance_min(self):
         return self.text
@@ -434,11 +435,15 @@ class Placeholder:
 
 class Fixed:
 
-    def __init__(self, appearance):
-        self.appearance_min_ = appearance
+    def __init__(self, appearance_min):
+        self.appearance_min_ = appearance_min
+        self.dimensions = appearance_dimensions(appearance_min)
 
     def appearance_min(self):
         return self.appearance_min_
+
+    def appearance_dimensions(self):
+        return self.dimensions
 
 
 ##########################
