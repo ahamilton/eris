@@ -1168,7 +1168,6 @@ def entry_point():
         with chdir(root_path):  # FIX: Don't change directory if possible.
             loop = asyncio.get_event_loop()
             main(root_path, loop, worker_count, editor_command, theme)
-    os._exit(0)
 
 
 if __name__ == "__main__":
