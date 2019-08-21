@@ -893,12 +893,13 @@ class Screen:
         self._summary._cursor_position = column_index, row_index
 
     def _is_switching_focus(self, x, y, view_width, view_height):
-        return (self._is_listing_portrait and (x > view_width and
+        return (not self._is_fullscreen and
+                (self._is_listing_portrait and (x > view_width and
                 self._is_summary_focused or x <= view_width and
                 not self._is_summary_focused) or
                 not self._is_listing_portrait and (y > view_height and
                 self._is_summary_focused or y <= view_height and
-                not self._is_summary_focused))
+                not self._is_summary_focused)))
 
     def _on_mouse_event(self, event):
         x, y = event[2:4]
