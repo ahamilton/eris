@@ -216,7 +216,7 @@ class MainTestCase(unittest.TestCase):
     def test_main_and_restart_and_no_leaks_and_is_relocatable(self):
         def test_run(root_path, loop):
             mount_total = _mount_total()
-            # tmp_total = _tmp_total()
+            tmp_total = _tmp_total()
             foo_path = os.path.join(root_path, "foo")
             open(foo_path, "w").close()
             __main__.manage_cache(root_path)
@@ -228,7 +228,7 @@ class MainTestCase(unittest.TestCase):
                                   "foo-metadata", "foo-contents"]:
                     self.assertTrue(os.path.exists(".eris/" + file_name))
             self.assertEqual(_mount_total(), mount_total)
-            # self.assertEqual(_tmp_total(), tmp_total)
+            self.assertEqual(_tmp_total(), tmp_total)
         temp_dir = tempfile.mkdtemp()
         try:
             loop = asyncio.get_event_loop()
