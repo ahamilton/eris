@@ -597,6 +597,7 @@ class Result:
             os.remove(self.pickle_path)
         with contextlib.suppress(FileNotFoundError):
             shutil.rmtree(self.get_pages_dir())
+        Result.result.fget.evict(self)
 
     def as_html(self):
         html, styles = termstr.TermStr(status_to_str(self.status)).as_html()
