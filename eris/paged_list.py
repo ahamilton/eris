@@ -39,7 +39,7 @@ class PagedList:
             return pickle.load(file_)
 
     def __getitem__(self, index):
-        if type(index) == slice:
+        if isinstance(index, slice):
             start, stop, step = index.indices(self._len)
             start_page_index, start_page_offset = divmod(start, self.page_size)
             stop_page_index, stop_page_offset = divmod(stop, self.page_size)
