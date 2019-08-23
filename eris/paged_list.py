@@ -20,13 +20,13 @@ class PagedList:
         if len(list_) == 0:
             pages = [[]]
         else:
-            pages = [list_[start:start+self.page_size]
-                     for start in range(0, len(list_), self.page_size)]
+            pages = (list_[start:start+self.page_size]
+                     for start in range(0, len(list_), self.page_size))
         for index, page in enumerate(pages):
             pickle_path = os.path.join(tmp_dir, str(index))
             with gzip.open(pickle_path, "wb") as file_:
                 pickle.dump(page, file_, protocol=pickle.HIGHEST_PROTOCOL)
-        self.page_count = len(pages)
+        self.page_count = index + 1
         os.rename(tmp_dir, self.pages_dir)
         self._get_page = functools.lru_cache(maxsize=cache_size)(self._get_page)
 
