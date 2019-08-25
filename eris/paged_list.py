@@ -28,12 +28,12 @@ class PagedList:
                 pickle.dump(page, file_, protocol=pickle.HIGHEST_PROTOCOL)
         self.page_count = index + 1
         os.rename(tmp_dir, self.pages_dir)
-        self._get_page = functools.lru_cache(maxsize=cache_size)(self._get_page)
+        self._setup_page_cache()
 
     def __len__(self):
         return self._len
 
-    def _get_page(self, index):  # This is cached, see __init__.
+    def _get_page(self, index):  # This is cached, see setup_page_cache.
         pickle_path = os.path.join(self.pages_dir, str(index))
         with gzip.open(pickle_path, "rb") as file_:
             return pickle.load(file_)
@@ -62,6 +62,9 @@ class PagedList:
             page_index, page_offset = divmod(index, self.page_size)
             return self._get_page(page_index)[page_offset]
 
+    def _setup_page_cache(self):
+        self._get_page = functools.lru_cache(self.cache_size)(self._get_page)
+
     def __getstate__(self):  # Don't pickle the lru_cache.
         state = self.__dict__.copy()
         del state["_get_page"]
@@ -69,5 +72,4 @@ class PagedList:
 
     def __setstate__(self, state):
         self.__dict__ = state
-        self._get_page = \
-            functools.lru_cache(maxsize=self.cache_size)(self._get_page)
+        self._setup_page_cache()
