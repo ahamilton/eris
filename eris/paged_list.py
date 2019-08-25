@@ -17,11 +17,9 @@ class PagedList:
         self._len = len(list_)
         tmp_dir = pages_dir + ".tmp"
         os.makedirs(tmp_dir)
-        if len(list_) == 0:
-            pages = [[]]
-        else:
-            pages = (list_[start:start+self.page_size]
-                     for start in range(0, len(list_), self.page_size))
+        pages = ([[]] if len(list_) == 0 else
+                 (list_[start:start+self.page_size]
+                  for start in range(0, len(list_), self.page_size)))
         for index, page in enumerate(pages):
             pickle_path = os.path.join(tmp_dir, str(index))
             with gzip.open(pickle_path, "wb") as file_:
