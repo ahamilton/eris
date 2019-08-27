@@ -6,16 +6,20 @@ import functools
 import gzip
 import os
 import pickle
+import shutil
 
 
 class PagedList:
 
-    def __init__(self, list_, pages_dir, page_size, cache_size):
+    def __init__(self, list_, pages_dir, page_size, cache_size, exist_ok=False):
         self.pages_dir = pages_dir  # An empty or non-existant directory.
         self.page_size = page_size
         self.cache_size = cache_size
         self._len = len(list_)
         tmp_dir = pages_dir + ".tmp"
+        if exist_ok:
+            shutil.rmtree(tmp_dir, ignore_errors=True)
+            shutil.rmtree(pages_dir, ignore_errors=True)
         os.makedirs(tmp_dir)
         pages = ([[]] if len(list_) == 0 else
                  (list_[start:start+self.page_size]

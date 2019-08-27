@@ -86,10 +86,9 @@ def make_result_widget(text, result):
     appearance = fill3.str_to_appearance(text)
     page_size = 500
     if len(appearance) > page_size:
-        pages_dir = result.get_pages_dir()
-        shutil.rmtree(pages_dir, ignore_errors=True)
         appearance = eris.paged_list.PagedList(
-            appearance, pages_dir, page_size, cache_size=2)
+            appearance, result.get_pages_dir(), page_size, cache_size=2,
+            exist_ok=True)
     return fill3.Fixed(appearance)
 
 
