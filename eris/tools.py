@@ -442,6 +442,8 @@ def svglib(path):
     import reportlab.graphics.renderPM
     drawing = svglib.svglib.svg2rlg(path)
     image = reportlab.graphics.renderPM.drawToPIL(drawing)
+    if image.width > MAX_IMAGE_SIZE:
+        image = _resize_image(image, MAX_IMAGE_SIZE)
     return Status.normal, _image_to_text(image)
 
 
