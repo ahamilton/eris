@@ -208,7 +208,7 @@ tools_for_extensions = [
 
 [elinks]
   dependencies = ["elinks"]
-  command = "elinks -dump-color-mode 1 -dump"
+  command = "elinks -dump-color-mode 1 -dump -no-numbering -no-references"
   success_status = "normal"
   has_color = true
 
