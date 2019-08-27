@@ -946,12 +946,13 @@ class Screen:
         widget = self._summary.get_selection()
         view = self._listing.widget.view
         view.position = widget.scroll_position
+        x, y = view.position
         view.widget = widget.result
         tool_name = tools.tool_name_colored(widget.tool, widget.path)
-        divider = " " + self._listing.top * 4 + " "
+        divider = " " + self._listing.top * 2 + " "
         self._listing.title = (
             tools.path_colored(widget.path) + divider + tool_name + " " +
-            tools.status_to_str(widget.status))
+            tools.status_to_str(widget.status) + divider + "Line: " + str(y+1))
 
     _STATUS_BAR = highlight_chars(
         " *help *quit *t*a*b:focus *turn *log *edit *next *pause *order"
