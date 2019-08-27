@@ -392,6 +392,18 @@ def html_syntax(path):
     return status, stderr
 
 
+@deps(deps={"pandoc", "elinks"}, url="pandoc",
+      executables={"pandoc", "elinks"})
+def pandoc(path):
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_path = os.path.join(temp_dir, "temp.html")
+        _do_command(["pandoc", "-t", "html", "-o", temp_path, path])
+        return _run_command(
+            ["elinks", "-no-numbering", "-no-references",
+             "-dump-color-mode", "1", "-dump", temp_path],
+            has_color=True, success_status=Status.normal)
+
+
 MAX_IMAGE_SIZE = 200
 
 

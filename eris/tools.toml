@@ -21,7 +21,7 @@ tools_for_extensions = [
    [["bash", "sh", "dash", "ksh"], ["shellcheck"]],
    [["wasm"], ["wasm_validate", "wasm_objdump"]],
    [["pdf"], ["pdf2txt"]],
-   [["html", "htm"], ["html_syntax", "html2text", "pandoc", "elinks"]],
+   [["html", "htm"], ["html_syntax", "html2text", "elinks"]],
    [["yaml", "yml"], ["yamllint"]],
    [["md", "epub", "docx", "odt", "rst"], ["pandoc"]],
    [["zip", "jar", "apk", "egg", "whl"], ["zipinfo"]],
@@ -204,11 +204,6 @@ tools_for_extensions = [
 [html2text]
   dependencies = ["html2text"]
   command = "html2text"
-  success_status = "normal"
-
-[pandoc]
-  dependencies = ["pandoc"]
-  command = "pandoc -t plain"
   success_status = "normal"
 
 [elinks]
