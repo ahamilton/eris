@@ -952,7 +952,7 @@ class Screen:
         divider = " " + self._listing.top * 2 + " "
         self._listing.title = (
             tools.path_colored(widget.path) + divider + tool_name + " " +
-            tools.status_to_str(widget.status) + divider + "Line: " + str(y+1))
+            tools.status_to_str(widget.status) + divider + "line " + str(y+1))
 
     _STATUS_BAR = highlight_chars(
         " *help *quit *t*a*b:focus *turn *log *edit *next *pause *order"
@@ -971,10 +971,10 @@ class Screen:
                                    progress_bar_size):
         bar_transparency = 0.7
         ordering_text = "directory" if is_directory_sort else "type     "
-        paused_indicator = (termstr.TermStr("paused ").fg_color(
+        paused_indicator = (termstr.TermStr(" paused").fg_color(
             termstr.Color.yellow) if is_paused else termstr.TermStr("running").
                             fg_color(termstr.Color.blue))
-        indicators = " " + paused_indicator + f"  order:{ordering_text} "
+        indicators = " " + paused_indicator + f" • {ordering_text} "
         spacing = " " * (width - len(self._STATUS_BAR) - len(indicators))
         bar = (self._STATUS_BAR[:width - len(indicators)] + spacing +
                indicators)[:width]
