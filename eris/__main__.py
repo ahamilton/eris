@@ -605,7 +605,7 @@ class Help:
             self._on_mouse_event(event, appearance_changed_event)
             return
         try:
-            action = self.key_map[event]
+            action = self.key_map[event.lower()]
         except KeyError:
             pass
         else:
@@ -935,7 +935,7 @@ class Screen:
             self._appearance_changed_event.set()
             return
         try:
-            action = self._key_map[event]
+            action = self._key_map[event.lower()]
         except KeyError:
             pass
         else:
