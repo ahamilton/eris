@@ -929,17 +929,19 @@ class Screen:
             self._help_widget.on_input_event(
                 event, self._appearance_changed_event)
             return
-        if type(event) == tuple and event[0] in ["mouse press", "mouse drag"]:
-            self._on_mouse_event(event)
-            self._appearance_changed_event.set()
-            return
-        try:
-            action = self._key_map[event.lower()]
-        except KeyError:
-            pass
+        if type(event) == tuple:
+            if event[0] in ["mouse press", "mouse drag"]:
+                self._on_mouse_event(event)
+                self._appearance_changed_event.set()
+                return
         else:
-            action(self)
-            self._appearance_changed_event.set()
+            try:
+                action = self._key_map[event.lower()]
+            except KeyError:
+                pass
+            else:
+                action(self)
+                self._appearance_changed_event.set()
 
     def _fix_listing(self):
         widget = self._summary.get_selection()
