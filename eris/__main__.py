@@ -584,10 +584,9 @@ class Help:
         self.widget = fill3.Border(self.view, title="Help")
         portal = self.view.portal
         self.key_map = make_key_map([
-            ({"h"}, self._exit_help), ({"d", "up"}, portal.scroll_up),
-            ({"c", "down"}, portal.scroll_down),
-            ({"j", "left"}, portal.scroll_left),
-            ({"k", "right"}, portal.scroll_right), ({"q"}, self._exit_help)])
+            ({"h"}, self._exit_help), ({"up"}, portal.scroll_up),
+            ({"down"}, portal.scroll_down), ({"left"}, portal.scroll_left),
+            ({"right"}, portal.scroll_right), ({"q"}, self._exit_help)])
 
     def _exit_help(self):
         self.screen._is_help_visible = False
