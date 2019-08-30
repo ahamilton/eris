@@ -3,7 +3,6 @@
 
 
 import functools
-import gzip
 import os
 import pickle
 import shutil
@@ -11,10 +10,12 @@ import shutil
 
 class PagedList:
 
-    def __init__(self, list_, pages_dir, page_size, cache_size, exist_ok=False):
+    def __init__(self, list_, pages_dir, page_size, cache_size, exist_ok=False,
+                 open_func=open):
         self.pages_dir = pages_dir  # An empty or non-existant directory.
         self.page_size = page_size
         self.cache_size = cache_size
+        self.open_func = open_func
         self._len = len(list_)
         tmp_dir = pages_dir + ".tmp"
         if exist_ok:
@@ -26,7 +27,7 @@ class PagedList:
                   for start in range(0, len(list_), self.page_size)))
         for index, page in enumerate(pages):
             pickle_path = os.path.join(tmp_dir, str(index))
-            with gzip.open(pickle_path, "wb") as file_:
+            with self.open_func(pickle_path, "wb") as file_:
                 pickle.dump(page, file_, protocol=pickle.HIGHEST_PROTOCOL)
         self.page_count = index + 1
         os.rename(tmp_dir, self.pages_dir)
@@ -37,7 +38,7 @@ class PagedList:
 
     def _get_page(self, index):  # This is cached, see setup_page_cache.
         pickle_path = os.path.join(self.pages_dir, str(index))
-        with gzip.open(pickle_path, "rb") as file_:
+        with self.open_func(pickle_path, "rb") as file_:
             return pickle.load(file_)
 
     def __getitem__(self, index):

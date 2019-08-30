@@ -4,6 +4,7 @@
 # Licensed under the Artistic License 2.0.
 
 import asyncio
+import gzip
 import os
 import shutil
 import signal
@@ -88,7 +89,7 @@ def make_result_widget(text, result):
     if len(appearance) > page_size:
         appearance = eris.paged_list.PagedList(
             appearance, result.get_pages_dir(), page_size, cache_size=2,
-            exist_ok=True)
+            exist_ok=True, open_func=gzip.open)
     return fill3.Fixed(appearance)
 
 
