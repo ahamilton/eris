@@ -935,11 +935,9 @@ class Screen:
                 self._appearance_changed_event.set()
                 return
         else:
-            try:
-                action = self._key_map[event.lower()]
-            except KeyError:
-                pass
-            else:
+            action = (self._key_map.get(event) or
+                      self._key_map.get(event.lower()))
+            if action is not None:
                 action(self)
                 self._appearance_changed_event.set()
 
