@@ -278,6 +278,23 @@ def python_unittests(path):
         return Status.not_applicable, "No tests."
 
 
+@deps(deps={"pip/pytest"}, url="https://docs.pytest.org/en/latest/",
+      executables={"pytest"})
+def pytest(path):
+    command = ["pytest", "--doctest-modules", "--color=yes", path]
+    process = subprocess.run(command, stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE, text=True,
+                             timeout=TIMEOUT)
+    stdout, stderr, returncode = (
+        termstr.TermStr.from_term(process.stdout),
+        termstr.TermStr.from_term(process.stderr), process.returncode)
+    if returncode == 5:
+        status = Status.not_applicable
+    else:
+        status = Status.ok if returncode == 0 else Status.problem
+    return status, (stdout + stderr)
+
+
 @deps(url="https://docs.python.org/3/library/pydoc.html")
 def pydoc(path):
     stdout, stderr, returncode = _do_command(

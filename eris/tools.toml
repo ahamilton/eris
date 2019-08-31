@@ -3,7 +3,7 @@
 # Licensed under the Artistic License 2.0.
 
 tools_for_extensions = [
-   [["py"], ["python_syntax", "python_unittests", "pydoc", "mypy",
+   [["py"], ["python_syntax", "python_unittests", "pytest", "pydoc", "mypy",
              "python_coverage", "pycodestyle", "pydocstyle", "pyflakes",
 	     "pylint", "python_gut", "python_modulefinder", "dis",
 	     "python_mccabe", "bandit"]],
