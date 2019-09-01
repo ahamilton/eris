@@ -401,14 +401,14 @@ class Border:
         if self.title is None:
             title_bar = self.top * content_width
         else:
-            title = ("…" + self.title[-(content_width-1):]
-                     if len(self.title) > content_width - 2
-                     else " " + self.title + " ")
+            padded_title = " " + ("…" + self.title[-(content_width-3):]
+                                  if len(self.title) > content_width - 2
+                                  else self.title) + " "
             try:
-                title_bar = title.center(content_width, self.top)
+                title_bar = padded_title.center(content_width, self.top)
             except TypeError:
-                title = termstr.TermStr(title)
-                title_bar = title.center(content_width, self.top)
+                padded_title = termstr.TermStr(padded_title)
+                title_bar = padded_title.center(content_width, self.top)
         result = [self.top_left + title_bar + self.top_right]
         result.extend(self.left + line + self.right for line in body_content)
         result.append(self.bottom_left + self.bottom * content_width +

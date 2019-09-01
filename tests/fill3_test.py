@@ -64,6 +64,10 @@ class WidgetTests(unittest.TestCase):
                            "┌─ AB ─┐\n"
                            "│abcdef│\n"
                            "└──────┘")
+        self.assert_string(fill3.Border(text, title="ABC").appearance((6, 3)),
+                           "┌ …C ┐\n"
+                           "│abcd│\n"
+                           "└────┘")
 
     def test_placeholder_widget(self):
         placeholder = fill3.Placeholder(self.TEXT_A)
