@@ -238,7 +238,7 @@ class MainTestCase(unittest.TestCase):
             second_dir = os.path.join(temp_dir, "second")
             os.rename(first_dir, second_dir)
             test_run(second_dir, loop)
-            loop.close()
+            loop.stop()
         finally:
             shutil.rmtree(temp_dir)
 

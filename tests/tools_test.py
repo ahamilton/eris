@@ -124,7 +124,7 @@ class ToolsTestCase(unittest.TestCase):
     def test_python_modulefinder(self):
         self._test_tool(tools.python_modulefinder, self.HI_NORMAL)
 
-    def test_python_mccable(self):
+    def test_python_mccabe(self):
         self._test_tool(tools.python_mccabe, self.HI_OK)
 
     # FIX: Make the golden-file deterministic

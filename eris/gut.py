@@ -37,12 +37,12 @@ def _indentation_of_line(line):
 
 
 def _is_start_line_of_signature(line):
-    return re.match("^\s*(async)?\s*def\s", line) is not None
+    return re.match(r"^\s*(async)?\s*def\s", line) is not None
 
 
 def _is_end_line_of_signature(line):
-    return (re.match(".*\):\s*\n$", line) is not None or
-            re.match(".*\):\s*#.*\n$", line) is not None)
+    return (re.match(r".*\):\s*\n$", line) is not None or
+            re.match(r".*\):\s*#.*\n$", line) is not None)
 
 
 def gut_module(module_contents):
