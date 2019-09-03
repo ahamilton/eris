@@ -96,6 +96,14 @@ tools_for_extensions = [
   command = "perl6 -c"
   has_color = true
 
+[perldoc]
+  dependencies = ["perl-doc"]
+  url = "http://perldoc.perl.org/"
+  command = "perldoc -oterm"
+  success_status = "normal"
+  error_status = "not_applicable"
+  has_color = true
+
 [git_blame]
   dependencies = ["git"]
   url = "https://git-scm.com/docs/git-blame"

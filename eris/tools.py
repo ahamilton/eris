@@ -387,14 +387,6 @@ def python_mccabe(path):
 #                         Status.not_applicable)
 
 
-@deps(deps={"perl-doc"}, url="http://perldoc.perl.org/",
-      executables={"perldoc"})
-def perldoc(path):
-    stdout, stderr, returncode = _do_command(["perldoc", "-t", path])
-    return ((Status.normal, stdout) if returncode == 0
-            else (Status.not_applicable, stderr))
-
-
 @deps(deps={"perltidy"}, url="http://perltidy.sourceforge.net/",
       executables={"perltidy"})
 def perltidy(path):

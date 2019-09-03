@@ -1,61 +1,61 @@
-Net::Z3950::AsyncZ
-  Intro
+[m[38;2;255;255;255m[48;2;0;0;0m[1mNet::Z3950::AsyncZ[m[38;2;255;255;255m[48;2;0;0;0m
+  [m[38;2;255;255;255m[48;2;0;0;0m[1mIntro[m[38;2;255;255;255m[48;2;0;0;0m
     Net::Z3950::AsyncZ adds an additional layer of asynchronous support for
-    the Z3950 module through the use of multiple forked processes. I hope
-    that users will also find that it provides a convenient front end to
-    "Net::Z3950". My initial idea was to write something that would provide
-    a convenient means of processing and formatting Z39.50 records--which I
-    did, using the "Z3950" synchronous code. But I also wanted something
-    that could handle queries to large numbers of servers at one session.
-    Working on this part of my project, I found that I had trouble with the
-    "Z3950" asynchronous features and so ended up with what I have here.
+    the Z3950 module through the use of multiple forked processes. I hope that
+    users will also find that it provides a convenient front end to
+    "Net::Z3950". My initial idea was to write something that would provide a
+    convenient means of processing and formatting Z39.50 records--which I did,
+    using the "Z3950" synchronous code. But I also wanted something that could
+    handle queries to large numbers of servers at one session. Working on this
+    part of my project, I found that I had trouble with the "Z3950"
+    asynchronous features and so ended up with what I have here.
 
-    I give a more detailed account in in the DESCRIPTION section of
+    I give a more detailed account in in the [m[38;2;255;255;255m[48;2;0;0;0m[1mDESCRIPTION[m[38;2;255;255;255m[48;2;0;0;0m section of
     "AsyncZ.pod".
 
-  Documentation
+  [m[38;2;255;255;255m[48;2;0;0;0m[1mDocumentation[m[38;2;255;255;255m[48;2;0;0;0m
     AsyncZ.pod
-        This is the starting point--it gives an overview of the AsyncZ
-        module, describes the basic mechanics of its asynchronous workings,
-        and details the particulars of the objects and methods. But see
-        ""Examples.pod" for detailed explanations of the sample scripts
-        which come with the "Net::Z3950::AsyncZ" distribution.
+        This is the starting point--it gives an overview of the AsyncZ module,
+        describes the basic mechanics of its asynchronous workings, and
+        details the particulars of the objects and methods. But see
+        ""Examples.pod" for detailed explanations of the sample scripts which
+        come with the "Net::Z3950::AsyncZ" distribution.
 
     Options.pod
         This document details the various options that can be set to modify
         the behavior of AsyncZ Index
 
     Report.pod
-        Report.pod deals with how records are treated line by line and how
-        you can affect the apearance of a record's line by line output
+        Report.pod deals with how records are treated line by line and how you
+        can affect the apearance of a record's line by line output
 
     Examples.pod
         This document goes through the sample scripts that come with the
-        "Net::Z3950::AsyncZ" distribution and annotates them in a
-        line-by-line fashion. It's a basic HOW-TO.
+        "Net::Z3950::AsyncZ" distribution and annotates them in a line-by-line
+        fashion. It's a basic HOW-TO.
 
-  The Modules
-    There are more modules than there is documentation. The reason for this
-    is that the only module you have full and complete access to is
+  [m[38;2;255;255;255m[48;2;0;0;0m[1mThe Modules[m[38;2;255;255;255m[48;2;0;0;0m
+    There are more modules than there is documentation. The reason for this is
+    that the only module you have full and complete access to is
     "Net::Z3950::AsyncZ". The other modules are either internal to
     "Net::AsyncZ" or accessed indirectly or in part indirectly.
 
    Here are the modules:
     Net::Z3950::AsyncZ
-        The main module: direct access --documented in "AsyncZ" and
-        "Options" documentation
+        The main module: direct access --documented in "AsyncZ" and "Options"
+        documentation
 
     Net::Z3950::AsyncZ::ErrMsg
-        User error message handling: indirect access -- documented in
-        "AsyncZ" documentation
+        User error message handling: indirect access -- documented in "AsyncZ"
+        documentation
 
     Net::Z3950::AsyncZ::Errors
-        Error handling for debugging: limited access -- documented in
-        "AsyncZ" documentation
+        Error handling for debugging: limited access -- documented in "AsyncZ"
+        documentation
 
     Net::Z3950::AsyncZ::Report
-        Module reponsible for fetching and formatting records: limited
-        access -- documented
+        Module reponsible for fetching and formatting records: limited access
+        -- documented
 
     Net::Z3950::AsyncZ::ZLoop
         Event loop for child processes: no access -- not documented
@@ -64,7 +64,8 @@ Net::Z3950::AsyncZ
         Connection details for child processes: no access -- not documented
 
     Net::Z3950::AsyncZ::Options::_params
-        Options for child processes: direct and indirect access --
-        documented in "Options" and "AsyncZ" documentation
+        Options for child processes: direct and indirect access -- documented
+        in "Options" and "AsyncZ" documentation
 
-INDEX
+[m[38;2;255;255;255m[48;2;0;0;0m[1mINDEX[m[38;2;255;255;255m[48;2;0;0;0m
+[m
