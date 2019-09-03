@@ -561,7 +561,7 @@ def highlight_chars(str_, style, marker="*"):
 
 def get_status_help():
     return fill3.join("\n", ["Statuses:"] +
-                      ["  " + tools.status_to_str(status) + " " + meaning
+                      ["  " + tools.STATUS_TO_TERMSTR[status] + " " + meaning
                        for status, meaning in tools.STATUS_MEANINGS])
 
 
@@ -951,7 +951,8 @@ class Screen:
         divider = " " + self._listing.top * 2 + " "
         self._listing.title = (
             tools.path_colored(widget.path) + divider + tool_name + " " +
-            tools.status_to_str(widget.status) + divider + "line " + str(y+1))
+            tools.STATUS_TO_TERMSTR[widget.status] + divider +
+            "line " + str(y+1))
 
     _STATUS_BAR = highlight_chars(
         " *help *quit *t*a*b:focus *turn *log *edit *next *pause *order"

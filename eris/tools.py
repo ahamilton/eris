@@ -69,12 +69,12 @@ STATUS_MEANINGS = [
     (Status.timed_out, "Timed out"), (Status.pending, "Pending"),
     (Status.error, "Error")
 ]
-_STATUS_TO_TERMSTR = {
+STATUS_TO_TERMSTR = {
     status: termstr.TermStr(" ", termstr.CharStyle(bg_color=color))
     for status, color in _STATUS_COLORS.items()}
-_STATUS_TO_TERMSTR[Status.error] = termstr.TermStr(
+STATUS_TO_TERMSTR[Status.error] = termstr.TermStr(
     "E", termstr.CharStyle(bg_color=termstr.Color.red))
-_STATUS_TO_TERMSTR[Status.pending] = "."
+STATUS_TO_TERMSTR[Status.pending] = "."
 
 
 def get_ls_color_codes():
@@ -539,11 +539,6 @@ def dump_pickle_safe(object_, path, protocol=pickle.HIGHEST_PROTOCOL,
         os.rename(tmp_path, path)
 
 
-def status_to_str(status):
-    return (_STATUS_TO_TERMSTR[status] if isinstance(status, enum.Enum)
-            else status)
-
-
 class Result:
 
     COMPLETED_STATUSES = {
@@ -600,14 +595,14 @@ class Result:
         appearance_changed_event.set()
         log.log_message(
             ["Finished running ", tool_name, " on ", path, ". ",
-             status_to_str(new_status),
+             STATUS_TO_TERMSTR[new_status],
              f" {round(end_time - start_time, 2)} secs"])
 
     def reset(self):
         self.set_status(Status.pending)
 
     def appearance_min(self):
-        return [status_to_str(self.status)]
+        return [STATUS_TO_TERMSTR[self.status]]
 
     def get_pages_dir(self):
         return self.pickle_path + ".pages"
@@ -620,7 +615,7 @@ class Result:
         Result.result.fget.evict(self)
 
     def as_html(self):
-        html, styles = termstr.TermStr(status_to_str(self.status)).as_html()
+        html, styles = termstr.TermStr(STATUS_TO_TERMSTR[self.status]).as_html()
         return (f'<a title="{self.tool.__name__}" '
                 f'href="{self.path}/{self.tool.__name__}">{html}</a>', styles)
 
