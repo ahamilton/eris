@@ -245,10 +245,11 @@ def metadata(path):
 def contents(path):
     with open(path) as file_:
         try:
-            text = file_.read()
+            head = file_.read(200)
+            tail = file_.read()
         except UnicodeDecodeError:
             return Status.not_applicable, "Not unicode"
-    text = _fix_input(text)
+    text = _fix_input(head)
     try:
         text = _syntax_highlight_using_path(text, path)
     except pygments.util.ClassNotFound:
