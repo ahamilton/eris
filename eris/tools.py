@@ -249,7 +249,7 @@ def contents(path):
             tail = file_.read()
         except UnicodeDecodeError:
             return Status.not_applicable, "Not unicode"
-    text = _fix_input(head)
+    text = _fix_input(head + tail)
     try:
         text = _syntax_highlight_using_path(text, path)
     except pygments.util.ClassNotFound:
