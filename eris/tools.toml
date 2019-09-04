@@ -51,6 +51,15 @@ tools_for_extensions = [
   url = "https://en.wikipedia.org/wiki/Python_syntax_and_semantics"
   command = "python3.7 -m py_compile"
 
+[pydoc]
+  dependencies = []
+  url = "https://docs.python.org/3/library/pydoc.html"
+  command = "pydoc_color"
+  success_status = "normal"
+  error_status = "not_applicable"
+  has_color = true
+  timeout = 60
+
 [pycodestyle]
   dependencies = ["pip/pycodestyle"]
   url = "http://pycodestyle.pycqa.org/en/latest/"

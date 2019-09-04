@@ -296,17 +296,6 @@ def pytest(path):
     return status, (stdout + stderr)
 
 
-@deps(url="https://docs.python.org/3/library/pydoc.html")
-def pydoc(path):
-    stdout, stderr, returncode = _do_command(
-        [PYTHON_EXECUTABLE, "-m", "pydoc", path], timeout=TIMEOUT)
-    status = Status.normal if returncode == 0 else Status.not_applicable
-    if not stdout.startswith("Help on module"):
-        status = Status.not_applicable
-    stdout = stdout.replace(os.getcwd() + "/", "")
-    return status, _fix_input(stdout)
-
-
 @deps(deps={"pip/mypy"}, url="http://mypy-lang.org/", executables={"mypy"})
 def mypy(path):
     stdout, stderr, returncode = _do_command(

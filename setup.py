@@ -22,4 +22,5 @@ setup(name="eris",
       entry_points={"console_scripts":
                     ["eris=eris.__main__:entry_point",
                      "eris-worker=eris.worker:main",
-                     "eris-webserver=eris.webserver:main"]})
+                     "eris-webserver=eris.webserver:main",
+                     "pydoc_color=eris.pydoc_color:main"]})
