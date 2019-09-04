@@ -18,7 +18,11 @@ class TermDoc(pydoc.TextDoc):
 
 def main():
     path = sys.argv[1]
-    print(pydoc.render_doc(pydoc.importfile(path), renderer=TermDoc()))
+    try:
+        print(pydoc.render_doc(pydoc.importfile(path), renderer=TermDoc()))
+    except pydoc.ErrorDuringImport as e:
+        print(e)
+        return 1
 
 
 if __name__ == "__main__":
