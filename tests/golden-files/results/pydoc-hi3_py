@@ -1,12 +1,13 @@
-Help on module hi3:
+[m[38;2;255;255;255m[48;2;0;0;0mPython Library Documentation: module hi3
 
-NAME
+[m[38;2;255;255;255m[48;2;0;0;0m[1mNAME[m[38;2;255;255;255m[48;2;0;0;0m
     hi3
 
-FUNCTIONS
-    hi()
+[m[38;2;255;255;255m[48;2;0;0;0m[1mFUNCTIONS[m[38;2;255;255;255m[48;2;0;0;0m
+    [m[38;2;255;255;255m[48;2;0;0;0m[1mhi[m[38;2;255;255;255m[48;2;0;0;0m()
 
-FILE
-    input/hi3.py
+[m[38;2;255;255;255m[48;2;0;0;0m[1mFILE[m[38;2;255;255;255m[48;2;0;0;0m
+    /home/ahamilton/code/eris/tests/golden-files/input/hi3.py
 
 
+[m
