@@ -284,9 +284,12 @@ def python_unittests(path):
 def pytest(path):
     command = [PYTHON_EXECUTABLE, "-m", "pytest", "--cov=.",
                "--doctest-modules", "--color=yes", path]
-    process = subprocess.run(command, stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE, text=True,
-                             timeout=TIMEOUT)
+    with tempfile.TemporaryDirectory() as temp_dir:
+        env = os.environ.copy()
+        env["COVERAGE_FILE"] = os.path.join(temp_dir, "coverage")
+        process = subprocess.run(command, stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE, text=True,
+                                 timeout=TIMEOUT, env=env)
     stdout, stderr, returncode = (
         termstr.TermStr.from_term(process.stdout),
         termstr.TermStr.from_term(process.stderr), process.returncode)
