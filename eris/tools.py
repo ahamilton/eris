@@ -279,10 +279,11 @@ def python_unittests(path):
         return Status.not_applicable, "No tests."
 
 
-@deps(deps={"pip/pytest"}, url="https://docs.pytest.org/en/latest/",
-      executables={"pytest"})
+@deps(deps={"pip/pytest", "pip/pytest-cov"},
+      url="https://docs.pytest.org/en/latest/", executables={"pytest"})
 def pytest(path):
-    command = ["pytest", "--doctest-modules", "--color=yes", path]
+    command = [PYTHON_EXECUTABLE, "-m", "pytest", "--cov=.",
+               "--doctest-modules", "--color=yes", path]
     process = subprocess.run(command, stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE, text=True,
                              timeout=TIMEOUT)
