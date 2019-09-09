@@ -106,9 +106,6 @@ class ToolsTestCase(unittest.TestCase):
     def test_mypy(self):
         self._test_tool(tools.mypy, self.HI_OK)
 
-    def test_python_coverage(self):
-        self._test_tool(tools.python_coverage, self.HI_NORMAL)
-
     def test_pycodestyle(self):
         self._test_tool(tools.pycodestyle, self.HI_OK)
 

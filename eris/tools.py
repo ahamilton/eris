@@ -309,36 +309,31 @@ def mypy(path):
     return status, stdout
 
 
-def _colorize_coverage_report(text):
+def _colorize_coverage_report(lines):
     line_color = {"> ": termstr.Color.green, "! ": termstr.Color.red,
                   "  ": None}
     return fill3.join("", [termstr.TermStr(line).fg_color(line_color[line[:2]])
-                           for line in text.splitlines(keepends=True)])
+                           for line in lines])
 
 
 @deps(deps={"pip/coverage"}, url="https://coverage.readthedocs.io/")
 def python_coverage(path):
-    # FIX: Also use test_*.py files.
-    test_path = path[:-(len(".py"))] + "_test.py"
-    if os.path.exists(test_path):
-        with tempfile.TemporaryDirectory() as temp_dir:
-            coverage_cmd = [PYTHON_EXECUTABLE, "-m", "coverage"]
-            coverage_path = os.path.join(temp_dir, "coverage")
-            env = os.environ.copy()
-            env["COVERAGE_FILE"] = coverage_path
-            stdout, *rest = _do_command(
-                coverage_cmd + ["run", test_path], env=env, timeout=TIMEOUT)
-            path = os.path.normpath(path)
-            stdout, *rest = _do_command(
-                coverage_cmd + ["annotate", "--directory", temp_dir, path],
-                env=env)
-            flat_path = path.replace("/", "_")
-            with open(os.path.join(temp_dir, flat_path + ",cover"), "r") as f:
-                stdout = f.read()
-        return Status.normal, _colorize_coverage_report(stdout)
-    else:
-        return Status.not_applicable, ("No corresponding test file: "
-                                       + os.path.normpath(test_path))
+    coverage_path = ".coverage"
+    if not os.path.exists(coverage_path):
+        return Status.not_applicable, f'No "{coverage_path}" file.'
+    if os.stat(path).st_mtime > os.stat(coverage_path).st_mtime:
+        return (Status.not_applicable,
+                f'File has been modified since "{coverage_path}" file was generated.')
+    path = os.path.normpath(path)
+    with tempfile.TemporaryDirectory() as temp_dir:
+        _do_command([PYTHON_EXECUTABLE, "-m", "coverage",
+                     "annotate", "--directory", temp_dir, path])
+        cover_filename = path.replace("/", "_") + ",cover"
+        with open(os.path.join(temp_dir, cover_filename), "r") as f:
+            lines = f.read().splitlines(keepends=True)
+    failed_lines = [line for line in lines if line.startswith("! ")]
+    status = Status.ok if not failed_lines else Status.normal
+    return status, _colorize_coverage_report(lines)
 
 
 @deps(url="https://github.com/ahamilton/eris/blob/master/gut.py")
