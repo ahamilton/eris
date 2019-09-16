@@ -53,14 +53,11 @@ class PagedList:
                 return (self._get_page(start_page_index)
                         [start_page_offset:stop_page_offset])
             else:
-                result = self._get_page(start_page_index)[start_page_offset:]
-                middle_pages = (self._get_page(page_index) for page_index in
-                                range(start_page_index+1, stop_page_index))
-                for page in middle_pages:
-                    result.extend(page)
-                result.extend(
-                    self._get_page(stop_page_index)[:stop_page_offset])
-                return result
+                return (self._get_page(start_page_index)[start_page_offset:] +
+                        [line for page_index in
+                         range(start_page_index+1, stop_page_index)
+                         for line in self._get_page(page_index)] +
+                        self._get_page(stop_page_index)[:stop_page_offset])
         else:
             page_index, page_offset = divmod(index, self.page_size)
             return self._get_page(page_index)[page_offset]
