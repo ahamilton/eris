@@ -379,7 +379,7 @@ class Summary:
         scroll_x, scroll_y = self._view_widget.position
         highlighted_y = cursor_y - scroll_y
         appearance[highlighted_y] = (highlight_str(
-            appearance[highlighted_y][:-1], termstr.Color.white, 0.85)
+            appearance[highlighted_y][:-1], termstr.Color.white, 0.8)
                                      + appearance[highlighted_y][-1])
         return appearance
 
