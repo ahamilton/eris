@@ -250,7 +250,7 @@ patches = {
 
     "mediainfo": {"subdir": "Project/GNU/CLI"},
 
-    "php7.2": {"buildsystem": "simple",
+    "php7.3": {"buildsystem": "simple",
                "build-commands": [
                    "./configure --prefix=/app --disable-all --disable-cgi"
                               " --disable-phpdbg",

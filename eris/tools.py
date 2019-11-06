@@ -424,7 +424,7 @@ def _image_to_text(image):
         for index in range(0, image.height, 2)])
 
 
-@deps(deps={"pip/pillow"}, url="python3-pil")
+@deps(deps={"pip/pillow"}, url="http://python-pillow.github.io/")
 def pil(path):
     import PIL.Image
     with open(path, "rb") as image_file:

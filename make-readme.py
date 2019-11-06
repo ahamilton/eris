@@ -31,7 +31,7 @@ Eris maintains an up-to-date set of reports for every file in a codebase.
 
 ### Installation
 
-(Tested in Ubuntu 18.10)
+(Tested in Ubuntu 19.10)
 
     # git clone https://github.com/ahamilton/eris
     # cd eris

@@ -177,7 +177,7 @@ tools_for_extensions = [
 
 [7z]
   dependencies = ["p7zip"]
-  command = "7z l"
+  command = "7zr l"
   success_status = "normal"
 
 [unxz]
@@ -242,7 +242,7 @@ tools_for_extensions = [
   has_color = true
 
 [php7_syntax]
-  dependencies = ["php7.2-cli"]
+  dependencies = ["php7.3-cli"]
   url = "https://en.wikipedia.org/wiki/PHP"
   command = "php --syntax-check"
 
@@ -285,7 +285,7 @@ tools_for_extensions = [
   command = "vet"
 
 [golint]
-  dependencies = ["go/github.com/golang/lint/golint"]
+  dependencies = ["go/golang.org/x/lint/golint"]
   url = "https://github.com/golang/lint"
   command = "golint -set_exit_status"
 
