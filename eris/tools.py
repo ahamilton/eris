@@ -108,13 +108,13 @@ def _do_command(command, **kwargs):
 
 
 def _run_command(command, success_status=None, error_status=None,
-                 has_color=False, timeout=None):
+                 has_color=False, timeout=None, **kwargs):
     success_status = Status.ok if success_status is None else success_status
     error_status = Status.problem if error_status is None else error_status
     if has_color:
         process = subprocess.run(command, stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE, text=True,
-                                 timeout=timeout)
+                                 timeout=timeout, **kwargs)
         stdout, stderr, returncode = (
             termstr.TermStr.from_term(process.stdout),
             termstr.TermStr.from_term(process.stderr), process.returncode)
@@ -302,11 +302,11 @@ def pytest(path):
 
 @deps(deps={"pip/mypy"}, url="http://mypy-lang.org/", executables={"mypy"})
 def mypy(path):
-    stdout, stderr, returncode = _do_command(
-        [PYTHON_EXECUTABLE, "-m", "mypy", "--ignore-missing-imports", path],
-        timeout=TIMEOUT)
-    status = Status.ok if returncode == 0 else Status.problem
-    return status, stdout
+    env = os.environ.copy()
+    env["MYPY_FORCE_COLOR"] = "1"
+    return _run_command([PYTHON_EXECUTABLE, "-m", "mypy", "--color-output",
+                         "--ignore-missing-imports", path], timeout=TIMEOUT,
+                        has_color=True, env=env)
 
 
 def _colorize_coverage_report(lines):
