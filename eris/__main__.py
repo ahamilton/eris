@@ -80,21 +80,26 @@ KEYS_DOC = """Keys:
 """
 
 
-class Entry(collections.UserList):
+class Entry:
 
     def __init__(self, path, results, summary, highlighted=None,
                  set_results=True):
-        collections.UserList.__init__(self, results)
         self.path = path
         self.summary = summary
         self.highlighted = highlighted
-        self.widgets = self.data
+        self.widgets = results
         if set_results:
             # FIX: this is missed for entries appended later
             for result in results:
                 result.entry = self
         self.widget = fill3.Row(results)
         self.appearance_cache = None
+
+    def __len__(self):
+        return len(self.widgets)
+
+    def __getitem__(self, index):
+        return self.widgets.__getitem__(index)
 
     def _get_cursor(self):
         result_selected = self.widget[self.highlighted]

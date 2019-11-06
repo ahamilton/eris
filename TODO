@@ -264,7 +264,6 @@ Ideas
 - Let the mouse click on the actions in the status bar?
 - Let the mouse click the filenames.  Try to show a result from the same type
   of tool.
-- Check if class Entry is really working correctly as a collections.UserList.
 - Docstrings
 - Add ESC as an alternative to 'q' for quit. If looking at Help, ESC should just
   exit the help screen.
@@ -439,3 +438,5 @@ Shelved
   - Not necessary since git_diff was removed.
 - Cache tools._python_version.
   - Not supporting python2 anymore.
+- Check if class Entry is really working correctly as a collections.UserList.
+  - Entry is no longer a UserList.
