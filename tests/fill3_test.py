@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3.8
 # -*- coding: utf-8 -*-
 
 # Copyright (C) 2015-2019 Andrew Hamilton. All rights reserved.

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3.8
 
 # Copyright (C) 2017-2019 Andrew Hamilton. All rights reserved.
 # Licensed under the Artistic License 2.0.

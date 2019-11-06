@@ -33,7 +33,7 @@ import eris.lscolors as lscolors
 import eris.termstr as termstr
 
 
-PYTHON_VERSION = "3.7"
+PYTHON_VERSION = "3.8"
 PYTHON_EXECUTABLE = "python" + PYTHON_VERSION
 CACHE_PATH = ".eris"
 
