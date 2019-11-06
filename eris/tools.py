@@ -305,8 +305,8 @@ def mypy(path):
     env = os.environ.copy()
     env["MYPY_FORCE_COLOR"] = "1"
     return _run_command([PYTHON_EXECUTABLE, "-m", "mypy", "--color-output",
-                         "--ignore-missing-imports", path], timeout=TIMEOUT,
-                        has_color=True, env=env)
+                         "--ignore-missing-imports", "--pretty", path],
+                        timeout=TIMEOUT, has_color=True, env=env)
 
 
 def _colorize_coverage_report(lines):
