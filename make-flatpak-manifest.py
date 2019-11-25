@@ -374,7 +374,7 @@ def lua_modules(dep):
             url = line.split()[1]
             sources.append({"type": "file", "url": url,
                             "sha256": get_url_sha256(url)})
-    commands = ["luarocks-admin make-manifest .",
+    commands = ["luarocks-admin make_manifest .",
                 f"luarocks install --only-from=$PWD {dep}"]
     return modules + [{"name": dep, "buildsystem": "simple",
                        "build-commands": commands,

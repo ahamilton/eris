@@ -22,8 +22,8 @@
       "sources": [
         {
           "type": "archive",
-          "url": "http://archive.ubuntu.com/ubuntu/pool/universe/c/cppcheck/cppcheck_1.86.orig.tar.gz",
-          "sha256": "e72748603b3c457e93e4a59725f26548193ab87dbb508fc9c7b7ed8b23445fc6"
+          "url": "http://au.archive.ubuntu.com/ubuntu/pool/universe/c/cppcheck/cppcheck_1.88.orig.tar.gz",
+          "sha256": "7a335c8203d815a52153f2183dfbdf5041eff8184d1ff57d5ef89035d98c663b"
         }
       ],
       "buildsystem": "cmake"
@@ -33,8 +33,8 @@
       "sources": [
         {
           "type": "archive",
-          "url": "http://archive.ubuntu.com/ubuntu/pool/main/d/dpkg/dpkg_1.19.6ubuntu1.tar.xz",
-          "sha256": "f11a53a11c44b6bdc1b042b6a65a821318dfd7b190c75b22491b74a210f13029"
+          "url": "http://au.archive.ubuntu.com/ubuntu/pool/main/d/dpkg/dpkg_1.19.7ubuntu2.tar.xz",
+          "sha256": "972f148f1404b3382002d919c35fabfdfa74161492882a8f8af33e7f534af977"
         }
       ],
       "buildsystem": "simple",
@@ -48,7 +48,7 @@
       "sources": [
         {
           "type": "archive",
-          "url": "http://archive.ubuntu.com/ubuntu/pool/universe/e/elinks/elinks_0.13~20190125.orig.tar.xz",
+          "url": "http://au.archive.ubuntu.com/ubuntu/pool/universe/e/elinks/elinks_0.13~20190125.orig.tar.xz",
           "sha256": "18d7f5bc46664d8cc131f2c57545d2668277515eb6ccc677d3580e1fcd18efa9"
         }
       ]
@@ -58,7 +58,7 @@
       "sources": [
         {
           "type": "archive",
-          "url": "http://archive.ubuntu.com/ubuntu/pool/main/c/cdrkit/cdrkit_1.1.11.orig.tar.gz",
+          "url": "http://au.archive.ubuntu.com/ubuntu/pool/main/c/cdrkit/cdrkit_1.1.11.orig.tar.gz",
           "sha256": "d1c030756ecc182defee9fe885638c1785d35a2c2a297b4604c0e0dcc78e47da"
         }
       ],
@@ -75,7 +75,7 @@
         {
           "type": "git",
           "url": "https://github.com/WebAssembly/wabt",
-          "commit": "8e2da7b6b5d5b1c6cc4177bff5ed170d6bdfd33d"
+          "commit": "838256d449ecd48f37e0c2fc0c2c1d0f50ce8584"
         }
       ],
       "buildsystem": "simple",
@@ -133,26 +133,20 @@
         }
       },
       "build-commands": [
-        ". /usr/lib/sdk/golang/enable.sh; GOPATH=$PWD go install github.com/golang/lint/golint"
+        ". /usr/lib/sdk/golang/enable.sh; GOPATH=$PWD go install golang.org/x/lint/golint"
       ],
       "sources": [
         {
           "type": "git",
           "url": "https://go.googlesource.com/tools",
-          "commit": "b346f7fd45de50e7e5dd5d24a7a009c3c8d8ec61",
+          "commit": "76a3b8da50ef7c9da5c87b2fdff51392aad781a0",
           "dest": "src/golang.org/x/tools"
         },
         {
           "type": "git",
           "url": "https://go.googlesource.com/lint",
-          "commit": "959b441ac422379a43da2230f62be024250818b0",
+          "commit": "16217165b5de779cb6a5e4fc81fa9c1166fda457",
           "dest": "src/golang.org/x/lint"
-        },
-        {
-          "type": "git",
-          "url": "https://github.com/golang/lint",
-          "commit": "959b441ac422379a43da2230f62be024250818b0",
-          "dest": "src/github.com/golang/lint"
         }
       ]
     },
@@ -188,74 +182,64 @@
       "name": "haskell-ShellCheck",
       "buildsystem": "simple",
       "build-commands": [
-        "./install-package Diff-0.3.4",
-        "./install-package StateVar-1.2",
-        "./install-package base-compat-0.10.5",
+        "./install-package Diff-0.4.0",
+        "./install-package base-compat-0.11.0",
         "./install-package base-orphans-0.8.1",
         "./install-package dlist-0.8.0.7",
         "./install-package hashable-1.3.0.0",
         "./install-package integer-logarithms-1.0.3",
         "./install-package primitive-0.7.0.0",
         "./install-package random-1.1",
-        "./install-package regex-base-0.93.2",
+        "./install-package regex-base-0.94.0.0",
         "./install-package tagged-0.8.6",
         "./install-package th-abstraction-0.3.1.0",
-        "./install-package contravariant-1.5.2",
         "./install-package time-compat-1.9.2.2",
         "./install-package unordered-containers-0.2.10.0",
         "./install-package vector-0.12.0.3",
         "./install-package scientific-0.3.6.2",
         "./install-package uuid-types-1.0.3",
         "./install-package splitmix-0.0.3",
-        "./install-package regex-tdfa-1.2.3.2",
-        "./install-package attoparsec-0.13.2.2",
+        "./install-package regex-tdfa-1.3.0",
+        "./install-package attoparsec-0.13.2.3",
         "./install-package QuickCheck-2.13.2",
-        "./install-package aeson-1.4.4.0",
+        "./install-package aeson-1.4.6.0",
         "./install-package ShellCheck-0.7.0",
         "cd ShellCheck-0.7.0; ./Setup unregister",
-        "cd aeson-1.4.4.0; ./Setup unregister",
+        "cd aeson-1.4.6.0; ./Setup unregister",
         "cd QuickCheck-2.13.2; ./Setup unregister",
-        "cd attoparsec-0.13.2.2; ./Setup unregister",
-        "cd regex-tdfa-1.2.3.2; ./Setup unregister",
+        "cd attoparsec-0.13.2.3; ./Setup unregister",
+        "cd regex-tdfa-1.3.0; ./Setup unregister",
         "cd splitmix-0.0.3; ./Setup unregister",
         "cd uuid-types-1.0.3; ./Setup unregister",
         "cd scientific-0.3.6.2; ./Setup unregister",
         "cd vector-0.12.0.3; ./Setup unregister",
         "cd unordered-containers-0.2.10.0; ./Setup unregister",
         "cd time-compat-1.9.2.2; ./Setup unregister",
-        "cd contravariant-1.5.2; ./Setup unregister",
         "cd th-abstraction-0.3.1.0; ./Setup unregister",
         "cd tagged-0.8.6; ./Setup unregister",
-        "cd regex-base-0.93.2; ./Setup unregister",
+        "cd regex-base-0.94.0.0; ./Setup unregister",
         "cd random-1.1; ./Setup unregister",
         "cd primitive-0.7.0.0; ./Setup unregister",
         "cd integer-logarithms-1.0.3; ./Setup unregister",
         "cd hashable-1.3.0.0; ./Setup unregister",
         "cd dlist-0.8.0.7; ./Setup unregister",
         "cd base-orphans-0.8.1; ./Setup unregister",
-        "cd base-compat-0.10.5; ./Setup unregister",
-        "cd StateVar-1.2; ./Setup unregister",
-        "cd Diff-0.3.4; ./Setup unregister"
+        "cd base-compat-0.11.0; ./Setup unregister",
+        "cd Diff-0.4.0; ./Setup unregister"
       ],
       "builddir": true,
       "sources": [
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/Diff-0.3.4/Diff-0.3.4.tar.gz",
-          "sha256": "77b7daec5a79ade779706748f11b4d9b8f805e57a68e7406c3b5a1dee16e0c2f",
-          "dest": "Diff-0.3.4"
+          "url": "http://hackage.haskell.org/package/Diff-0.4.0/Diff-0.4.0.tar.gz",
+          "sha256": "7290ac098ad8b4748b9c10e494cc85ba54af688226ae69a465aa7b4c73f149c7",
+          "dest": "Diff-0.4.0"
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/StateVar-1.2/StateVar-1.2.tar.gz",
-          "sha256": "afc036021fcd38f15fcc4af392a3e57017d5ddcc926e99391dbfc8c4e6375f8b",
-          "dest": "StateVar-1.2"
-        },
-        {
-          "type": "archive",
-          "url": "http://hackage.haskell.org/package/base-compat-0.10.5/base-compat-0.10.5.tar.gz",
-          "sha256": "990aea21568956d44ab018c5dbfbaea014b9a0d5295d29ca7550149419a6fb41",
-          "dest": "base-compat-0.10.5"
+          "url": "http://hackage.haskell.org/package/base-compat-0.11.0/base-compat-0.11.0.tar.gz",
+          "sha256": "46782aa5d041579600d4a068897ce2f827063a9b355111d5522cf96547e47a6b",
+          "dest": "base-compat-0.11.0"
         },
         {
           "type": "archive",
@@ -309,16 +293,9 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/regex-base-0.93.2/regex-base-0.93.2.tar.gz",
-          "sha256": "20dc5713a16f3d5e2e6d056b4beb9cfdc4368cd09fd56f47414c847705243278",
-          "dest": "regex-base-0.93.2"
-        },
-        {
-          "type": "file",
-          "url": "http://hackage.haskell.org/package/regex-base-0.93.2/revision/1.cabal",
-          "sha256": "da123f4c8e91c0e8a4177a9236c707f6ff43cb61d93fda91ddd0c4f3fd815fc6",
-          "dest": "regex-base-0.93.2",
-          "dest-filename": "regex-base.cabal"
+          "url": "http://hackage.haskell.org/package/regex-base-0.94.0.0/regex-base-0.94.0.0.tar.gz",
+          "sha256": "c41f82f5fc1157c961a4cbdc0cd5561e5aa44f339ce6e706d978d97e0ca6b914",
+          "dest": "regex-base-0.94.0.0"
         },
         {
           "type": "archive",
@@ -338,12 +315,6 @@
           "url": "http://hackage.haskell.org/package/th-abstraction-0.3.1.0/th-abstraction-0.3.1.0.tar.gz",
           "sha256": "4b9e1bcc6ec3d897fb09c3d7fa2f37f0672d5370e0e3e49809886da81fe001b9",
           "dest": "th-abstraction-0.3.1.0"
-        },
-        {
-          "type": "archive",
-          "url": "http://hackage.haskell.org/package/contravariant-1.5.2/contravariant-1.5.2.tar.gz",
-          "sha256": "c4262c24e3dcc2ba8ca221ed52a6390818a715301e4f13135d8d732e0c7dc60c",
-          "dest": "contravariant-1.5.2"
         },
         {
           "type": "archive",
@@ -411,21 +382,21 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/regex-tdfa-1.2.3.2/regex-tdfa-1.2.3.2.tar.gz",
-          "sha256": "0e8ea50b60abbe998b191005695647fc2fcb544bdf5b6829b7e7a48f33bed00f",
-          "dest": "regex-tdfa-1.2.3.2"
+          "url": "http://hackage.haskell.org/package/regex-tdfa-1.3.0/regex-tdfa-1.3.0.tar.gz",
+          "sha256": "1b605791160b32662eddbc6cea90477e67734a74198f413890b4fcba488fece3",
+          "dest": "regex-tdfa-1.3.0"
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/attoparsec-0.13.2.2/attoparsec-0.13.2.2.tar.gz",
-          "sha256": "dd93471eb969172cc4408222a3842d867adda3dd7fb39ad8a4df1b121a67d848",
-          "dest": "attoparsec-0.13.2.2"
+          "url": "http://hackage.haskell.org/package/attoparsec-0.13.2.3/attoparsec-0.13.2.3.tar.gz",
+          "sha256": "3d1ac6713505e520ebb51f26cfb5f6e5a0825e25394a51419c7e035b60b2f2d9",
+          "dest": "attoparsec-0.13.2.3"
         },
         {
           "type": "file",
-          "url": "http://hackage.haskell.org/package/attoparsec-0.13.2.2/revision/3.cabal",
-          "sha256": "51ca172466aa77a7b5802e676577926f0d4991cebeece0a848b7753390da39ae",
-          "dest": "attoparsec-0.13.2.2",
+          "url": "http://hackage.haskell.org/package/attoparsec-0.13.2.3/revision/1.cabal",
+          "sha256": "38717f481a131e1f50ce8e126f49961e6fe740f55df53e5e45cbbf8c451a9698",
+          "dest": "attoparsec-0.13.2.3",
           "dest-filename": "attoparsec.cabal"
         },
         {
@@ -436,9 +407,9 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/aeson-1.4.4.0/aeson-1.4.4.0.tar.gz",
-          "sha256": "17c67cdaca651e18f310b21b2b12bac6bcec5188c3ac0e4b64cc60c94d7e4d2e",
-          "dest": "aeson-1.4.4.0"
+          "url": "http://hackage.haskell.org/package/aeson-1.4.6.0/aeson-1.4.6.0.tar.gz",
+          "sha256": "923fb2c6e224c4c0d1848174b1010592f31cd149f538923efd87f8a6b4b3488b",
+          "dest": "aeson-1.4.6.0"
         },
         {
           "type": "archive",
@@ -473,8 +444,7 @@
       "build-commands": [
         "./install-package HsYAML-0.1.2.0",
         "./install-package SHA-1.6.4.4",
-        "./install-package StateVar-1.2",
-        "./install-package base-compat-0.10.5",
+        "./install-package base-compat-0.11.0",
         "./install-package base-orphans-0.8.1",
         "./install-package base64-bytestring-1.0.0.2",
         "./install-package basement-0.0.11",
@@ -494,12 +464,12 @@
         "./install-package hxt-charproperties-9.4.0.0",
         "./install-package integer-logarithms-1.0.3",
         "./install-package mime-types-0.1.0.9",
-        "./install-package network-3.1.0.1",
+        "./install-package network-3.1.1.0",
         "./install-package network-uri-2.6.1.0",
         "./install-package old-locale-1.0.0.7",
         "./install-package primitive-0.7.0.0",
         "./install-package random-1.1",
-        "./install-package regex-base-0.93.2",
+        "./install-package regex-base-0.94.0.0",
         "./install-package safe-0.3.17",
         "./install-package split-0.2.3.3",
         "./install-package syb-0.7.1",
@@ -509,126 +479,124 @@
         "./install-package transformers-compat-0.6.5",
         "./install-package utf8-string-1.0.1.1",
         "./install-package xml-1.3.14",
-        "./install-package zlib-0.6.2",
-        "./install-package contravariant-1.5.2",
+        "./install-package zlib-0.6.2.1",
         "./install-package time-compat-1.9.2.2",
-        "./install-package memory-0.14.18",
+        "./install-package memory-0.15.0",
         "./install-package unicode-transforms-0.3.6",
-        "./install-package blaze-markup-0.8.2.2",
-        "./install-package ansi-terminal-0.9.1",
+        "./install-package blaze-markup-0.8.2.3",
+        "./install-package ansi-terminal-0.10.1",
         "./install-package data-default-instances-containers-0.0.1",
-        "./install-package cookie-0.4.4",
+        "./install-package cookie-0.4.5",
         "./install-package data-default-instances-dlist-0.0.1",
         "./install-package unordered-containers-0.2.10.0",
         "./install-package case-insensitive-1.2.1.0",
         "./install-package async-2.2.2",
         "./install-package hxt-unicode-9.0.2.4",
         "./install-package hxt-regex-xmlschema-9.2.0.3",
-        "./install-package socks-0.6.0",
+        "./install-package socks-0.6.1",
         "./install-package HTTP-4000.3.14",
         "./install-package data-default-instances-old-locale-0.0.1",
         "./install-package vector-0.12.0.3",
         "./install-package scientific-0.3.6.2",
         "./install-package uuid-types-1.0.3",
         "./install-package splitmix-0.0.3",
-        "./install-package regex-pcre-builtin-0.94.4.8.8.35",
-        "./install-package exceptions-0.10.2",
+        "./install-package regex-pcre-builtin-0.95.1.1.8.43",
+        "./install-package exceptions-0.10.3",
         "./install-package Glob-0.10.0",
         "./install-package zip-archive-0.4.1",
         "./install-package pem-0.2.4",
         "./install-package cryptonite-0.26",
         "./install-package asn1-types-0.3.3",
-        "./install-package blaze-html-0.9.1.1",
+        "./install-package blaze-html-0.9.1.2",
         "./install-package http-types-0.12.3",
         "./install-package streaming-commons-0.2.1.1",
         "./install-package hxt-9.3.1.18",
         "./install-package data-default-0.7.1.1",
-        "./install-package JuicyPixels-3.3.3.1",
-        "./install-package attoparsec-0.13.2.2",
+        "./install-package JuicyPixels-3.3.4",
+        "./install-package attoparsec-0.13.2.3",
         "./install-package QuickCheck-2.13.2",
         "./install-package temporary-1.3",
-        "./install-package hslua-1.0.3.1",
-        "./install-package asn1-encoding-0.9.5",
+        "./install-package hslua-1.0.3.2",
+        "./install-package asn1-encoding-0.9.6",
         "./install-package http-client-0.6.4",
-        "./install-package aeson-1.4.4.0",
+        "./install-package aeson-1.4.6.0",
         "./install-package hslua-module-text-0.2.1",
         "./install-package hslua-module-system-0.2.1",
-        "./install-package asn1-parse-0.9.4",
-        "./install-package skylighting-core-0.8.2",
-        "./install-package pandoc-types-1.17.5.4",
+        "./install-package asn1-parse-0.9.5",
+        "./install-package skylighting-core-0.8.2.3",
+        "./install-package pandoc-types-1.17.6.1",
         "./install-package ipynb-0.1",
         "./install-package doctemplates-0.2.2.1",
-        "./install-package aeson-pretty-0.8.7",
+        "./install-package aeson-pretty-0.8.8",
         "./install-package x509-1.7.5",
-        "./install-package skylighting-0.8.2",
-        "./install-package texmath-0.11.2.2",
+        "./install-package skylighting-0.8.2.3",
+        "./install-package texmath-0.11.3",
         "./install-package x509-store-1.6.7",
         "./install-package x509-validation-1.6.11",
         "./install-package x509-system-1.6.6",
-        "./install-package tls-1.5.1",
-        "./install-package connection-0.3.0",
+        "./install-package tls-1.5.2",
+        "./install-package connection-0.3.1",
         "./install-package http-client-tls-0.3.5.3",
         "./install-package pandoc-2.7.3",
         "cd pandoc-2.7.3; ./Setup unregister",
         "cd http-client-tls-0.3.5.3; ./Setup unregister",
-        "cd connection-0.3.0; ./Setup unregister",
-        "cd tls-1.5.1; ./Setup unregister",
+        "cd connection-0.3.1; ./Setup unregister",
+        "cd tls-1.5.2; ./Setup unregister",
         "cd x509-system-1.6.6; ./Setup unregister",
         "cd x509-validation-1.6.11; ./Setup unregister",
         "cd x509-store-1.6.7; ./Setup unregister",
-        "cd texmath-0.11.2.2; ./Setup unregister",
-        "cd skylighting-0.8.2; ./Setup unregister",
+        "cd texmath-0.11.3; ./Setup unregister",
+        "cd skylighting-0.8.2.3; ./Setup unregister",
         "cd x509-1.7.5; ./Setup unregister",
-        "cd aeson-pretty-0.8.7; ./Setup unregister",
+        "cd aeson-pretty-0.8.8; ./Setup unregister",
         "cd doctemplates-0.2.2.1; ./Setup unregister",
         "cd ipynb-0.1; ./Setup unregister",
-        "cd pandoc-types-1.17.5.4; ./Setup unregister",
-        "cd skylighting-core-0.8.2; ./Setup unregister",
-        "cd asn1-parse-0.9.4; ./Setup unregister",
+        "cd pandoc-types-1.17.6.1; ./Setup unregister",
+        "cd skylighting-core-0.8.2.3; ./Setup unregister",
+        "cd asn1-parse-0.9.5; ./Setup unregister",
         "cd hslua-module-system-0.2.1; ./Setup unregister",
         "cd hslua-module-text-0.2.1; ./Setup unregister",
-        "cd aeson-1.4.4.0; ./Setup unregister",
+        "cd aeson-1.4.6.0; ./Setup unregister",
         "cd http-client-0.6.4; ./Setup unregister",
-        "cd asn1-encoding-0.9.5; ./Setup unregister",
-        "cd hslua-1.0.3.1; ./Setup unregister",
+        "cd asn1-encoding-0.9.6; ./Setup unregister",
+        "cd hslua-1.0.3.2; ./Setup unregister",
         "cd temporary-1.3; ./Setup unregister",
         "cd QuickCheck-2.13.2; ./Setup unregister",
-        "cd attoparsec-0.13.2.2; ./Setup unregister",
-        "cd JuicyPixels-3.3.3.1; ./Setup unregister",
+        "cd attoparsec-0.13.2.3; ./Setup unregister",
+        "cd JuicyPixels-3.3.4; ./Setup unregister",
         "cd data-default-0.7.1.1; ./Setup unregister",
         "cd hxt-9.3.1.18; ./Setup unregister",
         "cd streaming-commons-0.2.1.1; ./Setup unregister",
         "cd http-types-0.12.3; ./Setup unregister",
-        "cd blaze-html-0.9.1.1; ./Setup unregister",
+        "cd blaze-html-0.9.1.2; ./Setup unregister",
         "cd asn1-types-0.3.3; ./Setup unregister",
         "cd cryptonite-0.26; ./Setup unregister",
         "cd pem-0.2.4; ./Setup unregister",
         "cd zip-archive-0.4.1; ./Setup unregister",
         "cd Glob-0.10.0; ./Setup unregister",
-        "cd exceptions-0.10.2; ./Setup unregister",
-        "cd regex-pcre-builtin-0.94.4.8.8.35; ./Setup unregister",
+        "cd exceptions-0.10.3; ./Setup unregister",
+        "cd regex-pcre-builtin-0.95.1.1.8.43; ./Setup unregister",
         "cd splitmix-0.0.3; ./Setup unregister",
         "cd uuid-types-1.0.3; ./Setup unregister",
         "cd scientific-0.3.6.2; ./Setup unregister",
         "cd vector-0.12.0.3; ./Setup unregister",
         "cd data-default-instances-old-locale-0.0.1; ./Setup unregister",
         "cd HTTP-4000.3.14; ./Setup unregister",
-        "cd socks-0.6.0; ./Setup unregister",
+        "cd socks-0.6.1; ./Setup unregister",
         "cd hxt-regex-xmlschema-9.2.0.3; ./Setup unregister",
         "cd hxt-unicode-9.0.2.4; ./Setup unregister",
         "cd async-2.2.2; ./Setup unregister",
         "cd case-insensitive-1.2.1.0; ./Setup unregister",
         "cd unordered-containers-0.2.10.0; ./Setup unregister",
         "cd data-default-instances-dlist-0.0.1; ./Setup unregister",
-        "cd cookie-0.4.4; ./Setup unregister",
+        "cd cookie-0.4.5; ./Setup unregister",
         "cd data-default-instances-containers-0.0.1; ./Setup unregister",
-        "cd ansi-terminal-0.9.1; ./Setup unregister",
-        "cd blaze-markup-0.8.2.2; ./Setup unregister",
+        "cd ansi-terminal-0.10.1; ./Setup unregister",
+        "cd blaze-markup-0.8.2.3; ./Setup unregister",
         "cd unicode-transforms-0.3.6; ./Setup unregister",
-        "cd memory-0.14.18; ./Setup unregister",
+        "cd memory-0.15.0; ./Setup unregister",
         "cd time-compat-1.9.2.2; ./Setup unregister",
-        "cd contravariant-1.5.2; ./Setup unregister",
-        "cd zlib-0.6.2; ./Setup unregister",
+        "cd zlib-0.6.2.1; ./Setup unregister",
         "cd xml-1.3.14; ./Setup unregister",
         "cd utf8-string-1.0.1.1; ./Setup unregister",
         "cd transformers-compat-0.6.5; ./Setup unregister",
@@ -638,12 +606,12 @@
         "cd syb-0.7.1; ./Setup unregister",
         "cd split-0.2.3.3; ./Setup unregister",
         "cd safe-0.3.17; ./Setup unregister",
-        "cd regex-base-0.93.2; ./Setup unregister",
+        "cd regex-base-0.94.0.0; ./Setup unregister",
         "cd random-1.1; ./Setup unregister",
         "cd primitive-0.7.0.0; ./Setup unregister",
         "cd old-locale-1.0.0.7; ./Setup unregister",
         "cd network-uri-2.6.1.0; ./Setup unregister",
-        "cd network-3.1.0.1; ./Setup unregister",
+        "cd network-3.1.1.0; ./Setup unregister",
         "cd mime-types-0.1.0.9; ./Setup unregister",
         "cd integer-logarithms-1.0.3; ./Setup unregister",
         "cd hxt-charproperties-9.4.0.0; ./Setup unregister",
@@ -663,8 +631,7 @@
         "cd basement-0.0.11; ./Setup unregister",
         "cd base64-bytestring-1.0.0.2; ./Setup unregister",
         "cd base-orphans-0.8.1; ./Setup unregister",
-        "cd base-compat-0.10.5; ./Setup unregister",
-        "cd StateVar-1.2; ./Setup unregister",
+        "cd base-compat-0.11.0; ./Setup unregister",
         "cd SHA-1.6.4.4; ./Setup unregister",
         "cd HsYAML-0.1.2.0; ./Setup unregister"
       ],
@@ -677,6 +644,13 @@
           "dest": "HsYAML-0.1.2.0"
         },
         {
+          "type": "file",
+          "url": "http://hackage.haskell.org/package/HsYAML-0.1.2.0/revision/1.cabal",
+          "sha256": "8e09629f5f023c5a2454000aba83c1a0f4a8ea280433a1614210fbf259add848",
+          "dest": "HsYAML-0.1.2.0",
+          "dest-filename": "HsYAML.cabal"
+        },
+        {
           "type": "archive",
           "url": "http://hackage.haskell.org/package/SHA-1.6.4.4/SHA-1.6.4.4.tar.gz",
           "sha256": "6bd950df6b11a3998bb1452d875d2da043ee43385459afc5f16d471d25178b44",
@@ -684,15 +658,9 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/StateVar-1.2/StateVar-1.2.tar.gz",
-          "sha256": "afc036021fcd38f15fcc4af392a3e57017d5ddcc926e99391dbfc8c4e6375f8b",
-          "dest": "StateVar-1.2"
-        },
-        {
-          "type": "archive",
-          "url": "http://hackage.haskell.org/package/base-compat-0.10.5/base-compat-0.10.5.tar.gz",
-          "sha256": "990aea21568956d44ab018c5dbfbaea014b9a0d5295d29ca7550149419a6fb41",
-          "dest": "base-compat-0.10.5"
+          "url": "http://hackage.haskell.org/package/base-compat-0.11.0/base-compat-0.11.0.tar.gz",
+          "sha256": "46782aa5d041579600d4a068897ce2f827063a9b355111d5522cf96547e47a6b",
+          "dest": "base-compat-0.11.0"
         },
         {
           "type": "archive",
@@ -711,6 +679,13 @@
           "url": "http://hackage.haskell.org/package/basement-0.0.11/basement-0.0.11.tar.gz",
           "sha256": "67582b3475a5547925399f719df21f8bbbd0ca4d4db27795c22a474f8ee6346b",
           "dest": "basement-0.0.11"
+        },
+        {
+          "type": "file",
+          "url": "http://hackage.haskell.org/package/basement-0.0.11/revision/2.cabal",
+          "sha256": "af43e2e334e515b52ca309919b135c51b5e9411e6d4c68d0e8950d61eb5f25d1",
+          "dest": "basement-0.0.11",
+          "dest-filename": "basement.cabal"
         },
         {
           "type": "archive",
@@ -824,9 +799,9 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/network-3.1.0.1/network-3.1.0.1.tar.gz",
-          "sha256": "5af256c71245deacf656775525a98875a0f5a3e5625b3be5992ed17b9a2a9d64",
-          "dest": "network-3.1.0.1"
+          "url": "http://hackage.haskell.org/package/network-3.1.1.0/network-3.1.1.0.tar.gz",
+          "sha256": "7a7aa468719a6e4b5dbf660d816d5fd2ac39c29d8b3ce0a49311ce63f54c293f",
+          "dest": "network-3.1.1.0"
         },
         {
           "type": "archive",
@@ -875,16 +850,9 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/regex-base-0.93.2/regex-base-0.93.2.tar.gz",
-          "sha256": "20dc5713a16f3d5e2e6d056b4beb9cfdc4368cd09fd56f47414c847705243278",
-          "dest": "regex-base-0.93.2"
-        },
-        {
-          "type": "file",
-          "url": "http://hackage.haskell.org/package/regex-base-0.93.2/revision/1.cabal",
-          "sha256": "da123f4c8e91c0e8a4177a9236c707f6ff43cb61d93fda91ddd0c4f3fd815fc6",
-          "dest": "regex-base-0.93.2",
-          "dest-filename": "regex-base.cabal"
+          "url": "http://hackage.haskell.org/package/regex-base-0.94.0.0/regex-base-0.94.0.0.tar.gz",
+          "sha256": "c41f82f5fc1157c961a4cbdc0cd5561e5aa44f339ce6e706d978d97e0ca6b914",
+          "dest": "regex-base-0.94.0.0"
         },
         {
           "type": "archive",
@@ -900,8 +868,8 @@
         },
         {
           "type": "file",
-          "url": "http://hackage.haskell.org/package/split-0.2.3.3/revision/1.cabal",
-          "sha256": "f1c7b12865e38d1e241ceef74c85eb81d82301022fea1a5012d8d9803af5e26f",
+          "url": "http://hackage.haskell.org/package/split-0.2.3.3/revision/2.cabal",
+          "sha256": "64c8e45b8f74dc16b6329d99d9d9b1c47d6abae146d7d7e3ec3317dcb5660bb1",
           "dest": "split-0.2.3.3",
           "dest-filename": "split.cabal"
         },
@@ -970,15 +938,9 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/zlib-0.6.2/zlib-0.6.2.tar.gz",
-          "sha256": "0dcc7d925769bdbeb323f83b66884101084167501f11d74d21eb9bc515707fed",
-          "dest": "zlib-0.6.2"
-        },
-        {
-          "type": "archive",
-          "url": "http://hackage.haskell.org/package/contravariant-1.5.2/contravariant-1.5.2.tar.gz",
-          "sha256": "c4262c24e3dcc2ba8ca221ed52a6390818a715301e4f13135d8d732e0c7dc60c",
-          "dest": "contravariant-1.5.2"
+          "url": "http://hackage.haskell.org/package/zlib-0.6.2.1/zlib-0.6.2.1.tar.gz",
+          "sha256": "f0f810ff173560b60392db448455c0513b3239f48e43cb494b3733aa559621d0",
+          "dest": "zlib-0.6.2.1"
         },
         {
           "type": "archive",
@@ -995,15 +957,15 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/memory-0.14.18/memory-0.14.18.tar.gz",
-          "sha256": "f5458d170a291788ac8da896bb44b0cc84021c99dd596c52adf2f7a7f6c03507",
-          "dest": "memory-0.14.18"
+          "url": "http://hackage.haskell.org/package/memory-0.15.0/memory-0.15.0.tar.gz",
+          "sha256": "e3ff892c1a94708954d0bb2c4f4ab81bc0f505352d95095319c462db1aeb3529",
+          "dest": "memory-0.15.0"
         },
         {
           "type": "file",
-          "url": "http://hackage.haskell.org/package/memory-0.14.18/revision/1.cabal",
-          "sha256": "f55301417e1c5a43b055d1f0d3e88abe895d15a3e9d49889af634fb4b7028d40",
-          "dest": "memory-0.14.18",
+          "url": "http://hackage.haskell.org/package/memory-0.15.0/revision/1.cabal",
+          "sha256": "be7024b50e876a9c3b7febaefdd81d5dc67268c58a7b4e6b3825bdc58274d88c",
+          "dest": "memory-0.15.0",
           "dest-filename": "memory.cabal"
         },
         {
@@ -1014,22 +976,15 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/blaze-markup-0.8.2.2/blaze-markup-0.8.2.2.tar.gz",
-          "sha256": "c6f0cf8fd707ba8c0b700e0c5ad6a1212c8b57d46a9cbdfb904d8bf585ad82e1",
-          "dest": "blaze-markup-0.8.2.2"
-        },
-        {
-          "type": "file",
-          "url": "http://hackage.haskell.org/package/blaze-markup-0.8.2.2/revision/1.cabal",
-          "sha256": "fda3582c37167b7b26a3e973f8501e0889041de01416add83c592cf03bbb7a47",
-          "dest": "blaze-markup-0.8.2.2",
-          "dest-filename": "blaze-markup.cabal"
+          "url": "http://hackage.haskell.org/package/blaze-markup-0.8.2.3/blaze-markup-0.8.2.3.tar.gz",
+          "sha256": "72f8b0ed5310e3c2e49abcc9273728555655ec5f13f3f0e1f7cd1da9ad3a35bd",
+          "dest": "blaze-markup-0.8.2.3"
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/ansi-terminal-0.9.1/ansi-terminal-0.9.1.tar.gz",
-          "sha256": "74088e80b33ba680f7c46137d25bfcca6fa8795bc2d097e4e0435b3c41a320fb",
-          "dest": "ansi-terminal-0.9.1"
+          "url": "http://hackage.haskell.org/package/ansi-terminal-0.10.1/ansi-terminal-0.10.1.tar.gz",
+          "sha256": "31397cff165772b6c3725583cd45e535145945ad7dd5251a79342c84cc4726ac",
+          "dest": "ansi-terminal-0.10.1"
         },
         {
           "type": "archive",
@@ -1039,9 +994,9 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/cookie-0.4.4/cookie-0.4.4.tar.gz",
-          "sha256": "3245ed04ae933cf7becede816d1f76043b851472700abf558ae90b28414cc0e3",
-          "dest": "cookie-0.4.4"
+          "url": "http://hackage.haskell.org/package/cookie-0.4.5/cookie-0.4.5.tar.gz",
+          "sha256": "707f94d1b31018b91d6a1e9e19ef5413e20d02cab00ad93a5fd7d7b3b46a3583",
+          "dest": "cookie-0.4.5"
         },
         {
           "type": "archive",
@@ -1095,9 +1050,9 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/socks-0.6.0/socks-0.6.0.tar.gz",
-          "sha256": "9762fa87aeda7cf98290cb66af91c4ed5bf258b3548b189e9188d0c29f707381",
-          "dest": "socks-0.6.0"
+          "url": "http://hackage.haskell.org/package/socks-0.6.1/socks-0.6.1.tar.gz",
+          "sha256": "734447558bb061ce768f53a0df1f2401902c6bee396cc96ce627edd986ef6a73",
+          "dest": "socks-0.6.1"
         },
         {
           "type": "archive",
@@ -1151,15 +1106,15 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/regex-pcre-builtin-0.94.4.8.8.35/regex-pcre-builtin-0.94.4.8.8.35.tar.gz",
-          "sha256": "0bd1b695de953ba4b6e6e0de007021c346cb2a6c8e09356fbcd34f8a79d2ea78",
-          "dest": "regex-pcre-builtin-0.94.4.8.8.35"
+          "url": "http://hackage.haskell.org/package/regex-pcre-builtin-0.95.1.1.8.43/regex-pcre-builtin-0.95.1.1.8.43.tar.gz",
+          "sha256": "4d3b108482982c6f188b740bcb4959d39c47bf05955fcb17068a5c9916d171aa",
+          "dest": "regex-pcre-builtin-0.95.1.1.8.43"
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/exceptions-0.10.2/exceptions-0.10.2.tar.gz",
-          "sha256": "918c2ccbfb03caff826726bb7bf5170734b393817ace939f8dea86d60fc1512a",
-          "dest": "exceptions-0.10.2"
+          "url": "http://hackage.haskell.org/package/exceptions-0.10.3/exceptions-0.10.3.tar.gz",
+          "sha256": "44e45866b42f1f7774fd545c2564a09d3797ea8d8be2b5d310dbe8a23d9145f0",
+          "dest": "exceptions-0.10.3"
         },
         {
           "type": "archive",
@@ -1207,9 +1162,9 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/blaze-html-0.9.1.1/blaze-html-0.9.1.1.tar.gz",
-          "sha256": "ea0e944298dbbd692b41af4f15dbd1a1574aec7b8f91f38391d25106b143bb1b",
-          "dest": "blaze-html-0.9.1.1"
+          "url": "http://hackage.haskell.org/package/blaze-html-0.9.1.2/blaze-html-0.9.1.2.tar.gz",
+          "sha256": "60503f42546c6c1b954014d188ea137e43d74dcffd2bf6157c113fd91a0c394c",
+          "dest": "blaze-html-0.9.1.2"
         },
         {
           "type": "archive",
@@ -1237,21 +1192,21 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/JuicyPixels-3.3.3.1/JuicyPixels-3.3.3.1.tar.gz",
-          "sha256": "ae1afb4001e4120cc88fb4e511032c67add18fe11c4a7bcac36a79323f3a97ff",
-          "dest": "JuicyPixels-3.3.3.1"
+          "url": "http://hackage.haskell.org/package/JuicyPixels-3.3.4/JuicyPixels-3.3.4.tar.gz",
+          "sha256": "dde000c8802efff8e872d38f7da916ea86d130ba621266dc90d3332cbecd4c61",
+          "dest": "JuicyPixels-3.3.4"
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/attoparsec-0.13.2.2/attoparsec-0.13.2.2.tar.gz",
-          "sha256": "dd93471eb969172cc4408222a3842d867adda3dd7fb39ad8a4df1b121a67d848",
-          "dest": "attoparsec-0.13.2.2"
+          "url": "http://hackage.haskell.org/package/attoparsec-0.13.2.3/attoparsec-0.13.2.3.tar.gz",
+          "sha256": "3d1ac6713505e520ebb51f26cfb5f6e5a0825e25394a51419c7e035b60b2f2d9",
+          "dest": "attoparsec-0.13.2.3"
         },
         {
           "type": "file",
-          "url": "http://hackage.haskell.org/package/attoparsec-0.13.2.2/revision/3.cabal",
-          "sha256": "51ca172466aa77a7b5802e676577926f0d4991cebeece0a848b7753390da39ae",
-          "dest": "attoparsec-0.13.2.2",
+          "url": "http://hackage.haskell.org/package/attoparsec-0.13.2.3/revision/1.cabal",
+          "sha256": "38717f481a131e1f50ce8e126f49961e6fe740f55df53e5e45cbbf8c451a9698",
+          "dest": "attoparsec-0.13.2.3",
           "dest-filename": "attoparsec.cabal"
         },
         {
@@ -1268,15 +1223,22 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/hslua-1.0.3.1/hslua-1.0.3.1.tar.gz",
-          "sha256": "35f93fa818d948254fc2aff855bb7adaf94f4f9b0f61f6e56fb250a9596921f0",
-          "dest": "hslua-1.0.3.1"
+          "url": "http://hackage.haskell.org/package/hslua-1.0.3.2/hslua-1.0.3.2.tar.gz",
+          "sha256": "d2d40b0c143ef58d26203f34d96d4220f1a20077386e4a5216be74260b7d6ba0",
+          "dest": "hslua-1.0.3.2"
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/asn1-encoding-0.9.5/asn1-encoding-0.9.5.tar.gz",
-          "sha256": "1e863bfd363f6c3760cc80f2c0d422e17845a9f79fe006030db202ecab5aaf29",
-          "dest": "asn1-encoding-0.9.5"
+          "url": "http://hackage.haskell.org/package/asn1-encoding-0.9.6/asn1-encoding-0.9.6.tar.gz",
+          "sha256": "d9f8deabd3b908e5cf83c0d813c08dc0143b3ec1c0d97f660d2cfa02c1c8da0a",
+          "dest": "asn1-encoding-0.9.6"
+        },
+        {
+          "type": "file",
+          "url": "http://hackage.haskell.org/package/asn1-encoding-0.9.6/revision/1.cabal",
+          "sha256": "3655d9a68c8c082e0d22f33456d968ad8c484d4e95308ad9217788b1c343d8a6",
+          "dest": "asn1-encoding-0.9.6",
+          "dest-filename": "asn1-encoding.cabal"
         },
         {
           "type": "archive",
@@ -1286,9 +1248,9 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/aeson-1.4.4.0/aeson-1.4.4.0.tar.gz",
-          "sha256": "17c67cdaca651e18f310b21b2b12bac6bcec5188c3ac0e4b64cc60c94d7e4d2e",
-          "dest": "aeson-1.4.4.0"
+          "url": "http://hackage.haskell.org/package/aeson-1.4.6.0/aeson-1.4.6.0.tar.gz",
+          "sha256": "923fb2c6e224c4c0d1848174b1010592f31cd149f538923efd87f8a6b4b3488b",
+          "dest": "aeson-1.4.6.0"
         },
         {
           "type": "archive",
@@ -1304,28 +1266,21 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/asn1-parse-0.9.4/asn1-parse-0.9.4.tar.gz",
-          "sha256": "c6a328f570c69db73f8d2416f9251e8a03753f90d5d19e76cbe69509a3ceb708",
-          "dest": "asn1-parse-0.9.4"
+          "url": "http://hackage.haskell.org/package/asn1-parse-0.9.5/asn1-parse-0.9.5.tar.gz",
+          "sha256": "8f1fe1344d30b39dc594d74df2c55209577722af1497204b4c2b6d6e8747f39e",
+          "dest": "asn1-parse-0.9.5"
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/skylighting-core-0.8.2/skylighting-core-0.8.2.tar.gz",
-          "sha256": "407f91df647cca1e0928281f38f192719c70be4d7d05e121d8bc9f0c4e08a1d9",
-          "dest": "skylighting-core-0.8.2"
+          "url": "http://hackage.haskell.org/package/skylighting-core-0.8.2.3/skylighting-core-0.8.2.3.tar.gz",
+          "sha256": "ccde924ebebfc84efaa877e7504a360812bbc87d64d9a7a2ee86208f16b3aa00",
+          "dest": "skylighting-core-0.8.2.3"
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/pandoc-types-1.17.5.4/pandoc-types-1.17.5.4.tar.gz",
-          "sha256": "32aca86c510bd23c6bd54ce1a37ca005f4b84f077ab8e835a522833cf5179327",
-          "dest": "pandoc-types-1.17.5.4"
-        },
-        {
-          "type": "file",
-          "url": "http://hackage.haskell.org/package/pandoc-types-1.17.5.4/revision/1.cabal",
-          "sha256": "6c60ed77a4cef8ec0b23b4d8c59b7e693d4558fa4412f270a152c55c7114ed2e",
-          "dest": "pandoc-types-1.17.5.4",
-          "dest-filename": "pandoc-types.cabal"
+          "url": "http://hackage.haskell.org/package/pandoc-types-1.17.6.1/pandoc-types-1.17.6.1.tar.gz",
+          "sha256": "1834c2064918a21d346f399c4abcd424617a9a4f0f1e1a8e8ab9b590127edeb4",
+          "dest": "pandoc-types-1.17.6.1"
         },
         {
           "type": "archive",
@@ -1341,9 +1296,9 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/aeson-pretty-0.8.7/aeson-pretty-0.8.7.tar.gz",
-          "sha256": "c1c1ecc5e3abd004a6c4c256ee6f61da2a43d7f1452ffa391dee250df43b27d5",
-          "dest": "aeson-pretty-0.8.7"
+          "url": "http://hackage.haskell.org/package/aeson-pretty-0.8.8/aeson-pretty-0.8.8.tar.gz",
+          "sha256": "81cea61cb6dcf32c3f0529ea5cfc98dbea3894152d7f2d9fe1cb051f927ec726",
+          "dest": "aeson-pretty-0.8.8"
         },
         {
           "type": "archive",
@@ -1360,15 +1315,15 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/skylighting-0.8.2/skylighting-0.8.2.tar.gz",
-          "sha256": "9f25d3bd1d274891a69b74d1237d57cd76bfe62385405ab4428c76e048830129",
-          "dest": "skylighting-0.8.2"
+          "url": "http://hackage.haskell.org/package/skylighting-0.8.2.3/skylighting-0.8.2.3.tar.gz",
+          "sha256": "578cf56e9cba1be805de9bc0caad550590ff911581448accd0386b8b05c97e81",
+          "dest": "skylighting-0.8.2.3"
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/texmath-0.11.2.2/texmath-0.11.2.2.tar.gz",
-          "sha256": "fe4e24af001104ed3c95ee44076e6819ffad67684efdabee5ae07cf8ceb81087",
-          "dest": "texmath-0.11.2.2"
+          "url": "http://hackage.haskell.org/package/texmath-0.11.3/texmath-0.11.3.tar.gz",
+          "sha256": "2e01dd4534f3dba26a4d5ec889dcb2c6195bd0211b125eab305aae41eeea370f",
+          "dest": "texmath-0.11.3"
         },
         {
           "type": "archive",
@@ -1397,21 +1352,21 @@
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/tls-1.5.1/tls-1.5.1.tar.gz",
-          "sha256": "d18ff12e8db63d3b9e041106383915a4b50a47f29c8cdba48810dd4812c145bb",
-          "dest": "tls-1.5.1"
+          "url": "http://hackage.haskell.org/package/tls-1.5.2/tls-1.5.2.tar.gz",
+          "sha256": "eb90db5034baac136b1fc5f307e6ec89adf3d1918ed1f1bc9f20368d55984330",
+          "dest": "tls-1.5.2"
         },
         {
           "type": "archive",
-          "url": "http://hackage.haskell.org/package/connection-0.3.0/connection-0.3.0.tar.gz",
-          "sha256": "6470d69a4f9a0bd374183a30d2089a96d38ad31438ef081b62287f74b55fa3b8",
-          "dest": "connection-0.3.0"
+          "url": "http://hackage.haskell.org/package/connection-0.3.1/connection-0.3.1.tar.gz",
+          "sha256": "5d759589c532c34d87bfc4f6fcb732bf55b55a93559d3b94229e8347a15375d9",
+          "dest": "connection-0.3.1"
         },
         {
           "type": "file",
-          "url": "http://hackage.haskell.org/package/connection-0.3.0/revision/1.cabal",
-          "sha256": "139db21f619e93ab3e45df5c321c6093d3a14bdc584db82d8166336d5510a432",
-          "dest": "connection-0.3.0",
+          "url": "http://hackage.haskell.org/package/connection-0.3.1/revision/1.cabal",
+          "sha256": "65da1c055610095733bcd228d85dff80804b23a5d18fede994a0f9fcd1b0c121",
+          "dest": "connection-0.3.1",
           "dest-filename": "connection.cabal"
         },
         {
@@ -1459,7 +1414,7 @@
       "sources": [
         {
           "type": "archive",
-          "url": "http://archive.ubuntu.com/ubuntu/pool/universe/h/html2text/html2text_1.3.2a.orig.tar.gz",
+          "url": "http://au.archive.ubuntu.com/ubuntu/pool/universe/h/html2text/html2text_1.3.2a.orig.tar.gz",
           "sha256": "000b39d5d910b867ff7e087177b470a1e26e2819920dcffd5991c33f6d480392"
         }
       ],
@@ -1475,7 +1430,7 @@
       "sources": [
         {
           "type": "archive",
-          "url": "http://archive.ubuntu.com/ubuntu/pool/main/l/lua5.3/lua5.3_5.3.3.orig.tar.gz",
+          "url": "http://au.archive.ubuntu.com/ubuntu/pool/main/l/lua5.3/lua5.3_5.3.3.orig.tar.gz",
           "sha256": "5113c06884f7de453ce57702abaac1d618307f33f6789fa870e87a59d772aca2"
         }
       ],
@@ -1510,7 +1465,7 @@
         {
           "type": "git",
           "url": "https://github.com/luarocks/luarocks",
-          "commit": "1d3bb56b309ce0463249852f901147157f34adfa"
+          "commit": "3a3f2cbaa50d353f4c26b39f59c015a20f28c4ae"
         }
       ],
       "cleanup": [
@@ -1521,7 +1476,7 @@
       "name": "luacheck",
       "buildsystem": "simple",
       "build-commands": [
-        "luarocks-admin make-manifest .",
+        "luarocks-admin make_manifest .",
         "luarocks install --only-from=$PWD luacheck"
       ],
       "sources": [
@@ -1532,8 +1487,8 @@
         },
         {
           "type": "file",
-          "url": "https://luarocks.org/argparse-0.6.0-1.src.rock",
-          "sha256": "e4029f42d61cbdde1540e0a098a24b1fed0bc8a2803efe2a0d0d3e7f2f2f2c82"
+          "url": "https://luarocks.org/argparse-0.7.0-1.all.rock",
+          "sha256": "8927d0ff3dbc0cbb4842a4dd95f7d9be90d653dde25a32696b8a6c386abda270"
         },
         {
           "type": "file",
@@ -1547,7 +1502,7 @@
       "sources": [
         {
           "type": "archive",
-          "url": "http://archive.ubuntu.com/ubuntu/pool/universe/libz/libzen/libzen_0.4.37.orig.tar.gz",
+          "url": "http://au.archive.ubuntu.com/ubuntu/pool/universe/libz/libzen/libzen_0.4.37.orig.tar.gz",
           "sha256": "165ea5cd8d2e26d09b93b388904d228b71717b4a024b4694d455a407269686a6"
         }
       ],
@@ -1558,7 +1513,7 @@
       "sources": [
         {
           "type": "archive",
-          "url": "http://archive.ubuntu.com/ubuntu/pool/universe/libm/libmediainfo/libmediainfo_18.12.orig.tar.gz",
+          "url": "http://au.archive.ubuntu.com/ubuntu/pool/universe/libm/libmediainfo/libmediainfo_18.12.orig.tar.gz",
           "sha256": "4cf0d7b4d8960ce668df7936b306699479e9347ecff77623a40fb060de880117"
         }
       ],
@@ -1569,7 +1524,7 @@
       "sources": [
         {
           "type": "archive",
-          "url": "http://archive.ubuntu.com/ubuntu/pool/universe/m/mediainfo/mediainfo_18.12.orig.tar.gz",
+          "url": "http://au.archive.ubuntu.com/ubuntu/pool/universe/m/mediainfo/mediainfo_18.12.orig.tar.gz",
           "sha256": "7601fce7332dec59d2aedd55b4923ffb409cb4596886885dd722e9c96ccb3cfd"
         }
       ],
@@ -1595,14 +1550,14 @@
       "sources": [
         {
           "type": "archive",
-          "url": "http://archive.ubuntu.com/ubuntu/pool/universe/p/p7zip/p7zip_16.02+dfsg.orig.tar.xz",
+          "url": "http://au.archive.ubuntu.com/ubuntu/pool/universe/p/p7zip/p7zip_16.02+dfsg.orig.tar.xz",
           "sha256": "50adee7a4259e3492d8b68dfd12bda0ed27e615193a16f10af296f23dc831b14"
         }
       ],
       "buildsystem": "simple",
       "build-commands": [
         "make -f makefile",
-        "install -DT bin/7za /app/bin/7z"
+        "install -DT bin/7za /app/bin/7zr"
       ]
     },
     {
@@ -1625,12 +1580,12 @@
       ]
     },
     {
-      "name": "php7.2",
+      "name": "php7.3",
       "sources": [
         {
           "type": "archive",
-          "url": "http://archive.ubuntu.com/ubuntu/pool/main/p/php7.2/php7.2_7.2.15.orig.tar.xz",
-          "sha256": "75e90012faef700dffb29311f3d24fa25f1a5e0f70254a9b8d5c794e25e938ce"
+          "url": "http://au.archive.ubuntu.com/ubuntu/pool/main/p/php7.3/php7.3_7.3.8.orig.tar.xz",
+          "sha256": "f6046b2ae625d8c04310bda0737ac660dc5563a8e04e8a46c1ee24ea414ad5a5"
         }
       ],
       "buildsystem": "simple",
@@ -1641,16 +1596,31 @@
       ]
     },
     {
-      "name": "python3.7-bandit",
+      "name": "python3.8",
+      "sources": [
+        {
+          "type": "archive",
+          "url": "http://au.archive.ubuntu.com/ubuntu/pool/universe/p/python3.8/python3.8_3.8.0.orig.tar.xz",
+          "sha256": "b356244e13fb5491da890b35b13b2118c3122977c2cd825e3eb6e7d462030d84"
+        }
+      ]
+    },
+    {
+      "name": "python3.8-bandit",
       "buildsystem": "simple",
       "build-commands": [
-        "python3.7 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app bandit"
+        "python3.8 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app bandit"
       ],
       "sources": [
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/3c/d3/aecfe42163233de6071248ea7565e97ba1c51e345a9e1dcc128dd1e46c1e/GitPython-2.1.13-py2.py3-none-any.whl",
-          "sha256": "df752b6b6f06f11213e91c4925aea7eaf9e37e88fb71c8a7a1aa0a5c10852120"
+          "url": "https://files.pythonhosted.org/packages/03/6c/99296f89bad2ef85626e1df9f677acbee8885bb043ad82ad3ed4746d2325/gitdb2-2.0.6-py2.py3-none-any.whl",
+          "sha256": "96bbb507d765a7f51eb802554a9cfe194a174582f772e0d89f4e87288c288b7b"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/46/a4/d5c83831a3452713e4b4f126149bc4fbda170f7cb16a86a00ce57ce0e9ad/pbr-5.4.3-py2.py3-none-any.whl",
+          "sha256": "b32c8ccaac7b1a20c0ce00ce317642e6cf231cf038f9875e0280e28af5bf7ac9"
         },
         {
           "type": "file",
@@ -1664,36 +1634,31 @@
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/73/fb/00a976f728d0d1fecfe898238ce23f502a721c0ac0ecfedb80e0d88c64e9/six-1.12.0-py2.py3-none-any.whl",
-          "sha256": "3350809f0555b11f552448330d0b52d5f24c91a322ea4a15ef22629740f3761c"
+          "url": "https://files.pythonhosted.org/packages/65/26/32b8464df2a97e6dd1b656ed26b2c194606c16fe163c695a992b36c11cdf/six-1.13.0-py2.py3-none-any.whl",
+          "sha256": "1f1b7d42e254082a9db6279deae68afb421ceba6158efa6131de7b3003ee93fd"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/c6/dc/6ee92bccfe3c0448786b30b693e6060d62ec8c4a3ec9a287bac1c1a8d8c9/stevedore-1.30.1-py2.py3-none-any.whl",
-          "sha256": "7d1ce610a87d26f53c087da61f06f9b7f7e552efad2a7f6d2322632b5f932ea2"
+          "url": "https://files.pythonhosted.org/packages/aa/25/9fd9f0b05408021736a22ae73f837152c132e4ea85cdd71d186e24efec31/GitPython-3.0.4-py3-none-any.whl",
+          "sha256": "a7d6bef0775f66ba47f25911d285bcd692ce9053837ff48a120c2b8cf3a71389"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/da/30/a407568aa8d8f25db817cf50121a958722f3fc5f87e3a6fba1f40c0633e3/gitdb2-2.0.5-py2.py3-none-any.whl",
-          "sha256": "e3a0141c5f2a3f635c7209d56c496ebe1ad35da82fe4d3ec4aaa36278d70648a"
+          "url": "https://files.pythonhosted.org/packages/b1/e1/f5ddbd83f60b03f522f173c03e406c1bff8343f0232a292ac96aa633b47a/stevedore-1.31.0-py2.py3-none-any.whl",
+          "sha256": "01d9f4beecf0fbd070ddb18e5efb10567801ba7ef3ddab0074f54e3cd4e91730"
         },
         {
           "type": "file",
           "url": "https://files.pythonhosted.org/packages/e3/e8/b3212641ee2718d556df0f23f78de8303f068fe29cdaa7a91018849582fe/PyYAML-5.1.2.tar.gz",
           "sha256": "01adf0b6c6f61bd11af6e10ca52b7d4057dd0be0343eb9283c878cf3af56aee4"
-        },
-        {
-          "type": "file",
-          "url": "https://files.pythonhosted.org/packages/f9/d8/bd657bfa0e89eb71ad5e977ed99a9bb2b44e5db68d9190970637c26501bb/pbr-5.4.2-py2.py3-none-any.whl",
-          "sha256": "56e52299170b9492513c64be44736d27a512fa7e606f21942160b68ce510b4bc"
         }
       ]
     },
     {
-      "name": "python3.7-chardet",
+      "name": "python3.8-chardet",
       "buildsystem": "simple",
       "build-commands": [
-        "python3.7 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app chardet"
+        "python3.8 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app chardet"
       ],
       "sources": [
         {
@@ -1704,24 +1669,24 @@
       ]
     },
     {
-      "name": "python3.7-coverage",
+      "name": "python3.8-coverage",
       "buildsystem": "simple",
       "build-commands": [
-        "python3.7 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app coverage"
+        "python3.8 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app coverage"
       ],
       "sources": [
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/82/8f/a2a687fa00059360858023c5cb74e94b8afaf318726e9a256934066a9d90/coverage-4.5.4-cp37-cp37m-manylinux1_x86_64.whl",
-          "sha256": "eca2b7343524e7ba246cab8ff00cab47a2d6d54ada3b02772e908a45675722e2"
+          "url": "https://files.pythonhosted.org/packages/85/d5/818d0e603685c4a613d56f065a721013e942088047ff1027a632948bdae6/coverage-4.5.4.tar.gz",
+          "sha256": "e07d9f1a23e9e93ab5c62902833bf3e4b1f65502927379148b6622686223125c"
         }
       ]
     },
     {
-      "name": "python3.7-mccabe",
+      "name": "python3.8-mccabe",
       "buildsystem": "simple",
       "build-commands": [
-        "python3.7 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app mccabe"
+        "python3.8 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app mccabe"
       ],
       "sources": [
         {
@@ -1732,39 +1697,39 @@
       ]
     },
     {
-      "name": "python3.7-mypy",
+      "name": "python3.8-mypy",
       "buildsystem": "simple",
       "build-commands": [
-        "python3.7 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app mypy"
+        "python3.8 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app mypy"
       ],
       "sources": [
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/27/aa/bd1442cfb0224da1b671ab334d3b0a4302e4161ea916e28904ff9618d471/typing_extensions-3.7.4-py3-none-any.whl",
-          "sha256": "d8179012ec2c620d3791ca6fe2bf7979d979acdbef1fca0bc56b37411db682ed"
+          "url": "https://files.pythonhosted.org/packages/03/92/705fe8aca27678e01bbdd7738173b8e7df0088a2202c80352f664630d638/typing_extensions-3.7.4.1-py3-none-any.whl",
+          "sha256": "cf8b63fedea4d89bab840ecbb93e75578af28f76f66c35889bd7065f5af88575"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/4d/72/8d54e2b296631b9b14961d583e56e90d9d7fba8a240d5ce7f1113cc5e887/mypy_extensions-0.4.1-py2.py3-none-any.whl",
-          "sha256": "b16cabe759f55e3409a7d231ebd2841378fb0c27a5d1994719e340e4f429ac3e"
+          "url": "https://files.pythonhosted.org/packages/5c/eb/975c7c080f3223a5cdaff09612f3a5221e4ba534f7039db34c35d95fa6a5/mypy_extensions-0.4.3-py2.py3-none-any.whl",
+          "sha256": "090fedd75945a69ae91ce1303b5824f428daf5a028d2f6ab8a299250a846f15d"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/73/4f/ed4fbcee5899b1cefe39ebb191a8fdc0c5a03b68930d3f929449b7d2101a/mypy-0.720-cp37-cp37m-manylinux1_x86_64.whl",
-          "sha256": "15e43d3b1546813669bd1a6ec7e6a11d2888db938e0607f7b5eef6b976671339"
+          "url": "https://files.pythonhosted.org/packages/77/96/6de3a8bb7441550361fedf9b43c45557e10246cff23ca3fac65e4acf20c1/mypy-0.740-cp38-cp38-manylinux1_x86_64.whl",
+          "sha256": "3b1a411909c84b2ae9b8283b58b48541654b918e8513c20a400bb946aa9111ae"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/fb/56/dd4e168a0009da85c78c6cfe91f5b2df2c7bbed60f3ba778c4a71289e6fb/typed_ast-1.4.0-cp37-cp37m-manylinux1_x86_64.whl",
-          "sha256": "d7c45933b1bdfaf9f36c579671fec15d25b06c8398f113dab64c18ed1adda01d"
+          "url": "https://files.pythonhosted.org/packages/f2/4f/2f98f0c6929a725ba22c750838a4424be5053d8fc76f0f018424ebecc62e/typed_ast-1.4.0-cp38-cp38-manylinux1_x86_64.whl",
+          "sha256": "48e5b1e71f25cfdef98b013263a88d7145879fbb2d5185f2a0c79fa7ebbeae47"
         }
       ]
     },
     {
-      "name": "python3.7-pdfminer.six",
+      "name": "python3.8-pdfminer.six",
       "buildsystem": "simple",
       "build-commands": [
-        "python3.7 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app pdfminer.six"
+        "python3.8 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app pdfminer.six"
       ],
       "sources": [
         {
@@ -1774,40 +1739,45 @@
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/4b/43/b6df7cd1354cc03c80cb972d5930b1adc209c717e9141883ca9026314eda/pycryptodome-3.8.2-cp37-cp37m-manylinux1_x86_64.whl",
-          "sha256": "34091e9a6650c44e25339f22fc821396f19f152f65be2546edd823a093fb5a04"
+          "url": "https://files.pythonhosted.org/packages/54/60/b0dbce203a0dca1ad865f063f5e79e0ff8021da4f2ae9478d37828175bc6/pycryptodome-3.9.3-cp38-cp38-manylinux1_x86_64.whl",
+          "sha256": "3b4943134332d81393475c8abed899dce37aa7d8481488d661c2fc7f78f74f84"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/73/fb/00a976f728d0d1fecfe898238ce23f502a721c0ac0ecfedb80e0d88c64e9/six-1.12.0-py2.py3-none-any.whl",
-          "sha256": "3350809f0555b11f552448330d0b52d5f24c91a322ea4a15ef22629740f3761c"
+          "url": "https://files.pythonhosted.org/packages/65/26/32b8464df2a97e6dd1b656ed26b2c194606c16fe163c695a992b36c11cdf/six-1.13.0-py2.py3-none-any.whl",
+          "sha256": "1f1b7d42e254082a9db6279deae68afb421ceba6158efa6131de7b3003ee93fd"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/8a/fd/6e8746e6965d1a7ea8e97253e3d79e625da5547e8f376f88de5d024bacb9/pdfminer.six-20181108-py2.py3-none-any.whl",
-          "sha256": "f04d029d1d3e58c87da51bdefef2e9a1dbf2d7b63f727dd2a3e36054f5ae96ea"
+          "url": "https://files.pythonhosted.org/packages/bc/a9/01ffebfb562e4274b6487b4bb1ddec7ca55ec7510b22e4c51f14098443b8/chardet-3.0.4-py2.py3-none-any.whl",
+          "sha256": "fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/cb/83/200b2723bcbf1d1248a8a7d16e6dd6cb970b5331397b11948428d7ebcf37/pdfminer.six-20191110-py2.py3-none-any.whl",
+          "sha256": "ca2ca58f3ac66a486bce53a6ddba95dc2b27781612915fa41c444790ba9cd2a8"
         }
       ]
     },
     {
-      "name": "python3.7-pillow",
+      "name": "python3.8-pillow",
       "buildsystem": "simple",
       "build-commands": [
-        "python3.7 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app pillow"
+        "python3.8 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app pillow"
       ],
       "sources": [
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/a4/da/2bd281c875686230eabc13d20ab590ea617563b0e746abfb0698c4d5b645/Pillow-6.1.0-cp37-cp37m-manylinux1_x86_64.whl",
-          "sha256": "b50bc1780681b127e28f0075dfb81d6135c3a293e0c1d0211133c75e2179b6c0"
+          "url": "https://files.pythonhosted.org/packages/a4/ad/a7fc21b083c3acf873d8d7e2b8605e0b3c8b2a840aff398fdb5f35aaaef7/Pillow-6.2.1-cp38-cp38-manylinux1_x86_64.whl",
+          "sha256": "809c19241c14433c5d6135e1b6c72da4e3b56d5c865ad5736ab99af8896b8f41"
         }
       ]
     },
     {
-      "name": "python3.7-pycodestyle",
+      "name": "python3.8-pycodestyle",
       "buildsystem": "simple",
       "build-commands": [
-        "python3.7 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app pycodestyle"
+        "python3.8 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app pycodestyle"
       ],
       "sources": [
         {
@@ -1818,29 +1788,29 @@
       ]
     },
     {
-      "name": "python3.7-pydocstyle",
+      "name": "python3.8-pydocstyle",
       "buildsystem": "simple",
       "build-commands": [
-        "python3.7 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app pydocstyle"
+        "python3.8 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app pydocstyle"
       ],
       "sources": [
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/a0/5e/d9ead2d57d39b3e1c1868ce84212319e5543a19c4185dce7e42a9dd968b0/snowballstemmer-1.9.0.tar.gz",
-          "sha256": "9f3b9ffe0809d174f7047e121431acf99c89a7040f0ca84f94ba53a498e6d0c9"
+          "url": "https://files.pythonhosted.org/packages/4b/17/5a4834af38d2afd796ec33b809a570966a8173dacabc44cbc30e75001b4f/pydocstyle-4.0.1-py3-none-any.whl",
+          "sha256": "66aff87ffe34b1e49bff2dd03a88ce6843be2f3346b0c9814410d34987fbab59"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/eb/9a/8b5285c888e09a4f257e184b067c87b4423fed387bffa4b6514f72439b62/pydocstyle-4.0.0-py3-none-any.whl",
-          "sha256": "58c421dd605eec0bce65df8b8e5371bb7ae421582cdf0ba8d9435ac5b0ffc36a"
+          "url": "https://files.pythonhosted.org/packages/7d/4b/cdf1113a0e88b641893b814e9c36f69a6fda28cd88b62c7f0d858cde3166/snowballstemmer-2.0.0-py2.py3-none-any.whl",
+          "sha256": "209f257d7533fdb3cb73bdbd24f436239ca3b2fa67d56f6ff88e86be08cc5ef0"
         }
       ]
     },
     {
-      "name": "python3.7-pyflakes",
+      "name": "python3.8-pyflakes",
       "buildsystem": "simple",
       "build-commands": [
-        "python3.7 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app pyflakes"
+        "python3.8 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app pyflakes"
       ],
       "sources": [
         {
@@ -1851,10 +1821,10 @@
       ]
     },
     {
-      "name": "python3.7-pygments",
+      "name": "python3.8-pygments",
       "buildsystem": "simple",
       "build-commands": [
-        "python3.7 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app pygments"
+        "python3.8 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app pygments"
       ],
       "sources": [
         {
@@ -1865,10 +1835,10 @@
       ]
     },
     {
-      "name": "python3.7-pylint",
+      "name": "python3.8-pylint",
       "buildsystem": "simple",
       "build-commands": [
-        "python3.7 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app pylint"
+        "python3.8 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app pylint"
       ],
       "sources": [
         {
@@ -1878,18 +1848,13 @@
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/43/a5/1b19b094ad19bce55b5b6d434020f5537b424fd2b3cff0fbef23d7bb5a95/lazy_object_proxy-1.4.1-cp37-cp37m-manylinux1_x86_64.whl",
-          "sha256": "bfab710d859c779f273cc48fb86af38d6e9210f38287df0069a63e40b45a2f5c"
+          "url": "https://files.pythonhosted.org/packages/34/8c/74acd0ad5a0518be9e0f3b4d022e84da0c1d9b78972afce73259ac85d78b/lazy_object_proxy-1.4.3-cp38-cp38-manylinux1_x86_64.whl",
+          "sha256": "a6ae12d08c0bf9909ce12385803a543bfe99b95fe01e752536a60af2b7797c62"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/60/c2/b3f73f4ac008bef6e75bca4992f3963b3f85942e0277237721ef1c151f0d/pylint-2.3.1-py3-none-any.whl",
-          "sha256": "5d77031694a5fb97ea95e828c8d10fc770a1df6eb3906067aaed42201a8a6a09"
-        },
-        {
-          "type": "file",
-          "url": "https://files.pythonhosted.org/packages/73/fb/00a976f728d0d1fecfe898238ce23f502a721c0ac0ecfedb80e0d88c64e9/six-1.12.0-py2.py3-none-any.whl",
-          "sha256": "3350809f0555b11f552448330d0b52d5f24c91a322ea4a15ef22629740f3761c"
+          "url": "https://files.pythonhosted.org/packages/65/26/32b8464df2a97e6dd1b656ed26b2c194606c16fe163c695a992b36c11cdf/six-1.13.0-py2.py3-none-any.whl",
+          "sha256": "1f1b7d42e254082a9db6279deae68afb421ceba6158efa6131de7b3003ee93fd"
         },
         {
           "type": "file",
@@ -1898,8 +1863,8 @@
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/d5/ad/7221a62a2dbce5c3b8c57fd18e1052c7331adc19b3f27f1561aa6e620db2/astroid-2.2.5-py3-none-any.whl",
-          "sha256": "b65db1bbaac9f9f4d190199bb8680af6f6f84fd3769a5ea883df8a91fe68b4c4"
+          "url": "https://files.pythonhosted.org/packages/ad/ae/86734823047962e7b8c8529186a1ac4a7ca19aaf1aa0c7713c022ef593fd/astroid-2.3.3-py3-none-any.whl",
+          "sha256": "840947ebfa8b58f318d42301cf8c0a20fd794a33b61cc4638e28e9e61ba32f42"
         },
         {
           "type": "file",
@@ -1908,22 +1873,150 @@
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/fb/56/dd4e168a0009da85c78c6cfe91f5b2df2c7bbed60f3ba778c4a71289e6fb/typed_ast-1.4.0-cp37-cp37m-manylinux1_x86_64.whl",
-          "sha256": "d7c45933b1bdfaf9f36c579671fec15d25b06c8398f113dab64c18ed1adda01d"
+          "url": "https://files.pythonhosted.org/packages/ea/f1/758de486e46ea2b8717992704b0fdd968b7cbc2bc790b976fae4a35a212c/pylint-2.4.3-py3-none-any.whl",
+          "sha256": "7b76045426c650d2b0f02fc47c14d7934d17898779da95288a74c2a7ec440702"
         }
       ]
     },
     {
-      "name": "python3.7-svglib",
+      "name": "python3.8-pytest",
       "buildsystem": "simple",
       "build-commands": [
-        "python3.7 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app svglib"
+        "python3.8 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app pytest"
       ],
       "sources": [
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/12/e2/91fcd4cd32545beec6e11628d64d3e20f11b5a95dd1ccf3216fd69f176b7/cssselect2-0.2.1-py2.py3-none-any.whl",
-          "sha256": "267eebc7378ade2e8be710cd0179606ad9c95ecc673138fccfcfba42c5ce153d"
+          "url": "https://files.pythonhosted.org/packages/45/dc/3241eef99eb45f1def35cf93af35d1cf9ef4c0991792583b8f33ea41b092/more_itertools-7.2.0-py3-none-any.whl",
+          "sha256": "92b8c4b06dac4f0611c0729b2f2ede52b2e1bac1ab48f089c7ddc12e26bb60c4"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/52/90/6155aa926f43f2b2a22b01be7241be3bfd1ceaf7d0b3267213e8127d41f4/atomicwrites-1.3.0-py2.py3-none-any.whl",
+          "sha256": "03472c30eb2c5d1ba9227e4c2ca66ab8287fbfbbda3888aa93dc2e28fc6811b4"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/65/26/32b8464df2a97e6dd1b656ed26b2c194606c16fe163c695a992b36c11cdf/six-1.13.0-py2.py3-none-any.whl",
+          "sha256": "1f1b7d42e254082a9db6279deae68afb421ceba6158efa6131de7b3003ee93fd"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/76/bc/394ad449851729244a97857ee14d7cba61ddb268dce3db538ba2f2ba1f0f/py-1.8.0-py2.py3-none-any.whl",
+          "sha256": "64f65755aee5b381cea27766a3a147c3f15b9b6b9ac88676de66ba2ae36793fa"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/7e/9f/526a6947247599b084ee5232e4f9190a38f398d7300d866af3ab571a5bfe/wcwidth-0.1.7-py2.py3-none-any.whl",
+          "sha256": "f4ebe71925af7b40a864553f761ed559b43544f8f71746c2d756c7fe788ade7c"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/92/c7/48439f7d5fd6bddb4c04b850bb862b42e3e2b98570040dfaf68aedd8114b/pluggy-0.13.0-py2.py3-none-any.whl",
+          "sha256": "0db4b7601aae1d35b4a033282da476845aa19185c1e6964b25cf324b5e4ec3e6"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/93/16/f6dec5178f5f4141e80dfc4812a9aba88f5f29ca881f174ab1851181d016/pytest-5.2.2-py3-none-any.whl",
+          "sha256": "58cee9e09242937e136dbb3dab466116ba20d6b7828c7620f23947f37eb4dae4"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/a2/db/4313ab3be961f7a763066401fb77f7748373b6094076ae2bda2806988af6/attrs-19.3.0-py2.py3-none-any.whl",
+          "sha256": "08a96c641c3a74e44eb59afb61a24f2cb9f4d7188748e76ba4bb5edfa3cb7d1c"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/c0/0c/fc2e007d9a992d997f04a80125b0f183da7fb554f1de701bbb70a8e7d479/pyparsing-2.4.5-py2.py3-none-any.whl",
+          "sha256": "20f995ecd72f2a1f4bf6b072b63b22e2eb457836601e76d6e5dfcd75436acc1f"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/cf/94/9672c2d4b126e74c4496c6b3c58a8b51d6419267be9e70660ba23374c875/packaging-19.2-py2.py3-none-any.whl",
+          "sha256": "d9551545c6d761f3def1677baf08ab2a3ca17c56879e70fecba2fc4dde4ed108"
+        }
+      ]
+    },
+    {
+      "name": "python3.8-pytest-cov",
+      "buildsystem": "simple",
+      "build-commands": [
+        "python3.8 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app pytest-cov"
+      ],
+      "sources": [
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/45/dc/3241eef99eb45f1def35cf93af35d1cf9ef4c0991792583b8f33ea41b092/more_itertools-7.2.0-py3-none-any.whl",
+          "sha256": "92b8c4b06dac4f0611c0729b2f2ede52b2e1bac1ab48f089c7ddc12e26bb60c4"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/52/90/6155aa926f43f2b2a22b01be7241be3bfd1ceaf7d0b3267213e8127d41f4/atomicwrites-1.3.0-py2.py3-none-any.whl",
+          "sha256": "03472c30eb2c5d1ba9227e4c2ca66ab8287fbfbbda3888aa93dc2e28fc6811b4"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/65/26/32b8464df2a97e6dd1b656ed26b2c194606c16fe163c695a992b36c11cdf/six-1.13.0-py2.py3-none-any.whl",
+          "sha256": "1f1b7d42e254082a9db6279deae68afb421ceba6158efa6131de7b3003ee93fd"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/76/bc/394ad449851729244a97857ee14d7cba61ddb268dce3db538ba2f2ba1f0f/py-1.8.0-py2.py3-none-any.whl",
+          "sha256": "64f65755aee5b381cea27766a3a147c3f15b9b6b9ac88676de66ba2ae36793fa"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/7e/9f/526a6947247599b084ee5232e4f9190a38f398d7300d866af3ab571a5bfe/wcwidth-0.1.7-py2.py3-none-any.whl",
+          "sha256": "f4ebe71925af7b40a864553f761ed559b43544f8f71746c2d756c7fe788ade7c"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/85/d5/818d0e603685c4a613d56f065a721013e942088047ff1027a632948bdae6/coverage-4.5.4.tar.gz",
+          "sha256": "e07d9f1a23e9e93ab5c62902833bf3e4b1f65502927379148b6622686223125c"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/92/c7/48439f7d5fd6bddb4c04b850bb862b42e3e2b98570040dfaf68aedd8114b/pluggy-0.13.0-py2.py3-none-any.whl",
+          "sha256": "0db4b7601aae1d35b4a033282da476845aa19185c1e6964b25cf324b5e4ec3e6"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/93/16/f6dec5178f5f4141e80dfc4812a9aba88f5f29ca881f174ab1851181d016/pytest-5.2.2-py3-none-any.whl",
+          "sha256": "58cee9e09242937e136dbb3dab466116ba20d6b7828c7620f23947f37eb4dae4"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/a2/db/4313ab3be961f7a763066401fb77f7748373b6094076ae2bda2806988af6/attrs-19.3.0-py2.py3-none-any.whl",
+          "sha256": "08a96c641c3a74e44eb59afb61a24f2cb9f4d7188748e76ba4bb5edfa3cb7d1c"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/b9/54/3673ee8be482f81527678ac894276223b9814bb7262e4f730469bb7bf70e/pytest_cov-2.8.1-py2.py3-none-any.whl",
+          "sha256": "cdbdef4f870408ebdbfeb44e63e07eb18bb4619fae852f6e760645fa36172626"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/c0/0c/fc2e007d9a992d997f04a80125b0f183da7fb554f1de701bbb70a8e7d479/pyparsing-2.4.5-py2.py3-none-any.whl",
+          "sha256": "20f995ecd72f2a1f4bf6b072b63b22e2eb457836601e76d6e5dfcd75436acc1f"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/cf/94/9672c2d4b126e74c4496c6b3c58a8b51d6419267be9e70660ba23374c875/packaging-19.2-py2.py3-none-any.whl",
+          "sha256": "d9551545c6d761f3def1677baf08ab2a3ca17c56879e70fecba2fc4dde4ed108"
+        }
+      ]
+    },
+    {
+      "name": "python3.8-svglib",
+      "buildsystem": "simple",
+      "build-commands": [
+        "python3.8 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app svglib"
+      ],
+      "sources": [
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/3f/b8/a50adb8c49a393c08c08bd7162e54bd064eece9eb0ec1ed2ef88f3c4132a/lxml-4.4.1-cp38-cp38-manylinux1_x86_64.whl",
+          "sha256": "1409b14bf83a7d729f92e2a7fbfe7ec929d4883ca071b06e95c539ceedb6497c"
         },
         {
           "type": "file",
@@ -1932,52 +2025,52 @@
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/a4/da/2bd281c875686230eabc13d20ab590ea617563b0e746abfb0698c4d5b645/Pillow-6.1.0-cp37-cp37m-manylinux1_x86_64.whl",
-          "sha256": "b50bc1780681b127e28f0075dfb81d6135c3a293e0c1d0211133c75e2179b6c0"
+          "url": "https://files.pythonhosted.org/packages/a4/ad/a7fc21b083c3acf873d8d7e2b8605e0b3c8b2a840aff398fdb5f35aaaef7/Pillow-6.2.1-cp38-cp38-manylinux1_x86_64.whl",
+          "sha256": "809c19241c14433c5d6135e1b6c72da4e3b56d5c865ad5736ab99af8896b8f41"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/a9/28/43138488a942809fe920ba7edd844c19b5c1dbd59aebcfb8112fdf5cc2e0/reportlab-3.5.23-cp37-cp37m-manylinux1_x86_64.whl",
-          "sha256": "a30b42d6c5ffe1ce7c677328a47386f861c3bb9057bf4de5eb0f97fe17e9b3ba"
+          "url": "https://files.pythonhosted.org/packages/ab/bb/ef55c0664404e16ab145c99dd611b070c9592d8e13f987ebbee7dc5f1fd2/reportlab-3.5.32-cp38-cp38-manylinux1_x86_64.whl",
+          "sha256": "7560ef655ac6448bb257fd34bfdfb8d546f9c7c0900ed8963fb8509f75e8ca80"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/ea/fe/7c05fe6d203aba828d1b90d48d5257a456fefae7cf331c9d067a589ef4ee/svglib-0.9.2.tar.gz",
-          "sha256": "8dae55c991617b85a418f52b605221cd83c1698663c2fce792c9754559b11d07"
+          "url": "https://files.pythonhosted.org/packages/c4/a1/1a37602bbcfa2f7c079758f31555776a00a947e43457a3e0110b2165c7d9/cssselect2-0.2.2-py2.py3-none-any.whl",
+          "sha256": "07e9c3b1b52d81dd08b177532bbd6b9ced650d87abfd641f4e4ec7de34b98807"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/ec/51/f45cea425fd5cb0b0380f5b0f048ebc1da5b417e48d304838c02d6288a1e/setuptools-41.0.1-py2.py3-none-any.whl",
-          "sha256": "c7769ce668c7a333d84e17fe8b524b1c45e7ee9f7908ad0a73e1eda7e6a5aebf"
-        },
-        {
-          "type": "file",
-          "url": "https://files.pythonhosted.org/packages/f0/34/bd9aaf095af93648bf9e2738b1105460e2687c2202f24b8046cf9bca6895/lxml-4.4.0-cp37-cp37m-manylinux1_x86_64.whl",
-          "sha256": "d5a61e9c2322b45f259909a02b76bc98c4641214e22a37191d00c151aa9cdb9a"
+          "url": "https://files.pythonhosted.org/packages/d9/de/554b6310ac87c5b921bc45634b07b11394fe63bc4cb5176f5240addf18ab/setuptools-41.6.0-py2.py3-none-any.whl",
+          "sha256": "3e8e8505e563631e7cb110d9ad82d135ee866b8146d5efe06e42be07a72db20a"
         },
         {
           "type": "file",
           "url": "https://files.pythonhosted.org/packages/f4/24/2a3e3df732393fed8b3ebf2ec078f05546de641fe1b667ee316ec1dcf3b7/webencodings-0.5.1-py2.py3-none-any.whl",
           "sha256": "a0af1213f3c2226497a97e2b3aa01a7e4bee4f403f95be16fc9acd2947514a78"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/f4/46/a3d3ae2e04222ef70e8b9fd19296afe2d79ce1c818a754b7621a87dfd632/svglib-0.9.3.tar.gz",
+          "sha256": "91e6becb5698c4328584ce86642d9024be1db043741b0af5518d4420bd3e5d5e"
         }
       ]
     },
     {
-      "name": "python3.7-yamllint",
+      "name": "python3.8-yamllint",
       "buildsystem": "simple",
       "build-commands": [
-        "python3.7 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app yamllint"
+        "python3.8 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app yamllint"
       ],
       "sources": [
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/84/2a/bfee636b1e2f7d6e30dd74f49201ccfa5c3cf322d44929ecc6c137c486c5/pathspec-0.5.9.tar.gz",
-          "sha256": "54a5eab895d89f342b52ba2bffe70930ef9f8d96e398cccf530d21fa0516a873"
+          "url": "https://files.pythonhosted.org/packages/06/a9/2697a044b133a7eb1ed14071020254965519e4a9ec7bd0749d9745da6468/yamllint-1.18.0-py2.py3-none-any.whl",
+          "sha256": "24f05b7ff1a604120eeb5ff7afb7ed8792253bfa96ee83db9cec6d5c20feaf64"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/a7/9b/f43134908f31b420f983726e348ac30f884c300e006f244ab095c29b942a/yamllint-1.16.0-py2.py3-none-any.whl",
-          "sha256": "f97cd763fe7b588444a94cc44fd3764b832a613b5250baa2bfe8b84c91e4c330"
+          "url": "https://files.pythonhosted.org/packages/7a/68/5902e8cd7f7b17c5879982a3a3ee2ad0c3b92b80c79989a2d3e1ca8d29e1/pathspec-0.6.0.tar.gz",
+          "sha256": "e285ccc8b0785beadd4c18e5708b12bb8fcf529a1e61215b3feff1d1e559ea5c"
         },
         {
           "type": "file",
@@ -2013,7 +2106,7 @@
       "sources": [
         {
           "type": "archive",
-          "url": "http://archive.ubuntu.com/ubuntu/pool/main/d/db5.3/db5.3_5.3.28+dfsg1.orig.tar.xz",
+          "url": "http://au.archive.ubuntu.com/ubuntu/pool/main/d/db5.3/db5.3_5.3.28+dfsg1.orig.tar.xz",
           "sha256": "b19bf3dd8ce74b95a7b215be9a7c8489e8e8f18da60d64d6340a06e75f497749"
         }
       ],
@@ -2027,7 +2120,7 @@
       "sources": [
         {
           "type": "archive",
-          "url": "http://archive.ubuntu.com/ubuntu/pool/universe/r/rpm/rpm_4.14.2.1+dfsg1.orig.tar.xz",
+          "url": "http://au.archive.ubuntu.com/ubuntu/pool/universe/r/rpm/rpm_4.14.2.1+dfsg1.orig.tar.xz",
           "sha256": "1f8ab32e127583c25add1df529c5d8a24318eafe057075f2afa0200e9d07b969"
         }
       ],
@@ -2040,7 +2133,7 @@
       "sources": [
         {
           "type": "archive",
-          "url": "http://archive.ubuntu.com/ubuntu/pool/main/r/ruby2.5/ruby2.5_2.5.5.orig.tar.xz",
+          "url": "http://au.archive.ubuntu.com/ubuntu/pool/main/r/ruby2.5/ruby2.5_2.5.5.orig.tar.xz",
           "sha256": "a49a222bbeeeb0191ae043a509cd05137869f971a33fef74d3c0aaae95170877"
         }
       ],
@@ -2056,7 +2149,7 @@
       "sources": [
         {
           "type": "archive",
-          "url": "http://archive.ubuntu.com/ubuntu/pool/main/t/tidy-html5/tidy-html5_5.6.0.orig.tar.gz",
+          "url": "http://au.archive.ubuntu.com/ubuntu/pool/main/t/tidy-html5/tidy-html5_5.6.0.orig.tar.gz",
           "sha256": "08a63bba3d9e7618d1570b4ecd6a7daa83c8e18a41c82455b6308bc11fe34958"
         }
       ],
@@ -2073,7 +2166,7 @@
       "sources": [
         {
           "type": "archive",
-          "url": "http://archive.ubuntu.com/ubuntu/pool/multiverse/u/unrar-nonfree/unrar-nonfree_5.6.6.orig.tar.gz",
+          "url": "http://au.archive.ubuntu.com/ubuntu/pool/multiverse/u/unrar-nonfree/unrar-nonfree_5.6.6.orig.tar.gz",
           "sha256": "5dbdd3cff955c4bc54dd50bf58120af7cb30dec0763a79ffff350f26f96c4430"
         }
       ],
@@ -2088,16 +2181,16 @@
       "sources": [
         {
           "type": "archive",
-          "url": "http://archive.ubuntu.com/ubuntu/pool/main/x/xz-utils/xz-utils_5.2.4.orig.tar.xz",
+          "url": "http://au.archive.ubuntu.com/ubuntu/pool/main/x/xz-utils/xz-utils_5.2.4.orig.tar.xz",
           "sha256": "9717ae363760dedf573dad241420c5fea86256b65bc21d2cf71b2b12f0544f4b"
         }
       ]
     },
     {
-      "name": "python3.7-docopt",
+      "name": "python3.8-docopt",
       "buildsystem": "simple",
       "build-commands": [
-        "python3.7 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app docopt"
+        "python3.8 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app docopt"
       ],
       "sources": [
         {
@@ -2108,10 +2201,10 @@
       ]
     },
     {
-      "name": "python3.7-pyinotify",
+      "name": "python3.8-pyinotify",
       "buildsystem": "simple",
       "build-commands": [
-        "python3.7 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app pyinotify"
+        "python3.8 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app pyinotify"
       ],
       "sources": [
         {
@@ -2122,10 +2215,10 @@
       ]
     },
     {
-      "name": "python3.7-toml",
+      "name": "python3.8-toml",
       "buildsystem": "simple",
       "build-commands": [
-        "python3.7 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app toml"
+        "python3.8 -m pip install --no-index --find-links=\"file://${PWD}\" --prefix=/app toml"
       ],
       "sources": [
         {
@@ -2139,14 +2232,14 @@
       "name": "eris",
       "buildsystem": "simple",
       "build-commands": [
-        "python3.7 -m pip install --no-index --prefix=/app .",
+        "python3.8 -m pip install --no-index --prefix=/app .",
         "cp -a tests test-all /app/bin"
       ],
       "sources": [
         {
           "type": "git",
           "url": "https://github.com/ahamilton/eris",
-          "commit": "bf3fd5c63b4eaceba30598509e4e282946979e70"
+          "commit": "d6bcb86d06a02f4bcaf6fa6d960dac19a9c1284e"
         }
       ]
     }
