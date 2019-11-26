@@ -294,7 +294,7 @@ patches = {
     "p7zip": {"buildsystem": "simple",
               "build-commands": [
                   "make -f makefile",
-                  "install -DT bin/7za /app/bin/7z"]},
+                  "install -DT bin/7za /app/bin/7zr"]},
 
     "wabt": {"buildsystem": "simple",
              "build-commands": [
