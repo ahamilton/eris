@@ -738,6 +738,8 @@ def url_of_tool(tool):
 if __name__ == "__main__":
     tool_name, path = sys.argv[1:3]
     tool = locals()[tool_name]
+    valid_tools = tools_for_path(path)
+    assert tool in valid_tools, valid_tools
     status, text = run_tool_no_error(path, tool)
     print(text)
     sys.exit(0 if status in [Status.ok, Status.normal] else 1)
