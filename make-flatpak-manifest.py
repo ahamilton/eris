@@ -447,7 +447,14 @@ def make_combined_manifest(all_modules):
 SUBSTITUTIONS = {"shellcheck": "haskell/ShellCheck",
                  "pandoc": "haskell/pandoc"}
 
+
+def install_script_deps():
+    # cabal-install - cabal
+    subprocess.run(["sudo", "apt-get", "install", "cabal-install"], check=True)
+
+
 def main():
+    install_script_deps()
     manifests_dir = os.path.join(os.getcwd(), "manifests-cache")
     os.makedirs(manifests_dir, exist_ok=True)
     deps = {SUBSTITUTIONS.get(dep, dep) for dep in eris.tools.dependencies()}
