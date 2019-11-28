@@ -1,3 +1,4 @@
+#!/usr/bin/python3.8
 # -*- coding: utf-8 -*-
 
 # Copyright (C) 2015-2019 Andrew Hamilton. All rights reserved.
@@ -17,6 +18,7 @@ import pwd
 import shutil
 import stat
 import subprocess
+import sys
 import tempfile
 import time
 import traceback
@@ -731,3 +733,11 @@ def url_of_tool(tool):
         return url if url.startswith("http") else get_homepage_of_package(url)
     except AttributeError:
         return None
+
+
+if __name__ == "__main__":
+    tool_name, path = sys.argv[1:3]
+    tool = locals()[tool_name]
+    status, text = run_tool_no_error(path, tool)
+    print(text)
+    sys.exit(0 if status in [Status.ok, Status.normal] else 1)
