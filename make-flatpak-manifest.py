@@ -100,7 +100,7 @@ def haskell_modules(dep):
     modules = []
     for package, url, sha256 in get_package_sources(["ghc"]):
         modules.append(make_simple_module(package, url, sha256))
-    modules = [patch_module(module, patches) for module in modules]    
+    modules = [patch_module(module, patches) for module in modules]
     modules.append(make_haskell_module(dep, get_haskell_deps(dep)))
     return modules
 
@@ -113,8 +113,8 @@ def python_modules(package):
              package], text=True)
         sources = []
         for line in output.splitlines():
-            if (line.startswith("  Downloading") or
-                line.startswith("  Using cached")):
+            if line.startswith("  Downloading") or \
+               line.startswith("  Using cached"):
                 url = line.split()[-1]
                 archive_path = os.path.join(temp_dir, os.path.basename(url))
                 sources.append((url, get_file_sha256(archive_path)))
@@ -132,8 +132,9 @@ def python_modules(package):
 def go_repo_source(repo_path):
     current_commit = subprocess.check_output(["git", "rev-parse", "HEAD"],
                                              cwd=repo_path, text=True).strip()
-    remote_url = subprocess.check_output(["git", "remote", "get-url", "origin"],
-                                         cwd=repo_path, text=True).strip()
+    remote_url = subprocess.check_output(
+        ["git", "remote", "get-url", "origin"],
+        cwd=repo_path, text=True).strip()
     dest_path = repo_path[repo_path.rfind("src/"):]
     return {"type": "git", "url": remote_url, "commit": current_commit,
             "dest": dest_path}
@@ -208,7 +209,8 @@ patches = {
     "ghc": {"buildsystem": "simple",
             "build-commands": [
                 "mkdir -p /app/lib",
-                "ln -s /usr/lib/x86_64-linux-gnu/libtinfo.so.6 /app/lib/libtinfo.so.5",
+                "ln -s /usr/lib/x86_64-linux-gnu/libtinfo.so.6 "
+                "/app/lib/libtinfo.so.5",
                 "./configure --prefix=/app",
                 "make install"],
             "sources": [{
@@ -221,7 +223,7 @@ patches = {
                         "/app/bin/aeson-pretty", "/app/bin/hpc",
                         "/app/bin/haddock*", "/app/bin/hsc2hs",
                         "/app/bin/runhaskell", "/app/bin/hp2ps"]},
-    
+
     "html2text": {"buildsystem": "simple",
                   "build-commands": [
                       "./configure --prefix=/app",
@@ -235,7 +237,7 @@ patches = {
     "lua": {"buildsystem": "simple",
             "build-commands": [
                 r'sed -e "s/INSTALL_TOP= \/usr\/local/INSTALL_TOP= \/app/" '
-                 'Makefile > new',
+                'Makefile > new',
                 "mv new Makefile",
                 "make -j4 linux",
                 "make install"]},
@@ -243,7 +245,7 @@ patches = {
     "lua5.3": {"buildsystem": "simple",
                "build-commands": [
                    r'sed -e "s/INSTALL_TOP= \/usr\/local/INSTALL_TOP= \/app/" '
-                    'Makefile > new',
+                   'Makefile > new',
                    "mv new Makefile",
                    "make -j4 linux",
                    "make install"]},
@@ -288,8 +290,10 @@ patches = {
                ],
                "sources": [{
                    "type": "archive",
-                   "url": "https://rakudostar.com/files/star/rakudo-star-2019.03.tar.gz",
-                   "sha256": "640a69de3a2b4f6c49e75a01040e8770de3650ea1d5bb61057e3dfa3c79cc008"}]},
+                   "url": "https://rakudostar.com/files/star/"
+                          "rakudo-star-2019.03.tar.gz",
+                   "sha256": "640a69de3a2b4f6c49e75a01040e8770"
+                             "de3650ea1d5bb61057e3dfa3c79cc008"}]},
 
     "p7zip": {"buildsystem": "simple",
               "build-commands": [
@@ -302,7 +306,7 @@ patches = {
                  "cmake -DCMAKE_INSTALL_PREFIX=/app ..",
                  "cd build && make -j4 install"]
              },
-    
+
     "rpm": {"config-opts": ["--without-lua"]},
 
     "tidy-html5": {"buildsystem": "simple",
@@ -354,8 +358,8 @@ def ubuntu_modules(dep):
         for package, url, sha256 in get_package_sources([new_dist_dep]):
             modules.append(make_simple_module(package, url, sha256))
     assert modules != []
-    return [patch_module(module, patches) for module in modules]    
-    
+    return [patch_module(module, patches) for module in modules]
+
 
 def lua_modules(dep):
     modules = [make_simple_module(
@@ -403,7 +407,7 @@ def eris_modules():
 
 def nodejs_modules():
     return [{"name": "nodejs",
-             "cleanup": ["/include", "/share", "/lib/node_modules",],
+             "cleanup": ["/include", "/share", "/lib/node_modules"],
              "sources": [
                  {"type": "archive",
                   "url": "https://nodejs.org/dist/v9.9.0/node-v9.9.0.tar.gz",
