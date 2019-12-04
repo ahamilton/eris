@@ -3,9 +3,6 @@
 # Licensed under the Artistic License 2.0.
 
 
-"""Termstr strings contain characters that have color and style."""
-
-
 import collections
 import functools
 import html
@@ -24,7 +21,6 @@ xterm_colormap = eris.ColorMap.XTermColorMap()
 
 @functools.lru_cache()
 def xterm_color_to_rgb(color_index):
-    """Return the rgb color of an xterm color."""
     return eris.ColorMap._rgb(xterm_colormap.colors[color_index])
 
 
@@ -39,7 +35,6 @@ def _cache_first_result(user_function):
 
 
 class Color:
-    """A list of common colors."""
 
     # https://en.wikipedia.org/wiki/Natural_Color_System
     black = (0, 0, 0)
@@ -61,10 +56,6 @@ class Color:
 
 
 class CharStyle:
-    """Characters have a foreground and background color, and styles.
-
-    The styles are bold, italic or underlined.
-    """
 
     _POOL = weakref.WeakValueDictionary()
     _TERMINAL256_FORMATTER = \
@@ -109,7 +100,7 @@ class CharStyle:
         return (f"<CharStyle: fg:{self.fg_color} bg:{self.bg_color}"
                 f" attr:{','.join(attributes)}>")
 
-    def termcode_of_color(self, color, is_foreground):
+    def _color_code(self, color, is_foreground):
         if isinstance(color, int):
             return terminal.color(color, is_foreground)
         else:  # true color
@@ -122,13 +113,15 @@ class CharStyle:
 
     @_cache_first_result
     def code_for_term(self):
-        fg_termcode = terminal.ESC + self.termcode_of_color(self.fg_color, True)
-        bg_termcode = terminal.ESC + self.termcode_of_color(self.bg_color, False)
+        fg_termcode = terminal.ESC + self._color_code(self.fg_color, True)
+        bg_termcode = terminal.ESC + self._color_code(self.bg_color, False)
         bold_code = (terminal.ESC + terminal.bold) if self.is_bold else ""
-        italic_code = (terminal.ESC + terminal.italic) if self.is_italic else ""
-        underline_code = (terminal.ESC + terminal.underline) if self.is_underlined else ""
-        return "".join([terminal.ESC, terminal.normal, fg_termcode, bg_termcode,
-                        bold_code, italic_code, underline_code])
+        italic_code = ((terminal.ESC + terminal.italic)
+                       if self.is_italic else "")
+        underline_code = ((terminal.ESC + terminal.underline)
+                          if self.is_underlined else "")
+        return "".join([terminal.ESC, terminal.normal, fg_termcode,
+                        bg_termcode, bold_code, italic_code, underline_code])
 
     def as_html(self):
         bold_code = "font-weight:bold; " if self.is_bold else ""

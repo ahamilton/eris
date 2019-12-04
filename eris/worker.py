@@ -5,7 +5,6 @@
 
 import asyncio
 import os
-import shutil
 import signal
 
 import eris.fill3 as fill3
@@ -37,12 +36,13 @@ class Worker:
         os.setpriority(os.PRIO_PGRP, self.child_pgid, 19)
 
     async def run_tool(self, path, tool):
-        self.process.stdin.write(f"{tool.__qualname__}\n{path}\n".encode("utf-8"))
+        self.process.stdin.write(
+            f"{tool.__qualname__}\n{path}\n".encode("utf-8"))
         data = await self.process.stdout.readline()
         return tools.Status(int(data))
 
     async def job_runner(self, screen, summary, log, jobs_added_event,
-                   appearance_changed_event):
+                         appearance_changed_event):
         await self.create_process()
         self.process.stdin.write(f"{self.compression}\n".encode("utf-8"))
         while True:
@@ -108,7 +108,7 @@ def main():
             status, text = tools.run_tool_no_error(path, tool)
             result.result = make_result_widget(text, result, compression)
             print(status.value, flush=True)
-    except:
+    except Exception:
         tools.log_error()
 
 

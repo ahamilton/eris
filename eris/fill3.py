@@ -20,9 +20,6 @@ import eris.termstr as termstr
 
 
 def appearance_is_valid(appearance):
-    """An appearance is a list of strings of equal length.
-
-    An empty list is valid. Empty strings are not allowed."""
     return (all(isinstance(line, (str, termstr.TermStr)) and len(line) > 0
                 for line in appearance) and
             len(set(len(line) for line in appearance)) < 2)
@@ -45,9 +42,6 @@ def appearance_dimensions(appearance):
 
 
 def join(seperator, parts):
-    """Returns a string if all the parts and the seperator are plain strings.
-
-    In other words it returns a TermStr if anything is a TermStr."""
     if parts == []:
         return ""
     try:
@@ -179,8 +173,8 @@ class Filler:
 
 class ScrollBar:
 
-    _PARTIAL_CHARS = (["█", "▇", "▆", "▅", "▄", "▃", "▂", "▁"]
-                      ,[" ", "▏", "▎", "▍", "▌", "▋", "▊", "▉"])
+    _PARTIAL_CHARS = (["█", "▇", "▆", "▅", "▄", "▃", "▂", "▁"],
+                      [" ", "▏", "▎", "▍", "▌", "▋", "▊", "▉"])
     DEFAULT_BAR_COLOR = termstr.Color.grey_100
     DEFAULT_BACKGROUND_COLOR = termstr.Color.grey_30
 

@@ -16,9 +16,9 @@ class PagedListTestCase(unittest.TestCase):
     def test_getitem(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             list_ = paged_list.PagedList([3, 4, 5, 6], temp_dir, 4, 2)
-            self.assertEqual(list_[1], 4)            
+            self.assertEqual(list_[1], 4)
             self.assertEqual(list_[1:3], [4, 5])
-            self.assertEqual(list_[0:4], [3, 4, 5, 6])        
+            self.assertEqual(list_[0:4], [3, 4, 5, 6])
         with tempfile.TemporaryDirectory() as temp_dir:
             list_ = paged_list.PagedList([3, 4, 5, 6], temp_dir, 2, 2)
             self.assertEqual(list_[1:3], [4, 5])

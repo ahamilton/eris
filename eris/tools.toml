@@ -68,7 +68,7 @@ tools_for_extensions = [
 [pydocstyle]
   dependencies = ["pip/pydocstyle"]
   url = "http://www.pydocstyle.org/en/2.1.1/usage.html"
-  command = "python3.8 -m pydocstyle --ignore=D1"
+  command = "python3.8 -m pydocstyle --ignore=D1,D213"
 
 [pyflakes]
   dependencies = ["pip/pyflakes"]

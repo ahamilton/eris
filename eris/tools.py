@@ -7,7 +7,6 @@
 import contextlib
 import enum
 import functools
-import gzip
 import importlib
 import importlib.resources
 import math
@@ -325,7 +324,8 @@ def python_coverage(path):
         return Status.not_applicable, f'No "{coverage_path}" file.'
     if os.stat(path).st_mtime > os.stat(coverage_path).st_mtime:
         return (Status.not_applicable,
-                f'File has been modified since "{coverage_path}" file was generated.')
+                f'File has been modified since "{coverage_path}"'
+                ' file was generated.')
     path = os.path.normpath(path)
     with tempfile.TemporaryDirectory() as temp_dir:
         _do_command([PYTHON_EXECUTABLE, "-m", "coverage",
@@ -473,6 +473,7 @@ def make_tool_function(dependencies, command, url=None, success_status=None,
     return func
 
 
+elinks, git_blame, git_log = None, None, None  # For linters.
 with importlib.resources.open_text(eris, "tools.toml") as tools_toml_file:
     tools_toml = toml.load(tools_toml_file)
 tools_for_extensions = tools_toml["tools_for_extensions"]
@@ -556,8 +557,8 @@ class Result:
         if self.status == Status.pending or self.compression is None:
             return unknown_label
         try:
-            with compression_open_func(self.compression)(self.pickle_path, "rb") \
-                 as pickle_file:
+            with compression_open_func(self.compression)(
+                    self.pickle_path, "rb") as pickle_file:
                 return pickle.load(pickle_file)
         except FileNotFoundError:
             return unknown_label
@@ -614,7 +615,8 @@ class Result:
         Result.result.fget.evict(self)
 
     def as_html(self):
-        html, styles = termstr.TermStr(STATUS_TO_TERMSTR[self.status]).as_html()
+        html, styles = termstr.TermStr(
+            STATUS_TO_TERMSTR[self.status]).as_html()
         return (f'<a title="{self.tool.__name__}" '
                 f'href="{self.path}/{self.tool.__name__}">{html}</a>', styles)
 

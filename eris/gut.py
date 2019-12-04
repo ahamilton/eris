@@ -9,7 +9,6 @@
 This can be useful when initially reading a codebase.
 """
 
-
 import re
 import sys
 

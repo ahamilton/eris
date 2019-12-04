@@ -25,7 +25,7 @@ Example:
 def make_page(body_html, title):
     return (f"<html><head><title>{title}</title></head><body><style>body "
             f"{{ background-color: black; }} </style>{body_html}</body></html>"
-           ).encode("utf-8")
+            ).encode("utf-8")
 
 
 class Webserver(http.server.BaseHTTPRequestHandler):

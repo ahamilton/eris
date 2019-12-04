@@ -17,7 +17,6 @@ directory.
 
 
 import asyncio
-import collections
 import contextlib
 import functools
 import gzip
@@ -317,9 +316,9 @@ class Summary:
             if sum(stats) != 0:
                 log_filesystem_changed(log, *stats)
         with self.keep_selection():
-            self._column, self._cache, self.result_total, self.completed_total, \
-                self._max_width, self._max_path_length, \
-                self.closest_placeholder_generator, self._all_results = (
+            (self._column, self._cache, self.result_total,
+             self.completed_total, self._max_width, self._max_path_length,
+             self.closest_placeholder_generator, self._all_results) = (
                     new_column, new_cache, result_total, completed_total,
                     max_width, max_path_length, None, all_results)
             if jobs_added:
@@ -649,6 +648,7 @@ class Screen:
         self._is_fullscreen = False
         self._make_widgets()
         self._key_map = make_key_map(Screen._KEY_DATA)
+        self._last_mouse_position = 0, 0
 
     def __getstate__(self):
         state = self.__dict__.copy()
@@ -876,7 +876,7 @@ class Screen:
         self._log.log_message([in_green("Opening "), path_colored,
                                in_green("…")])
         subprocess.Popen(["xdg-open", path], stdout=subprocess.PIPE,
-                          stderr=subprocess.PIPE)
+                         stderr=subprocess.PIPE)
 
     def save(self):
         worker.Worker.unsaved_jobs_total = 0
@@ -901,12 +901,14 @@ class Screen:
 
     def _is_switching_focus(self, x, y, view_width, view_height):
         return (not self._is_fullscreen and
-                (self._is_listing_portrait and (x > view_width and
-                self._is_summary_focused or x <= view_width and
-                not self._is_summary_focused) or
-                not self._is_listing_portrait and (y > view_height and
-                self._is_summary_focused or y <= view_height and
-                not self._is_summary_focused)))
+                (self._is_listing_portrait and
+                 (x > view_width and
+                  self._is_summary_focused or x <= view_width and
+                  not self._is_summary_focused) or
+                 not self._is_listing_portrait and
+                 (y > view_height and
+                  self._is_summary_focused or y <= view_height and
+                  not self._is_summary_focused)))
 
     def _on_mouse_event(self, event):
         x, y = event[2:4]
@@ -1072,8 +1074,8 @@ def load_state(pickle_path, jobs_added_event, appearance_changed_event,
     return summary, screen, log, is_first_run
 
 
-def main(root_path, loop, worker_count=None, editor_command=None, theme=None, compression=None,
-         is_being_tested=False):
+def main(root_path, loop, worker_count=None, editor_command=None, theme=None,
+         compression=None, is_being_tested=False):
     if worker_count is None:
         worker_count = max(multiprocessing.cpu_count() - 1, 1)
     if theme is None:

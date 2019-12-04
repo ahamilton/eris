@@ -53,8 +53,8 @@ class ScreenWidgetTestCase(unittest.TestCase):
         appearance_changed_event = asyncio.Event()
         summary = __main__.Summary(self.temp_dir, jobs_added_event)
         log = __main__.Log(appearance_changed_event)
-        self.main_widget = __main__.Screen(summary, log, appearance_changed_event,
-                                           _MockMainLoop())
+        self.main_widget = __main__.Screen(
+            summary, log, appearance_changed_event, _MockMainLoop())
 
     def tearDown(self):
         shutil.rmtree(self.temp_dir)
@@ -173,7 +173,7 @@ class SummarySyncWithFilesystem(unittest.TestCase):
     #     self.assertFalse(self.jobs_added_event.is_set())
 
     def test_sync_linked_files(self):
-        """Symbolic and hard-linked files are given distinct entry objects"""
+        """Symbolic and hard-linked files are given distinct entry objects."""
         baz_path = os.path.join(self.temp_dir, "baz")
         os.symlink(self.foo_path, baz_path)
         os.link(self.foo_path, self.zoo_path)

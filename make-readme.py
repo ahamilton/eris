@@ -51,8 +51,9 @@ then to run:
 Extensions({len(extension_set)-1}) | Tools({len(tool_set)})
 ----------:| -----""")
     for extensions, tools_ in all_tools:
-        print("%s | %s" % (" ".join("." + extension for extension in extensions),
-                           " • ".join(tool_markup(tool) for tool in tools_)))
+        print("%s | %s" % (
+            " ".join("." + extension for extension in extensions),
+            " • ".join(tool_markup(tool) for tool in tools_)))
 
 
 if __name__ == "__main__":

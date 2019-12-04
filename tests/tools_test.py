@@ -133,7 +133,7 @@ class ToolsTestCase(unittest.TestCase):
         self._test_tool(tools.perl_syntax,
                         [("perl.pl", tools.Status.ok),
                          # ("perl6.pl", tools.Status.problem)
-                        ])
+                         ])
 
     def test_perldoc(self):
         # FIX: This is failing in an Appimage, inside a nspawn container,

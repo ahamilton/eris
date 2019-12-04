@@ -32,8 +32,8 @@ def umount_squashfs_iso(mount_point):
 
 def run_in_container(container, command):
     option = "--directory" if os.path.isdir(container) else "--image"
-    cmd(f"sudo systemd-nspawn --quiet --chdir=/eris --overlay={ERIS_PATH}:/eris "
-        f'{option}={container} /bin/bash --login -c "{command}"')
+    cmd(f"sudo systemd-nspawn --quiet --chdir=/eris --overlay={ERIS_PATH}:"
+        f'/eris {option}={container} /bin/bash --login -c "{command}"')
 
 
 def build_ubuntu():

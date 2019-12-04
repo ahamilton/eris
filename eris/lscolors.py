@@ -60,7 +60,7 @@ def get_color_codes(environment):
     if "LS_COLORS" in environment:
         try:
             return _parse_ls_colors(environment["LS_COLORS"])
-        except:
+        except Exception:
             syslog.syslog("Syntax error in LS_COLORS environment variable. "
                           "Using default colors.")
     return _DEFAULT_COLOR_CODES
