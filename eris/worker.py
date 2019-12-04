@@ -4,7 +4,6 @@
 # Licensed under the Artistic License 2.0.
 
 import asyncio
-import gzip
 import os
 import shutil
 import signal
@@ -19,9 +18,10 @@ class Worker:
     AUTOSAVE_MESSAGE = "Auto-saving…"
     unsaved_jobs_total = 0
 
-    def __init__(self, is_already_paused, is_being_tested):
+    def __init__(self, is_already_paused, is_being_tested, compression):
         self.is_already_paused = is_already_paused
         self.is_being_tested = is_being_tested
+        self.compression = compression
         self.result = None
         self.process = None
         self.child_pgid = None
@@ -44,6 +44,7 @@ class Worker:
     async def job_runner(self, screen, summary, log, jobs_added_event,
                    appearance_changed_event):
         await self.create_process()
+        self.process.stdin.write(f"{self.compression}\n".encode("utf-8"))
         while True:
             await jobs_added_event.wait()
             while True:
@@ -53,6 +54,7 @@ class Worker:
                     self.result = None
                     break
                 await self.result.run(log, appearance_changed_event, self)
+                self.result.compression = self.compression
                 Worker.unsaved_jobs_total += 1
                 if Worker.unsaved_jobs_total == 100:
                     log.log_message(Worker.AUTOSAVE_MESSAGE)
@@ -83,25 +85,28 @@ class Worker:
             os.killpg(self.child_pgid, signal.SIGKILL)
 
 
-def make_result_widget(text, result):
+def make_result_widget(text, result, compression):
     appearance = fill3.str_to_appearance(text)
     page_size = 500
+    compression_open_func = tools.compression_open_func(compression)
     if len(appearance) > page_size:
         appearance = eris.paged_list.PagedList(
             appearance, result.get_pages_dir(), page_size, cache_size=2,
-            exist_ok=True, open_func=gzip.open)
+            exist_ok=True, open_func=compression_open_func)
     return fill3.Fixed(appearance)
 
 
 def main():
     print(os.getpgid(os.getpid()), flush=True)
+    compression = input()
     try:
         while True:
             tool_name, path = input(), input()
             tool = getattr(tools, tool_name)
             result = tools.Result(path, tool)
+            result.compression = compression
             status, text = tools.run_tool_no_error(path, tool)
-            result.result = make_result_widget(text, result)
+            result.result = make_result_widget(text, result, compression)
             print(status.value, flush=True)
     except:
         tools.log_error()

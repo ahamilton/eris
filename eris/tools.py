@@ -529,6 +529,12 @@ def dump_pickle_safe(object_, path, protocol=pickle.HIGHEST_PROTOCOL,
         os.rename(tmp_path, path)
 
 
+@functools.lru_cache()
+def compression_open_func(compression):
+    return (open if compression == "none" else
+            importlib.import_module(compression).open)
+
+
 class Result:
 
     COMPLETED_STATUSES = {
@@ -538,6 +544,7 @@ class Result:
     def __init__(self, path, tool):
         self.path = path
         self.tool = tool
+        self.compression = None
         self.pickle_path = os.path.join(CACHE_PATH, path + "-" + tool.__name__)
         self.scroll_position = (0, 0)
         self.status = Status.pending
@@ -546,10 +553,11 @@ class Result:
     @lru_cache_with_eviction(maxsize=50)
     def result(self):
         unknown_label = fill3.Text("?")
-        if self.status == Status.pending:
+        if self.status == Status.pending or self.compression is None:
             return unknown_label
         try:
-            with gzip.open(self.pickle_path, "rb") as pickle_file:
+            with compression_open_func(self.compression)(self.pickle_path, "rb") \
+                 as pickle_file:
                 return pickle.load(pickle_file)
         except FileNotFoundError:
             return unknown_label
@@ -557,7 +565,8 @@ class Result:
     @result.setter
     def result(self, value):
         os.makedirs(os.path.dirname(self.pickle_path), exist_ok=True)
-        dump_pickle_safe(value, self.pickle_path, open=gzip.open)
+        dump_pickle_safe(value, self.pickle_path,
+                         open=compression_open_func(self.compression))
         Result.result.fget.evict(self)
 
     def set_status(self, status):

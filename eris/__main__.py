@@ -58,6 +58,8 @@ Options:
                                    the *edit command. It may contain options.
   -t THEME, --theme=THEME          The pygment theme used for syntax
                                    highlighting. Defaults to "native".
+  -c TYPE, --compression=TYPE      The type of compression used in the cache:
+                                   gzip, lzma, bz2, or none. Defaults to gzip.
 """
 
 
@@ -655,10 +657,11 @@ class Screen:
         state["workers"] = None
         return state
 
-    def make_workers(self, worker_count, is_being_tested):
+    def make_workers(self, worker_count, is_being_tested, compression):
         workers = []
         for index in range(worker_count):
-            worker_ = worker.Worker(self._is_paused, is_being_tested)
+            worker_ = worker.Worker(self._is_paused, is_being_tested,
+                                    compression)
             workers.append(worker_)
             future = worker_.job_runner(self, self._summary, self._log,
                                         self._summary._jobs_added_event,
@@ -1069,12 +1072,14 @@ def load_state(pickle_path, jobs_added_event, appearance_changed_event,
     return summary, screen, log, is_first_run
 
 
-def main(root_path, loop, worker_count=None, editor_command=None, theme=None,
+def main(root_path, loop, worker_count=None, editor_command=None, theme=None, compression=None,
          is_being_tested=False):
     if worker_count is None:
         worker_count = max(multiprocessing.cpu_count() - 1, 1)
     if theme is None:
         theme = "native"
+    if compression is None:
+        compression = "gzip"
     os.environ["PYGMENT_STYLE"] = theme
     pickle_path = os.path.join(tools.CACHE_PATH, "summary.pickle")
     jobs_added_event = asyncio.Event()
@@ -1097,7 +1102,7 @@ def main(root_path, loop, worker_count=None, editor_command=None, theme=None,
                              is_path_excluded)
     try:
         log.log_message(f"Starting workers ({worker_count}) …")
-        screen.make_workers(worker_count, is_being_tested)
+        screen.make_workers(worker_count, is_being_tested, compression)
 
         def exit_loop():
             log.log_command("Exiting…")
@@ -1162,18 +1167,26 @@ def check_arguments():
         if arguments["--theme"] not in themes:
             print("--theme must be one of:", " ".join(themes))
             sys.exit(1)
+    if arguments["--compression"] is not None:
+        compressions = ["gzip", "lzma", "bz2", "none"]
+        if arguments["--compression"] not in compressions:
+            print("--compression must be one of:", " ".join(compressions))
+            sys.exit(1)
     editor_command = arguments["--editor"] or os.environ.get("EDITOR", None)\
         or os.environ.get("VISUAL", None)
-    return root_path, worker_count, editor_command, arguments["--theme"]
+    return root_path, worker_count, editor_command, arguments["--theme"], \
+        arguments["--compression"]
 
 
 def entry_point():
-    root_path, worker_count, editor_command, theme = check_arguments()
+    root_path, worker_count, editor_command, theme, compression = \
+        check_arguments()
     with terminal.terminal_title("eris: " + os.path.basename(root_path)):
         manage_cache(root_path)
         with chdir(root_path):  # FIX: Don't change directory if possible.
             loop = asyncio.get_event_loop()
-            main(root_path, loop, worker_count, editor_command, theme)
+            main(root_path, loop, worker_count, editor_command, theme,
+                 compression)
 
 
 if __name__ == "__main__":

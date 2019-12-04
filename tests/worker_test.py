@@ -29,8 +29,10 @@ class WorkerTestCase(unittest.TestCase):
 
     def test_run_job(self):
         loop = asyncio.get_event_loop()
-        worker_ = worker.Worker(False, False)
+        compression = "none"
+        worker_ = worker.Worker(False, False, compression)
         loop.run_until_complete(worker_.create_process())
+        worker_.process.stdin.write(f"{compression}\n".encode("utf-8"))
         future = worker_.run_tool("foo", tools.metadata)
         status = loop.run_until_complete(future)
         self.assertEqual(status, tools.Status.normal)
