@@ -49,7 +49,7 @@ tools_for_extensions = [
 [python_syntax]
   dependencies = []
   url = "https://en.wikipedia.org/wiki/Python_syntax_and_semantics"
-  command = "python3.8 -m py_compile"
+  command = "python3.7 -m py_compile"
 
 [pydoc]
   dependencies = []
@@ -63,34 +63,34 @@ tools_for_extensions = [
 [pycodestyle]
   dependencies = ["pip/pycodestyle"]
   url = "http://pycodestyle.pycqa.org/en/latest/"
-  command = "python3.8 -m pycodestyle"
+  command = "python3.7 -m pycodestyle"
 
 [pydocstyle]
   dependencies = ["pip/pydocstyle"]
   url = "http://www.pydocstyle.org/en/2.1.1/usage.html"
-  command = "python3.8 -m pydocstyle --ignore=D1,D213"
+  command = "python3.7 -m pydocstyle --ignore=D1,D213"
 
 [pyflakes]
   dependencies = ["pip/pyflakes"]
   url = "https://pypi.org/project/pyflakes/"
-  command = "python3.8 -m pyflakes"
+  command = "python3.7 -m pyflakes"
 
 [pylint]
   dependencies = ["pip/pylint"]
   url = "https://www.pylint.org/"
-  command = "python3.8 -m pylint -f colorized --errors-only"
+  command = "python3.7 -m pylint -f colorized --errors-only"
   has_color = true
 
 [python_modulefinder]
   dependencies = []
   url = "https://docs.python.org/3/library/modulefinder.html"
-  command = "python3.8 -m modulefinder"
+  command = "python3.7 -m modulefinder"
   success_status = "normal"
 
 [bandit]
   dependencies = ["pip/bandit"]
   url = "https://pypi.org/project/bandit/"
-  command = "python3.8 -m bandit.cli.main -f screen"
+  command = "python3.7 -m bandit.cli.main -f screen"
   has_color = true
   timeout = 60
 
@@ -132,7 +132,7 @@ tools_for_extensions = [
 [dis]
   dependencies = []
   url = "https://docs.python.org/3/library/dis.html"
-  command = "python3.8 -m dis"
+  command = "python3.7 -m dis"
   success_status = "normal"
 
 [objdump_headers]
@@ -303,7 +303,7 @@ tools_for_extensions = [
 [yamllint]
   dependencies = ["pip/yamllint"]
   url = "https://github.com/adrienverge/yamllint"
-  command = "python3.8 -m yamllint -f colored"
+  command = "python3.7 -m yamllint -f colored"
   has_color = true
 
 [mediainfo]

@@ -1,4 +1,4 @@
-#!/usr/bin/python3.8
+#!/usr/bin/python3.7
 
 # Copyright (C) 2019 Andrew Hamilton. All rights reserved.
 # Licensed under the Artistic License 2.0.
@@ -106,7 +106,7 @@ def haskell_modules(dep):
 
 
 def python_modules(package):
-    python_version = "python3.8"
+    python_version = "python3.7"
     with tempfile.TemporaryDirectory() as temp_dir:
         output = subprocess.check_output(
             [python_version, "-m", "pip", "download", "--dest", temp_dir,
@@ -398,7 +398,7 @@ def eris_modules():
     modules.append({"name": "eris",
                     "buildsystem": "simple",
                     "build-commands": [
-                        "python3.8 -m pip install --no-index --prefix=/app .",
+                        "python3.7 -m pip install --no-index --prefix=/app .",
                         "cp -a tests test-all /app/bin"],
                     "sources": [{"type": "git", "url": eris_url,
                                  "commit": get_latest_commit()}]})

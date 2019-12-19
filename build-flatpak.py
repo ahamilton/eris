@@ -1,4 +1,4 @@
-#!/usr/bin/python3.8
+#!/usr/bin/python3.7
 
 # Copyright (C) 2019 Andrew Hamilton. All rights reserved.
 # Licensed under the Artistic License 2.0.

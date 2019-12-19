@@ -11,7 +11,7 @@ Eris maintains an up-to-date set of reports for every file in a codebase.
     # git clone https://github.com/ahamilton/eris
     # cd eris
     # ./install-dependencies
-    # python3.8 -m pip install .
+    # python3.7 -m pip install .
 
 To test its working properly:
 

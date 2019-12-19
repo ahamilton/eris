@@ -1,4 +1,4 @@
-#!/usr/bin/python3.8
+#!/usr/bin/python3.7
 # -*- coding: utf-8 -*-
 
 # Copyright (C) 2015-2019 Andrew Hamilton. All rights reserved.
@@ -34,7 +34,7 @@ import eris.lscolors as lscolors
 import eris.termstr as termstr
 
 
-PYTHON_VERSION = "3.8"
+PYTHON_VERSION = "3.7"
 PYTHON_EXECUTABLE = "python" + PYTHON_VERSION
 CACHE_PATH = ".eris"
 
@@ -303,11 +303,11 @@ def pytest(path):
 
 @deps(deps={"pip/mypy"}, url="http://mypy-lang.org/", executables={"mypy"})
 def mypy(path):
-    env = os.environ.copy()
-    env["MYPY_FORCE_COLOR"] = "1"
-    return _run_command([PYTHON_EXECUTABLE, "-m", "mypy", "--color-output",
-                         "--ignore-missing-imports", "--pretty", path],
-                        timeout=TIMEOUT, has_color=True, env=env)
+    stdout, stderr, returncode = _do_command(
+        [PYTHON_EXECUTABLE, "-m", "mypy", "--ignore-missing-imports", path],
+        timeout=TIMEOUT)
+    status = Status.ok if returncode == 0 else Status.problem
+    return status, stdout
 
 
 def _colorize_coverage_report(lines):
