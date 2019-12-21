@@ -961,14 +961,10 @@ class Screen:
                 for char in fill3.ScrollBar._PARTIAL_CHARS[1]]
 
     @functools.lru_cache(maxsize=2)
-    def _get_status_bar_appearance(self, width, is_directory_sort,
-                                   progress_bar_size):
+    def _get_status_bar_appearance(self, width, progress_bar_size):
         bar_transparency = 0.7
-        ordering_text = "directory" if is_directory_sort else "type     "
-        indicator = f"{ordering_text} "
-        spacing = " " * (width - len(self._STATUS_BAR) - len(indicator))
-        bar = (self._STATUS_BAR[:width - len(indicator)] + spacing +
-               indicator)[:width]
+        spacing = " " * (width - len(self._STATUS_BAR))
+        bar = (self._STATUS_BAR[:width] + spacing)[:width]
         fraction, whole = math.modf(progress_bar_size)
         whole = int(whole)
         if whole < len(bar) and bar[whole].data == " ":
@@ -986,8 +982,7 @@ class Screen:
         incomplete = self._summary.result_total - self._summary.completed_total
         progress_bar_size = max(0, width * incomplete /
                                 self._summary.result_total)
-        return self._get_status_bar_appearance(
-            width, self._summary.is_directory_sort, progress_bar_size)
+        return self._get_status_bar_appearance(width, progress_bar_size)
 
     def appearance(self, dimensions):
         self._fix_listing()
