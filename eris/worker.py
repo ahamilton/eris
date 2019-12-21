@@ -17,8 +17,7 @@ class Worker:
     AUTOSAVE_MESSAGE = "Auto-saving…"
     unsaved_jobs_total = 0
 
-    def __init__(self, is_already_paused, is_being_tested, compression):
-        self.is_already_paused = is_already_paused
+    def __init__(self, is_being_tested, compression):
         self.is_being_tested = is_being_tested
         self.compression = compression
         self.result = None
@@ -67,18 +66,6 @@ class Worker:
                     if self.is_being_tested:
                         os.kill(os.getpid(), signal.SIGINT)
             jobs_added_event.clear()
-
-    def pause(self):
-        if self.result is not None and \
-           self.result.status == tools.Status.running:
-            os.killpg(self.child_pgid, signal.SIGSTOP)
-            self.result.set_status(tools.Status.paused)
-
-    def continue_(self):
-        if self.result is not None and \
-           self.result.status == tools.Status.paused:
-            self.result.set_status(tools.Status.running)
-            os.killpg(self.child_pgid, signal.SIGCONT)
 
     def kill(self):
         if self.child_pgid is not None:

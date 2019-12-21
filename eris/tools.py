@@ -52,8 +52,7 @@ class Status(enum.IntEnum):
     not_applicable = 5
     running = 6
     pending = 7
-    paused = 8
-    timed_out = 9
+    timed_out = 8
 
 
 _STATUS_COLORS = {Status.ok: termstr.Color.green,
@@ -61,14 +60,12 @@ _STATUS_COLORS = {Status.ok: termstr.Color.green,
                   Status.normal: termstr.Color.grey_200,
                   Status.not_applicable: termstr.Color.grey_100,
                   Status.running: termstr.Color.blue,
-                  Status.paused: termstr.Color.yellow,
                   Status.timed_out: termstr.Color.purple}
 STATUS_MEANINGS = [
     (Status.normal, "Normal"), (Status.ok, "Ok"),
     (Status.problem, "Problem"), (Status.not_applicable, "Not applicable"),
-    (Status.running, "Running"), (Status.paused, "Paused"),
-    (Status.timed_out, "Timed out"), (Status.pending, "Pending"),
-    (Status.error, "Error")
+    (Status.running, "Running"), (Status.timed_out, "Timed out"),
+    (Status.pending, "Pending"), (Status.error, "Error")
 ]
 STATUS_TO_TERMSTR = {
     status: termstr.TermStr(" ", termstr.CharStyle(bg_color=color))
@@ -583,9 +580,6 @@ class Result:
         path = path_colored(self.path)
         log.log_message(["Running ", tool_name, " on ", path, "…"])
         self.set_status(Status.running)
-        if runner.is_already_paused:
-            runner.is_already_paused = False
-            runner.pause()
         appearance_changed_event.set()
         start_time = time.time()
         new_status = await runner.run_tool(self.path, self.tool)

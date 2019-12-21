@@ -72,7 +72,6 @@ KEYS_DOC = """Keys:
   *e - Edit the current file with an editor defined by -e, $EDITOR or $VISUAL.
   *n - Move to the next issue.
   *N - Move to the next issue of the current tool.
-  *p - Pause workers. (toggle)
   *o - Order files by type, or by directory location. (toggle)
   *r - Refresh the currently selected report.
   *R - Refresh all reports of the current tool.
@@ -489,8 +488,7 @@ class Summary:
     def clear_running(self):
         for row in self._column:
             for result in row:
-                if result.status in [tools.Status.running,
-                                     tools.Status.paused]:
+                if result.status == tools.Status.running:
                     self.refresh_result(result)
 
     def as_html(self):
@@ -644,7 +642,6 @@ class Screen:
         self._is_listing_portrait = True
         self._is_log_visible = True
         self._is_help_visible = False
-        self._is_paused = False
         self._is_fullscreen = False
         self._make_widgets()
         self._key_map = make_key_map(Screen._KEY_DATA)
@@ -660,8 +657,7 @@ class Screen:
     def make_workers(self, worker_count, is_being_tested, compression):
         workers = []
         for index in range(worker_count):
-            worker_ = worker.Worker(self._is_paused, is_being_tested,
-                                    compression)
+            worker_ = worker.Worker(is_being_tested, compression)
             workers.append(worker_)
             future = worker_.job_runner(self, self._summary, self._log,
                                         self._summary._jobs_added_event,
@@ -672,7 +668,6 @@ class Screen:
 
     def stop_workers(self):
         for worker_ in self.workers:
-            worker_.pause()
             worker_.future.cancel()
             if worker_.result is not None:
                 worker_.result.reset()
@@ -823,17 +818,6 @@ class Screen:
         with self._summary.keep_selection():
             self._summary.sort_entries()
 
-    def toggle_pause(self):
-        self._is_paused = not self._is_paused
-        self._log.log_command("Paused workers." if self._is_paused else
-                              "Running workers…")
-        if self._is_paused:
-            for worker_ in self.workers:
-                worker_.pause()
-        else:
-            for worker_ in self.workers:
-                worker_.continue_()
-
     def quit_(self):
         os.kill(os.getpid(), signal.SIGINT)
 
@@ -965,7 +949,7 @@ class Screen:
             "line " + str(y+1))
 
     _STATUS_BAR = highlight_chars(
-        " *help *quit *t*a*b:focus *turn *log *edit *next *pause *order"
+        " *help *quit *t*a*b:focus *turn *log *edit *next *order"
         " *refresh *fullscreen *xdg-open", Log._GREEN_STYLE)
 
     @functools.lru_cache()
@@ -977,17 +961,14 @@ class Screen:
                 for char in fill3.ScrollBar._PARTIAL_CHARS[1]]
 
     @functools.lru_cache(maxsize=2)
-    def _get_status_bar_appearance(self, width, is_directory_sort, is_paused,
+    def _get_status_bar_appearance(self, width, is_directory_sort,
                                    progress_bar_size):
         bar_transparency = 0.7
         ordering_text = "directory" if is_directory_sort else "type     "
-        paused_indicator = (termstr.TermStr(" paused").fg_color(
-            termstr.Color.yellow) if is_paused else termstr.TermStr("running").
-                            fg_color(termstr.Color.blue))
-        indicators = " " + paused_indicator + f" • {ordering_text} "
-        spacing = " " * (width - len(self._STATUS_BAR) - len(indicators))
-        bar = (self._STATUS_BAR[:width - len(indicators)] + spacing +
-               indicators)[:width]
+        indicator = f"{ordering_text} "
+        spacing = " " * (width - len(self._STATUS_BAR) - len(indicator))
+        bar = (self._STATUS_BAR[:width - len(indicator)] + spacing +
+               indicator)[:width]
         fraction, whole = math.modf(progress_bar_size)
         whole = int(whole)
         if whole < len(bar) and bar[whole].data == " ":
@@ -1006,8 +987,7 @@ class Screen:
         progress_bar_size = max(0, width * incomplete /
                                 self._summary.result_total)
         return self._get_status_bar_appearance(
-            width, self._summary.is_directory_sort, self._is_paused,
-            progress_bar_size)
+            width, self._summary.is_directory_sort, progress_bar_size)
 
     def appearance(self, dimensions):
         self._fix_listing()
@@ -1034,9 +1014,8 @@ class Screen:
         ({"home", "ctrl a"}, cursor_home),
         ({"end", "ctrl e"}, cursor_end), ({"n"}, move_to_next_issue),
         ({"N"}, move_to_next_issue_of_tool), ({"e"}, edit_file),
-        ({"q"}, quit_), ({"p", " "}, toggle_pause), ({"r"}, refresh),
-        ({"R"}, refresh_tool), ({"tab"}, toggle_focus),
-        ({"f"}, toggle_fullscreen), ("x", xdg_open)]
+        ({"q"}, quit_), ({"r"}, refresh), ({"R"}, refresh_tool),
+        ({"tab"}, toggle_focus), ({"f"}, toggle_fullscreen), ("x", xdg_open)]
 
 
 def setup_inotify(root_path, loop, on_filesystem_change, exclude_filter):
