@@ -72,7 +72,7 @@ KEYS_DOC = """Keys:
   *e - Edit the current file with an editor defined by -e, $EDITOR or $VISUAL.
   *n - Move to the next issue.
   *N - Move to the next issue of the current tool.
-  *o - Order files by type, or by directory location. (toggle)
+  *s - Sort files by type, or by directory location. (toggle)
   *r - Refresh the currently selected report.
   *R - Refresh all reports of the current tool.
   *f - Resize the focused pane to the full screen. (toggle)
@@ -814,7 +814,7 @@ class Screen:
         self._summary.is_directory_sort = not self._summary.is_directory_sort
         sort_order = ("directory then type" if self._summary.is_directory_sort
                       else "type then directory")
-        self._log.log_command(f"Ordering files by {sort_order}.")
+        self._log.log_command(f"Sorting files by {sort_order}.")
         with self._summary.keep_selection():
             self._summary.sort_entries()
 
@@ -949,7 +949,7 @@ class Screen:
             "line " + str(y+1))
 
     _STATUS_BAR = highlight_chars(
-        " *help *quit *t*a*b:focus *turn *log *edit *next *order"
+        " *help *quit *t*a*b:focus *turn *log *edit *next *sort"
         " *refresh *fullscreen *xdg-open", Log._GREEN_STYLE)
 
     @functools.lru_cache()
@@ -1004,7 +1004,7 @@ class Screen:
         ({"h"}, toggle_help), ({"up"}, cursor_up),
         ({"down"}, cursor_down), ({"left"}, cursor_left),
         ({"right"}, cursor_right), ({"page down", "ctrl v"}, cursor_page_down),
-        ({"page up", "meta v"}, cursor_page_up), ({"o"}, toggle_order),
+        ({"page up", "meta v"}, cursor_page_up), ({"s"}, toggle_order),
         ({"home", "ctrl a"}, cursor_home),
         ({"end", "ctrl e"}, cursor_end), ({"n"}, move_to_next_issue),
         ({"N"}, move_to_next_issue_of_tool), ({"e"}, edit_file),
