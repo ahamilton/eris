@@ -67,7 +67,7 @@ KEYS_DOC = """Keys:
   tab - Change the focus between summary and result pane.
   *h - Show the help screen. (toggle)
   *q - Quit.
-  *t - Turn the result pane to portrait or landscape orientation. (toggle)
+  *o - Orient the result pane as portrait or landscape. (toggle)
   *l - Show the activity log. (toggle)
   *e - Edit the current file with an editor defined by -e, $EDITOR or $VISUAL.
   *n - Move to the next issue.
@@ -949,7 +949,7 @@ class Screen:
             "line " + str(y+1))
 
     _STATUS_BAR = highlight_chars(
-        " *help *quit *t*a*b:focus *turn *log *edit *next *sort"
+        " *help *quit *t*a*b:focus *orient *log *edit *next *sort"
         " *refresh *fullscreen *xdg-open", Log._GREEN_STYLE)
 
     @functools.lru_cache()
@@ -1000,7 +1000,7 @@ class Screen:
                 else fill3.appearance_resize(result, dimensions))
 
     _KEY_DATA = [
-        ({"t"}, toggle_window_orientation), ({"l"}, toggle_log),
+        ({"o"}, toggle_window_orientation), ({"l"}, toggle_log),
         ({"h"}, toggle_help), ({"up"}, cursor_up),
         ({"down"}, cursor_down), ({"left"}, cursor_left),
         ({"right"}, cursor_right), ({"page down", "ctrl v"}, cursor_page_down),
