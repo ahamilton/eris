@@ -963,8 +963,7 @@ class Screen:
     @functools.lru_cache(maxsize=2)
     def _get_status_bar_appearance(self, width, progress_bar_size):
         bar_transparency = 0.7
-        spacing = " " * (width - len(self._STATUS_BAR))
-        bar = (self._STATUS_BAR[:width] + spacing)[:width]
+        bar = self._STATUS_BAR.center(width)[:width]
         fraction, whole = math.modf(progress_bar_size)
         whole = int(whole)
         if whole < len(bar) and bar[whole].data == " ":
