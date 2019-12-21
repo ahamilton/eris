@@ -129,6 +129,30 @@ def python_modules(package):
                          for url, sha256 in sorted(sources)]}]
 
 
+def python_modules_all(packages):
+    python_version = "python3.7"
+    with tempfile.TemporaryDirectory() as temp_dir:
+        output = subprocess.check_output(
+            [python_version, "-m", "pip", "download", "--dest", temp_dir] +
+             packages, text=True)
+        sources = []
+        for line in output.splitlines():
+            if line.startswith("  Downloading") or \
+               line.startswith("  Using cached"):
+                url = line.split()[-1]
+                archive_path = os.path.join(temp_dir, os.path.basename(url))
+                sources.append((url, get_file_sha256(archive_path)))
+    assert sources != [], ("No python modules found for:", package)
+    return [{"name": python_version,
+             "buildsystem": "simple",
+             "build-commands": [
+                 python_version + " -m pip install --no-index"
+                 ' --find-links="file://${PWD}" --prefix=/app ' + " ".join(packages)
+             ],
+             "sources": [{"type": "file", "url": url, "sha256": sha256}
+                         for url, sha256 in sorted(sources)]}]
+
+
 def go_repo_source(repo_path):
     current_commit = subprocess.check_output(["git", "rev-parse", "HEAD"],
                                              cwd=repo_path, text=True).strip()
@@ -463,8 +487,12 @@ def main():
     os.makedirs(manifests_dir, exist_ok=True)
     deps = {SUBSTITUTIONS.get(dep, dep) for dep in eris.tools.dependencies()}
     all_modules = []
+    python_modules_list = []
     for dep in sorted(deps - DEPS_IN_RUNTIME) + ["eris"]:
         build_func, package = get_build_func(dep)
+        if build_func == python_modules:
+            python_modules_list.append(package)
+            continue
         dep_name = os.path.basename(package)
         manifest_path = os.path.join(manifests_dir, dep_name+".json")
         print(f"Making manifest for {dep} …".ljust(70), end="", flush=True)
@@ -483,6 +511,19 @@ def main():
         print()
         all_modules.extend(modules)
         save_manifest(make_manifest(modules, dep), manifest_path)
+
+    manifest_path = os.path.join(manifests_dir, "python.json")
+    dep = "python3.7"
+    print(f"Making manifest for {dep} …".ljust(70), end="", flush=True)
+    if os.path.exists(manifest_path):
+        print(" (cached)")
+        with open(manifest_path) as json_file:
+            modules = json.load(json_file)["modules"]
+    else:
+        modules = python_modules_all(python_modules_list)
+        save_manifest(make_manifest(modules, dep), manifest_path)
+    all_modules[-1:-1] = modules
+
     eris_module = all_modules[-1]
     eris_module["sources"][0]["commit"] = get_latest_commit()
     manifest = make_combined_manifest(all_modules)
