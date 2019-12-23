@@ -38,7 +38,7 @@ def run_in_container(container, command):
 
 def build_ubuntu():
     cmd("sudo debootstrap --components=main,restricted,universe,multiverse "
-        "cosmic ubuntu.part")
+        "eoan ubuntu.part http://au.archive.ubuntu.com/ubuntu/")
     run_in_container("ubuntu.part",
                      "ln -sf /lib/systemd/resolv.conf /etc/resolv.conf")
     os.rename("ubuntu.part", "ubuntu")
