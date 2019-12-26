@@ -104,7 +104,7 @@ class CharStyle:
         if isinstance(color, int):
             return terminal.color(color, is_foreground)
         else:  # true color
-            if os.environ["TERM"] == "xterm":
+            if os.environ.get("TERM", None) == "xterm":
                 closest_color = self._TERMINAL256_FORMATTER._closest_color(
                     *color)
                 return terminal.color(closest_color, is_foreground)
