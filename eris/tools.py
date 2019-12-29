@@ -666,11 +666,20 @@ def splitext(path):
     return root, ext
 
 
+@functools.lru_cache()
+def is_tool_available(tool):
+    try:
+        return all(shutil.which(executable) for executable in tool.executables)
+    except AttributeError:
+        return True
+
+
 def tools_for_path(path):
     git_tools = [git_blame, git_log] if os.path.exists(".git") else []
     root, ext = splitext(path)
     extra_tools = [] if ext == "" else _tools_for_extension().get(ext[1:], [])
-    return generic_tools() + git_tools + extra_tools
+    tools = generic_tools() + git_tools + extra_tools
+    return [tool for tool in tools if is_tool_available(tool)]
 
 
 def run_tool_no_error(path, tool):
