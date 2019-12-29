@@ -1,15 +1,8 @@
 Current
-- Tmp files are being left behind after shutdown.
 - All tools in AppImages aren't working correctly. See ./vigil --self_test
 
 
 Current (tool related)
-- When the bandit executable is missing the result status is not an error.
-  There is possibly the same problem for every executable.
-- gut had an error with utf-8. A traceback printed directly on the screen,
-  garbling the interface.
-- There is much less code coverage than I expect from vigil.py, tools.py
-  and worker.py.
 
 
 Fixed
@@ -258,6 +251,17 @@ Fixed
 - If a job is paused for longer than the timeout period, sometimes it has
   the timed out status when un-paused.
   <- Dropped pause feature.
+- When the bandit executable is missing the result status is not an error.
+  There is possibly the same problem for every executable.
+  <- Atm tools with missing executables aren't used.
+- gut had an error with utf-8. A traceback printed directly on the screen,
+  garbling the interface.
+  <- Can't reproduce.
+- There is much less code coverage than I expect from vigil.py, tools.py
+  and worker.py.
+  <- Coverage has changed, working now.
+- Tmp files are being left behind after shutdown.
+  <- Can't reproduce.
 
 
 Won't fix
