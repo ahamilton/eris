@@ -25,13 +25,13 @@ def main():
     print(f"""\
 # Eris Codebase Monitor
 
-### Summary
+## Summary
 
 Eris maintains an up-to-date set of reports for every file in a codebase.
 
-### Installation
+## Installation
 
-(Tested in Ubuntu 19.10)
+### Ubuntu (19.10)
 
     # git clone https://github.com/ahamilton/eris
     # cd eris
@@ -46,7 +46,15 @@ then to run:
 
     # eris <directory_path>
 
-### Tools
+### Docker
+
+    # git clone https://github.com/ahamilton/eris
+    # cd eris
+    # sudo docker build -t eris .
+    # mv eris-docker ~/bin
+    # eris-docker -h
+
+## Tools
 
 Extensions({len(extension_set)-1}) | Tools({len(tool_set)})
 ----------:| -----""")
