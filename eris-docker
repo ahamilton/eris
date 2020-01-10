@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Copyright (C) 2020 Andrew Hamilton. All rights reserved.
+# Licensed under the Artistic License 2.0.
+
+
+set -e
+
+
+DOCKER_IMAGE=eris
+ARGS=( $(getopt -u -o hw:e:t:c: --long help,workers:,editor:,theme:,compression: -- "$@") )
+if [ "${ARGS[-1]}" == "--" ]; then
+    OPTION_ARGS="${ARGS[@]:0:${#ARGS[@]}-1}"  # ARGS[:-1]
+    DOCKER_ARGS="$DOCKER_IMAGE $OPTION_ARGS"
+elif [ "${ARGS[-2]}" == "--" ]; then
+    OPTION_ARGS="${ARGS[@]:0:${#ARGS[@]}-2}"  # ARGS[:-2]
+    REAL_PATH=$(realpath "${ARGS[-1]}")
+    PROJECT=$(basename "$REAL_PATH")
+    DOCKER_ARGS="-v $REAL_PATH:/tmp/$PROJECT $DOCKER_IMAGE $OPTION_ARGS /tmp/$PROJECT"
+else
+    echo "Usage:
+  eris [options] <directory>
+  eris -h | --help"
+    exit 1
+fi
+exec docker run -v /etc/passwd:/etc/passwd -u ${UID}:$(id -g) -it --rm $DOCKER_ARGS
