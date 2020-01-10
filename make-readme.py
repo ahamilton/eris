@@ -51,8 +51,16 @@ then to run:
     # git clone https://github.com/ahamilton/eris
     # cd eris
     # sudo docker build -t eris .
-    # mv eris-docker ~/bin
-    # eris-docker -h
+    # mv eris-docker ~/bin/eris  # Put wrapper in your PATH
+    # eris -h
+
+### AppImage
+
+    # Download AppImage file from github releases page:
+      https://github.com/ahamilton/eris/releases
+    # chmod +x ./eris-2019-12-22.AppImage
+    # mv ./eris-2019-12-22.AppImage ~/bin/eris  # Put it in your PATH
+    # eris -h
 
 ## Tools
 
