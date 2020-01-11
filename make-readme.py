@@ -37,14 +37,7 @@ Eris maintains an up-to-date set of reports for every file in a codebase.
     # cd eris
     # ./install-dependencies
     # python3.7 -m pip install .
-
-To test its working properly:
-
-    # ./test-all
-
-then to run:
-
-    # eris <directory_path>
+    # eris -h
 
 ### Flatpak
 
