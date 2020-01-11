@@ -48,13 +48,13 @@ then to run:
 
 ### Flatpak
 
+    # flatpak install org.freedesktop.Sdk/x86_64/18.08  # Install the runtime
     # Download flatpak bundle file from github releases page:
       https://github.com/ahamilton/eris/releases
-    # flatpak install org.freedesktop.Sdk/x86_64/18.08
-    # flatpak install eris-2019-12-22.flatpak
+    # flatpak install eris-2019-12-22.flatpak  # Install the bundle
     # flatpak run --filesystem=host com.github.ahamilton.eris -h
 
-    there is a wrapper script available to make running easier:
+there is a wrapper script available to make running easier:
 
     # git clone https://github.com/ahamilton/eris
     # cp eris/eris-flatpak ~/bin/eris  # Put wrapper script in your PATH
