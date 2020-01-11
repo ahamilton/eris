@@ -16,16 +16,16 @@ Eris maintains an up-to-date set of reports for every file in a codebase.
 
 ### Flatpak
 
-    # flatpak install org.freedesktop.Sdk/x86_64/18.08  # Install the runtime
+    # flatpak install org.freedesktop.Sdk/x86_64/18.08    # Install the runtime
     # Download flatpak bundle file from github releases page:
       https://github.com/ahamilton/eris/releases
-    # flatpak install eris-2019-12-22.flatpak  # Install the bundle
+    # flatpak install eris-2019-12-22.flatpak    # Install the bundle
     # flatpak run --filesystem=host com.github.ahamilton.eris -h
 
 there is a wrapper script available to make running easier:
 
     # git clone https://github.com/ahamilton/eris
-    # cp eris/eris-flatpak ~/bin/eris  # Put wrapper script in your PATH
+    # cp eris/eris-flatpak ~/bin/eris    # Put wrapper script in your PATH
     # eris -h
 
 ### Docker
@@ -33,15 +33,15 @@ there is a wrapper script available to make running easier:
     # git clone https://github.com/ahamilton/eris
     # cd eris
     # sudo docker build -t eris .
-    # cp eris-docker ~/bin/eris  # Put wrapper script in your PATH
+    # cp eris-docker ~/bin/eris    # Put wrapper script in your PATH
     # eris -h
 
 ### AppImage
 
     # Download AppImage file from github releases page:
       https://github.com/ahamilton/eris/releases
-    # chmod +x ./eris-2019-12-22.AppImage
-    # mv ./eris-2019-12-22.AppImage ~/bin/eris  # Put appimage in your PATH
+    # chmod +x eris-2019-12-22.AppImage
+    # mv eris-2019-12-22.AppImage ~/bin/eris    # Put appimage in your PATH
     # eris -h
 
 ## Tools
