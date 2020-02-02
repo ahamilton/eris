@@ -724,8 +724,13 @@ def path_colored(path):
         return termstr.TermStr(basename, char_style)
     else:
         dirname = dirname + os.path.sep
-        return (termstr.TermStr(dirname, _charstyle_of_path(dirname)) +
-                termstr.TermStr(basename, char_style))
+        dir_style = _charstyle_of_path(os.path.sep)
+        parts = [termstr.TermStr(part, dir_style)
+                 for part in dirname.split(os.path.sep)]
+        path_sep = termstr.TermStr(os.path.sep).fg_color(
+            termstr.Color.grey_100)
+        dir_name = fill3.join(path_sep, parts)
+        return dir_name + termstr.TermStr(basename, char_style)
 
 
 @functools.lru_cache(maxsize=100)
