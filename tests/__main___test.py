@@ -117,42 +117,66 @@ class SummaryCursorTest(unittest.TestCase):
                                 (self.summary.cursor_down, (2, 2))])
 
 
-class SummarySyncWithFilesystem(unittest.TestCase):
+class SummarySyncWithFilesystemTestCase(unittest.TestCase):
 
     def setUp(self):
         self.temp_dir = tempfile.mkdtemp()
         self.foo_path = os.path.join(self.temp_dir, "foo")
-        self.bar_path = os.path.join(self.temp_dir, "bar")
-        self.zoo_path = os.path.join(self.temp_dir, "zoo")
+        self.bar_path = os.path.join(self.temp_dir, "bar.md")
+        self.zoo_path = os.path.join(self.temp_dir, "zoo.html")
         _touch(self.foo_path)
         _touch(self.bar_path)
         self.jobs_added_event = asyncio.Event()
         self.appearance_changed_event = asyncio.Event()
         self.summary = __main__.Summary(self.temp_dir, self.jobs_added_event)
         self.jobs_added_event.clear()
+        self.loop = asyncio.new_event_loop()
+        callback = lambda event: __main__.on_filesystem_event(
+            event, self.summary, self.temp_dir, self.appearance_changed_event)
+        __main__.setup_inotify(self.temp_dir, self.loop, callback,
+                               __main__.is_path_excluded)
 
     def tearDown(self):
         shutil.rmtree(self.temp_dir)
 
     def _assert_paths(self, expected_paths):
         actual_paths = [entry[0].path for entry in self.summary._column]
-        self.assertEqual(actual_paths, expected_paths)
+        self.assertEqual(set(actual_paths), set(expected_paths))
 
     def test_summary_initial_state(self):
-        self._assert_paths(["./bar", "./foo"])
+        self._assert_paths(["./bar.md", "./foo"])
         self.assertFalse(self.jobs_added_event.is_set())
 
     def test_sync_removed_file(self):
-        os.remove(self.foo_path)
-        self._assert_paths(["./bar", "./foo"])
-        self.summary.sync_with_filesystem()
-        self._assert_paths(["./bar"])
+        self._assert_paths(["./bar.md", "./foo"])
+        self.assertEqual(self.summary.result_total, 9)
+        self.assertEqual(self.summary.completed_total, 0)
+        self.assertEqual(self.summary._max_width, 5)
+        self.assertEqual(self.summary._max_path_length, len("bar.md"))
+        async def foo():
+            os.remove(self.bar_path)
+        self.loop.run_until_complete(foo())
+        self._assert_paths(["./foo"])
+        self.assertEqual(self.summary.result_total, 4)
+        self.assertEqual(self.summary.completed_total, 0)
+        self.assertEqual(self.summary._max_width, 4)
+        self.assertEqual(self.summary._max_path_length, len("foo"))
         self.assertFalse(self.jobs_added_event.is_set())
 
     def test_sync_added_file(self):
-        _touch(self.zoo_path)
-        self.summary.sync_with_filesystem()
-        self._assert_paths(["./bar", "./foo", "./zoo"])
+        self._assert_paths(["./bar.md", "./foo"])
+        self.assertEqual(self.summary.result_total, 9)
+        self.assertEqual(self.summary.completed_total, 0)
+        self.assertEqual(self.summary._max_width, 5)
+        self.assertEqual(self.summary._max_path_length, 6)
+        async def foo():
+            _touch(self.zoo_path)
+        self.loop.run_until_complete(foo())
+        self._assert_paths(["./bar.md", "./foo", "./zoo.html"])
+        self.assertEqual(self.summary.result_total, 16)
+        self.assertEqual(self.summary.completed_total, 0)
+        self.assertEqual(self.summary._max_width, 7)
+        self.assertEqual(self.summary._max_path_length, len("zoo.html"))
         self.assertTrue(self.jobs_added_event.is_set())
 
     # def test_sync_changed_file_metadata(self):
@@ -178,7 +202,7 @@ class SummarySyncWithFilesystem(unittest.TestCase):
         os.symlink(self.foo_path, baz_path)
         os.link(self.foo_path, self.zoo_path)
         self.summary.sync_with_filesystem()
-        self._assert_paths(["./bar", "./baz", "./foo", "./zoo"])
+        self._assert_paths(["./bar.md", "./baz", "./foo", "./zoo.html"])
         self.assertTrue(id(self.summary._column[1]) !=  # baz
                         id(self.summary._column[2]))    # foo
         self.assertTrue(id(self.summary._column[2]) !=  # foo
@@ -238,6 +262,7 @@ class MainTestCase(unittest.TestCase):
             second_dir = os.path.join(temp_dir, "second")
             os.rename(first_dir, second_dir)
             test_run(second_dir, loop)
+            loop.close()
             loop.stop()
         finally:
             shutil.rmtree(temp_dir)

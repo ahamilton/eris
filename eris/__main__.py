@@ -95,6 +95,9 @@ class Entry:
         self.widget = fill3.Row(results)
         self.appearance_cache = None
 
+    def __eq__(self, other):
+        return self.path == other.path
+
     def __len__(self):
         return len(self.widgets)
 
@@ -256,6 +259,65 @@ class Summary:
         self._column.sort(key=directory_sort if self.is_directory_sort
                           else type_sort)
         self.closest_placeholder_generator = None
+
+    def file_added(self, path):
+        full_path = os.path.join(self._root_path, path)
+        try:
+            file_key = (path, os.stat(full_path).st_ctime)
+        except FileNotFoundError:
+            return
+        row = []
+        for tool in tools.tools_for_path(path):
+            tool_key = (tool.__name__, tool.__code__.co_code)
+            result = tools.Result(path, tool)
+            self._all_results.add(result)
+            self.result_total += 1
+            file_entry = self._cache.setdefault(file_key, {})
+            file_entry[tool_key] = result
+            if result.is_completed:
+                self.completed_total += 1
+            row.append(result)
+        self._max_width = max(len(row), self._max_width)
+        self._max_path_length = max(len(path) - len("./"),
+                                    self._max_path_length)
+        self._column.append(Entry(path, row, self))
+        self.sort_entries()
+        self._jobs_added_event.set()
+        self.closest_placeholder_generator = None
+
+    def file_deleted(self, path):
+        entry = Entry(path, [], self)
+        try:
+            index = self._column.index(entry)
+        except ValueError:
+            return
+        new_cache = {}
+        for file_key in self._cache:
+            cache_path, cache_time = file_key
+            if cache_path != path:
+                new_cache[file_key] = self._cache[file_key]
+        self._cache = new_cache
+        for result in self._column[index]:
+            self._all_results.remove(result)
+            if result.is_completed:
+                self.completed_total -= 1
+            self.result_total -= 1
+            result.delete()
+        row = self._column[index]
+        del self._column[index]
+        if len(row) == self._max_width:
+            self._max_width = max(len(entry) for entry in self._column)
+        if (len(path) - 2) == self._max_path_length:
+            self._max_path_length = max((len(entry.path) - 2)
+                                        for entry in self._column)
+        x, y = self._cursor_position
+        if y == len(self._column):
+            self._cursor_position = x, y - 1
+        self.closest_placeholder_generator = None
+
+    def file_modified(self, path):
+        self.file_deleted(path)
+        self.file_added(path)
 
     @contextlib.contextmanager
     def keep_selection(self):
@@ -1012,16 +1074,16 @@ class Screen:
         ({"tab"}, toggle_focus), ({"f"}, toggle_fullscreen), ("x", xdg_open)]
 
 
-def setup_inotify(root_path, loop, on_filesystem_change, exclude_filter):
+def setup_inotify(root_path, loop, on_filesystem_event, exclude_filter):
     watch_manager = pyinotify.WatchManager()
     event_mask = (pyinotify.IN_CREATE | pyinotify.IN_DELETE |
                   pyinotify.IN_CLOSE_WRITE | pyinotify.IN_ATTRIB |
                   pyinotify.IN_MOVED_FROM | pyinotify.IN_MOVED_TO)
     watch_manager.add_watch(root_path, event_mask, rec=True, auto_add=True,
-                            proc_fun=lambda event: None,
+                            proc_fun=on_filesystem_event,
                             exclude_filter=exclude_filter)
     return pyinotify.AsyncioNotifier(watch_manager, loop,
-                                     callback=on_filesystem_change)
+                                     callback=lambda notifier: None)
 
 
 def load_state(pickle_path, jobs_added_event, appearance_changed_event,
@@ -1047,6 +1109,20 @@ def load_state(pickle_path, jobs_added_event, appearance_changed_event,
     return summary, screen, log, is_first_run
 
 
+def on_filesystem_event(event, summary, root_path, appearance_changed_event):
+    path = fix_paths(root_path, [event.pathname])[0]
+    if is_path_excluded(path[2:]):
+        return
+    inotify_actions = {pyinotify.IN_CREATE: summary.file_added,
+                       pyinotify.IN_MOVED_TO: summary.file_added,
+                       pyinotify.IN_DELETE: summary.file_deleted,
+                       pyinotify.IN_MOVED_FROM: summary.file_deleted,
+                       pyinotify.IN_ATTRIB: summary.file_modified,
+                       pyinotify.IN_CLOSE_WRITE: summary.file_modified}
+    inotify_actions[event.mask](path)
+    appearance_changed_event.set()
+
+
 def main(root_path, loop, worker_count=None, editor_command=None, theme=None,
          compression=None, is_being_tested=False):
     if worker_count is None:
@@ -1068,13 +1144,9 @@ def main(root_path, loop, worker_count=None, editor_command=None, theme=None,
     jobs_added_event.set()
     if not is_first_run:
         summary.sync_with_filesystem(log)
-
-    def on_filesystem_change(notifier):
-        time.sleep(0.1)  # A little time for more events
-        summary.sync_with_filesystem(log)
-        appearance_changed_event.set()
-    notifier = setup_inotify(root_path, loop, on_filesystem_change,
-                             is_path_excluded)
+    callback = lambda event: on_filesystem_event(event, summary, root_path,
+                                                 appearance_changed_event)
+    notifier = setup_inotify(root_path, loop, callback, is_path_excluded)
     try:
         log.log_message(f"Starting workers ({worker_count}) …")
         screen.make_workers(worker_count, is_being_tested, compression)

@@ -14,6 +14,7 @@ import os
 import os.path
 import pickle
 import pwd
+import shlex
 import shutil
 import stat
 import subprocess
@@ -383,10 +384,11 @@ def perltidy(path):
 
 @deps(deps={"tidy"}, url="tidy", executables={"tidy"})
 def html_syntax(path):
-    # Maybe only show errors
-    stdout, stderr, returncode = _do_command(["tidy", path])
-    status = Status.ok if returncode == 0 else Status.problem
-    return status, stderr
+    # Stop tidy from modifiying input path by piping in input.
+    tidy_process = subprocess.run(f"cat {shlex.quote(path)} | tidy",
+                                  capture_output=True, text=True, shell=True)
+    status = Status.ok if tidy_process.returncode == 0 else Status.problem
+    return status, _fix_input(tidy_process.stderr)
 
 
 @deps(deps={"pandoc"}, url="pandoc", executables={"pandoc"})

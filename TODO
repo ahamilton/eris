@@ -7,6 +7,7 @@ Todo
 
 Todo (tool related)
 - Report on python doctests. (also coverage of)
+- eslint for javascript (at least for js,md,ts)
 
 
 Done
@@ -220,7 +221,6 @@ Ideas
   csv file?
 - Check these tools: astyle, indent, uncrustify, xmlindent, csstidy, flake8,
   frosted, pep257, pyroma, dodgy, jedi, pep8-naming, graphite, propector, vmprof, pytype
-- eslint for javascript?
 - epydoc for python
 - readelf
 - pinfer from mypy
