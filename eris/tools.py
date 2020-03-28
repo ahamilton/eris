@@ -548,6 +548,7 @@ class Result:
         self.pickle_path = os.path.join(CACHE_PATH, path + "-" + tool.__name__)
         self.scroll_position = (0, 0)
         self.status = Status.pending
+        self.is_highlighted = False
 
     @property
     @lru_cache_with_eviction(maxsize=50)
@@ -597,8 +598,16 @@ class Result:
     def reset(self):
         self.set_status(Status.pending)
 
+    def _get_cursor(self):
+        status_color = _STATUS_COLORS.get(self.status, None)
+        fg_color = (termstr.Color.white if self.status == Status.pending
+                    else termstr.Color.black)
+        return termstr.TermStr("+", termstr.CharStyle(fg_color=fg_color,
+                                                      bg_color=status_color))
+
     def appearance_min(self):
-        return [STATUS_TO_TERMSTR[self.status]]
+        return ([self._get_cursor() if self.is_highlighted else
+                 STATUS_TO_TERMSTR[self.status]])
 
     def get_pages_dir(self):
         return self.pickle_path + ".pages"

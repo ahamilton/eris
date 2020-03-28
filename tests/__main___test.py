@@ -88,7 +88,7 @@ class SummaryCursorTest(unittest.TestCase):
         self.original_method = __main__.Summary.sync_with_filesystem
         __main__.Summary.sync_with_filesystem = lambda foo: None
         self.summary = __main__.Summary(None, None)
-        self.summary._column = [[1, 1, 1], [1, 1], [1, 1, 1]]
+        self.summary._entries = [[1, 1, 1], [1, 1], [1, 1, 1]]
 
     def tearDown(self):
         __main__.Summary.sync_with_filesystem = self.original_method
@@ -124,59 +124,62 @@ class SummarySyncWithFilesystemTestCase(unittest.TestCase):
         self.foo_path = os.path.join(self.temp_dir, "foo")
         self.bar_path = os.path.join(self.temp_dir, "bar.md")
         self.zoo_path = os.path.join(self.temp_dir, "zoo.html")
-        _touch(self.foo_path)
-        _touch(self.bar_path)
         self.jobs_added_event = asyncio.Event()
         self.appearance_changed_event = asyncio.Event()
         self.summary = __main__.Summary(self.temp_dir, self.jobs_added_event)
-        self.jobs_added_event.clear()
         self.loop = asyncio.new_event_loop()
         callback = lambda event: __main__.on_filesystem_event(
             event, self.summary, self.temp_dir, self.appearance_changed_event)
         __main__.setup_inotify(self.temp_dir, self.loop, callback,
                                __main__.is_path_excluded)
+        _touch(self.foo_path)
+        _touch(self.bar_path)
+        self.log = __main__.Log(self.appearance_changed_event)
+        self.loop.run_until_complete(self.summary.sync_with_filesystem(self.log))
+        self.jobs_added_event.clear()
 
     def tearDown(self):
         shutil.rmtree(self.temp_dir)
 
     def _assert_paths(self, expected_paths):
-        actual_paths = [entry[0].path for entry in self.summary._column]
+        actual_paths = [entry[0].path for entry in self.summary._entries]
         self.assertEqual(set(actual_paths), set(expected_paths))
 
+    def _assert_summary_invariants(self):
+        completed_total = 0
+        result_total = 0
+        for row in self.summary._entries:
+            for result in row:
+                if result.is_completed:
+                    completed_total += 1
+                result_total += 1
+        self.assertEqual(self.summary.completed_total, completed_total)
+        self.assertEqual(self.summary.result_total, result_total)
+        max_width = max((len(row) for row in self.summary._entries), default=0)
+        self.assertEqual(self.summary._max_width, max_width)
+        max_path_length = max(
+            (len(row.path) - 2 for row in self.summary._entries), default=0)
+        self.assertEqual(self.summary._max_path_length, max_path_length)
+
     def test_summary_initial_state(self):
+        self._assert_summary_invariants()
         self._assert_paths(["./bar.md", "./foo"])
         self.assertFalse(self.jobs_added_event.is_set())
 
     def test_sync_removed_file(self):
-        self._assert_paths(["./bar.md", "./foo"])
-        self.assertEqual(self.summary.result_total, 9)
-        self.assertEqual(self.summary.completed_total, 0)
-        self.assertEqual(self.summary._max_width, 5)
-        self.assertEqual(self.summary._max_path_length, len("bar.md"))
         async def foo():
             os.remove(self.bar_path)
         self.loop.run_until_complete(foo())
         self._assert_paths(["./foo"])
-        self.assertEqual(self.summary.result_total, 4)
-        self.assertEqual(self.summary.completed_total, 0)
-        self.assertEqual(self.summary._max_width, 4)
-        self.assertEqual(self.summary._max_path_length, len("foo"))
+        self._assert_summary_invariants()
         self.assertFalse(self.jobs_added_event.is_set())
 
     def test_sync_added_file(self):
-        self._assert_paths(["./bar.md", "./foo"])
-        self.assertEqual(self.summary.result_total, 9)
-        self.assertEqual(self.summary.completed_total, 0)
-        self.assertEqual(self.summary._max_width, 5)
-        self.assertEqual(self.summary._max_path_length, 6)
         async def foo():
             _touch(self.zoo_path)
         self.loop.run_until_complete(foo())
         self._assert_paths(["./bar.md", "./foo", "./zoo.html"])
-        self.assertEqual(self.summary.result_total, 16)
-        self.assertEqual(self.summary.completed_total, 0)
-        self.assertEqual(self.summary._max_width, 7)
-        self.assertEqual(self.summary._max_path_length, len("zoo.html"))
+        self._assert_summary_invariants()
         self.assertTrue(self.jobs_added_event.is_set())
 
     # def test_sync_changed_file_metadata(self):
@@ -201,12 +204,13 @@ class SummarySyncWithFilesystemTestCase(unittest.TestCase):
         baz_path = os.path.join(self.temp_dir, "baz")
         os.symlink(self.foo_path, baz_path)
         os.link(self.foo_path, self.zoo_path)
-        self.summary.sync_with_filesystem()
+        log = __main__.Log(self.appearance_changed_event)
+        self.loop.run_until_complete(self.summary.sync_with_filesystem(log))
         self._assert_paths(["./bar.md", "./baz", "./foo", "./zoo.html"])
-        self.assertTrue(id(self.summary._column[1]) !=  # baz
-                        id(self.summary._column[2]))    # foo
-        self.assertTrue(id(self.summary._column[2]) !=  # foo
-                        id(self.summary._column[3]))    # zoo
+        self.assertTrue(id(self.summary._entries[1]) !=  # baz
+                        id(self.summary._entries[2]))    # foo
+        self.assertTrue(id(self.summary._entries[2]) !=  # foo
+                        id(self.summary._entries[3]))    # zoo
         self.assertTrue(self.jobs_added_event.is_set())
 
 

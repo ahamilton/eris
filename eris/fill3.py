@@ -120,12 +120,11 @@ def join_vertical(appearances):
     return result
 
 
-class Column(collections.UserList):
+class Column:
 
     def __init__(self, widgets, partition_func=even_partition,
                  background_char=" "):
-        collections.UserList.__init__(self, widgets)
-        self.widgets = self.data
+        self.widgets = widgets
         self.partition_func = partition_func
         self.background_char = background_char
 

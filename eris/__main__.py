@@ -20,6 +20,8 @@ import asyncio
 import contextlib
 import functools
 import gzip
+import importlib
+import importlib.resources
 import math
 import multiprocessing
 import os
@@ -33,7 +35,9 @@ import time
 import docopt
 import pygments.styles
 import pyinotify
+import sortedcontainers
 
+import eris
 from eris import fill3
 from eris import terminal
 from eris import termstr
@@ -94,6 +98,7 @@ class Entry:
                 result.entry = self
         self.widget = fill3.Row(results)
         self.appearance_cache = None
+        self.last_width = None
 
     def __eq__(self, other):
         return self.path == other.path
@@ -102,29 +107,21 @@ class Entry:
         return len(self.widgets)
 
     def __getitem__(self, index):
-        return self.widgets.__getitem__(index)
-
-    def _get_cursor(self):
-        result_selected = self.widget[self.highlighted]
-        status_color = tools._STATUS_COLORS.get(
-            result_selected.status, None)
-        fg_color = (termstr.Color.white if result_selected.status ==
-                    tools.Status.pending else termstr.Color.black)
-        return fill3.Text(termstr.TermStr("+", termstr.CharStyle(
-            fg_color=fg_color, bg_color=status_color)))
+        return self.widgets[index]
 
     def appearance_min(self):
-        # 'appearance' local variable exists because appearance_cache can
-        # become None at any time.
         appearance = self.appearance_cache
-        if appearance is None:
+        if appearance is None or self.last_width != self.summary._max_width:
+            self.last_width = self.summary._max_width
             if self.highlighted is not None:
-                self.widget[self.highlighted] = self._get_cursor()
+                self.widget[self.highlighted].is_highlighted = True
             new_appearance = self.widget.appearance_min()
             path = tools.path_colored(self.path)
-            padding = " " * (self.summary._max_width - len(self.widget) + 1)
+            padding = " " * (self.last_width - len(self.widget) + 1)
             new_appearance[0] = new_appearance[0] + padding + path
             self.appearance_cache = appearance = new_appearance
+        if self.highlighted is not None:
+            self.widget[self.highlighted].is_highlighted = False
         return appearance
 
     def as_html(self):
@@ -156,8 +153,8 @@ def codebase_files(path, skip_hidden_directories=True):
 
 
 def fix_paths(root_path, paths):
-    return [os.path.join(".", os.path.relpath(path, root_path))
-            for path in paths]
+    return (os.path.join(".", os.path.relpath(path, root_path))
+            for path in paths)
 
 
 def blend_color(a_color, b_color, transparency):
@@ -204,26 +201,6 @@ def type_sort(entry):
             os.path.basename(path))
 
 
-def log_filesystem_changed(log, added, removed, modified):
-    def part(stat, text, color):
-        return termstr.TermStr(f"{stat:2} {text}.").fg_color(
-            termstr.Color.grey_100 if stat == 0 else color)
-    parts = [part(added, "added", termstr.Color.green),
-             part(removed, "removed", termstr.Color.red),
-             part(modified, "modified", termstr.Color.blue)]
-    log.log_message("Filesystem changed: " + fill3.join(" ", parts))
-
-
-def get_diff_stats(old_files, new_files):
-    old_names = set(name for name, ctime in old_files)
-    new_names = set(name for name, ctime in new_files)
-    added_count = len(new_names - old_names)
-    removed_count = len(old_names - new_names)
-    same_count = len(new_names) - added_count
-    modified_count = same_count - len(old_files.intersection(new_files))
-    return added_count, removed_count, modified_count
-
-
 class Summary:
 
     def __init__(self, root_path, jobs_added_event):
@@ -234,10 +211,11 @@ class Summary:
         self.closest_placeholder_generator = None
         self._cache = {}
         self.is_directory_sort = True
-        self._max_width = None
-        self._max_path_length = None
-        self._all_results = set()
-        self.sync_with_filesystem()
+        self._max_width = 0
+        self._max_path_length = 0
+        self._entries = sortedcontainers.SortedList([], key=directory_sort)
+        self.result_total = 0
+        self.completed_total = 0
 
     def __getstate__(self):
         state = self.__dict__.copy()
@@ -256,68 +234,75 @@ class Summary:
             self.closest_placeholder_generator = None
 
     def sort_entries(self):
-        self._column.sort(key=directory_sort if self.is_directory_sort
-                          else type_sort)
+        key_func = directory_sort if self.is_directory_sort else type_sort
+        self._entries = sortedcontainers.SortedList(
+            self._entries, key=key_func)
         self.closest_placeholder_generator = None
 
     def file_added(self, path):
         full_path = os.path.join(self._root_path, path)
         try:
-            file_key = (path, os.stat(full_path).st_ctime)
+            change_time = os.stat(full_path).st_ctime
         except FileNotFoundError:
             return
         row = []
+        change_time = self._cache.setdefault(path, change_time)
         for tool in tools.tools_for_path(path):
-            tool_key = (tool.__name__, tool.__code__.co_code)
             result = tools.Result(path, tool)
-            self._all_results.add(result)
             self.result_total += 1
-            file_entry = self._cache.setdefault(file_key, {})
-            file_entry[tool_key] = result
             if result.is_completed:
                 self.completed_total += 1
             row.append(result)
         self._max_width = max(len(row), self._max_width)
         self._max_path_length = max(len(path) - len("./"),
                                     self._max_path_length)
-        self._column.append(Entry(path, row, self))
-        self.sort_entries()
+        entry = Entry(path, row, self)
+        self._entries.add(entry)
+        entry_index = self._entries.index(entry)
+        x, y = self._cursor_position
+        if entry_index <= y:
+            self.scroll(0, -1)
         self._jobs_added_event.set()
         self.closest_placeholder_generator = None
 
-    def file_deleted(self, path):
+    def file_deleted(self, path, check=True):
+        if check and os.path.exists(os.path.join(self._root_path, path)):
+            return
         entry = Entry(path, [], self)
         try:
-            index = self._column.index(entry)
+            index = self._entries.index(entry)
         except ValueError:
             return
-        new_cache = {}
-        for file_key in self._cache:
-            cache_path, cache_time = file_key
-            if cache_path != path:
-                new_cache[file_key] = self._cache[file_key]
-        self._cache = new_cache
-        for result in self._column[index]:
-            self._all_results.remove(result)
+        x, y = self._cursor_position
+        if index < y:
+            self.scroll(0, 1)
+        del self._cache[path]
+        for result in self._entries[index]:
             if result.is_completed:
                 self.completed_total -= 1
             self.result_total -= 1
             result.delete()
-        row = self._column[index]
-        del self._column[index]
+        row = self._entries[index]
+        self._entries.pop(index)
         if len(row) == self._max_width:
-            self._max_width = max(len(entry) for entry in self._column)
+            self._max_width = max((len(entry) for entry in self._entries),
+                                  default=0)
         if (len(path) - 2) == self._max_path_length:
-            self._max_path_length = max((len(entry.path) - 2)
-                                        for entry in self._column)
+            self._max_path_length = max(((len(entry.path) - 2)
+                                         for entry in self._entries), default=0)
         x, y = self._cursor_position
-        if y == len(self._column):
+        if y == len(self._entries):
             self._cursor_position = x, y - 1
         self.closest_placeholder_generator = None
 
     def file_modified(self, path):
-        self.file_deleted(path)
-        self.file_added(path)
+        entry = Entry(path, [], self)
+        try:
+            entry_index = self._entries.index(entry)
+        except ValueError:
+            return
+        for result in self._entries[entry_index]:
+            self.refresh_result(result, only_completed=False)
 
     @contextlib.contextmanager
     def keep_selection(self):
@@ -328,77 +313,45 @@ class Summary:
             return
         x, y = self._cursor_position
         yield
-        for index, row in enumerate(self._column):
+        for index, row in enumerate(self._entries):
             if row.path == cursor_path:
                 self._cursor_position = (x, index)
                 return
-        if y >= len(self._column):
-            self._cursor_position = (x, len(self._column) - 1)
+        if y >= len(self._entries):
+            self._cursor_position = (x, len(self._entries) - 1)
 
-    def sync_with_filesystem(self, log=None):
-        new_column = fill3.Column([])
-        new_cache = {}
-        paths = fix_paths(self._root_path, codebase_files(self._root_path))
-        jobs_added = False
-        row_index = 0
-        result_total, completed_total = 0, 0
-        all_results = set()
-        for path in paths:
-            full_path = os.path.join(self._root_path, path)
-            try:
-                file_key = (path, os.stat(full_path).st_ctime)
-            except FileNotFoundError:
-                continue
-            row = []
-            for tool in tools.tools_for_path(path):
-                tool_key = (tool.__name__, tool.__code__.co_code)
-                if file_key in self._cache \
-                   and tool_key in self._cache[file_key]:
-                    result = self._cache[file_key][tool_key]
-                    result.tool = tool
-                else:
-                    result = tools.Result(path, tool)
-                    jobs_added = True
-                all_results.add(result)
-                if result.is_completed:
-                    completed_total += 1
-                file_entry = new_cache.setdefault(file_key, {})
-                file_entry[tool_key] = result
-                row.append(result)
-            new_column.append(Entry(path, row, self))
-            row_index += 1
-            result_total += len(row)
-        max_width = max(len(row) for row in new_column)
-        max_path_length = max(len(path) for path in paths) - len("./")
-        deleted_results = self._all_results - all_results
-        if log is not None:
-            stats = get_diff_stats(
-                set(self._cache.keys()), set(new_cache.keys()))
-            if sum(stats) != 0:
-                log_filesystem_changed(log, *stats)
-        with self.keep_selection():
-            (self._column, self._cache, self.result_total,
-             self.completed_total, self._max_width, self._max_path_length,
-             self.closest_placeholder_generator, self._all_results) = (
-                    new_column, new_cache, result_total, completed_total,
-                    max_width, max_path_length, None, all_results)
-            if jobs_added:
-                self._jobs_added_event.set()
-            for result in deleted_results:
-                result.delete()
-            self.sort_entries()
+    async def sync_with_filesystem(self, log=None):
+        log.log_message("Started syncing filesystem…")
+        start_time = time.time()
+        all_paths = set()
+        for path in fix_paths(self._root_path, codebase_files(self._root_path)):
+            await asyncio.sleep(0)
+            all_paths.add(path)
+            if path in self._cache:
+                full_path = os.path.join(self._root_path, path)
+                change_time = os.stat(full_path).st_ctime
+                if change_time != self._cache[path]:
+                    self._cache[path] = change_time
+                    self.file_modified(path)
+            else:
+                self.file_added(path)
+        for path in self._cache.keys() - all_paths:
+            await asyncio.sleep(0)
+            self.file_deleted(path)
+        duration = time.time() - start_time
+        log.log_message(f"Finished syncing filesystem. {round(duration, 2)} secs")
 
     def _sweep_up(self, x, y):
-        yield from reversed(self._column[y][:x])
+        yield from reversed(self._entries[y][:x])
         while True:
-            y = (y - 1) % len(self._column)
-            yield from reversed(self._column[y])
+            y = (y - 1) % len(self._entries)
+            yield from reversed(self._entries[y])
 
     def _sweep_down(self, x, y):
-        yield from self._column[y][x:]
+        yield from self._entries[y][x:]
         while True:
-            y = (y + 1) % len(self._column)
-            yield from self._column[y]
+            y = (y + 1) % len(self._entries)
+            yield from self._entries[y]
 
     def _sweep_combined(self, x, y):
         for up_result, down_result in zip(self._sweep_up(x, y),
@@ -423,15 +376,17 @@ class Summary:
             return await self.closest_placeholder_generator.asend(None)
 
     def appearance_dimensions(self):
-        return self._max_path_length + 1 + self._max_width, len(self._column)
+        return self._max_path_length + 1 + self._max_width, len(self._entries)
 
     def appearance_interval(self, interval):
         start_y, end_y = interval
         x, y = self.cursor_position()
-        rows = fill3.Column(self._column.widgets)
-        rows[y] = Entry(rows[y].path, rows[y].widgets, self, highlighted=x,
-                        set_results=False)
-        return rows.appearance_interval(interval)
+        self._entries[y].highlighted = x
+        self._entries[y].appearance_cache = None
+        appearance = fill3.Column(self._entries).appearance_interval(interval)
+        self._entries[y].highlighted = None
+        self._entries[y].appearance_cache = None
+        return appearance
 
     def _set_scroll_position(self, cursor_x, cursor_y, summary_height):
         scroll_x, scroll_y = new_scroll_x, new_scroll_y = \
@@ -452,6 +407,8 @@ class Summary:
 
     def appearance(self, dimensions):
         width, height = dimensions
+        if len(self._entries) == 0:
+            return [" " * width for row in range(height)]
         cursor_x, cursor_y = self.cursor_position()
         width, height = width - 1, height - 1  # Minus one for the scrollbars
         self._set_scroll_position(cursor_x, cursor_y, height)
@@ -466,20 +423,23 @@ class Summary:
 
     def cursor_position(self):
         x, y = self._cursor_position
-        return min(x, len(self._column[y])-1), y
+        try:
+            return min(x, len(self._entries[y])-1), y
+        except IndexError:
+            return 0, 0
 
     def get_selection(self):
         x, y = self.cursor_position()
-        return self._column[y][x]
+        return self._entries[y][x]
 
     def _move_cursor(self, vector):
         dx, dy = vector
         if dy == 0:
             x, y = self.cursor_position()
-            self._cursor_position = ((x + dx) % len(self._column[y]), y)
+            self._cursor_position = ((x + dx) % len(self._entries[y]), y)
         elif dx == 0:
             x, y = self._cursor_position
-            self._cursor_position = (x, (y + dy) % len(self._column))
+            self._cursor_position = (x, (y + dy) % len(self._entries))
         else:
             raise ValueError
 
@@ -509,17 +469,17 @@ class Summary:
 
     def cursor_end(self):
         x, y = self._cursor_position
-        self._cursor_position = x, len(self._column) - 1
+        self._cursor_position = x, len(self._entries) - 1
 
     def _issue_generator(self):
         x, y = self.cursor_position()
-        for index in range(len(self._column) + 1):
-            row_index = (index + y) % len(self._column)
-            row = self._column[row_index]
+        for index in range(len(self._entries) + 1):
+            row_index = (index + y) % len(self._entries)
+            row = self._entries[row_index]
             for index_x, result in enumerate(row):
                 if (result.status == tools.Status.problem and
                     not (row_index == y and index_x <= x and
-                         index != len(self._column))):
+                         index != len(self._entries))):
                     yield result, (index_x, row_index)
 
     def move_to_next_issue(self):
@@ -533,22 +493,23 @@ class Summary:
                 self._cursor_position = position
                 return
 
-    def refresh_result(self, result):
-        if result.is_completed:
+    def refresh_result(self, result, only_completed=True):
+        if result.is_completed or not only_completed:
+            if result.is_completed:
+                self.completed_total -= 1
             result.reset()
             result.delete()
             self.closest_placeholder_generator = None
             self._jobs_added_event.set()
-            self.completed_total -= 1
 
     def refresh_tool(self, tool):
-        for row in self._column:
+        for row in self._entries:
             for result in row:
                 if result.tool == tool:
                     self.refresh_result(result)
 
     def clear_running(self):
-        for row in self._column:
+        for row in self._entries:
             for result in row:
                 if result.status == tools.Status.running:
                     self.refresh_result(result)
@@ -556,7 +517,7 @@ class Summary:
     def as_html(self):
         html_parts = []
         styles = set()
-        for row in self._column:
+        for row in self._entries:
             html_row, styles_row = row.as_html()
             html_parts.append(html_row)
             styles.update(styles_row)
@@ -572,9 +533,8 @@ class Log:
 
     def __init__(self, appearance_changed_event):
         self._appearance_changed_event = appearance_changed_event
-        self.widget = fill3.Column([])
-        self.portal = fill3.Portal(self.widget)
-        self._appearance_cache = None
+        self.lines = []
+        self._appearance = None
 
     def __getstate__(self):
         state = self.__dict__.copy()
@@ -591,11 +551,10 @@ class Log:
         timestamp = (time.strftime("%H:%M:%S", time.localtime())
                      if timestamp is None else timestamp)
         line = termstr.TermStr(timestamp, Log._GREY_BOLD_STYLE) + " " + message
-        self.widget.append(fill3.Text(line))
+        self.lines.append(line)
         with open(Log.LOG_PATH, "a") as log_file:
             print(line, file=log_file)
-        self.widget.widgets = self.widget[-200:]
-        self._appearance_cache = None
+        self._appearance = None
         self._appearance_changed_event.set()
 
     def log_command(self, message, timestamp=None):
@@ -605,17 +564,13 @@ class Log:
         with contextlib.suppress(FileNotFoundError):
             os.remove(Log.LOG_PATH)
 
-    def appearance_min(self):
-        appearance = self._appearance_cache
-        if appearance is None:
-            self._appearance_cache = appearance = self.widget.appearance_min()
-        return appearance
-
     def appearance(self, dimensions):
-        width, height = dimensions
-        full_appearance = self.appearance_min()
-        self.portal.position = (0, max(0, len(full_appearance) - height))
-        return self.portal.appearance(dimensions)
+        if self._appearance is None or \
+           fill3.appearance_dimensions(self._appearance) != dimensions:
+            width, height = dimensions
+            self.lines = self.lines[-height:]
+            self._appearance = fill3.appearance_resize(self.lines, dimensions)
+        return self._appearance
 
 
 def highlight_chars(str_, style, marker="*"):
@@ -748,8 +703,12 @@ class Screen:
         root_path = os.path.basename(self._summary._root_path)
         summary = fill3.Border(self._summary, title="Summary of " + root_path)
         self._summary_border = summary
-        selected_widget = self._summary.get_selection()
-        self._view = fill3.View.from_widget(selected_widget.result)
+        try:
+            selected_widget = self._summary.get_selection()
+            result_widget = selected_widget.result
+        except IndexError:
+            result_widget = fill3.Text("Nothing selected")
+        self._view = fill3.View.from_widget(result_widget)
         self._listing = fill3.Border(Listing(self._view))
         log = fill3.Border(self._log, title="Log",
                            characters=Screen._DIMMED_BORDER)
@@ -1041,12 +1000,13 @@ class Screen:
 
     def _get_status_bar(self, width):
         incomplete = self._summary.result_total - self._summary.completed_total
-        progress_bar_size = max(0, width * incomplete /
-                                self._summary.result_total)
+        progress_bar_size = width if self._summary.result_total == 0 else \
+            max(0, width * incomplete / self._summary.result_total)
         return self._get_status_bar_appearance(width, progress_bar_size)
 
     def appearance(self, dimensions):
-        self._fix_listing()
+        if len(self._summary._entries) > 0:
+            self._fix_listing()
         if self._is_help_visible:
             body = self._help_widget
         elif self._is_fullscreen:
@@ -1110,7 +1070,7 @@ def load_state(pickle_path, jobs_added_event, appearance_changed_event,
 
 
 def on_filesystem_event(event, summary, root_path, appearance_changed_event):
-    path = fix_paths(root_path, [event.pathname])[0]
+    path = list(fix_paths(root_path, [event.pathname]))[0]
     if is_path_excluded(path[2:]):
         return
     inotify_actions = {pyinotify.IN_CREATE: summary.file_added,
@@ -1119,7 +1079,13 @@ def on_filesystem_event(event, summary, root_path, appearance_changed_event):
                        pyinotify.IN_MOVED_FROM: summary.file_deleted,
                        pyinotify.IN_ATTRIB: summary.file_modified,
                        pyinotify.IN_CLOSE_WRITE: summary.file_modified}
-    inotify_actions[event.mask](path)
+    if event.mask not in inotify_actions:
+        return
+    try:
+        inotify_actions[event.mask](path)
+    except Exception:
+        tools.log_error()
+        raise KeyboardInterrupt
     appearance_changed_event.set()
 
 
@@ -1142,8 +1108,7 @@ def main(root_path, loop, worker_count=None, editor_command=None, theme=None,
     log.delete_log_file()
     log.log_message("Program started.")
     jobs_added_event.set()
-    if not is_first_run:
-        summary.sync_with_filesystem(log)
+    asyncio.ensure_future(summary.sync_with_filesystem(log))
     callback = lambda event: on_filesystem_event(event, summary, root_path,
                                                  appearance_changed_event)
     notifier = setup_inotify(root_path, loop, callback, is_path_excluded)
@@ -1176,11 +1141,15 @@ def chdir(path):
 def manage_cache(root_path):
     cache_path = os.path.join(root_path, tools.CACHE_PATH)
     timestamp_path = os.path.join(cache_path, "creation_time")
-    if os.path.exists(cache_path) and \
-       os.stat(__file__).st_mtime > os.stat(timestamp_path).st_mtime:
-        print("Eris has been updated, so clearing the cache and"
-              " recalculating all results…")
-        shutil.rmtree(cache_path)
+    if os.path.exists(cache_path):
+        timestamp = os.stat(timestamp_path).st_mtime
+        for resource_path in ["__main__.py", "tools.py", "tools.toml"]:
+            with importlib.resources.path(eris, resource_path) as resource:
+                if resource.stat().st_mtime > timestamp:
+                    print("Eris has been updated, so clearing the cache and"
+                          " recalculating all results…")
+                    shutil.rmtree(cache_path)
+                    break
     if not os.path.exists(cache_path):
         os.mkdir(cache_path)
         open(timestamp_path, "w").close()
