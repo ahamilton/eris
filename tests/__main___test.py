@@ -47,11 +47,13 @@ class ScreenWidgetTestCase(unittest.TestCase):
 
     def setUp(self):
         self.temp_dir = tempfile.mkdtemp()
-        foo_path = os.path.join(self.temp_dir, "foo.py")
+        project_dir = os.path.join(self.temp_dir, "project")
+        os.mkdir(project_dir)
+        foo_path = os.path.join(project_dir, "foo.py")
         _touch(foo_path)
         jobs_added_event = asyncio.Event()
         appearance_changed_event = asyncio.Event()
-        summary = __main__.Summary(self.temp_dir, jobs_added_event)
+        summary = __main__.Summary(project_dir, jobs_added_event)
         log = __main__.Log(appearance_changed_event)
         self.main_widget = __main__.Screen(
             summary, log, appearance_changed_event, _MockMainLoop())
@@ -59,27 +61,28 @@ class ScreenWidgetTestCase(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.temp_dir)
 
-    # def test_initial_appearance(self):
-    #     _assert_widget_appearance(self.main_widget, "golden-files/initial")
+    def test_initial_appearance(self):
+        _assert_widget_appearance(self.main_widget, "golden-files/initial")
 
     def test_help_appearance(self):
         self.main_widget.toggle_help()
         _assert_widget_appearance(self.main_widget, "golden-files/help")
 
-    # def test_log_appearance(self):
-    #     log_shown = _widget_to_string(self.main_widget)
-    #     self.main_widget.toggle_log()
-    #     log_hidden = _widget_to_string(self.main_widget)
-    #     actual = "shown:\n%s\nhidden:\n%s" % (log_shown, log_hidden)
-    #     golden.assertGolden(actual, "golden-files/log")
+    def test_log_appearance(self):
+        log_shown = _widget_to_string(self.main_widget)
+        self.main_widget.toggle_log()
+        log_hidden = _widget_to_string(self.main_widget)
+        actual = "shown:\n%s\nhidden:\n%s" % (log_shown, log_hidden)
+        _assert_widget_appearance(self.main_widget, "golden-files/log")
 
-    # def test_window_orientation(self):
-    #     window_left_right = _widget_to_string(self.main_widget)
-    #     self.main_widget.toggle_window_orientation()
-    #     window_top_bottom = _widget_to_string(self.main_widget)
-    #     actual = ("left-right:\n%s\ntop-bottom:\n%s" %
-    #               (window_left_right, window_top_bottom))
-    #     golden.assertGolden(actual, "golden-files/window-orientation")
+    def test_window_orientation(self):
+        window_left_right = _widget_to_string(self.main_widget)
+        self.main_widget.toggle_window_orientation()
+        window_top_bottom = _widget_to_string(self.main_widget)
+        actual = ("left-right:\n%s\ntop-bottom:\n%s" %
+                  (window_left_right, window_top_bottom))
+        _assert_widget_appearance(self.main_widget,
+                                  "golden-files/window-orientation")
 
 
 class SummaryCursorTest(unittest.TestCase):
@@ -182,23 +185,6 @@ class SummarySyncWithFilesystemTestCase(unittest.TestCase):
         self._assert_summary_invariants()
         self.assertTrue(self.jobs_added_event.is_set())
 
-    # def test_sync_changed_file_metadata(self):
-    #     ids_before = [id(entry) for entry in self.summary._column]
-    #     time.sleep(1)
-    #     _touch(self.foo_path)
-    #     self.summary.sync_with_filesystem()
-    #     ids_after = [id(entry) for entry in self.summary._column]
-    #     self.assertTrue(ids_before[0] == ids_after[0]) # bar
-    #     self.assertTrue(ids_before[1] != ids_after[1]) # foo
-    #     self.assertTrue(self.jobs_added_event.is_set())
-
-    # def test_sync_same_objects(self):
-    #     ids_before = [id(entry) for entry in self.summary._column]
-    #     self.summary.sync_with_filesystem()
-    #     ids_after = [id(entry) for entry in self.summary._column]
-    #     self.assertTrue(ids_before == ids_after)
-    #     self.assertFalse(self.jobs_added_event.is_set())
-
     def test_sync_linked_files(self):
         """Symbolic and hard-linked files are given distinct entry objects."""
         baz_path = os.path.join(self.temp_dir, "baz")
@@ -212,22 +198,6 @@ class SummarySyncWithFilesystemTestCase(unittest.TestCase):
         self.assertTrue(id(self.summary._entries[2]) !=  # foo
                         id(self.summary._entries[3]))    # zoo
         self.assertTrue(self.jobs_added_event.is_set())
-
-
-# class LogTestCase(unittest.TestCase):
-
-#     def test_log(self):
-#         appearance_changed_event = asyncio.Event()
-#         log = __main__.Log(appearance_changed_event)
-#         _assert_widget_appearance(log, "golden-files/log-initial", None)
-#         timestamp = "11:11:11"
-#         self.assertFalse(appearance_changed_event.is_set())
-#         log.log_message("foo", timestamp=timestamp)
-#         self.assertTrue(appearance_changed_event.is_set())
-#         _assert_widget_appearance(log, "golden-files/log-one-message", None)
-#         log.log_message("bar", timestamp=timestamp)
-#         _assert_widget_appearance(log, "golden-files/log-two-messages", None)
-#         _assert_widget_appearance(log, "golden-files/log-appearance")
 
 
 def _mount_total():
