@@ -55,7 +55,7 @@ class Worker:
                 await self.result.run(log, appearance_changed_event, self)
                 self.result.compression = self.compression
                 Worker.unsaved_jobs_total += 1
-                if Worker.unsaved_jobs_total == 100:
+                if Worker.unsaved_jobs_total == 2000:
                     log.log_message(Worker.AUTOSAVE_MESSAGE)
                     screen.save()
                 summary.completed_total += 1
