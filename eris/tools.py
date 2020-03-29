@@ -545,10 +545,12 @@ class Result:
         self.path = path
         self.tool = tool
         self.compression = None
-        self.pickle_path = os.path.join(CACHE_PATH, path + "-" + tool.__name__)
         self.scroll_position = (0, 0)
         self.status = Status.pending
         self.is_highlighted = False
+
+    def pickle_path(self):
+        return os.path.join(CACHE_PATH, self.path + "-" + self.tool.__name__)
 
     @property
     @lru_cache_with_eviction(maxsize=50)
@@ -558,15 +560,15 @@ class Result:
             return unknown_label
         try:
             with compression_open_func(self.compression)(
-                    self.pickle_path, "rb") as pickle_file:
+                    self.pickle_path(), "rb") as pickle_file:
                 return pickle.load(pickle_file)
         except FileNotFoundError:
             return unknown_label
 
     @result.setter
     def result(self, value):
-        os.makedirs(os.path.dirname(self.pickle_path), exist_ok=True)
-        dump_pickle_safe(value, self.pickle_path,
+        os.makedirs(os.path.dirname(self.pickle_path()), exist_ok=True)
+        dump_pickle_safe(value, self.pickle_path(),
                          open=compression_open_func(self.compression))
         Result.result.fget.evict(self)
 
@@ -610,11 +612,11 @@ class Result:
                  STATUS_TO_TERMSTR[self.status]])
 
     def get_pages_dir(self):
-        return self.pickle_path + ".pages"
+        return self.pickle_path() + ".pages"
 
     def delete(self):
         with contextlib.suppress(FileNotFoundError):
-            os.remove(self.pickle_path)
+            os.remove(self.pickle_path())
         with contextlib.suppress(FileNotFoundError):
             shutil.rmtree(self.get_pages_dir())
         Result.result.fget.evict(self)

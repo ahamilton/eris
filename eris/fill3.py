@@ -5,7 +5,6 @@
 # Licensed under the Artistic License 2.0.
 
 import asyncio
-import collections
 import contextlib
 import itertools
 import os
@@ -77,11 +76,10 @@ def appearance_as_html(appearance):
             "\n<pre>" + "<br>".join(lines) + "</pre>")
 
 
-class Row(collections.UserList):
+class Row:
 
     def __init__(self, widgets, widths_func=even_widths):
-        collections.UserList.__init__(self, widgets)
-        self.widgets = self.data
+        self.widgets = widgets
         self.widths_func = widths_func
 
     def appearance(self, dimensions):

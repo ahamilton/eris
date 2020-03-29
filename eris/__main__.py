@@ -91,7 +91,7 @@ class Entry:
         self.path = path
         self.summary = summary
         self.highlighted = highlighted
-        self.widgets = results
+        self.results = results
         if set_results:
             # FIX: this is missed for entries appended later
             for result in results:
@@ -104,25 +104,24 @@ class Entry:
         return self.path == other.path
 
     def __len__(self):
-        return len(self.widgets)
+        return len(self.results)
 
     def __getitem__(self, index):
-        return self.widgets[index]
+        return self.results[index]
 
     def appearance_min(self):
-        appearance = self.appearance_cache
-        if appearance is None or self.last_width != self.summary._max_width:
+        if self.appearance_cache is None \
+           or self.last_width != self.summary._max_width:
             self.last_width = self.summary._max_width
             if self.highlighted is not None:
-                self.widget[self.highlighted].is_highlighted = True
-            new_appearance = self.widget.appearance_min()
+                self.results[self.highlighted].is_highlighted = True
+            row_appearance = self.widget.appearance_min()
             path = tools.path_colored(self.path)
-            padding = " " * (self.last_width - len(self.widget) + 1)
-            new_appearance[0] = new_appearance[0] + padding + path
-            self.appearance_cache = appearance = new_appearance
+            padding = " " * (self.last_width - len(self.results) + 1)
+            self.appearance_cache = [row_appearance[0] + padding + path]
         if self.highlighted is not None:
-            self.widget[self.highlighted].is_highlighted = False
-        return appearance
+            self.results[self.highlighted].is_highlighted = False
+        return self.appearance_cache
 
     def as_html(self):
         html_parts = []
