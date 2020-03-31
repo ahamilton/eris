@@ -13,6 +13,10 @@ import eris.paged_list as paged_list
 
 class PagedListTestCase(unittest.TestCase):
 
+    def test_batch(self):
+        self.assertEqual(list(paged_list.batch(iter([3,4,5,6,7]), 2)),
+                         [[3, 4], [5, 6], [7]])
+
     def test_getitem(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             list_ = paged_list.PagedList([3, 4, 5, 6], temp_dir, 4, 2)

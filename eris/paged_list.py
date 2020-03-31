@@ -3,9 +3,16 @@
 
 
 import functools
+import itertools
 import os
 import pickle
 import shutil
+
+
+def batch(iter_, page_size):
+    for _, batch in itertools.groupby(
+            enumerate(iter_), lambda tuple_: tuple_[0] // page_size):
+        yield [value for index, value in batch]
 
 
 class PagedList:
@@ -16,19 +23,17 @@ class PagedList:
         self.page_size = page_size
         self.cache_size = cache_size
         self.open_func = open_func
-        self._len = len(list_)
+        self._len = 0
         tmp_dir = pages_dir + ".tmp"
         if exist_ok:
             shutil.rmtree(tmp_dir, ignore_errors=True)
             shutil.rmtree(pages_dir, ignore_errors=True)
         os.makedirs(tmp_dir)
-        pages = ([[]] if len(list_) == 0 else
-                 (list_[start:start+self.page_size]
-                  for start in range(0, len(list_), self.page_size)))
-        for index, page in enumerate(pages):
+        for index, page in enumerate(batch(list_, page_size)):
             pickle_path = os.path.join(tmp_dir, str(index))
             with self.open_func(pickle_path, "wb") as file_:
                 pickle.dump(page, file_, protocol=pickle.HIGHEST_PROTOCOL)
+            self._len += len(page)
         self.page_count = index + 1
         os.rename(tmp_dir, self.pages_dir)
         self._setup_page_cache()
