@@ -22,6 +22,7 @@ import functools
 import gzip
 import importlib
 import importlib.resources
+import itertools
 import math
 import multiprocessing
 import os
@@ -43,6 +44,7 @@ from eris import terminal
 from eris import termstr
 from eris import tools
 from eris import worker
+from eris import paged_list
 
 
 USAGE = """
@@ -86,10 +88,12 @@ KEYS_DOC = """Keys:
 
 class Entry:
 
-    def __init__(self, path, results, summary, highlighted=None,
+    MAX_WIDTH = 0
+
+    def __init__(self, path, results, change_time, highlighted=None,
                  set_results=True):
         self.path = path
-        self.summary = summary
+        self.change_time = change_time
         self.highlighted = highlighted
         self.results = results
         if set_results:
@@ -111,8 +115,8 @@ class Entry:
 
     def appearance_min(self):
         if self.appearance_cache is None \
-           or self.last_width != self.summary._max_width:
-            self.last_width = self.summary._max_width
+           or self.last_width != Entry.MAX_WIDTH:
+            self.last_width = Entry.MAX_WIDTH
             if self.highlighted is not None:
                 self.results[self.highlighted].is_highlighted = True
             row_appearance = self.widget.appearance_min()
@@ -131,7 +135,7 @@ class Entry:
             html_parts.append(result_html)
             styles.update(result_styles)
         path = tools.path_colored(self.path)
-        padding = " " * (self.summary._max_width - len(self.widget) + 1)
+        padding = " " * (Entry.MAX_WIDTH - len(self.widget) + 1)
         path_html, path_styles = termstr.TermStr(padding + path).as_html()
         return "".join(html_parts) + path_html, styles.union(path_styles)
 
@@ -206,21 +210,43 @@ class Summary:
         self._root_path = root_path
         self._jobs_added_event = jobs_added_event
         self._view_widget = fill3.View.from_widget(self)
-        self.__cursor_position = (0, 0)
-        self.closest_placeholder_generator = None
-        self._cache = {}
         self.is_directory_sort = True
-        self._max_width = 0
+        self._old_entries = []
+        self.reset()
+
+    def reset(self):
+        self.__cursor_position = (0, 0)
+        Entry.MAX_WIDTH = 0
         self._max_path_length = 0
-        self._entries = sortedcontainers.SortedList([], key=directory_sort)
         self.result_total = 0
         self.completed_total = 0
+        self.is_loaded = False
+        self.closest_placeholder_generator = None
+        sort_func = directory_sort if self.is_directory_sort else type_sort
+        self._entries = sortedcontainers.SortedList([], key=sort_func)
 
     def __getstate__(self):
         state = self.__dict__.copy()
         state["closest_placeholder_generator"] = None
         state["_jobs_added_event"] = None
+        summary_path = os.path.join(tools.CACHE_PATH, "summary_dir")
+        open_compressed = functools.partial(gzip.open, compresslevel=1)
+        x, y = self.cursor_position()
+        if y == 0:
+            entries = []
+        else:
+            current_entry = self._entries[y]
+            del self._entries[y]
+            entries = itertools.chain([current_entry], self._entries)
+        state["_old_entries"] = paged_list.PagedList(
+            entries, summary_path, 2000, 1, exist_ok=True,
+            open_func=open_compressed)
+        state["_entries"] = None
         return state
+
+    def __setstate__(self, state):
+        self.__dict__ = state
+        self.reset()
 
     @property
     def _cursor_position(self):
@@ -238,24 +264,16 @@ class Summary:
             self._entries, key=key_func)
         self.closest_placeholder_generator = None
 
-    def file_added(self, path):
-        full_path = os.path.join(self._root_path, path)
-        try:
-            change_time = os.stat(full_path).st_ctime
-        except FileNotFoundError:
+    def add_entry(self, entry):
+        if entry in self._entries:
             return
-        row = []
-        change_time = self._cache.setdefault(path, change_time)
-        for tool in tools.tools_for_path(path):
-            result = tools.Result(path, tool)
+        for result in entry:
             self.result_total += 1
             if result.is_completed:
                 self.completed_total += 1
-            row.append(result)
-        self._max_width = max(len(row), self._max_width)
-        self._max_path_length = max(len(path) - len("./"),
+        Entry.MAX_WIDTH = max(len(entry), Entry.MAX_WIDTH)
+        self._max_path_length = max(len(entry.path) - len("./"),
                                     self._max_path_length)
-        entry = Entry(path, row, self)
         self._entries.add(entry)
         entry_index = self._entries.index(entry)
         x, y = self._cursor_position
@@ -264,10 +282,20 @@ class Summary:
         self._jobs_added_event.set()
         self.closest_placeholder_generator = None
 
-    def file_deleted(self, path, check=True):
-        if check and os.path.exists(os.path.join(self._root_path, path)):
+    def on_file_added(self, path):
+        full_path = os.path.join(self._root_path, path)
+        try:
+            change_time = os.stat(full_path).st_ctime
+        except FileNotFoundError:
             return
-        entry = Entry(path, [], self)
+        row = [tools.Result(path, tool) for tool in tools.tools_for_path(path)]
+        entry = Entry(path, row, change_time)
+        self.add_entry(entry)
+
+    def on_file_deleted(self, path):
+        if os.path.exists(os.path.join(self._root_path, path)):
+            return
+        entry = Entry(path, [], None)
         try:
             index = self._entries.index(entry)
         except ValueError:
@@ -275,7 +303,6 @@ class Summary:
         x, y = self._cursor_position
         if index < y:
             self.scroll(0, 1)
-        del self._cache[path]
         for result in self._entries[index]:
             if result.is_completed:
                 self.completed_total -= 1
@@ -283,8 +310,8 @@ class Summary:
             result.delete()
         row = self._entries[index]
         self._entries.pop(index)
-        if len(row) == self._max_width:
-            self._max_width = max((len(entry) for entry in self._entries),
+        if len(row) == Entry.MAX_WIDTH:
+            Entry.MAX_WIDTH = max((len(entry) for entry in self._entries),
                                   default=0)
         if (len(path) - 2) == self._max_path_length:
             self._max_path_length = max(((len(entry.path) - 2)
@@ -294,14 +321,15 @@ class Summary:
             self._cursor_position = x, y - 1
         self.closest_placeholder_generator = None
 
-    def file_modified(self, path):
-        entry = Entry(path, [], self)
+    def on_file_modified(self, path):
+        entry = Entry(path, [], None)
         try:
             entry_index = self._entries.index(entry)
         except ValueError:
             return
         for result in self._entries[entry_index]:
             self.refresh_result(result, only_completed=False)
+        self.closest_placeholder_generator = None
 
     @contextlib.contextmanager
     def keep_selection(self):
@@ -320,25 +348,37 @@ class Summary:
             self._cursor_position = (x, len(self._entries) - 1)
 
     async def sync_with_filesystem(self, log=None):
-        log.log_message("Started syncing filesystem…")
+        start_time = time.time()
+        cache = {}
+        log.log_message("Started loading summary…")
+        for index, entry in enumerate(self._old_entries):
+            if index != 0 and index % 5000 == 0:
+                log.log_message(f"Loaded {index} files…")
+            await asyncio.sleep(0)
+            self.add_entry(entry)
+            cache[entry.path] = entry.change_time
+        duration = time.time() - start_time
+        log.log_message(f"Finished loading summary. {round(duration, 2)} secs")
+        self.is_loaded = True
+        log.log_message("Started sync with filesystem…")
         start_time = time.time()
         all_paths = set()
         for path in fix_paths(self._root_path, codebase_files(self._root_path)):
             await asyncio.sleep(0)
             all_paths.add(path)
-            if path in self._cache:
+            if path in cache:
                 full_path = os.path.join(self._root_path, path)
                 change_time = os.stat(full_path).st_ctime
-                if change_time != self._cache[path]:
-                    self._cache[path] = change_time
-                    self.file_modified(path)
+                if change_time != cache[path]:
+                    cache[path] = change_time
+                    self.on_file_modified(path)
             else:
-                self.file_added(path)
-        for path in self._cache.keys() - all_paths:
+                self.on_file_added(path)
+        for path in cache.keys() - all_paths:
             await asyncio.sleep(0)
-            self.file_deleted(path)
+            self.on_file_deleted(path)
         duration = time.time() - start_time
-        log.log_message(f"Finished syncing filesystem. {round(duration, 2)} secs")
+        log.log_message(f"Finished sync with filesystem. {round(duration, 2)} secs")
 
     def _sweep_up(self, x, y):
         yield from reversed(self._entries[y][:x])
@@ -375,7 +415,7 @@ class Summary:
             return await self.closest_placeholder_generator.asend(None)
 
     def appearance_dimensions(self):
-        return self._max_path_length + 1 + self._max_width, len(self._entries)
+        return self._max_path_length + 1 + Entry.MAX_WIDTH, len(self._entries)
 
     def appearance_interval(self, interval):
         start_y, end_y = interval
@@ -1072,12 +1112,12 @@ def on_filesystem_event(event, summary, root_path, appearance_changed_event):
     path = list(fix_paths(root_path, [event.pathname]))[0]
     if is_path_excluded(path[2:]):
         return
-    inotify_actions = {pyinotify.IN_CREATE: summary.file_added,
-                       pyinotify.IN_MOVED_TO: summary.file_added,
-                       pyinotify.IN_DELETE: summary.file_deleted,
-                       pyinotify.IN_MOVED_FROM: summary.file_deleted,
-                       pyinotify.IN_ATTRIB: summary.file_modified,
-                       pyinotify.IN_CLOSE_WRITE: summary.file_modified}
+    inotify_actions = {pyinotify.IN_CREATE: summary.on_file_added,
+                       pyinotify.IN_MOVED_TO: summary.on_file_added,
+                       pyinotify.IN_DELETE: summary.on_file_deleted,
+                       pyinotify.IN_MOVED_FROM: summary.on_file_deleted,
+                       pyinotify.IN_ATTRIB: summary.on_file_modified,
+                       pyinotify.IN_CLOSE_WRITE: summary.on_file_modified}
     if event.mask not in inotify_actions:
         return
     try:
@@ -1124,7 +1164,8 @@ def main(root_path, loop, worker_count=None, editor_command=None, theme=None,
         log.log_message("Program stopped.")
     finally:
         notifier.stop()
-    screen.save()
+    if summary.is_loaded:
+        screen.save()
 
 
 @contextlib.contextmanager

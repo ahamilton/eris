@@ -29,6 +29,7 @@ class PagedList:
             shutil.rmtree(tmp_dir, ignore_errors=True)
             shutil.rmtree(pages_dir, ignore_errors=True)
         os.makedirs(tmp_dir)
+        index = 0
         for index, page in enumerate(batch(list_, page_size)):
             pickle_path = os.path.join(tmp_dir, str(index))
             with self.open_func(pickle_path, "wb") as file_:
@@ -43,8 +44,11 @@ class PagedList:
 
     def _get_page_org(self, index):  # This is cached, see setup_page_cache.
         pickle_path = os.path.join(self.pages_dir, str(index))
-        with self.open_func(pickle_path, "rb") as file_:
-            return pickle.load(file_)
+        try:
+            with self.open_func(pickle_path, "rb") as file_:
+                return pickle.load(file_)
+        except FileNotFoundError:
+            raise IndexError
 
     def __getitem__(self, index):
         if isinstance(index, slice):

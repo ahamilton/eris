@@ -31,6 +31,12 @@ class PagedListTestCase(unittest.TestCase):
             self.assertEqual(list_[1:5], [4, 5, 6, 7])
             self.assertEqual(list_[:2], [3, 4])
             self.assertEqual(list_[2:], [5, 6, 7, 8])
+            self.assertEqual(list(list_), [3, 4, 5, 6, 7, 8])
+            self.assertRaises(IndexError, list_.__getitem__, 6)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            list_ = paged_list.PagedList([], temp_dir, 2, 2)
+            self.assertRaises(IndexError, list_.__getitem__, 0)
+            # self.assertEqual(list_[3:4], [])   FIX
 
     def test_pickling(self):
         with tempfile.TemporaryDirectory() as temp_dir:

@@ -159,7 +159,7 @@ class SummarySyncWithFilesystemTestCase(unittest.TestCase):
         self.assertEqual(self.summary.completed_total, completed_total)
         self.assertEqual(self.summary.result_total, result_total)
         max_width = max((len(row) for row in self.summary._entries), default=0)
-        self.assertEqual(self.summary._max_width, max_width)
+        self.assertEqual(__main__.Entry.MAX_WIDTH, max_width)
         max_path_length = max(
             (len(row.path) - 2 for row in self.summary._entries), default=0)
         self.assertEqual(self.summary._max_path_length, max_path_length)
