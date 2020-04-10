@@ -77,12 +77,9 @@ STATUS_TO_TERMSTR[Status.pending] = "."
 
 
 def get_ls_color_codes():
-    if "LS_COLORS" not in os.environ:
-        script = os.path.join(os.path.dirname(__file__), "LS_COLORS.sh")
-        with open(script) as file_:
-            codes = file_.readline().strip()[len("LS_COLORS='"):-len("';")]
-            os.environ["LS_COLORS"] = codes
-    return lscolors.get_color_codes(os.environ)
+    with importlib.resources.open_text(eris, "LS_COLORS.sh") as lscolors_file:
+        codes = lscolors_file.readline().strip()[len("LS_COLORS='"):-len("';")]
+        return lscolors._parse_ls_colors(codes)
 
 
 _LS_COLOR_CODES = get_ls_color_codes()
