@@ -680,6 +680,9 @@ def splitext(path):
 
 @functools.lru_cache()
 def is_tool_available(tool):
+    if (hasattr(tool, "command") and
+        tool.command.startswith(f"{PYTHON_EXECUTABLE} -m ")):
+        return importlib.util.find_spec(tool.command.split()[2]) is not None
     try:
         return all(shutil.which(executable) for executable in tool.executables)
     except AttributeError:
