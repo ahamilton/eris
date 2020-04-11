@@ -51,12 +51,14 @@ USAGE = """
 Usage:
   eris [options] <directory>
   eris -h | --help
+  eris -i | --info
 
 Example:
   # eris my_project
 
 Options:
   -h, --help                       Show the full help.
+  -i, --info                       Show information about the available tools.
   -w COUNT, --workers=COUNT        The number of processes working in parallel.
                                    By default it is the number of cpus minus 1.
   -e "COMMAND", --editor="COMMAND" The command used to start the editor, in
@@ -1195,11 +1197,36 @@ def manage_cache(root_path):
         open(timestamp_path, "w").close()
 
 
+def print_tool_info():
+    extensions_for_tool = {}
+    for extensions, tools_ in tools.TOOLS_FOR_EXTENSIONS:
+        for extension in extensions:
+            for tool in tools_:
+                extensions_for_tool.setdefault(
+                    tool, {extension}).add(extension)
+    for tool in sorted(tools.tools_all(), key=lambda t: t.__name__):
+        print(termstr.TermStr(tool.__name__).bold())
+        print("url:", tool.url)
+        extensions = list(extensions_for_tool.get(tool, {"*"}))
+        print("extensions:", ", ".join(extensions))
+        if hasattr(tool, "command"):
+            print(f"command: {tool.command} foo.{extensions[0]}")
+        else:
+            print("function:", "tools." + tool.__name__)
+        available = ("yes" if tools.is_tool_available(tool) else
+                     termstr.TermStr("no").fg_color(termstr.Color.red))
+        print("available:", available)
+        print()
+
+
 def check_arguments():
     cmdline_help = __doc__ + USAGE.replace("*", "")
     arguments = docopt.docopt(cmdline_help, help=False)
     if arguments["--help"]:
         print(cmdline_help)
+        sys.exit(0)
+    if arguments["--info"]:
+        print_tool_info()
         sys.exit(0)
     worker_count = None
     try:

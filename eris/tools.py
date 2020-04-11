@@ -190,7 +190,8 @@ def _pretty_bytes(bytes):
     return f"{conversion} {units[unit_index]}"
 
 
-@deps(deps={"file", "coreutils"}, executables={"file"})
+@deps(deps={"file", "coreutils"}, url="https://github.com/ahamilton/eris",
+      executables={"file"})
 def metadata(path):
 
     def detail(value, unit):
@@ -237,7 +238,7 @@ def metadata(path):
     return (Status.normal, fill3.join("", text))
 
 
-@deps(deps={"pip/pygments"}, url="python3-pygments")
+@deps(deps={"pip/pygments"}, url="http://pygments.org/")
 def contents(path):
     with open(path) as file_:
         try:
@@ -333,7 +334,7 @@ def python_coverage(path):
     return status, _colorize_coverage_report(lines)
 
 
-@deps(url="https://github.com/ahamilton/eris/blob/master/gut.py")
+@deps(url="https://github.com/ahamilton/eris")
 def python_gut(path):
     with open(path) as module_file:
         output = gut.gut_module(module_file.read())
@@ -379,7 +380,7 @@ def perltidy(path):
     return Status.normal, _syntax_highlight_using_path(stdout, path)
 
 
-@deps(deps={"tidy"}, url="tidy", executables={"tidy"})
+@deps(deps={"tidy"}, url="https://www.html-tidy.org/", executables={"tidy"})
 def html_syntax(path):
     # Stop tidy from modifiying input path by piping in input.
     tidy_process = subprocess.run(f"cat {shlex.quote(path)} | tidy",
@@ -388,7 +389,7 @@ def html_syntax(path):
     return status, _fix_input(tidy_process.stderr)
 
 
-@deps(deps={"pandoc"}, url="pandoc", executables={"pandoc"})
+@deps(deps={"pandoc"}, url="https://pandoc.org/", executables={"pandoc"})
 def pandoc(path):
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_path = os.path.join(temp_dir, "temp.html")
@@ -458,14 +459,15 @@ def make_tool_function(dependencies, command, url=None, success_status=None,
                        error_status=None, has_color=False, timeout=None):
     if url is None:
         url = dependencies[0]
-    command = command.split()
-    executables = set([command[0]])
+    command_parts = command.split()
+    executables = set([command_parts[0]])
     success_status = None if success_status is None else Status[success_status]
     error_status = None if error_status is None else Status[error_status]
     @deps(deps=set(dependencies), url=url, executables=executables)
     def func(path):
-        return _run_command(command + [path], success_status, error_status,
-                            has_color, timeout)
+        return _run_command(command_parts + [path], success_status,
+                            error_status, has_color, timeout)
+    func.command = command
     return func
 
 
@@ -748,20 +750,6 @@ def tool_name_colored(tool, path):
     char_style = (termstr.CharStyle(is_bold=True) if tool in generic_tools()
                   else _charstyle_of_path(path))
     return termstr.TermStr(tool.__name__, char_style)
-
-
-@functools.lru_cache()
-def get_homepage_of_package(package):
-    line = subprocess.getoutput(f"dpkg-query --status {package}|grep Homepage")
-    return line.split()[1]
-
-
-def url_of_tool(tool):
-    try:
-        url = tool.url
-        return url if url.startswith("http") else get_homepage_of_package(url)
-    except AttributeError:
-        return None
 
 
 if __name__ == "__main__":

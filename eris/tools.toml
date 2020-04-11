@@ -155,6 +155,7 @@ tools_for_extensions = [
 
 [zipinfo]
   dependencies = ["unzip"]
+  url = "http://www.info-zip.org/UnZip.html"
   command = "zipinfo"
   success_status = "normal"
 
@@ -172,31 +173,37 @@ tools_for_extensions = [
 
 [unrar]
   dependencies = ["unrar"]
+  url = "http://www.rarlabs.com/"
   command = "unrar l"
   success_status = "normal"
 
 [7z]
   dependencies = ["p7zip"]
+  url = "http://p7zip.sourceforge.net/"
   command = "7zr l"
   success_status = "normal"
 
 [unxz]
   dependencies = ["xz-utils"]
+  url = "https://tukaani.org/xz/"
   command = "unxz --list"
   success_status = "normal"
 
 [dpkg_contents]
   dependencies = ["dpkg"]
+  url = "https://wiki.debian.org/Teams/Dpkg"
   command = "dpkg --contents"
   success_status = "normal"
 
 [dpkg_info]
   dependencies = ["dpkg"]
+  url = "https://wiki.debian.org/Teams/Dpkg"
   command = "dpkg --info"
   success_status = "normal"
 
 [rpm]
   dependencies = ["rpm"]
+  url = "http://rpm.org/"
   command = "rpm --query --list"
   success_status = "normal"
 
@@ -220,11 +227,13 @@ tools_for_extensions = [
 
 [html2text]
   dependencies = ["html2text"]
+  url = "http://www.mbayer.de/html2text/"
   command = "html2text"
   success_status = "normal"
 
 [elinks]
   dependencies = ["elinks"]
+  url = "http://elinks.cz/"
   command = "elinks -dump-color-mode 1 -dump -no-numbering -no-references"
   success_status = "normal"
   has_color = true
@@ -254,23 +263,28 @@ tools_for_extensions = [
 
 [shellcheck]
   dependencies = ["shellcheck"]
+  url = "https://www.shellcheck.net/"
   command = "shellcheck --color=always"
   has_color = true
 
 [cppcheck]
   dependencies = ["cppcheck"]
+  url = "http://sourceforge.net/p/cppcheck/wiki/Home/"
   command = "cppcheck"
 
 [ruby_syntax]
   dependencies = ["ruby2.5"]
+  url = "http://www.ruby-lang.org/"
   command = "ruby -c"
 
 [lua_syntax]
   dependencies = ["lua5.3"]
+  url = "http://www.lua.org"
   command = "luac -p"
 
 [js_syntax]
   dependencies = ["nodejs"]
+  url = "http://nodejs.org/"
   command = "node --check"
 
 [lua_check]
@@ -308,6 +322,7 @@ tools_for_extensions = [
 
 [mediainfo]
   dependencies = ["mediainfo"]
+  url = "https://mediaarea.net/MediaInfo"
   command = "mediainfo"
   success_status = "normal"
 
