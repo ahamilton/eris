@@ -8,10 +8,6 @@
 import eris.tools as tools
 
 
-def tool_markup(tool):
-    return f"[{tool.__name__}]({tool.url})"
-
-
 def main():
     all_tools = ([(["*"], tools.generic_tools() +
                    [tools.git_blame, tools.git_log])] +
