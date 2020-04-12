@@ -57,10 +57,11 @@ class Status(enum.IntEnum):
 
 
 _STATUS_COLORS = {Status.ok: termstr.Color.green,
-                  Status.problem: termstr.Color.red,
+                  Status.problem: termstr.Color.dark_green,
                   Status.normal: termstr.Color.grey_200,
                   Status.not_applicable: termstr.Color.grey_100,
                   Status.running: termstr.Color.blue,
+                  Status.error: termstr.Color.red,
                   Status.timed_out: termstr.Color.purple}
 STATUS_MEANINGS = [
     (Status.normal, "Normal"), (Status.ok, "Ok"),
@@ -71,8 +72,6 @@ STATUS_MEANINGS = [
 STATUS_TO_TERMSTR = {
     status: termstr.TermStr(" ", termstr.CharStyle(bg_color=color))
     for status, color in _STATUS_COLORS.items()}
-STATUS_TO_TERMSTR[Status.error] = termstr.TermStr(
-    "E", termstr.CharStyle(bg_color=termstr.Color.red))
 STATUS_TO_TERMSTR[Status.pending] = "."
 
 
