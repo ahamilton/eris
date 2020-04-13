@@ -329,9 +329,11 @@ class Summary:
             entry_index = self._entries.index(entry)
         except ValueError:
             return
-        for result in self._entries[entry_index]:
+        entry = self._entries[entry_index]
+        for result in entry:
             self.refresh_result(result, only_completed=False)
         self.closest_placeholder_generator = None
+        return entry
 
     @contextlib.contextmanager
     def keep_selection(self):
@@ -373,7 +375,8 @@ class Summary:
                 change_time = os.stat(full_path).st_ctime
                 if change_time != cache[path]:
                     cache[path] = change_time
-                    self.on_file_modified(path)
+                    entry = self.on_file_modified(path)
+                    entry.change_time = change_time
             else:
                 self.on_file_added(path)
         for path in cache.keys() - all_paths:
