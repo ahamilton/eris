@@ -237,9 +237,9 @@ class Summary:
         if y == 0:
             entries = []
         else:
-            current_entry = self._entries[y]
-            del self._entries[y]
-            entries = itertools.chain([current_entry], self._entries)
+            entries = itertools.chain(
+                [self._entries[y]], itertools.islice(self._entries, y),
+                itertools.islice(self._entries, y+1, None))
         state["_old_entries"] = paged_list.PagedList(
             entries, summary_path, 2000, 1, exist_ok=True,
             open_func=open_compressed)
