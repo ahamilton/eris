@@ -85,7 +85,7 @@ def main():
         screen = pickle.load(file_)
     summary_page = make_summary_page(project_name, screen._summary)
     index = {}
-    for row in screen._summary._column:
+    for row in screen._summary._entries:
         for result in row:
             index[(result.path[2:], result.tool.__name__)] = result.result
     run()

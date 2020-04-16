@@ -941,9 +941,9 @@ class Screen:
         view_x, view_y = self._summary._view_widget.portal.position
         column_index = x - border_width + view_x
         row_index = y - border_width + view_y
-        if row_index >= len(self._summary._column):
+        if row_index >= len(self._summary._entries):
             return
-        row = self._summary._column[row_index]
+        row = self._summary._entries[row_index]
         if column_index < 0 or column_index >= len(row):
             return
         self._summary._cursor_position = column_index, row_index
