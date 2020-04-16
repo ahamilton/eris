@@ -792,52 +792,36 @@ class Screen:
         selected_widget.scroll_position = x, y
 
     def cursor_up(self):
-        if self._is_summary_focused:
-            self._summary.cursor_up()
-        else:
-            self._move_listing(_UP)
+        (self._summary.cursor_up() if self._is_summary_focused
+         else self._move_listing(_UP))
 
     def cursor_down(self):
-        if self._is_summary_focused:
-            self._summary.cursor_down()
-        else:
-            self._move_listing(_DOWN)
+        (self._summary.cursor_down() if self._is_summary_focused
+         else self._move_listing(_DOWN))
 
     def cursor_right(self):
-        if self._is_summary_focused:
-            self._summary.cursor_right()
-        else:
-            self._move_listing(_RIGHT)
+        (self._summary.cursor_right() if self._is_summary_focused
+         else self._move_listing(_RIGHT))
 
     def cursor_left(self):
-        if self._is_summary_focused:
-            self._summary.cursor_left()
-        else:
-            self._move_listing(_LEFT)
+        (self._summary.cursor_left() if self._is_summary_focused
+         else self._move_listing(_LEFT))
 
     def cursor_page_up(self):
-        if self._is_summary_focused:
-            self._summary.cursor_page_up()
-        else:
-            self.listing_page_up()
+        (self._summary.cursor_page_up() if self._is_summary_focused
+         else self.listing_page_up())
 
     def cursor_page_down(self):
-        if self._is_summary_focused:
-            self._summary.cursor_page_down()
-        else:
-            self.listing_page_down()
+        (self._summary.cursor_page_down() if self._is_summary_focused
+         else self.listing_page_down())
 
     def cursor_end(self):
-        if self._is_summary_focused:
-            self._summary.cursor_end()
-        else:
-            self._page_listing(_RIGHT)
+        (self._summary.cursor_end() if self._is_summary_focused
+         else self._page_listing(_RIGHT))
 
     def cursor_home(self):
-        if self._is_summary_focused:
-            self._summary.cursor_home()
-        else:
-            self._page_listing(_LEFT)
+        (self._summary.cursor_home() if self._is_summary_focused
+         else self._page_listing(_LEFT))
 
     def _page_listing(self, vector):
         dx, dy = vector
