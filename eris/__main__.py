@@ -288,7 +288,7 @@ class Summary:
         full_path = os.path.join(self._root_path, path)
         try:
             change_time = os.stat(full_path).st_ctime
-        except FileNotFoundError:
+        except OSError:
             return
         row = [tools.Result(path, tool) for tool in tools.tools_for_path(path)]
         entry = Entry(path, row, change_time)
