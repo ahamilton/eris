@@ -600,10 +600,10 @@ class Result:
 
     def _get_cursor(self):
         status_color = _STATUS_COLORS.get(self.status, None)
-        fg_color = (termstr.Color.white if self.status == Status.pending
-                    else termstr.Color.black)
-        return termstr.TermStr("+", termstr.CharStyle(fg_color=fg_color,
-                                                      bg_color=status_color))
+        fg_color = (termstr.Color.black if self.status == Status.normal
+                    else termstr.Color.white)
+        return termstr.TermStr("+", termstr.CharStyle(
+            fg_color=fg_color, bg_color=status_color, is_bold=True))
 
     def appearance_min(self):
         return ([self._get_cursor() if self.is_highlighted else
