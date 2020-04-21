@@ -41,7 +41,7 @@ class Color:
     white = (255, 255, 255)
     red = (196, 2, 51)
     green = (0, 159, 107)
-    dark_green = (0, 100, 0)
+    dark_green = (0, 110, 58)
     blue = (0, 135, 189)
     lime = (0, 255, 0)
     yellow = (255, 211, 0)
