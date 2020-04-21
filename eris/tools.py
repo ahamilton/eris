@@ -58,8 +58,8 @@ class Status(enum.IntEnum):
 
 _STATUS_COLORS = {Status.ok: termstr.Color.green,
                   Status.problem: termstr.Color.dark_green,
-                  Status.normal: termstr.Color.grey_200,
-                  Status.not_applicable: termstr.Color.grey_100,
+                  Status.normal: termstr.Color.grey_80,
+                  Status.not_applicable: termstr.Color.grey_50,
                   Status.running: termstr.Color.blue,
                   Status.error: termstr.Color.red,
                   Status.timed_out: termstr.Color.purple}
@@ -600,10 +600,8 @@ class Result:
 
     def _get_cursor(self):
         status_color = _STATUS_COLORS.get(self.status, None)
-        fg_color = (termstr.Color.black if self.status == Status.normal
-                    else termstr.Color.white)
         return termstr.TermStr("+", termstr.CharStyle(
-            fg_color=fg_color, bg_color=status_color, is_bold=True))
+            fg_color=termstr.Color.white, bg_color=status_color, is_bold=True))
 
     def appearance_min(self):
         return ([self._get_cursor() if self.is_highlighted else
