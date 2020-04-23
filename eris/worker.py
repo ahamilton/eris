@@ -75,11 +75,10 @@ class Worker:
 def make_result_widget(text, result, compression):
     appearance = fill3.str_to_appearance(text)
     page_size = 500
-    compression_open_func = tools.compression_open_func(compression)
     if len(appearance) > page_size:
         appearance = eris.paged_list.PagedList(
             appearance, result.get_pages_dir(), page_size, cache_size=2,
-            exist_ok=True, open_func=compression_open_func)
+            exist_ok=True, open_func=tools.compression_open_func(compression))
     return fill3.Fixed(appearance)
 
 
