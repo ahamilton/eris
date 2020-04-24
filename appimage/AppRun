@@ -13,7 +13,7 @@ export PATH="${HERE}"/usr/bin/:"${HERE}"/usr/local/bin/:"${PATH}"
 export UNION_PRELOAD="${HERE}"
 export LD_PRELOAD="${HERE}/libunionpreload.so"
 export LD_LIBRARY_PATH="${HERE}"/usr/lib/:"${HERE}"/usr/lib/i386-linux-gnu/:"${HERE}"/usr/lib/x86_64-linux-gnu/:"${HERE}"/usr/lib32/:"${HERE}"/usr/lib64/:"${HERE}"/lib/:"${HERE}"/lib/i386-linux-gnu/:"${HERE}"/lib/x86_64-linux-gnu/:"${HERE}"/lib32/:"${HERE}"/lib64/:"${LD_LIBRARY_PATH}"
-export PYTHONPATH=/usr/local/lib/python3.7/dist-packages:"${PYTHONPATH}"
+export PYTHONPATH=/usr/local/lib/python3.8/dist-packages:"${PYTHONPATH}"
 if [ -z $APPIMAGE_ENTER ]; then
     EXEC=$(grep -e '^Exec=.*' "${HERE}"/*.desktop | head -n 1 | cut -d "=" -f 2- | sed -e 's|%.||g')
     exec ${EXEC} $@

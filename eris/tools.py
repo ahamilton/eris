@@ -1,4 +1,4 @@
-#!/usr/bin/python3.7
+#!/usr/bin/python3.8
 # -*- coding: utf-8 -*-
 
 # Copyright (C) 2015-2019 Andrew Hamilton. All rights reserved.
@@ -35,7 +35,7 @@ import eris.lscolors as lscolors
 import eris.termstr as termstr
 
 
-PYTHON_VERSION = "3.7"
+PYTHON_VERSION = "3.8"
 PYTHON_EXECUTABLE = "python" + PYTHON_VERSION
 CACHE_PATH = ".eris"
 

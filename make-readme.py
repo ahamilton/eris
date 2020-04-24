@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3.8
 # -*- coding: utf-8 -*-
 
 # Copyright (C) 2015-2019 Andrew Hamilton. All rights reserved.
@@ -31,7 +31,7 @@ Eris maintains an up-to-date set of reports for every file in a codebase.
     # git clone https://github.com/ahamilton/eris
     # cd eris
     # ./install-dependencies
-    # python3.7 -m pip install .
+    # python3.8 -m pip install .
     # eris -h
 
 ### Flatpak

@@ -1,4 +1,4 @@
-#!/usr/bin/python3.7
+#!/usr/bin/python3.8
 
 # Copyright (C) 2019 Andrew Hamilton. All rights reserved.
 # Licensed under the Artistic License 2.0.
@@ -106,7 +106,7 @@ def haskell_modules(dep):
 
 
 def python_modules(package):
-    python_version = "python3.7"
+    python_version = "python3.8"
     with tempfile.TemporaryDirectory() as temp_dir:
         output = subprocess.check_output(
             [python_version, "-m", "pip", "download", "--dest", temp_dir,
@@ -130,7 +130,7 @@ def python_modules(package):
 
 
 def python_modules_all(packages):
-    python_version = "python3.7"
+    python_version = "python3.8"
     with tempfile.TemporaryDirectory() as temp_dir:
         output = subprocess.check_output(
             [python_version, "-m", "pip", "download", "--dest", temp_dir] +
@@ -422,7 +422,7 @@ def eris_modules():
     modules.append({"name": "eris",
                     "buildsystem": "simple",
                     "build-commands": [
-                        "python3.7 -m pip install --no-index --prefix=/app .",
+                        "python3.8 -m pip install --no-index --prefix=/app .",
                         "cp -a tests test-all /app/bin"],
                     "sources": [{"type": "git", "url": eris_url,
                                  "commit": get_latest_commit()}]})
@@ -513,7 +513,7 @@ def main():
         save_manifest(make_manifest(modules, dep), manifest_path)
 
     manifest_path = os.path.join(manifests_dir, "python.json")
-    dep = "python3.7"
+    dep = "python3.8"
     print(f"Making manifest for {dep} …".ljust(70), end="", flush=True)
     if os.path.exists(manifest_path):
         print(" (cached)")
