@@ -6,7 +6,7 @@ Eris maintains an up-to-date set of reports for every file in a codebase.
 
 ## Installation
 
-### Ubuntu (19.10)
+### Ubuntu (20.04)
 
     # git clone https://github.com/ahamilton/eris
     # cd eris
