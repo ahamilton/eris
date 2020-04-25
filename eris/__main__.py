@@ -594,6 +594,9 @@ class Log:
         timestamp = (time.strftime("%H:%M:%S", time.localtime())
                      if timestamp is None else timestamp)
         line = termstr.TermStr(timestamp, Log._GREY_BOLD_STYLE) + " " + message
+        if not sys.stdout.isatty():
+            print(line, flush=True)
+            return
         self.lines.append(line)
         self._appearance = None
         self._appearance_changed_event.set()
@@ -1141,8 +1144,15 @@ def main(root_path, loop, worker_count=None, editor_command=None, theme=None,
             time.sleep(0.05)
             screen.stop_workers()
             loop.stop()
-        fill3.main(loop, appearance_changed_event, screen, exit_loop=exit_loop)
-        log.log_message("Program stopped.")
+        if sys.stdout.isatty():
+            fill3.main(loop, appearance_changed_event, screen, exit_loop=exit_loop)
+            log.log_message("Program stopped.")
+        else:
+            try:
+                loop.run_forever()
+            except KeyboardInterrupt:
+                screen.stop_workers()
+                loop.stop()
     finally:
         notifier.stop()
     if summary.is_loaded:
