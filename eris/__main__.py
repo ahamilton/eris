@@ -1191,7 +1191,7 @@ def print_tool_info():
         if hasattr(tool, "command"):
             print(f"command: {tool.command} foo.{extensions[0]}")
         else:
-            print("function:", "tools." + tool.__name__)
+            print("function:", "eris.tools." + tool.__name__)
         available = ("yes" if tools.is_tool_available(tool) else
                      termstr.TermStr("no").fg_color(termstr.Color.red))
         print("available:", available)
