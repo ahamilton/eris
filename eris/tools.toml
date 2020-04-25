@@ -222,7 +222,7 @@ tools_for_extensions = [
 [pdf2txt]
   dependencies = ["python3-pdfminer"]
   url = "https://github.com/pdfminer/pdfminer.six"
-  command = "pdf2txt"
+  command = "python3.8 /usr/bin/pdf2txt"
   success_status = "normal"
 
 [html2text]
