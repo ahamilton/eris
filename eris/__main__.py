@@ -573,7 +573,6 @@ class Log:
 
     _GREY_BOLD_STYLE = termstr.CharStyle(termstr.Color.grey_100, is_bold=True)
     _GREEN_STYLE = termstr.CharStyle(termstr.Color.lime)
-    LOG_PATH = os.path.join(tools.CACHE_PATH, "log")
 
     def __init__(self, appearance_changed_event):
         self._appearance_changed_event = appearance_changed_event
@@ -596,17 +595,11 @@ class Log:
                      if timestamp is None else timestamp)
         line = termstr.TermStr(timestamp, Log._GREY_BOLD_STYLE) + " " + message
         self.lines.append(line)
-        with open(Log.LOG_PATH, "a") as log_file:
-            print(line, file=log_file)
         self._appearance = None
         self._appearance_changed_event.set()
 
     def log_command(self, message, timestamp=None):
         self.log_message(message, char_style=Log._GREEN_STYLE)
-
-    def delete_log_file(self):
-        with contextlib.suppress(FileNotFoundError):
-            os.remove(Log.LOG_PATH)
 
     def appearance(self, dimensions):
         if self._appearance is None or \
@@ -1133,7 +1126,6 @@ def main(root_path, loop, worker_count=None, editor_command=None, theme=None,
         pickle_path, jobs_added_event, appearance_changed_event, root_path,
         loop)
     screen.editor_command = editor_command
-    log.delete_log_file()
     log.log_message("Program started.")
     jobs_added_event.set()
     asyncio.ensure_future(summary.sync_with_filesystem(log))

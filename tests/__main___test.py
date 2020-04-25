@@ -222,7 +222,7 @@ class MainTestCase(unittest.TestCase):
                 with contextlib.redirect_stdout(io.StringIO()):
                     __main__.main(root_path, loop, worker_count=2,
                                   is_being_tested=True)
-                for file_name in ["summary.pickle", "creation_time", "log",
+                for file_name in ["summary.pickle", "creation_time",
                                   "foo-metadata", "foo-contents"]:
                     self.assertTrue(os.path.exists(".eris/" + file_name))
             self.assertEqual(_mount_total(), mount_total)
