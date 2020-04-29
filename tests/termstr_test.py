@@ -14,25 +14,6 @@ from eris.termstr import TermStr, CharStyle
 import eris.termstr as termstr
 
 
-class CacheFirstResultTestCase(unittest.TestCase):
-
-    def test_cache_first_result_decorator(self):
-        class A:
-            @termstr._cache_first_result
-            def a(self, foo):
-                return foo
-        a = A()
-        self.assertEqual(a.a(3), 3)
-        self.assertEqual(a.a(4), 3)
-
-        class B:
-            @termstr._cache_first_result
-            def b(self, foo):
-                return foo
-        b = B()
-        self.assertEqual(b.b(5), 5)
-
-
 class CharStyleTests(unittest.TestCase):
 
     def setUp(self):
@@ -55,7 +36,7 @@ class CharStyleTests(unittest.TestCase):
                          "<CharStyle: fg:(255, 255, 255) bg:(0, 0, 0) attr:>")
 
     def test_code_for_term(self):
-        self.assertEqual(self.style.code_for_term(),
+        self.assertEqual(self.style.code_for_term,
                          "\x1b[m\x1b[38;2;255;255;255m\x1b[48;2;0;0;0m")
 
 

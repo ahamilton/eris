@@ -24,16 +24,6 @@ def xterm_color_to_rgb(color_index):
     return eris.ColorMap._rgb(xterm_colormap.colors[color_index])
 
 
-def _cache_first_result(user_function):
-    def decorator(self, *args, **kwds):
-        try:
-            return self._cache
-        except AttributeError:
-            self._cache = user_function(self, *args, **kwds)
-            return self._cache
-    return decorator
-
-
 class Color:
 
     # https://en.wikipedia.org/wiki/Natural_Color_System
@@ -113,7 +103,7 @@ class CharStyle:
             else:
                 return terminal.rgb_color(color, is_foreground)
 
-    @_cache_first_result
+    @functools.cached_property
     def code_for_term(self):
         fg_termcode = terminal.ESC + self._color_code(self.fg_color, True)
         bg_termcode = terminal.ESC + self._color_code(self.bg_color, False)
@@ -220,7 +210,7 @@ class TermStr(collections.UserString):
     def __hash__(self):
         return hash((self.data, self.style))
 
-    @_cache_first_result
+    @functools.cached_property
     def _partition_style(self):
         if self.data == "":
             return []
@@ -238,8 +228,8 @@ class TermStr(collections.UserString):
 
     def __str__(self):
         return "".join(_join_lists(
-            [style.code_for_term(), str_]
-            for style, str_, position in self._partition_style()) +
+            [style.code_for_term, str_]
+            for style, str_, position in self._partition_style) +
                        [terminal.ESC + terminal.normal])
 
     def __repr__(self):
@@ -327,7 +317,7 @@ class TermStr(collections.UserString):
     def transform_style(self, transform_func):
         new_style = tuple(_join_lists([transform_func(style)] * len(str_)
                                       for style, str_, position
-                                      in self._partition_style()))
+                                      in self._partition_style))
         return self.__class__(self.data, new_style)
 
     def bold(self):
@@ -368,7 +358,7 @@ class TermStr(collections.UserString):
     def as_html(self):
         result = []
         styles = set()
-        for style, str_, position in self._partition_style():
+        for style, str_, position in self._partition_style:
             styles.add(style)
             encoded = str(html.escape(str_).encode(
                 "ascii", "xmlcharrefreplace"))[2:-1]
