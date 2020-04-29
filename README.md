@@ -46,7 +46,7 @@ There is a wrapper script available to make running easier:
 
 ## Tools
 
-Extensions(98) | Tools(60)
+Extensions(99) | Tools(60)
 ----------:| -----
 .* | [contents](http://pygments.org/) • [metadata](https://github.com/ahamilton/eris) • [git_blame](https://git-scm.com/docs/git-blame) • [git_log](https://git-scm.com/docs/git-log)
 .py | [python_syntax](https://en.wikipedia.org/wiki/Python_syntax_and_semantics) • [python_unittests](https://docs.python.org/3/library/unittest.html) • [pytest](https://docs.pytest.org/en/latest/) • [pydoc](https://docs.python.org/3/library/pydoc.html) • [mypy](http://mypy-lang.org/) • [python_coverage](https://coverage.readthedocs.io/) • [pycodestyle](http://pycodestyle.pycqa.org/en/latest/) • [pydocstyle](http://www.pydocstyle.org/en/2.1.1/usage.html) • [pyflakes](https://pypi.org/project/pyflakes/) • [pylint](https://www.pylint.org/) • [python_gut](https://github.com/ahamilton/eris) • [python_modulefinder](https://docs.python.org/3/library/modulefinder.html) • [dis](https://docs.python.org/3/library/dis.html) • [python_mccabe](https://pypi.org/project/mccabe/) • [bandit](https://pypi.org/project/bandit/)
@@ -77,7 +77,7 @@ Extensions(98) | Tools(60)
 .so | [nm](https://linux.die.net/man/1/nm)
 .deb | [dpkg_contents](https://wiki.debian.org/Teams/Dpkg) • [dpkg_info](https://wiki.debian.org/Teams/Dpkg)
 .rpm | [rpm](http://rpm.org/)
-.png .jpg .gif .bmp .tif .tiff .tga | [mediainfo](https://mediaarea.net/MediaInfo) • [pil](http://python-pillow.github.io/)
+.png .jpg .gif .bmp .tif .tiff .tga .ico | [mediainfo](https://mediaarea.net/MediaInfo) • [pil](http://python-pillow.github.io/)
 .svg .svgz | [svglib](https://github.com/deeplook/svglib)
 .mkv .mka .mks .ogg .ogm .avi .wav .mpeg .mpg .vob .mp4 .mpgv .mpv .m1v .m2v .mp2 .mp3 .asf .wma .wmv .qt .mov .rm .rmvb .ra .ifo .ac3 .dts .aac .flac .aiff .aifc .au .iff .flv .srt .ssa .ass .sami | [mediainfo](https://mediaarea.net/MediaInfo)
 .iso | [isoinfo](https://manpages.debian.org/jessie/genisoimage/isoinfo.1.en.html)
