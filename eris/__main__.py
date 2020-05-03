@@ -403,21 +403,20 @@ class Summary:
             yield down_result
             yield up_result
 
-    async def _placeholder_sweep(self):
+    def _placeholder_sweep(self):
         x, y = self.cursor_position()
         for index, result in enumerate(self._sweep_combined(x, y)):
             if index > self.result_total:
                 break
-            await asyncio.sleep(0)
             if result.status == tools.Status.pending:
                 yield result
 
     async def get_closest_placeholder(self):
         try:
-            return await self.closest_placeholder_generator.asend(None)
+            return self.closest_placeholder_generator.send(None)
         except AttributeError:
             self.closest_placeholder_generator = self._placeholder_sweep()
-            return await self.closest_placeholder_generator.asend(None)
+            return self.closest_placeholder_generator.send(None)
 
     def appearance_dimensions(self):
         return self._max_path_length + 1 + Entry.MAX_WIDTH, len(self._entries)
