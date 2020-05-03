@@ -417,6 +417,8 @@ class Summary:
         except AttributeError:
             self.closest_placeholder_generator = self._placeholder_sweep()
             return self.closest_placeholder_generator.send(None)
+        except StopIteration:
+            raise StopAsyncIteration
 
     def appearance_dimensions(self):
         return self._max_path_length + 1 + Entry.MAX_WIDTH, len(self._entries)
