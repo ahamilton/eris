@@ -718,13 +718,11 @@ class Screen:
             future = worker_.job_runner(self, self._summary, self._log,
                                         self._summary._jobs_added_event,
                                         self._appearance_changed_event)
-            worker_.future = asyncio.ensure_future(future,
-                                                   loop=self._main_loop)
+            worker_.future = future
         self.workers = workers
 
     def stop_workers(self):
         for worker_ in self.workers:
-            worker_.future.cancel()
             if worker_.result is not None:
                 worker_.result.reset()
             worker_.kill()
@@ -1130,7 +1128,6 @@ def main(root_path, loop, worker_count=None, editor_command=None, theme=None,
     screen.editor_command = editor_command
     log.log_message("Program started.")
     jobs_added_event.set()
-    asyncio.ensure_future(summary.sync_with_filesystem(log))
     callback = lambda event: on_filesystem_event(event, summary, root_path,
                                                  appearance_changed_event)
     notifier = setup_inotify(root_path, loop, callback, is_path_excluded)
@@ -1143,8 +1140,15 @@ def main(root_path, loop, worker_count=None, editor_command=None, theme=None,
             time.sleep(0.05)
             screen.stop_workers()
             loop.stop()
+        loop.create_task(summary.sync_with_filesystem(log))
+        for worker in screen.workers:
+            loop.create_task(worker.future)
         if sys.stdout.isatty():
-            fill3.main(loop, appearance_changed_event, screen, exit_loop=exit_loop)
+            loop.create_task(
+                fill3.update_screen(screen, appearance_changed_event))
+            with fill3.context(loop, appearance_changed_event, screen,
+                               exit_loop=exit_loop):
+                loop.run_forever()
             log.log_message("Program stopped.")
         else:
             try:

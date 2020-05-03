@@ -474,7 +474,7 @@ def _urwid_screen():
         screen.stop()
 
 
-async def _update_screen(screen_widget, appearance_changed_event):
+async def update_screen(screen_widget, appearance_changed_event):
     while True:
         await appearance_changed_event.wait()
         appearance_changed_event.clear()
@@ -486,16 +486,15 @@ def on_input(urwid_screen, screen_widget):
         screen_widget.on_input_event(event)
 
 
-def main(loop, appearance_changed_event, screen_widget, exit_loop=None):
+@contextlib.contextmanager
+def context(loop, appearance_changed_event, screen_widget, exit_loop=None):
     appearance_changed_event.set()
     if exit_loop is None:
         exit_loop = loop.stop
     loop.add_signal_handler(signal.SIGWINCH, appearance_changed_event.set)
     loop.add_signal_handler(signal.SIGINT, exit_loop)
     loop.add_signal_handler(signal.SIGTERM, exit_loop)
-    asyncio.ensure_future(
-        _update_screen(screen_widget, appearance_changed_event))
     with terminal.hidden_cursor(), terminal.fullscreen(), \
             _urwid_screen() as urwid_screen:
         loop.add_reader(sys.stdin, on_input, urwid_screen, screen_widget)
-        loop.run_forever()
+        yield
