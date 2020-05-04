@@ -412,10 +412,9 @@ class Summary:
                 yield result
 
     async def get_closest_placeholder(self):
-        try:
-            return self.closest_placeholder_generator.send(None)
-        except AttributeError:
+        if self.closest_placeholder_generator is None:
             self.closest_placeholder_generator = self._placeholder_sweep()
+        try:
             return self.closest_placeholder_generator.send(None)
         except StopIteration:
             raise StopAsyncIteration
