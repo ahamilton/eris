@@ -214,10 +214,10 @@ class Summary:
         self._view_widget = fill3.View.from_widget(self)
         self.is_directory_sort = True
         self._old_entries = []
+        self.__cursor_position = (0, 0)
         self.reset()
 
     def reset(self):
-        self.__cursor_position = (0, 0)
         Entry.MAX_WIDTH = 0
         self._max_path_length = 0
         self.result_total = 0
@@ -244,6 +244,7 @@ class Summary:
             entries, summary_path, 2000, 1, exist_ok=True,
             open_func=open_compressed)
         state["_entries"] = None
+        state["__cursor_position"] = (x, 0)
         return state
 
     def __setstate__(self, state):
