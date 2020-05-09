@@ -1199,7 +1199,10 @@ def print_tool_info():
                 extensions_for_tool.setdefault(
                     tool, {extension}).add(extension)
     for tool in sorted(tools.tools_all(), key=lambda t: t.__name__):
-        print(termstr.TermStr(tool.__name__).bold())
+        print(termstr.TermStr(tool.__name__).bold()
+              if tools.is_tool_available(tool)
+              else termstr.TermStr(tool.__name__).fg_color(termstr.Color.red)
+              + " (not available) ")
         print("url:", tool.url)
         extensions = list(extensions_for_tool.get(tool, {"*"}))
         print("extensions:", ", ".join(extensions))
@@ -1207,9 +1210,6 @@ def print_tool_info():
             print(f"command: {tool.command} foo.{extensions[0]}")
         else:
             print("function:", "eris.tools." + tool.__name__)
-        available = ("yes" if tools.is_tool_available(tool) else
-                     termstr.TermStr("no").fg_color(termstr.Color.red))
-        print("available:", available)
         print()
 
 
