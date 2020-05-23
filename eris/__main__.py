@@ -352,7 +352,7 @@ class Summary:
         if y >= len(self._entries):
             self._cursor_position = (x, len(self._entries) - 1)
 
-    async def sync_with_filesystem(self, log=None):
+    async def sync_with_filesystem(self, appearance_changed_event, log=None):
         start_time = time.time()
         cache = {}
         log.log_message("Started loading summary…")
@@ -361,6 +361,7 @@ class Summary:
                 log.log_message(f"Loaded {index} files…")
             await asyncio.sleep(0)
             self.add_entry(entry)
+            appearance_changed_event.set()
             cache[entry.path] = entry.change_time
         duration = time.time() - start_time
         log.log_message(f"Finished loading summary. {round(duration, 2)} secs")
@@ -380,6 +381,7 @@ class Summary:
                     entry.change_time = change_time
             else:
                 self.on_file_added(path)
+            appearance_changed_event.set()
         for path in cache.keys() - all_paths:
             await asyncio.sleep(0)
             self.on_file_deleted(path)
@@ -1142,7 +1144,8 @@ def main(root_path, loop, worker_count=None, editor_command=None, theme=None,
             time.sleep(0.05)
             screen.stop_workers()
             loop.stop()
-        loop.create_task(summary.sync_with_filesystem(log))
+        loop.create_task(summary.sync_with_filesystem(
+            appearance_changed_event, log))
         for worker in screen.workers:
             loop.create_task(worker.future)
         if sys.stdout.isatty():

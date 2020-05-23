@@ -479,6 +479,7 @@ async def update_screen(screen_widget, appearance_changed_event):
         await appearance_changed_event.wait()
         appearance_changed_event.clear()
         patch_screen(screen_widget)
+        await asyncio.sleep(0.01)
 
 
 def on_input(urwid_screen, screen_widget):
