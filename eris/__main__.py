@@ -361,7 +361,8 @@ class Summary:
                 log.log_message(f"Loaded {index} files…")
             await asyncio.sleep(0)
             self.add_entry(entry)
-            appearance_changed_event.set()
+            if index % 1000 == 0:
+                appearance_changed_event.set()
             cache[entry.path] = entry.change_time
         duration = time.time() - start_time
         log.log_message(f"Finished loading summary. {round(duration, 2)} secs")
