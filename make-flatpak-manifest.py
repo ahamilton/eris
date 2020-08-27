@@ -276,14 +276,14 @@ patches = {
 
     "mediainfo": {"subdir": "Project/GNU/CLI"},
 
-    "php7.3": {"buildsystem": "simple",
+    "php7.4": {"buildsystem": "simple",
                "build-commands": [
                    "./configure --prefix=/app --disable-all --disable-cgi"
                               " --disable-phpdbg",
                    "make -j4",
                    "make install"]},
 
-    "ruby2.5": {"cleanup": ["/share/ri", "/lib/libruby-static.a",
+    "ruby2.7": {"cleanup": ["/share/ri", "/lib/libruby-static.a",
                             "/lib/ruby/*/rdoc",
                             "/lib/ruby/*/x86_64-linux/enc"]},
 
