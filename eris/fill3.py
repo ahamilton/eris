@@ -1,4 +1,4 @@
-
+#!/usr/bin/python3.8
 # -*- coding: utf-8 -*-
 
 # Copyright (C) 2015-2019 Andrew Hamilton. All rights reserved.
@@ -499,3 +499,32 @@ def context(loop, appearance_changed_event, screen_widget, exit_loop=None):
             _urwid_screen() as urwid_screen:
         loop.add_reader(sys.stdin, on_input, urwid_screen, screen_widget)
         yield
+
+
+##########################
+
+
+class _Screen:
+
+    def __init__(self, appearance_changed_event):
+        self.appearance_changed_event = appearance_changed_event
+        self.content = Filler(Text("Hello World"))
+
+    def appearance(self, dimensions):
+        return self.content.appearance(dimensions)
+
+    def on_input_event(self, event):
+        self.appearance_changed_event.set()
+
+
+def _main():
+    loop = asyncio.get_event_loop()
+    appearance_changed_event = asyncio.Event()
+    screen = _Screen(appearance_changed_event)
+    loop.create_task(update_screen(screen, appearance_changed_event))
+    with context(loop, appearance_changed_event, screen):
+        loop.run_forever()
+
+
+if __name__ == "__main__":
+    _main()
