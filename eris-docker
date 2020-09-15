@@ -8,7 +8,7 @@ set -e
 
 
 DOCKER_IMAGE=eris
-ARGS=( $(getopt -u -o hw:e:t:c: --long help,workers:,editor:,theme:,compression: -- "$@") )
+ARGS=( $(getopt -u -o hiw:e:t:c: --long help,info,workers:,editor:,theme:,compression: -- "$@") )
 if [ "${ARGS[-1]}" == "--" ]; then
     OPTION_ARGS="${ARGS[@]:0:${#ARGS[@]}-1}"  # ARGS[:-1]
     DOCKER_ARGS="$DOCKER_IMAGE $OPTION_ARGS"

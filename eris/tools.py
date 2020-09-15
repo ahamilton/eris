@@ -8,6 +8,7 @@ import contextlib
 import enum
 import functools
 import importlib
+import importlib.util
 import importlib.resources
 import math
 import os
