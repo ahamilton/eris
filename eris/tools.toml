@@ -220,9 +220,9 @@ tools_for_extensions = [
   success_status = "normal"
 
 [pdf2txt]
-  dependencies = ["python3-pdfminer"]
+  dependencies = ["pip/pdfminer.six"]
   url = "https://github.com/pdfminer/pdfminer.six"
-  command = "python3.8 /usr/bin/pdf2txt"
+  command = "pdf2txt.py"
   success_status = "normal"
 
 [html2text]
@@ -304,12 +304,12 @@ tools_for_extensions = [
   command = "golint -set_exit_status"
 
 [wasm_validate]
-  dependencies = ["git/github.com/WebAssembly/wabt"]
+  dependencies = ["wabt"]
   url = "https://github.com/WebAssembly/wabt"
   command = "wasm-validate"
 
 [wasm_objdump]
-  dependencies = ["git/github.com/WebAssembly/wabt"]
+  dependencies = ["wabt"]
   url = "https://github.com/WebAssembly/wabt"
   command = "wasm-objdump --disassemble"
   success_status = "normal"

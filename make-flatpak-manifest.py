@@ -109,15 +109,14 @@ def python_modules(package):
     python_version = "python3.8"
     with tempfile.TemporaryDirectory() as temp_dir:
         output = subprocess.check_output(
-            [python_version, "-m", "pip", "download", "--dest", temp_dir,
+            [python_version, "-m", "pip", "-v", "download", "--dest", temp_dir,
              package], text=True)
         sources = []
         for line in output.splitlines():
-            if line.startswith("  Downloading") or \
-               line.startswith("  Using cached"):
-                url = line.split()[-1]
-                archive_path = os.path.join(temp_dir, os.path.basename(url))
-                sources.append((url, get_file_sha256(archive_path)))
+            if " from build tracker " in line:
+                url = [part for part in line.split()
+                       if part.startswith("http")][0]
+                sources.append((url, get_url_sha256(url)))
     assert sources != [], ("No python modules found for:", package)
     return [{"name": python_version + "-" + package,
              "buildsystem": "simple",
@@ -133,15 +132,14 @@ def python_modules_all(packages):
     python_version = "python3.8"
     with tempfile.TemporaryDirectory() as temp_dir:
         output = subprocess.check_output(
-            [python_version, "-m", "pip", "download", "--dest", temp_dir] +
-             packages, text=True)
+            [python_version, "-m", "pip", "-v", "download", "--dest", temp_dir]
+            + packages, text=True)
         sources = []
         for line in output.splitlines():
-            if line.startswith("  Downloading") or \
-               line.startswith("  Using cached"):
-                url = line.split()[-1]
-                archive_path = os.path.join(temp_dir, os.path.basename(url))
-                sources.append((url, get_file_sha256(archive_path)))
+            if " from build tracker " in line:
+                url = [part for part in line.split()
+                       if part.startswith("http")][0]
+                sources.append((url, get_url_sha256(url)))
     assert sources != [], ("No python modules found for:", package)
     return [{"name": python_version,
              "buildsystem": "simple",
@@ -287,37 +285,39 @@ patches = {
                             "/lib/ruby/*/rdoc",
                             "/lib/ruby/*/x86_64-linux/enc"]},
 
+    "python2.7": {"cleanup": ["*"]},
+
     "perl": {"buildsystem": "simple",
              "build-commands": [
                  "./Configure -des -Dprefix=/app",
                  "make -j4",
                  "make install"],
              "post-install": [
-                 "chmod 755 -R /app/lib/perl5/5.28.0/x86_64-linux/auto"],
+                 "chmod 755 -R /app/lib/perl5/5.32.0/x86_64-linux/auto"],
              "sources": [{
                  "type": "archive",
-                 "url": "http://www.cpan.org/src/5.0/perl-5.28.0.tar.xz",
-                 "sha256": "059b3cb69970d8c8c5964caced0335b4a"
-                           "f34ac990c8e61f7e3f90cd1c2d11e49"}]},
+                 "url": "https://www.cpan.org/src/5.0/perl-5.32.0.tar.gz",
+                 "sha256": "efeb1ce1f10824190ad1cadbcccf6fdb"
+                           "8a5d37007d0100d2d9ae5f2b5900c0b4"}]},
 
     "rakudo": {"buildsystem": "simple",
                "build-commands": [
-                   "cd MoarVM; perl Configure.pl --prefix=/app",
-                   "cd MoarVM; make -j4",
-                   "cd MoarVM; make install",
-                   "cd nqp; perl Configure.pl --prefix=/app",
-                   "cd nqp; make -j4",
-                   "cd nqp; make install",
-                   "perl Configure.pl --prefix=/app",
-                   "make -j4",
-                   "make install",
+                   "cd src/moarvm-2020.05; perl Configure.pl --prefix=/app",
+                   "cd src/moarvm-2020.05; make -j6",
+                   "cd src/moarvm-2020.05; make install",
+                   "cd src/nqp-2020.05; perl Configure.pl --prefix=/app",
+                   "cd src/nqp-2020.05; make -j6",
+                   "cd src/nqp-2020.05; make install",
+                   "cd src/rakudo-2020.05.1; perl Configure.pl --prefix=/app",
+                   "cd src/rakudo-2020.05.1; make -j6",
+                   "cd src/rakudo-2020.05.1; make install"
                ],
                "sources": [{
                    "type": "archive",
-                   "url": "https://rakudostar.com/files/star/"
-                          "rakudo-star-2019.03.tar.gz",
-                   "sha256": "640a69de3a2b4f6c49e75a01040e8770"
-                             "de3650ea1d5bb61057e3dfa3c79cc008"}]},
+                   "url": "https://rakudo.org/dl/star/"
+                          "rakudo-star-2020.05.tar.gz",
+                   "sha256": "d0d0a4ed5f75a5fb010d9630c052c061"
+                             "df9b6ce8325d578fae21fc6a4b99e6d6"}]},
 
     "p7zip": {"buildsystem": "simple",
               "build-commands": [
@@ -356,7 +356,7 @@ def make_manifest(modules, dep):
     module_name = os.path.basename(dep)
     manifest = {"app-id": "com.github.ahamilton." + module_name,
                 "runtime": "org.freedesktop.Sdk",
-                "runtime-version": "18.08",
+                "runtime-version": "20.08",
                 "sdk": "org.freedesktop.Sdk",
                 "sdk-extensions": ["org.freedesktop.Sdk.Extension.golang"],
                 "cleanup": ["/lib/debug", "/share/man", "/man", "/include",
@@ -417,7 +417,8 @@ def get_latest_commit():
 def eris_modules():
     eris_url = "https://github.com/ahamilton/eris"
     modules = []
-    for dep in ["docopt", "pyinotify", "pygments", "pillow", "toml"]:
+    for dep in ["docopt", "pyinotify", "pygments", "pillow", "toml",
+                "sortedcontainers", "markupsafe"]:
         modules.extend(python_modules(dep))
     modules.append({"name": "eris",
                     "buildsystem": "simple",
@@ -430,13 +431,14 @@ def eris_modules():
 
 
 def nodejs_modules():
-    return [{"name": "nodejs",
+    return ubuntu_modules("python2.7") + [{"name": "nodejs",
              "cleanup": ["/include", "/share", "/lib/node_modules"],
              "sources": [
                  {"type": "archive",
-                  "url": "https://nodejs.org/dist/v9.9.0/node-v9.9.0.tar.gz",
-                  "sha256": "e774cf32bc7c1d61d2e654e67eaafd2"
-                            "a13f22f176933706de60250db5b5eabda"}]}]
+                  "url": "https://nodejs.org/dist/latest-v12.x/"
+                         "node-v12.18.4.tar.xz",
+                  "sha256": "25f03cb18e53b6d0959d0c219e701a85"
+                            "eb4693f526bdda7c72bc6199b364f609"}]}]
 
 
 BUILD_FUNCS = {"ubuntu": ubuntu_modules, "pip": python_modules,
@@ -452,7 +454,7 @@ def get_build_func(dep):
 
 DEPS_IN_RUNTIME = {"g++", "clang-format", "tar", "file", "perl-doc", "gcc",
                    "binutils", "coreutils", "git", "unzip", "python",
-                   "python3", "python-setuptools"}
+                   "python3", "python-setuptools", "p7zip"}
 
 
 def save_manifest(manifest, manifest_path):
@@ -473,7 +475,8 @@ def make_combined_manifest(all_modules):
 
 
 SUBSTITUTIONS = {"shellcheck": "haskell/ShellCheck",
-                 "pandoc": "haskell/pandoc"}
+                 "pandoc": "haskell/pandoc",
+                 "wabt": "git/github.com/WebAssembly/wabt"}
 
 
 def install_script_deps():
