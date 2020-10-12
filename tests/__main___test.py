@@ -138,7 +138,8 @@ class SummarySyncWithFilesystemTestCase(unittest.TestCase):
         _touch(self.foo_path)
         _touch(self.bar_path)
         self.log = __main__.Log(self.appearance_changed_event)
-        self.loop.run_until_complete(self.summary.sync_with_filesystem(self.log))
+        self.loop.run_until_complete(self.summary.sync_with_filesystem(
+            self.appearance_changed_event, self.log))
         self.jobs_added_event.clear()
 
     def tearDown(self):
@@ -191,7 +192,8 @@ class SummarySyncWithFilesystemTestCase(unittest.TestCase):
         os.symlink(self.foo_path, baz_path)
         os.link(self.foo_path, self.zoo_path)
         log = __main__.Log(self.appearance_changed_event)
-        self.loop.run_until_complete(self.summary.sync_with_filesystem(log))
+        self.loop.run_until_complete(self.summary.sync_with_filesystem(
+            self.appearance_changed_event, log))
         self._assert_paths(["./bar.md", "./baz", "./foo", "./zoo.html"])
         self.assertTrue(id(self.summary._entries[1]) !=  # baz
                         id(self.summary._entries[2]))    # foo
