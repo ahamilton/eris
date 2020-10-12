@@ -324,8 +324,11 @@ def python_coverage(path):
                 ' file was generated.')
     path = os.path.normpath(path)
     with tempfile.TemporaryDirectory() as temp_dir:
-        _do_command([PYTHON_EXECUTABLE, "-m", "coverage",
-                     "annotate", "--directory", temp_dir, path])
+        stdout, stderr, returncode = _do_command(
+            [PYTHON_EXECUTABLE, "-m", "coverage",
+             "annotate", "--directory", temp_dir, path])
+        if returncode != 0:
+            return Status.problem, stdout
         cover_filename = path.replace("/", "_") + ",cover"
         with open(os.path.join(temp_dir, cover_filename), "r") as f:
             lines = f.read().splitlines(keepends=True)
