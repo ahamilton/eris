@@ -307,7 +307,7 @@ def mypy(path):
 
 
 def _colorize_coverage_report(lines):
-    line_color = {"> ": termstr.Color.green, "! ": termstr.Color.red,
+    line_color = {"> ": termstr.Color.green, "! ": termstr.Color.grey_150,
                   "  ": None}
     return fill3.join("", [termstr.TermStr(line).fg_color(line_color[line[:2]])
                            for line in lines])
