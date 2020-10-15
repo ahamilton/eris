@@ -162,6 +162,10 @@ class TermStr(collections.UserString):
                 codes = part[1:end_index].split(";")
             previous_code = None
             for index, code in enumerate(codes):
+                try:
+                    code_int = int(code)
+                except ValueError:
+                    code_int = None
                 if code in ["", "0", "00"]:  # Normal
                     is_bold, is_italic, is_underlined = False, False, False
                     fg_color, bg_color = None, None
@@ -171,13 +175,13 @@ class TermStr(collections.UserString):
                     is_italic = True
                 elif code in ["04", "4"]:  # underline
                     is_underlined = True
-                elif 30 <= int(code) <= 37 :  # dim fg color
+                elif code_int and 30 <= code_int <= 37 :  # dim fg color
                     fg_color = int(code[1])
-                elif 40 <= int(code) <= 47:  # dim bg color
+                elif code_int and 40 <= code_int <= 47:  # dim bg color
                     bg_color = int(code[1])
-                elif 90 <= int(code) <= 97:  # high fg color
+                elif code_int and 90 <= code_int <= 97:  # high fg color
                     fg_color = int(code[1]) + 8
-                elif 100 <= int(code) <= 107:  # high bg color
+                elif code_int and 100 <= code_int <= 107:  # high bg color
                     bg_color = int(code[2]) + 8
                 elif code == "5" and previous_code == "38":  # simple fg color
                     fg_color = int(codes[index+1])
