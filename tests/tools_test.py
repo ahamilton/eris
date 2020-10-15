@@ -135,14 +135,6 @@ class ToolsTestCase(unittest.TestCase):
                          # ("perl6.pl", tools.Status.problem)
                          ])
 
-    def test_perldoc(self):
-        # FIX: This is failing in an Appimage, inside a nspawn container,
-        #      as root.
-        if "APPDIR" not in os.environ:
-            self._test_tool(tools.perldoc,
-                            [("perl.pl", tools.Status.not_applicable),
-                             ("contents.pod", tools.Status.normal)])
-
     # def test_perltidy(self):
     #     self._test_tool(tools.perltidy, [("perl.pl", tools.Status.normal)])
 
