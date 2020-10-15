@@ -33,17 +33,22 @@ class Worker:
         pid_line = await self.process.stdout.readline()
         self.child_pgid = int(pid_line.strip())
         os.setpriority(os.PRIO_PGRP, self.child_pgid, 19)
+        self.process.stdin.write(f"{self.compression}\n".encode("utf-8"))
 
     async def run_tool(self, path, tool):
-        self.process.stdin.write(
-            f"{tool.__qualname__}\n{path}\n".encode("utf-8"))
-        data = await self.process.stdout.readline()
+        while True:
+            self.process.stdin.write(
+                f"{tool.__qualname__}\n{path}\n".encode("utf-8"))
+            data = await self.process.stdout.readline()
+            if data == b"":
+                await self.create_process()
+            else:
+                break
         return tools.Status(int(data))
 
     async def job_runner(self, screen, summary, log, jobs_added_event,
                          appearance_changed_event):
         await self.create_process()
-        self.process.stdin.write(f"{self.compression}\n".encode("utf-8"))
         while True:
             await jobs_added_event.wait()
             while True:
