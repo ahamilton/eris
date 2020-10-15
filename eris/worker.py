@@ -4,6 +4,7 @@
 # Licensed under the Artistic License 2.0.
 
 import asyncio
+import contextlib
 import os
 import signal
 
@@ -74,7 +75,8 @@ class Worker:
 
     def kill(self):
         if self.child_pgid is not None:
-            os.killpg(self.child_pgid, signal.SIGKILL)
+            with contextlib.suppress(ProcessLookupError):
+                os.killpg(self.child_pgid, signal.SIGKILL)
 
 
 def make_result_widget(text, result, compression):
