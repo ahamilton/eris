@@ -46,7 +46,7 @@ There is a wrapper script available to make running easier:
 
 ## Tools
 
-Extensions(100) | Tools(60)
+File types(100) | Tools(60)
 ----------:| -----
 .* | [contents](http://pygments.org/) • [metadata](https://github.com/ahamilton/eris) • [git_blame](https://git-scm.com/docs/git-blame) • [git_log](https://git-scm.com/docs/git-log)
 .py | [python_syntax](https://en.wikipedia.org/wiki/Python_syntax_and_semantics) • [python_unittests](https://docs.python.org/3/library/unittest.html) • [pytest](https://docs.pytest.org/en/latest/) • [pydoc](https://docs.python.org/3/library/pydoc.html) • [mypy](http://mypy-lang.org/) • [python_coverage](https://coverage.readthedocs.io/) • [pycodestyle](http://pycodestyle.pycqa.org/en/latest/) • [pydocstyle](http://www.pydocstyle.org/en/2.1.1/usage.html) • [pyflakes](https://pypi.org/project/pyflakes/) • [pylint](https://www.pylint.org/) • [python_gut](https://github.com/ahamilton/eris) • [python_modulefinder](https://docs.python.org/3/library/modulefinder.html) • [dis](https://docs.python.org/3/library/dis.html) • [python_mccabe](https://pypi.org/project/mccabe/) • [bandit](https://pypi.org/project/bandit/)

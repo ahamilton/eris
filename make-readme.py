@@ -66,7 +66,7 @@ There is a wrapper script available to make running easier:
 
 ## Tools
 
-Extensions({len(extension_set)-1}) | Tools({len(tool_set)})
+File types({len(extension_set)-1}) | Tools({len(tool_set)})
 ----------:| -----""")
     for extensions, tools_ in all_tools:
         print("%s | %s" % (
