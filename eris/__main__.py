@@ -612,7 +612,7 @@ class Log:
         if self._appearance is None or \
            fill3.appearance_dimensions(self._appearance) != dimensions:
             width, height = dimensions
-            self.lines = self.lines[-height:]
+            self.lines[:-height] = []
             self._appearance = fill3.appearance_resize(self.lines, dimensions)
         return self._appearance
 
