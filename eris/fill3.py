@@ -442,12 +442,13 @@ class Fixed:
 ##########################
 
 
+_last_appearance = []
+
+
 def draw_screen(widget):
     appearance = widget.appearance(os.get_terminal_size())
     print(terminal.move(0, 0), *appearance, sep="", end="", flush=True)
-
-
-_last_appearance = []
+    _last_appearance = appearance
 
 
 def patch_screen(widget):
@@ -492,7 +493,7 @@ def context(loop, appearance_changed_event, screen_widget, exit_loop=None):
     appearance_changed_event.set()
     if exit_loop is None:
         exit_loop = loop.stop
-    loop.add_signal_handler(signal.SIGWINCH, appearance_changed_event.set)
+    loop.add_signal_handler(signal.SIGWINCH, lambda: draw_screen(screen_widget))
     loop.add_signal_handler(signal.SIGINT, exit_loop)
     loop.add_signal_handler(signal.SIGTERM, exit_loop)
     with terminal.hidden_cursor(), terminal.fullscreen(), \
