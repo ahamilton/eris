@@ -446,6 +446,7 @@ _last_appearance = []
 
 
 def draw_screen(widget):
+    global _last_appearance
     appearance = widget.appearance(os.get_terminal_size())
     print(terminal.move(0, 0), *appearance, sep="", end="", flush=True)
     _last_appearance = appearance
