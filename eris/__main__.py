@@ -1067,7 +1067,7 @@ def setup_inotify(root_path, loop, on_filesystem_event, exclude_filter):
                   pyinotify.IN_MOVED_FROM | pyinotify.IN_MOVED_TO)
     watch_manager.add_watch(root_path, event_mask, rec=True, auto_add=True,
                             proc_fun=on_filesystem_event,
-                            exclude_filter=exclude_filter)
+                            exclude_filter=exclude_filter, quiet=False)
     return pyinotify.AsyncioNotifier(watch_manager, loop,
                                      callback=lambda notifier: None)
 
@@ -1259,6 +1259,13 @@ def check_arguments():
         arguments["--compression"]
 
 
+def inotify_watches_exceeded():
+    print("Error: This codebase has too many directories to be monitored.")
+    print("  Fix by increasing the kernel parameter user.max_inotify_watches "
+          "to exceed the number of directories.")
+    print("  e.g. 'sudo sysctl user.max_inotify_watches=200000'")
+
+
 def entry_point():
     root_path, worker_count, editor_command, theme, compression = \
         check_arguments()
@@ -1266,8 +1273,11 @@ def entry_point():
         manage_cache(root_path)
         with chdir(root_path):  # FIX: Don't change directory if possible.
             loop = asyncio.get_event_loop()
-            main(root_path, loop, worker_count, editor_command, theme,
-                 compression)
+            try:
+                main(root_path, loop, worker_count, editor_command, theme,
+                     compression)
+            except pyinotify.WatchManagerError:
+                inotify_watches_exceeded()
 
 
 if __name__ == "__main__":
